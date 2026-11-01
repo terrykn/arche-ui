@@ -3,55 +3,65 @@
     "name": "Arche",
     "contractVersion": 1
   },
+  "fonts": [
+    {
+      "family": "Manrope",
+      "weights": [400, 500, 600, 700, 800]
+    },
+    {
+      "family": "JetBrains Mono",
+      "weights": [400, 500, 600]
+    }
+  ],
   "tokens": {
     "light": {
       "--background": {
         "$type": "color",
-        "$value": "oklch(0.965 0.015 95)"
+        "$value": "oklch(0.969 0.007 295.5)"
       },
       "--card": {
         "$type": "color",
-        "$value": "oklch(0.99 0.008 95)"
+        "$value": "oklch(1.000 0.000 0.0)"
       },
       "--popover": {
         "$type": "color",
-        "$value": "oklch(0.985 0.01 95)"
+        "$value": "oklch(1.000 0.000 0.0)"
       },
       "--foreground": {
         "$type": "color",
-        "$value": "oklch(0.28 0.035 75)"
+        "$value": "oklch(0.196 0.024 295.6)"
       },
       "--card-foreground": {
         "$type": "color",
-        "$value": "oklch(0.28 0.035 75)"
+        "$value": "oklch(0.196 0.024 295.6)"
       },
       "--popover-foreground": {
         "$type": "color",
-        "$value": "oklch(0.28 0.035 75)"
+        "$value": "oklch(0.196 0.024 295.6)"
       },
       "--primary": {
         "$type": "color",
-        "$value": "oklch(0.45 0.11 78)"
+        "$value": "oklch(0.550 0.174 286.2)"
       },
       "--primary-foreground": {
         "$type": "color",
-        "$value": "oklch(0.98 0.01 95)"
+        "$value": "oklch(1.000 0.000 0.0)"
       },
       "--secondary": {
         "$type": "color",
-        "$value": "oklch(0.88 0.05 235)"
+        "$value": "oklch(0.951 0.013 295.3)"
       },
       "--secondary-foreground": {
         "$type": "color",
-        "$value": "oklch(0.35 0.09 245)"
+        "$value": "oklch(0.478 0.172 284.6)"
       },
       "--accent": {
         "$type": "color",
-        "$value": "oklch(0.64 0.12 45)"
+        "$value": "oklch(0.951 0.013 295.3)"
       },
       "--accent-foreground": {
         "$type": "color",
-        "$value": "oklch(0.22 0.04 50)"
+        "$value": "oklch(0.478 0.172 284.6)"
       },
       "--destructive": {
         "$type": "color",
@@ -63,23 +73,23 @@
       },
       "--muted": {
         "$type": "color",
-        "$value": "oklch(0.93 0.015 90)"
+        "$value": "oklch(0.984 0.004 301.4)"
       },
       "--muted-foreground": {
         "$type": "color",
-        "$value": "oklch(0.47 0.03 80)"
+        "$value": "oklch(0.540 0.028 293.1)"
       },
       "--border": {
         "$type": "color",
-        "$value": "oklch(0.86 0.03 90)"
+        "$value": "oklch(0.920 0.012 296.3)"
       },
       "--input": {
         "$type": "color",
-        "$value": "oklch(0.86 0.03 90)"
+        "$value": "oklch(0.877 0.020 299.0)"
       },
       "--ring": {
         "$type": "color",
-        "$value": "oklch(0.60 0.10 78)"
+        "$value": "oklch(0.550 0.174 286.2)"
       },
       "--chart-1": {
         "$type": "color",
@@ -103,35 +113,35 @@
       },
       "--radius": {
         "$type": "dimension",
-        "$value": "0.5rem"
+        "$value": "18px"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "ui-sans-serif, system-ui, sans-serif"
+        "$value": "Manrope, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Georgia, Iowan Old Style, Times New Roman, serif"
+        "$value": "Manrope, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",
-        "$value": "0 1px 2px 0 oklch(0.3 0.03 80 / 0.08)"
+        "$value": "0 2px 8px 0 oklch(0.361 0.100 288.0 / 0.04)"
       },
       "--shadow-md": {
         "$type": "shadow",
-        "$value": "0 4px 6px -1px oklch(0.3 0.03 80 / 0.12)"
+        "$value": "0 10px 30px 0 oklch(0.361 0.100 288.0 / 0.07)"
       },
       "--shadow-lg": {
         "$type": "shadow",
-        "$value": "0 10px 15px -3px oklch(0.3 0.03 80 / 0.14)"
+        "$value": "0 24px 54px 0 oklch(0.361 0.100 288.0 / 0.11)"
       },
       "--shadow-xl": {
         "$type": "shadow",
-        "$value": "0 20px 25px -5px oklch(0.3 0.03 80 / 0.16)"
+        "$value": "0 32px 72px 0 oklch(0.361 0.100 288.0 / 0.14)"
       },
       "--motion-fast": {
         "$type": "motion",
@@ -151,51 +161,51 @@
     "dark": {
       "--background": {
         "$type": "color",
-        "$value": "oklch(0.21 0.02 75)"
+        "$value": "oklch(0.183 0.014 298.0)"
       },
       "--card": {
         "$type": "color",
-        "$value": "oklch(0.25 0.025 75)"
+        "$value": "oklch(0.232 0.025 295.0)"
       },
       "--popover": {
         "$type": "color",
-        "$value": "oklch(0.25 0.025 75)"
+        "$value": "oklch(0.232 0.025 295.0)"
       },
       "--foreground": {
         "$type": "color",
-        "$value": "oklch(0.93 0.02 95)"
+        "$value": "oklch(0.956 0.010 299.2)"
       },
       "--card-foreground": {
         "$type": "color",
-        "$value": "oklch(0.93 0.02 95)"
+        "$value": "oklch(0.956 0.010 299.2)"
       },
       "--popover-foreground": {
         "$type": "color",
-        "$value": "oklch(0.93 0.02 95)"
+        "$value": "oklch(0.956 0.010 299.2)"
       },
       "--primary": {
         "$type": "color",
-        "$value": "oklch(0.75 0.12 78)"
+        "$value": "oklch(0.725 0.101 293.6)"
       },
       "--primary-foreground": {
         "$type": "color",
-        "$value": "oklch(0.22 0.03 70)"
+        "$value": "oklch(0.196 0.024 295.6)"
       },
       "--secondary": {
         "$type": "color",
-        "$value": "oklch(0.35 0.07 245)"
+        "$value": "oklch(0.294 0.047 290.3)"
       },
       "--secondary-foreground": {
         "$type": "color",
-        "$value": "oklch(0.90 0.04 235)"
+        "$value": "oklch(0.805 0.079 294.4)"
       },
       "--accent": {
         "$type": "color",
-        "$value": "oklch(0.68 0.13 45)"
+        "$value": "oklch(0.294 0.047 290.3)"
       },
       "--accent-foreground": {
         "$type": "color",
-        "$value": "oklch(0.22 0.04 50)"
+        "$value": "oklch(0.805 0.079 294.4)"
       },
       "--destructive": {
         "$type": "color",
@@ -207,23 +217,23 @@
       },
       "--muted": {
         "$type": "color",
-        "$value": "oklch(0.28 0.02 80)"
+        "$value": "oklch(0.262 0.028 293.5)"
       },
       "--muted-foreground": {
         "$type": "color",
-        "$value": "oklch(0.72 0.03 85)"
+        "$value": "oklch(0.709 0.029 294.8)"
       },
       "--border": {
         "$type": "color",
-        "$value": "oklch(0.35 0.03 80)"
+        "$value": "oklch(0.314 0.036 293.4)"
       },
       "--input": {
         "$type": "color",
-        "$value": "oklch(0.38 0.03 80)"
+        "$value": "oklch(0.359 0.043 291.4)"
       },
       "--ring": {
         "$type": "color",
-        "$value": "oklch(0.65 0.10 78)"
+        "$value": "oklch(0.725 0.101 293.6)"
       },
       "--chart-1": {
         "$type": "color",
@@ -247,19 +257,19 @@
       },
       "--radius": {
         "$type": "dimension",
-        "$value": "0.5rem"
+        "$value": "18px"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "ui-sans-serif, system-ui, sans-serif"
+        "$value": "Manrope, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Georgia, Iowan Old Style, Times New Roman, serif"
+        "$value": "Manrope, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",

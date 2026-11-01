@@ -67,6 +67,10 @@ export async function assignApplication(formData: FormData) {
       return;
     }
   }
+  if (applicationId) {
+    // Fix D: at most one identity per application — detach any current holder first.
+    await service.from("libraries").update({ application_id: null }).eq("application_id", applicationId);
+  }
   await service.from("libraries").update({ application_id: applicationId }).eq("id", libraryId);
   revalidatePath("/dashboard");
 }

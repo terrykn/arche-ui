@@ -59,10 +59,17 @@ export interface Manifest {
   };
 }
 
+export interface ArcheIdentityFont {
+  family: string;
+  weights: number[];
+}
+
 export interface ArcheIdentity {
   meta: { name: string; contractVersion: number } & Record<string, unknown>;
   tokens: IdentityTokens;
   components: Record<string, Record<string, unknown>>;
+  /** Optional webfont loading declaration; the emitter builds a Google Fonts @import from it. */
+  fonts?: ArcheIdentityFont[];
 }
 
 export interface ValidationIssue {
@@ -79,6 +86,18 @@ export interface ValidationResult {
 // Identity validation (contract + manifest surfaces)
 // ---------------------------------------------------------------------------
 
+const FAMILY_RE = /^[A-Za-z0-9][A-Za-z0-9 \-]*$/;
+
+const fontsSchema = z
+  .array(
+    z.object({
+      family: z.string().min(1).max(100).regex(FAMILY_RE, "must be a URL-safe font family name"),
+      weights: z.array(z.number().int().min(100).max(900)).min(1),
+    }),
+  )
+  .min(1)
+  .optional();
+
 const identitySchema = z.object({
   meta: z.object({
     name: z.string().min(1),
@@ -86,7 +105,58 @@ const identitySchema = z.object({
   }),
   tokens: z.unknown(),
   components: z.record(z.string(), z.record(z.string(), z.unknown())),
+  fonts: fontsSchema,
 });
+
+/**
+ * Builds the portable Google Fonts @import URL for an identity's font
+ * declaration (families + weights). Returns null when no fonts declared.
+ */
+export function buildFontImport(fonts: ArcheIdentityFont[] | undefined): string | null {
+  if (!fonts || fonts.length === 0) {
+    return null;
+  }
+  const parts = fonts.map((font) => {
+    const slug = font.family.trim().replace(/\s+/g, "+");
+    const weights = [...new Set(font.weights)].sort((a, b) => a - b).join(";");
+    return `family=${slug}:wght@${weights}`;
+  });
+  return `url('https://fonts.googleapis.com/css2?${parts.join("&")}&display=swap')`;
+}
+
+function validateFonts(identity: ArcheIdentity, issues: ValidationIssue[]): void {
+  const fonts = identity.fonts;
+  if (fonts === undefined) {
+    return;
+  }
+  const seen = new Set<string>();
+  for (const font of fonts) {
+    const key = font.family.toLowerCase();
+    if (seen.has(key)) {
+      issues.push({
+        path: `fonts.${font.family}`,
+        message: `font family '${font.family}' is declared more than once`,
+      });
+    }
+    seen.add(key);
+  }
+  // Coherence: every --font-* token stack must use at least one declared family.
+  const families = fonts.map((font) => font.family);
+  for (const [modeName, modeSet] of Object.entries(identity.tokens ?? {})) {
+    for (const [tokenName, token] of Object.entries(modeSet ?? {})) {
+      if (!tokenName.startsWith("--font-")) {
+        continue;
+      }
+      const stack = String((token as { $value?: unknown }).$value ?? "");
+      if (!families.some((family) => stack.includes(family))) {
+        issues.push({
+          path: `${modeName}.${tokenName}`,
+          message: `font stack '${stack}' uses none of the declared font families [${families.join(", ")}]`,
+        });
+      }
+    }
+  }
+}
 
 const manifestDir = join(foundationDir, "src", "manifests");
 const MANIFESTS: Manifest[] = readdirSync(manifestDir)
@@ -196,6 +266,8 @@ export function validateIdentity(identity: ArcheIdentity): ValidationResult {
   }
 
   issues.push(...validateTokens(identity.tokens).issues);
+
+  validateFonts(identity, issues);
 
   const manifestNames = new Set(MANIFESTS.map((manifest) => manifest.name));
   for (const name of Object.keys(identity.components)) {
@@ -428,15 +500,23 @@ function emitTheme(identity: ArcheIdentity): ThemeEmission {
     themeVars[`color-${colorVar}`] = `var(--${colorVar})`;
   }
 
+  // Portable font loading: the Google Fonts @import is the first entry of the
+  // emitted theme CSS, built from the payload's fonts declaration. Key order
+  // is explicit here; serializeStable's sort keeps '@import' first anyway.
+  const css: Record<string, unknown> = {};
+  const fontImport = buildFontImport(identity.fonts);
+  if (fontImport !== null) {
+    css["@import"] = fontImport;
+  }
+  css["@layer base"] = {
+    ":root": derivedRoot,
+  };
+
   return {
     cssVarsLight,
     cssVarsDark,
     themeVars,
-    css: {
-      "@layer base": {
-        ":root": derivedRoot,
-      },
-    },
+    css,
   };
 }
 

@@ -1,0 +1,218 @@
+/* Acme Tasks mini app — skinned per rotation identity via --d-* vars. */
+.acme {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: 460px;
+  font-size: 13.5px;
+  background: var(--d-bg);
+  color: var(--d-ink);
+  border-radius: var(--d-radius);
+  transition: background-color 0.55s ease, color 0.55s ease;
+}
+
+.acme-side {
+  border-right: 1px solid var(--d-line);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.acme-brand {
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+
+.acme-nav {
+  padding: 7px 10px;
+  border-radius: 10px;
+  opacity: 0.7;
+}
+
+.acme-nav.active {
+  font-weight: 700;
+  opacity: 1;
+  background: var(--d-accent-bg);
+  color: var(--d-accent-text);
+}
+
+.acme-user {
+  margin-top: auto;
+  font-weight: 700;
+}
+
+.acme-main {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--d-bg);
+  border-radius: 0 var(--d-radius) var(--d-radius) 0;
+  transition: background-color 0.55s ease;
+}
+
+.acme-h {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.acme-sub {
+  font-size: 12.5px;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.acme-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.acme-tab {
+  padding: 6px 14px;
+  border-radius: var(--d-btn-radius);
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.acme-tab.active {
+  background: var(--d-primary);
+  color: #fff;
+  opacity: 1;
+}
+
+.acme-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.acme-stat {
+  border-radius: var(--d-radius);
+  padding: 12px;
+  background: var(--d-surface);
+  border: 1px solid var(--d-line);
+}
+
+.acme-bar {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--d-line);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.acme-bar i {
+  display: block;
+  height: 100%;
+  background: var(--d-primary);
+  border-radius: 999px;
+}
+
+.acme-task {
+  border-radius: var(--d-radius);
+  padding: 6px 14px;
+  background: var(--d-surface);
+  border: 1px solid var(--d-line);
+}
+
+.acme-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--d-line);
+}
+
+.acme-row:last-child {
+  border-bottom: none;
+}
+
+.acme-tag {
+  margin-left: auto;
+  font-style: normal;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: var(--d-accent-bg);
+  color: var(--d-accent-text);
+}
+
+.acme-tag.done {
+  background: var(--d-primary);
+  color: #fff;
+}
+
+.acme-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.acme-btn-primary {
+  border: none;
+  cursor: pointer;
+  background: var(--d-primary);
+  color: #fff;
+  border-radius: var(--d-btn-radius);
+  padding: 9px 18px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.acme-btn-ghost {
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  border: 1px solid var(--d-line);
+  border-radius: var(--d-btn-radius);
+  padding: 8px 18px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.acme-search {
+  border: 1px solid var(--d-line);
+  border-radius: var(--d-btn-radius);
+  padding: 8px 14px;
+  font-size: 13px;
+  background: var(--d-surface);
+  color: inherit;
+  min-width: 160px;
+}
+
+.acme-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+@media (max-width: 1020px) {
+  .acme {
+    grid-template-columns: 1fr;
+  }
+  .acme-side {
+    border-right: none;
+    border-bottom: 1px solid var(--d-line);
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+  }
+  .acme-user {
+    margin-top: 0;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .acme-stats {
+    grid-template-columns: 1fr;
+  }
+  .acme-main {
+    border-radius: 0 0 var(--d-radius) var(--d-radius);
+  }
+}

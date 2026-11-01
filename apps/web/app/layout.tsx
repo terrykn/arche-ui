@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./theme.css";
+import "./proto.css";
+import "./acme.css";
+import { manrope, jetbrainsMono } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Arche UI",
-  description: "Complete, installable React component libraries generated from data.",
+  description: "Generate complete React component libraries with AI, tailored to your brand identity.",
 };
 
-// Runs before paint: visitor's saved choice wins, else the OS preference.
-const themeInitScript = `(function(){try{var t=localStorage.getItem('arche-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();`;
+// data-theme drives the prototype token set; .dark follows for Tailwind surfaces.
+const themeInitScript = `(function(){try{var t=localStorage.getItem('arche-theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';if(d)document.documentElement.classList.add('dark')}catch(e){document.documentElement.dataset.theme='light'}})();`;
 
 export default function RootLayout({
   children,
@@ -19,7 +23,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body>{children}</body>
+      <body className={`${manrope.variable} ${jetbrainsMono.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,10 +1,4 @@
--- Arche UI — Brief #3 Milestone 1 schema.
--- Run once in Supabase Studio > SQL editor (or supabase db push).
--- Table naming keeps `library` internally per Brief #3 Rule 7; the UI says "Identity".
--- Snapshots live as JSONB on library_versions (not Storage): snapshots are a
--- few hundred KB of JSON, version rows are append-only, and JSONB keeps the
--- snapshot in the same RLS-governed row as its version metadata — no second
--- bucket policy surface to keep in sync.
+-- Arche UI — Brief #3 Milestone 1 schema (with review fixes A–E applied).
 
 -- ---------------------------------------------------------------- profiles
 create table if not exists public.profiles (
@@ -20,6 +14,11 @@ create table if not exists public.profiles (
   constraint username_format check (username ~ '^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$')
 );
 
+-- Public-safe projection of profiles for /p/<user> routes (Fix B).
+create or replace view public.public_profiles as
+  select id, username, display_name from public.profiles;
+grant select on public.public_profiles to anon, authenticated;
+
 -- ------------------------------------------------------------ applications
 create table if not exists public.applications (
   id uuid primary key default gen_random_uuid(),
@@ -28,6 +27,8 @@ create table if not exists public.applications (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+create index if not exists applications_owner_idx
+  on public.applications (owner);
 
 -- ---------------------------------------------------------------- libraries
 create table if not exists public.libraries (
@@ -42,6 +43,10 @@ create table if not exists public.libraries (
   updated_at timestamptz not null default now(),
   constraint libraries_slug_per_owner unique (owner, slug)
 );
+-- One identity per application (Fix D).
+create unique index if not exists libraries_one_per_application
+  on public.libraries (application_id)
+  where application_id is not null;
 
 -- --------------------------------------------------------- library_versions
 create table if not exists public.library_versions (
@@ -74,78 +79,3 @@ create trigger applications_touch before update on public.applications
 drop trigger if exists libraries_touch on public.libraries;
 create trigger libraries_touch before update on public.libraries
   for each row execute function public.touch_updated_at();
-
--- ------------------------------------------------------- new-user handling
--- Auth sign-up creates the profile row automatically; the username defaults
--- to the email local part and can be changed in settings (unique).
-create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer set search_path = public as $$
-declare
-  base_name text;
-begin
-  base_name := lower(regexp_replace(split_part(new.email, '@', 1), '[^a-z0-9-]', '-', 'g'));
-  insert into public.profiles (id, username, display_name)
-  values (
-    new.id,
-    coalesce(nullif(base_name, ''), 'user-' || substr(new.id::text, 1, 8)),
-    split_part(new.email, '@', 1)
-  )
-  on conflict (id) do nothing;
-  return new;
-end;
-$$;
-
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
-
--- ---------------------------------------------------------------------- RLS
-alter table public.profiles enable row level security;
-alter table public.applications enable row level security;
-alter table public.libraries enable row level security;
-alter table public.library_versions enable row level security;
-
--- profiles: readable by anyone (usernames feed /p/<user> routes), editable by owner only
-drop policy if exists profiles_public_read on public.profiles;
-create policy profiles_public_read on public.profiles
-  for select using (true);
-drop policy if exists profiles_owner_update on public.profiles;
-create policy profiles_owner_update on public.profiles
-  for update using (auth.uid() = id) with check (auth.uid() = id);
-
--- applications: owner only
-drop policy if exists applications_owner_all on public.applications;
-create policy applications_owner_all on public.applications
-  for all using (auth.uid() = owner) with check (auth.uid() = owner);
-
--- libraries: owner all; public libraries readable by anyone
-drop policy if exists libraries_owner_all on public.libraries;
-create policy libraries_owner_all on public.libraries
-  for all using (auth.uid() = owner) with check (auth.uid() = owner);
-drop policy if exists libraries_public_read on public.libraries;
-create policy libraries_public_read on public.libraries
-  for select using (visibility = 'public');
-
--- library_versions: immutable (no update/delete policies). Readable by the
--- library owner or anyone when the parent library is public. Insert allowed
--- only to the parent library's owner (publish path uses the service role,
--- which bypasses RLS; this policy covers any owner-held client inserts).
-drop policy if exists versions_owner_insert on public.library_versions;
-create policy versions_owner_insert on public.library_versions
-  for insert with check (
-    exists (
-      select 1 from public.libraries
-      where libraries.id = library_versions.library_id
-        and libraries.owner = auth.uid()
-    )
-  );
-drop policy if exists versions_visible_read on public.library_versions;
-create policy versions_visible_read on public.library_versions
-  for select using (
-    exists (
-      select 1 from public.libraries
-      where libraries.id = library_versions.library_id
-        and (libraries.owner = auth.uid() or libraries.visibility = 'public')
-    )
-  );
