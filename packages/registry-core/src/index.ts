@@ -2,9 +2,9 @@
  * @arche/registry-core — builds a deterministic shadcn-compatible registry from
  * an Arche identity (tokens + per-component knob selections).
  */
-import { readdirSync, readFileSync } from "node:fs";
-import { createRequire } from "node:module";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { validateTokens, type IdentityTokens } from "@arche/foundation/contract/validate-tokens";
 import tokenContract from "@arche/foundation/contract/token-contract.json" with { type: "json" };
@@ -13,10 +13,24 @@ const contractData = tokenContract as unknown as {
   contractVersion: number;
 };
 
-const require = createRequire(import.meta.url);
-const foundationDir = dirname(
-  require.resolve("@arche/foundation/package.json"),
-);
+// Foundation is located without require.resolve (bundlers rewrite that call).
+// From dist/index.js, up two levels lands on the package root's parent, so
+// both the monorepo layout (packages/registry-core -> packages/foundation)
+// and an installed layout (node_modules/@arche/registry-core ->
+// node_modules/@arche/foundation) resolve statically.
+function locateFoundation(): string {
+  const distDir = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    join(distDir, "..", "..", "foundation"),
+    join(distDir, "..", "..", "@arche", "foundation"),
+  ];
+  const found = candidates.find((dir) => existsSync(join(dir, "src", "manifests")));
+  if (!found) {
+    throw new Error("@arche/foundation manifests not found from registry-core");
+  }
+  return found;
+}
+const foundationDir: string = locateFoundation();
 
 // ---------------------------------------------------------------------------
 // Types
@@ -79,6 +93,16 @@ const MANIFESTS: Manifest[] = readdirSync(manifestDir)
   .filter((file) => file.endsWith(".manifest.json"))
   .sort()
   .map((file) => JSON.parse(readFileSync(join(manifestDir, file), "utf8")) as Manifest);
+
+/** All component manifests (parsed, sorted by file). Read-only: do not mutate. */
+export function getManifests(): Manifest[] {
+  return MANIFESTS;
+}
+
+/** The token contract (tokens + contrast pairs) for editor UI generation. */
+export function getTokenContract(): unknown {
+  return tokenContract;
+}
 
 /** Names shared by manifest knobs and their cva implementation axes. */
 const KNOB_TO_AXIS: Record<string, string> = {

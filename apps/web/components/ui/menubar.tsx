@@ -1,0 +1,28 @@
+/** GENERATED from the Arche identity (fixtures/identity.arche.json).
+ * Do not hand-edit — re-run: pnpm --filter web sync-components */
+"use client";
+import * as React from "react";
+import * as P from "@radix-ui/react-menubar";
+import { Check, ChevronRight, Circle } from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+const menubarContentVariants = cva("z-50 min-w-32 overflow-hidden border bg-popover p-1 text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out", { variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } }, defaultVariants: {
+      radius: "md",
+      shadow: "md",
+    } });
+function Menubar({ className, ...props }: React.ComponentProps<typeof P.Root>) { return <P.Root data-slot="menubar" className={cn("flex h-9 items-center gap-1 rounded-md border bg-background p-1", className)} {...props} />; }
+function MenubarMenu(props: React.ComponentProps<typeof P.Menu>) { return <P.Menu data-slot="menubar-menu" {...props} />; }
+function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof P.Trigger>) { return <P.Trigger data-slot="menubar-trigger" className={cn("rounded-sm px-3 py-1 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent", className)} {...props} />; }
+function MenubarPortal(props: React.ComponentProps<typeof P.Portal>) { return <P.Portal data-slot="menubar-portal" {...props} />; }
+function MenubarContent({ className, radius, shadow, ...props }: React.ComponentProps<typeof P.Content> & VariantProps<typeof menubarContentVariants>) { return <MenubarPortal><P.Content data-slot="menubar-content" className={cn(menubarContentVariants({ radius, shadow }), className)} {...props} /></MenubarPortal>; }
+function MenubarGroup(props: React.ComponentProps<typeof P.Group>) { return <P.Group data-slot="menubar-group" {...props} />; }
+function MenubarItem({ className, ...props }: React.ComponentProps<typeof P.Item>) { return <P.Item data-slot="menubar-item" className={cn("relative flex items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:opacity-50", className)} {...props} />; }
+function MenubarCheckboxItem({ className, children, ...props }: React.ComponentProps<typeof P.CheckboxItem>) { return <P.CheckboxItem data-slot="menubar-checkbox-item" className={cn("relative rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-accent", className)} {...props}><span className="absolute left-2"><P.ItemIndicator><Check className="size-4" /></P.ItemIndicator></span>{children}</P.CheckboxItem>; }
+function MenubarRadioGroup(props: React.ComponentProps<typeof P.RadioGroup>) { return <P.RadioGroup data-slot="menubar-radio-group" {...props} />; }
+function MenubarRadioItem({ className, children, ...props }: React.ComponentProps<typeof P.RadioItem>) { return <P.RadioItem data-slot="menubar-radio-item" className={cn("relative rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-accent", className)} {...props}><span className="absolute left-2"><P.ItemIndicator><Circle className="size-2 fill-current" /></P.ItemIndicator></span>{children}</P.RadioItem>; }
+function MenubarLabel({ className, ...props }: React.ComponentProps<typeof P.Label>) { return <P.Label data-slot="menubar-label" className={cn("px-2 py-1.5 text-sm font-semibold", className)} {...props} />; }
+function MenubarSeparator({ className, ...props }: React.ComponentProps<typeof P.Separator>) { return <P.Separator data-slot="menubar-separator" className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />; }
+function MenubarSub(props: React.ComponentProps<typeof P.Sub>) { return <P.Sub data-slot="menubar-sub" {...props} />; }
+function MenubarSubTrigger({ className, children, ...props }: React.ComponentProps<typeof P.SubTrigger>) { return <P.SubTrigger data-slot="menubar-sub-trigger" className={cn("flex items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent", className)} {...props}>{children}<ChevronRight className="ml-auto size-4" /></P.SubTrigger>; }
+function MenubarSubContent({ className, ...props }: React.ComponentProps<typeof P.SubContent>) { return <P.SubContent data-slot="menubar-sub-content" className={cn("z-50 min-w-32 rounded-md border bg-popover p-1 text-popover-foreground shadow-(--shadow-md)", className)} {...props} />; }
+export { Menubar, MenubarMenu, MenubarTrigger, MenubarPortal, MenubarContent, MenubarGroup, MenubarItem, MenubarCheckboxItem, MenubarRadioGroup, MenubarRadioItem, MenubarLabel, MenubarSeparator, MenubarSub, MenubarSubTrigger, MenubarSubContent, menubarContentVariants };

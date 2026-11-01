@@ -1,0 +1,27 @@
+/** GENERATED from the Arche identity (fixtures/identity.arche.json).
+ * Do not hand-edit — re-run: pnpm --filter web sync-components */
+"use client";
+import * as React from "react";
+import * as P from "@radix-ui/react-context-menu";
+import { Check, ChevronRight, Circle } from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+const contextMenuContentVariants = cva("z-50 min-w-32 overflow-hidden border bg-popover p-1 text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out", { variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } }, defaultVariants: {
+      radius: "md",
+      shadow: "md",
+    } });
+function ContextMenu(props: React.ComponentProps<typeof P.Root>) { return <P.Root data-slot="context-menu" {...props} />; }
+function ContextMenuTrigger(props: React.ComponentProps<typeof P.Trigger>) { return <P.Trigger data-slot="context-menu-trigger" {...props} />; }
+function ContextMenuPortal(props: React.ComponentProps<typeof P.Portal>) { return <P.Portal data-slot="context-menu-portal" {...props} />; }
+function ContextMenuContent({ className, radius, shadow, ...props }: React.ComponentProps<typeof P.Content> & VariantProps<typeof contextMenuContentVariants>) { return <ContextMenuPortal><P.Content data-slot="context-menu-content" className={cn(contextMenuContentVariants({ radius, shadow }), className)} {...props} /></ContextMenuPortal>; }
+function ContextMenuGroup(props: React.ComponentProps<typeof P.Group>) { return <P.Group data-slot="context-menu-group" {...props} />; }
+function ContextMenuItem({ className, ...props }: React.ComponentProps<typeof P.Item>) { return <P.Item data-slot="context-menu-item" className={cn("relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50", className)} {...props} />; }
+function ContextMenuCheckboxItem({ className, children, ...props }: React.ComponentProps<typeof P.CheckboxItem>) { return <P.CheckboxItem data-slot="context-menu-checkbox-item" className={cn("relative flex items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:opacity-50", className)} {...props}><span className="absolute left-2"><P.ItemIndicator><Check className="size-4" /></P.ItemIndicator></span>{children}</P.CheckboxItem>; }
+function ContextMenuRadioGroup(props: React.ComponentProps<typeof P.RadioGroup>) { return <P.RadioGroup data-slot="context-menu-radio-group" {...props} />; }
+function ContextMenuRadioItem({ className, children, ...props }: React.ComponentProps<typeof P.RadioItem>) { return <P.RadioItem data-slot="context-menu-radio-item" className={cn("relative flex items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:opacity-50", className)} {...props}><span className="absolute left-2"><P.ItemIndicator><Circle className="size-2 fill-current" /></P.ItemIndicator></span>{children}</P.RadioItem>; }
+function ContextMenuLabel({ className, ...props }: React.ComponentProps<typeof P.Label>) { return <P.Label data-slot="context-menu-label" className={cn("px-2 py-1.5 text-sm font-semibold", className)} {...props} />; }
+function ContextMenuSeparator({ className, ...props }: React.ComponentProps<typeof P.Separator>) { return <P.Separator data-slot="context-menu-separator" className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />; }
+function ContextMenuSub(props: React.ComponentProps<typeof P.Sub>) { return <P.Sub data-slot="context-menu-sub" {...props} />; }
+function ContextMenuSubTrigger({ className, children, ...props }: React.ComponentProps<typeof P.SubTrigger>) { return <P.SubTrigger data-slot="context-menu-sub-trigger" className={cn("flex items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent", className)} {...props}>{children}<ChevronRight className="ml-auto size-4" /></P.SubTrigger>; }
+function ContextMenuSubContent({ className, ...props }: React.ComponentProps<typeof P.SubContent>) { return <P.SubContent data-slot="context-menu-sub-content" className={cn("z-50 min-w-32 rounded-md border bg-popover p-1 text-popover-foreground shadow-(--shadow-md)", className)} {...props} />; }
+export { ContextMenu, ContextMenuTrigger, ContextMenuPortal, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuCheckboxItem, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuSub, ContextMenuSubTrigger, ContextMenuSubContent, contextMenuContentVariants };

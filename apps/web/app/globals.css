@@ -1,50 +1,100 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./theme.css";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@custom-variant dark (&:is(.dark *));
+
+/* @arche-theme:begin (generated — do not hand-edit) */
+@theme inline {
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-background: var(--background);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-foreground: var(--foreground);
+  --color-input: var(--input);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-ring: var(--ring);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+  --font-sans: var(--font-sans);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-md: var(--shadow-md);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-xl: var(--shadow-xl);
+}
+/* @arche-theme:end */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+/* Subtle identity gradient wash behind content only.
+   Token vars only — no hardcoded colors. Changing the site's
+   look = editing fixtures/identity.arche.json. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      60rem 30rem at 15% -5%,
+      color-mix(in oklch, var(--primary) 7%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50rem 28rem at 90% 10%,
+      color-mix(in oklch, var(--secondary) 22%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      70rem 36rem at 50% 110%,
+      color-mix(in oklch, var(--accent) 6%, transparent),
+      transparent 70%
+    );
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.imgDark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+.dark body::before {
+  background:
+    radial-gradient(
+      60rem 30rem at 15% -5%,
+      color-mix(in oklch, var(--primary) 10%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50rem 28rem at 90% 10%,
+      color-mix(in oklch, var(--secondary) 20%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      70rem 36rem at 50% 110%,
+      color-mix(in oklch, var(--accent) 8%, transparent),
+      transparent 70%
+    );
 }
