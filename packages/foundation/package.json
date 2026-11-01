@@ -24,7 +24,17 @@
       "default": "./dist/contract/validate-tokens.js"
     },
     "./manifests/button": "./src/manifests/button.manifest.json",
-    "./manifests/dialog": "./src/manifests/dialog.manifest.json"
+    "./manifests/dialog": "./src/manifests/dialog.manifest.json",
+    "./fonts": {
+      "types": "./src/fonts/fonts.ts",
+      "default": "./dist/fonts/fonts.js"
+    },
+    "./fonts/font-registry.json": "./src/fonts/font-registry.json",
+    "./icons": {
+      "types": "./src/icons/icons.ts",
+      "default": "./dist/icons/icons.js"
+    },
+    "./icons/icon-registry.json": "./src/icons/icon-registry.json"
   },
   "scripts": {
     "build": "tsc --project . && tsx scripts/copy-assets.ts",

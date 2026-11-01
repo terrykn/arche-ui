@@ -3,6 +3,12 @@
     "name": "Calm Hospital",
     "contractVersion": 1
   },
+  "fonts": {
+    "sans": "public-sans",
+    "display": "source-serif-4",
+    "mono": "ibm-plex-mono"
+  },
+  "icons": "lucide",
   "tokens": {
     "light": {
       "--background": {
@@ -107,15 +113,15 @@
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "ui-sans-serif, system-ui, sans-serif"
+        "$value": "Public Sans, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "ui-sans-serif, system-ui, sans-serif"
+        "$value": "Source Serif 4, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",
@@ -251,15 +257,15 @@
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "ui-sans-serif, system-ui, sans-serif"
+        "$value": "Public Sans, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "ui-sans-serif, system-ui, sans-serif"
+        "$value": "Source Serif 4, ui-sans-serif, system-ui, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",

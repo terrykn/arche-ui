@@ -35,6 +35,8 @@ interface Manifest {
 
 interface Payload {
   meta: { name: string; contractVersion: number };
+  fonts: { sans: string; display: string; mono: string };
+  icons: string;
   tokens: Record<string, Record<string, { $type: string; $value: unknown }>>;
   components: Record<string, Record<string, unknown>>;
 }
@@ -180,6 +182,9 @@ export function IdentityEditor({
     setIssues(null);
     const result = await savePayload(libraryId, {
       meta: initialPayload.meta,
+      // Closed-registry selections are preserved as-is (edited elsewhere, not here).
+      fonts: initialPayload.fonts,
+      icons: initialPayload.icons,
       tokens,
       components,
     });

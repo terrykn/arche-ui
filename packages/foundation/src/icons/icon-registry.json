@@ -1,0 +1,97 @@
+{
+  "$comment": "Arche UI closed icon library registry. Exactly one library per identity. Slot export names verified against the published packages (2026-11-01).",
+  "registryVersion": 1,
+  "requiredSlots": ["chevron-down", "chevron-up", "chevron-right", "check", "circle"],
+  "libraries": [
+    {
+      "id": "lucide",
+      "name": "Lucide",
+      "packages": ["lucide-react"],
+      "license": "ISC",
+      "approxCount": "~1,600",
+      "notes": "Default. Component templates ship lucide-react imports.",
+      "slots": {
+        "chevron-down": "ChevronDown",
+        "chevron-up": "ChevronUp",
+        "chevron-right": "ChevronRight",
+        "check": "Check",
+        "circle": "Circle"
+      }
+    },
+    {
+      "id": "tabler",
+      "name": "Tabler Icons",
+      "packages": ["@tabler/icons-react"],
+      "license": "MIT",
+      "approxCount": "~5,900",
+      "notes": "Largest set; outline style.",
+      "slots": {
+        "chevron-down": "IconChevronDown",
+        "chevron-up": "IconChevronUp",
+        "chevron-right": "IconChevronRight",
+        "check": "IconCheck",
+        "circle": "IconCircle"
+      }
+    },
+    {
+      "id": "hugeicons",
+      "name": "Hugeicons",
+      "packages": ["@hugeicons/react", "@hugeicons/core-free-icons"],
+      "license": "MIT (free set)",
+      "approxCount": "~4,000 free",
+      "notes": "Free set; icons are consumed from @hugeicons/core-free-icons through the @hugeicons/react renderer.",
+      "slots": {
+        "chevron-down": "ChevronDownIcon",
+        "chevron-up": "ChevronUpIcon",
+        "chevron-right": "ChevronRightIcon",
+        "check": "Tick01Icon",
+        "circle": "CircleIcon"
+      }
+    },
+    {
+      "id": "phosphor",
+      "name": "Phosphor Icons",
+      "packages": ["@phosphor-icons/react"],
+      "license": "MIT",
+      "approxCount": "~1,500 in six weights",
+      "notes": "Six weights (thin/bold/fill); regular weight is the slot equivalent.",
+      "slots": {
+        "chevron-down": "CaretDown",
+        "chevron-up": "CaretUp",
+        "chevron-right": "CaretRight",
+        "check": "Check",
+        "circle": "Circle"
+      }
+    },
+    {
+      "id": "remixicon",
+      "name": "Remix Icon",
+      "packages": ["@remixicon/react"],
+      "license": "Apache-2.0",
+      "approxCount": "~3,000",
+      "notes": "Line-style equivalents used for all slots.",
+      "slots": {
+        "chevron-down": "RiArrowDownSLine",
+        "chevron-up": "RiArrowUpSLine",
+        "chevron-right": "RiArrowRightSLine",
+        "check": "RiCheckLine",
+        "circle": "RiCircleLine"
+      }
+    },
+    {
+      "id": "radix",
+      "name": "Radix Icons",
+      "packages": ["@radix-ui/react-icons"],
+      "license": "MIT",
+      "approxCount": "~300 (limited coverage; dense/minimal UIs only)",
+      "notes": "Smallest set; covers every required slot but little beyond it.",
+      "slots": {
+        "chevron-down": "ChevronDownIcon",
+        "chevron-up": "ChevronUpIcon",
+        "chevron-right": "ChevronRightIcon",
+        "check": "CheckIcon",
+        "circle": "CircleIcon"
+      }
+    }
+  ]
+}

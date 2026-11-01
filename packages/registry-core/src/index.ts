@@ -7,6 +7,12 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import { validateTokens, type IdentityTokens } from "@arche/foundation/contract/validate-tokens";
+import {
+  fontEntriesById,
+  validateFontSelection,
+  type ArcheIdentityFonts,
+} from "@arche/foundation/fonts";
+import { validateIconSelection } from "@arche/foundation/icons";
 import tokenContract from "@arche/foundation/contract/token-contract.json" with { type: "json" };
 
 const contractData = tokenContract as unknown as {
@@ -59,17 +65,16 @@ export interface Manifest {
   };
 }
 
-export interface ArcheIdentityFont {
-  family: string;
-  weights: number[];
-}
+export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
 
 export interface ArcheIdentity {
   meta: { name: string; contractVersion: number } & Record<string, unknown>;
   tokens: IdentityTokens;
   components: Record<string, Record<string, unknown>>;
-  /** Optional webfont loading declaration; the emitter builds a Google Fonts @import from it. */
-  fonts?: ArcheIdentityFont[];
+  /** Closed-registry font ids, one per slot. */
+  fonts: ArcheIdentityFonts;
+  /** Closed-registry icon library id (exactly one per identity). */
+  icons: string;
 }
 
 export interface ValidationIssue {
@@ -86,18 +91,6 @@ export interface ValidationResult {
 // Identity validation (contract + manifest surfaces)
 // ---------------------------------------------------------------------------
 
-const FAMILY_RE = /^[A-Za-z0-9][A-Za-z0-9 \-]*$/;
-
-const fontsSchema = z
-  .array(
-    z.object({
-      family: z.string().min(1).max(100).regex(FAMILY_RE, "must be a URL-safe font family name"),
-      weights: z.array(z.number().int().min(100).max(900)).min(1),
-    }),
-  )
-  .min(1)
-  .optional();
-
 const identitySchema = z.object({
   meta: z.object({
     name: z.string().min(1),
@@ -105,56 +98,37 @@ const identitySchema = z.object({
   }),
   tokens: z.unknown(),
   components: z.record(z.string(), z.record(z.string(), z.unknown())),
-  fonts: fontsSchema,
+  fonts: z.object({
+    sans: z.string().min(1),
+    display: z.string().min(1),
+    mono: z.string().min(1),
+  }),
+  icons: z.string().min(1),
 });
 
 /**
- * Builds the portable Google Fonts @import URL for an identity's font
- * declaration (families + weights). Returns null when no fonts declared.
+ * Validates the identity's closed-registry selections: fonts (unknown ids,
+ * role violations, sans weight floor, token-stack coherence) and the single
+ * icon library (unknown id, per-slot coverage across every registered library).
  */
-export function buildFontImport(fonts: ArcheIdentityFont[] | undefined): string | null {
-  if (!fonts || fonts.length === 0) {
-    return null;
-  }
-  const parts = fonts.map((font) => {
-    const slug = font.family.trim().replace(/\s+/g, "+");
-    const weights = [...new Set(font.weights)].sort((a, b) => a - b).join(";");
-    return `family=${slug}:wght@${weights}`;
-  });
-  return `url('https://fonts.googleapis.com/css2?${parts.join("&")}&display=swap')`;
-}
-
-function validateFonts(identity: ArcheIdentity, issues: ValidationIssue[]): void {
-  const fonts = identity.fonts;
-  if (fonts === undefined) {
-    return;
-  }
-  const seen = new Set<string>();
-  for (const font of fonts) {
-    const key = font.family.toLowerCase();
-    if (seen.has(key)) {
-      issues.push({
-        path: `fonts.${font.family}`,
-        message: `font family '${font.family}' is declared more than once`,
-      });
+function validateRegistries(identity: ArcheIdentity, issues: ValidationIssue[]): void {
+  const stacks: { sans?: string; display?: string; mono?: string } = {};
+  const light = identity.tokens?.light ?? {};
+  for (const [slot, token] of [
+    ["sans", "--font-sans"],
+    ["display", "--font-display"],
+    ["mono", "--font-mono"],
+  ] as const) {
+    const value = (light[token] as { $value?: unknown } | undefined)?.$value;
+    if (typeof value === "string") {
+      stacks[slot] = value;
     }
-    seen.add(key);
   }
-  // Coherence: every --font-* token stack must use at least one declared family.
-  const families = fonts.map((font) => font.family);
-  for (const [modeName, modeSet] of Object.entries(identity.tokens ?? {})) {
-    for (const [tokenName, token] of Object.entries(modeSet ?? {})) {
-      if (!tokenName.startsWith("--font-")) {
-        continue;
-      }
-      const stack = String((token as { $value?: unknown }).$value ?? "");
-      if (!families.some((family) => stack.includes(family))) {
-        issues.push({
-          path: `${modeName}.${tokenName}`,
-          message: `font stack '${stack}' uses none of the declared font families [${families.join(", ")}]`,
-        });
-      }
-    }
+  for (const issue of validateFontSelection(identity.fonts, stacks)) {
+    issues.push(issue);
+  }
+  for (const issue of validateIconSelection(identity.icons)) {
+    issues.push(issue);
   }
 }
 
@@ -267,7 +241,7 @@ export function validateIdentity(identity: ArcheIdentity): ValidationResult {
 
   issues.push(...validateTokens(identity.tokens).issues);
 
-  validateFonts(identity, issues);
+  validateRegistries(identity, issues);
 
   const manifestNames = new Set(MANIFESTS.map((manifest) => manifest.name));
   for (const name of Object.keys(identity.components)) {
@@ -500,16 +474,13 @@ function emitTheme(identity: ArcheIdentity): ThemeEmission {
     themeVars[`color-${colorVar}`] = `var(--${colorVar})`;
   }
 
-  // Portable font loading: the Google Fonts @import is the first entry of the
-  // emitted theme CSS, built from the payload's fonts declaration. Key order
-  // is explicit here; serializeStable's sort keeps '@import' first anyway.
-  const css: Record<string, unknown> = {};
-  const fontImport = buildFontImport(identity.fonts);
-  if (fontImport !== null) {
-    css["@import"] = fontImport;
-  }
-  css["@layer base"] = {
-    ":root": derivedRoot,
+  // No Google Fonts @import is ever emitted into CSS (it broke the Turbopack
+  // build once: @import must lead the entry stylesheet). Fonts load via
+  // registry:font items (next/font/google) or the fontsource npm package.
+  const css: Record<string, unknown> = {
+    "@layer base": {
+      ":root": derivedRoot,
+    },
   };
 
   return {
@@ -569,6 +540,55 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
         dark: theme.cssVarsDark,
       },
       css: theme.css,
+    }),
+  );
+
+  // ---- fonts ----
+  // One registry:font item per unique family across the three slots (sans,
+  // display, mono). The font item's variable is the first slot using it.
+  const byId = fontEntriesById();
+  const fontItemNames: string[] = [];
+  const seenFamilies = new Set<string>();
+  const slotVars = { sans: "--font-sans", display: "--font-display", mono: "--font-mono" } as const;
+  for (const slot of ["sans", "display", "mono"] as const) {
+    const entry = byId.get(identity.fonts[slot])!;
+    if (seenFamilies.has(entry.family)) {
+      continue;
+    }
+    seenFamilies.add(entry.family);
+    const itemName = `font-${entry.id}`;
+    fontItemNames.push(itemName);
+    items.set(
+      itemName,
+      serializeStable({
+        name: itemName,
+        type: "registry:font",
+        title: `Arche font · ${entry.family}`,
+        description: `Webfont loading for the ${slot} slot of ${identity.meta.name} (next/font/google in apps, ${entry.fontsourcePackage} elsewhere).`,
+        font: {
+          family: entry.family,
+          provider: "google",
+          import: entry.nextFontImport,
+          variable: slotVars[slot],
+          weight: entry.weights.map(String),
+          subsets: ["latin"],
+          dependency: entry.fontsourcePackage,
+        },
+      }),
+    );
+  }
+
+  // ---- base ----
+  // registry:base items are the only items allowed to carry iconLibrary, so
+  // the identity's icon choice is pinned here for install tooling.
+  items.set(
+    "base",
+    serializeStable({
+      name: "base",
+      type: "registry:base",
+      title: `Arche UI · ${identity.meta.name} (base)`,
+      description: `Base configuration for ${identity.meta.name}: pins iconLibrary "${identity.icons}".`,
+      iconLibrary: identity.icons,
     }),
   );
 
@@ -633,9 +653,13 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
       // `all` has no manifest; its deps must be namespaced so the CLI resolves
       // them from this registry. Bare names would resolve to the official
       // shadcn registry (spec conflict vs 7.7c plain-name form, see report).
-      registryDependencies: [...MANIFESTS.map((manifest) => manifest.name), "utils", "theme"].map(
-        (name) => `@arche/${name}`,
-      ),
+      registryDependencies: [
+        ...MANIFESTS.map((manifest) => manifest.name),
+        "utils",
+        "theme",
+        "base",
+        ...fontItemNames,
+      ].map((name) => `@arche/${name}`),
       files: [],
     }),
   );

@@ -43,13 +43,11 @@ const block = (selector, vars) => {
 // @imported file in this pipeline. sync-theme writes :root/.dark/base here
 // and rewrites the marked @theme block in globals.css from the same emission.
 
-const fontImport = typeof theme.css?.["@import"] === "string" ? theme.css["@import"] : null;
-
-// NOTE: the emitted theme item leads with the Google Fonts @import, but it
-// cannot live in theme.css — theme.css is @imported mid-bundle (after the
-// Tailwind import expands to @property/@layer rules), and CSS requires
-// @import before all other rules. The entry stylesheet (globals.css) carries
-// it as its first statement instead, managed below between markers.
+// NOTE: fonts load via registry:font items (next/font/google) or the
+// fontsource npm package — never a Google Fonts @import inside a CSS file
+// (that broke the Turbopack build once: @import must lead the entry
+// stylesheet, and theme.css is inlined mid-bundle). The legacy font block is
+// removed from globals.css below if still present.
 const css = `/* GENERATED — do not hand-edit. Source: fixtures/identity.arche.json
  * Produced by apps/web/scripts/sync-theme.mjs via @arche/registry-core.
  * Edit the payload, then run: pnpm --filter web sync-theme */
@@ -94,13 +92,9 @@ if (!marked.test(globals)) {
   throw new Error("globals.css is missing the /* @arche-theme:begin/end */ markers");
 }
 let updated = globals.replace(marked, themeBlock);
-// Font loading must be the first statement of the entry stylesheet.
-const fontBlock = [
-  "/* @arche-fonts:begin (generated — do not hand-edit) */",
-  ...(fontImport ? [`@import ${fontImport};`] : []),
-  "/* @arche-fonts:end */",
-].join("\n");
-const fontMarked = /\/\* @arche-fonts:begin[\s\S]*?@arche-fonts:end \*\//;
-updated = fontMarked.test(updated) ? updated.replace(fontMarked, fontBlock) : `${fontBlock}\n${updated}`;
+// Remove the legacy font @import block (superseded by registry:font items).
+updated = updated
+  .replace(/\/\* @arche-fonts:begin[\s\S]*?@arche-fonts:end \*\/\n?/, "")
+  .replace(/^\n+/, "");
 writeFileSync(globalsPath, updated);
 console.log(`sync-theme: wrote app/theme.css + @theme block from ${identity.meta.name}`);

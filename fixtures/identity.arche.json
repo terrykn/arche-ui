@@ -3,16 +3,12 @@
     "name": "Arche",
     "contractVersion": 1
   },
-  "fonts": [
-    {
-      "family": "Manrope",
-      "weights": [400, 500, 600, 700, 800]
-    },
-    {
-      "family": "JetBrains Mono",
-      "weights": [400, 500, 600]
-    }
-  ],
+  "fonts": {
+    "sans": "manrope",
+    "display": "manrope",
+    "mono": "jetbrains-mono"
+  },
+  "icons": "lucide",
   "tokens": {
     "light": {
       "--background": {
