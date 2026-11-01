@@ -1,0 +1,58 @@
+{
+  "name": "@arche/foundation",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    "./templates/button": {
+      "types": "./src/templates/button.tsx",
+      "default": "./dist/templates/button.js"
+    },
+    "./templates/dialog": {
+      "types": "./src/templates/dialog.tsx",
+      "default": "./dist/templates/dialog.js"
+    },
+    "./templates/lib/utils": {
+      "types": "./src/templates/lib/utils.ts",
+      "default": "./dist/templates/lib/utils.js"
+    },
+    "./contract/token-contract.json": "./src/contract/token-contract.json",
+    "./contract/validate-tokens": {
+      "types": "./src/contract/validate-tokens.ts",
+      "default": "./dist/contract/validate-tokens.js"
+    },
+    "./manifests/button": "./src/manifests/button.manifest.json",
+    "./manifests/dialog": "./src/manifests/dialog.manifest.json"
+  },
+  "scripts": {
+    "build": "tsc --project . && tsx scripts/copy-assets.ts",
+    "check-types": "tsc --project . --noEmit",
+    "lint": "eslint .",
+    "check-token-only": "tsx scripts/check-token-only.ts"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.1.14"
+  },
+  "devDependencies": {
+    "@arche/eslint-config": "workspace:*",
+    "@arche/typescript-config": "workspace:*",
+    "@types/culori": "^2.1.1",
+    "@types/node": "26.4.1",
+    "@types/react": "19.2.18",
+    "culori": "^4.0.2",
+    "eslint": "10.9.1",
+    "react": "19.2.8",
+    "tsx": "^4.21.0",
+    "typescript": "7.0.2"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

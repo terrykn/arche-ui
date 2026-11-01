@@ -1,0 +1,38 @@
+{
+  "name": "@arche/ui",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./button": {
+      "types": "./src/button.ts",
+      "default": "./dist/button.js"
+    },
+    "./dialog": {
+      "types": "./src/dialog.ts",
+      "default": "./dist/dialog.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project .",
+    "check-types": "tsc --project . --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@arche/foundation": "workspace:*"
+  },
+  "devDependencies": {
+    "@arche/eslint-config": "workspace:*",
+    "@arche/typescript-config": "workspace:*",
+    "@types/react": "19.2.18",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "eslint": "10.9.1",
+    "typescript": "7.0.2"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

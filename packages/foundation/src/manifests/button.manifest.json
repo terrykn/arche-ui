@@ -1,0 +1,79 @@
+{
+  "name": "button",
+  "title": "Button",
+  "description": "Presentational action button styled entirely with contract tokens. Behavior comes from the native button element (and Radix Slot for asChild composition).",
+  "category": "actions",
+  "manifestVersion": 1,
+  "native": {
+    "element": "button",
+    "parts": ["button"],
+    "propsInherited": true
+  },
+  "slots": [
+    { "name": "button", "part": "button", "required": true }
+  ],
+  "axes": {
+    "variant": {
+      "values": ["default", "secondary", "destructive", "outline", "ghost", "link"],
+      "default": "default"
+    },
+    "size": {
+      "values": ["default", "sm", "lg", "icon"],
+      "default": "default"
+    }
+  },
+  "styleSurface": {
+    "button": {
+      "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost", "link"], "default": "default" },
+      "defaultSize": { "type": "enum", "values": ["default", "sm", "lg", "icon"], "default": "default" },
+      "shadow": { "type": "enum", "values": ["none", "sm"], "default": "none" },
+      "fontWeight": { "type": "enum", "values": ["normal", "medium", "semibold"], "default": "medium" }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--primary",
+    "--primary-foreground",
+    "--secondary",
+    "--secondary-foreground",
+    "--accent",
+    "--accent-foreground",
+    "--destructive",
+    "--destructive-foreground",
+    "--ring",
+    "--input",
+    "--border",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "name": "button",
+      "source": "src/templates/button.tsx",
+      "target": "components/ui/button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Trigger a single synchronous action in the view (submit, save, open a dialog, delete after confirmation).",
+    "useWhen": [
+      "The element performs an action that completes without navigation",
+      "The action is the primary one in its region and uses the default variant",
+      "A destructive action follows a confirmation pattern via the destructive variant"
+    ],
+    "doNotUseWhen": [
+      "The element navigates to another location (use a link)",
+      "More than one default-variant button would appear in the same view region",
+      "The action leads away from the current context entirely"
+    ],
+    "rules": [
+      { "id": "button-no-navigation", "severity": "error", "check": "Buttons must not be used for navigation; a location change requires a link." },
+      { "id": "button-one-primary", "severity": "error", "check": "Exactly one button with the default variant may appear per view region." },
+      { "id": "button-destructive-confirm", "severity": "error", "check": "The destructive variant requires a confirmation pattern before its action runs." }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "@arche/typescript-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": false,
+    "types": ["node", "react"],
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["dist", "node_modules", "scripts"]
+}
