@@ -1,0 +1,6 @@
+{
+  "name": "progress", "title": "Progress", "description": "Indicates the completion of an operation.", "category": "feedback", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-progress", "parts": ["Root", "Indicator"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "indicator", "part": "Indicator", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--muted", "--primary"],
+  "dependencies": ["@radix-ui/react-progress"], "registryDependencies": ["utils"], "files": [{ "name": "progress", "source": "src/templates/progress.tsx", "target": "components/ui/progress.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Communicate progress toward completion.", "useWhen": ["An operation has a measurable or indeterminate progress state."], "doNotUseWhen": ["There is no operation in progress."], "rules": [{ "id": "progress-accessible-label", "severity": "error", "check": "Provide an accessible name for the progress indicator." }] }
+}

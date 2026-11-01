@@ -24,7 +24,7 @@
   },
   "styleSurface": {
     "button": {
-      "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost", "link"], "default": "default" },
+      "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost"], "default": "default" },
       "defaultSize": { "type": "enum", "values": ["default", "sm", "lg", "icon"], "default": "default" },
       "shadow": { "type": "enum", "values": ["none", "sm"], "default": "none" },
       "fontWeight": { "type": "enum", "values": ["normal", "medium", "semibold"], "default": "medium" }
@@ -43,6 +43,7 @@
     "--ring",
     "--input",
     "--border",
+    "--radius",
     "--shadow-sm"
   ],
   "dependencies": [

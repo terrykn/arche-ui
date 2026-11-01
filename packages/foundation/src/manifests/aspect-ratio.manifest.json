@@ -1,0 +1,8 @@
+{
+  "name": "aspect-ratio", "title": "Aspect Ratio", "description": "Keeps content within a given aspect ratio.", "category": "layout", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-aspect-ratio", "parts": ["Root"], "propsInherited": true },
+  "slots": [{ "name": "root", "part": "Root", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": [],
+  "dependencies": ["@radix-ui/react-aspect-ratio"], "registryDependencies": [],
+  "files": [{ "name": "aspect-ratio", "source": "src/templates/aspect-ratio.tsx", "target": "components/ui/aspect-ratio.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Reserve a consistent media aspect ratio.", "useWhen": ["Media must retain a predictable frame."], "doNotUseWhen": ["Content should determine its own height."], "rules": [{ "id": "aspect-ratio-descriptive-media", "severity": "error", "check": "Images inside the frame retain suitable alternative text." }] }
+}

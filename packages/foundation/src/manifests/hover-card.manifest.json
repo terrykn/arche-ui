@@ -1,0 +1,7 @@
+{
+  "name": "hover-card", "title": "Hover Card", "description": "Supplementary content preview for a trigger.", "category": "overlays", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-hover-card", "parts": ["Root", "Trigger", "Portal", "Content", "Arrow"], "propsInherited": true }, "slots": [{ "name": "content", "part": "Content", "required": true }, { "name": "arrow", "part": "Arrow", "required": false }], "axes": {},
+  "styleSurface": { "content": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "lg" }, "shadow": { "type": "enum", "values": ["none", "sm", "md", "lg", "xl"], "default": "md" } } },
+  "tokensUsed": ["--border", "--popover", "--popover-foreground", "--radius", "--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"], "dependencies": ["@radix-ui/react-hover-card", "class-variance-authority"], "registryDependencies": ["utils"], "files": [{ "name": "hover-card", "source": "src/templates/hover-card.tsx", "target": "components/ui/hover-card.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Preview supplementary information about a trigger.", "useWhen": ["A nonessential preview adds context."], "doNotUseWhen": ["Essential content or interactive tasks must be presented."], "rules": [{ "id": "hover-card-supplementary-content", "severity": "warning", "check": "Do not make the hover card the only source of essential information." }] }
+}

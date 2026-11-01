@@ -1,0 +1,6 @@
+{
+  "name": "radio-group", "title": "Radio Group", "description": "Select one option from a group.", "category": "forms", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-radio-group", "parts": ["Root", "Item", "Indicator"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "item", "part": "Item", "required": true }, { "name": "indicator", "part": "Indicator", "required": true }, { "name": "mark", "part": "span", "partType": "native", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--border", "--input", "--ring", "--primary"],
+  "dependencies": ["@radix-ui/react-radio-group"], "registryDependencies": ["utils"], "files": [{ "name": "radio-group", "source": "src/templates/radio-group.tsx", "target": "components/ui/radio-group.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Choose one item from a related set.", "useWhen": ["Options are mutually exclusive."], "doNotUseWhen": ["Options may be selected independently."], "rules": [{ "id": "radio-group-label-options", "severity": "error", "check": "Provide an accessible name for the group and every option." }] }
+}

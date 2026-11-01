@@ -1,0 +1,6 @@
+{
+  "name": "scroll-area", "title": "Scroll Area", "description": "A scrollable region with styled scrollbars.", "category": "layout", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-scroll-area", "parts": ["Root", "Viewport", "Scrollbar", "Thumb", "Corner"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "viewport", "part": "Viewport", "required": true }, { "name": "scrollbar", "part": "Scrollbar", "required": false }, { "name": "thumb", "part": "Thumb", "required": false }, { "name": "corner", "part": "Corner", "required": false }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--ring", "--border"],
+  "dependencies": ["@radix-ui/react-scroll-area"], "registryDependencies": ["utils"], "files": [{ "name": "scroll-area", "source": "src/templates/scroll-area.tsx", "target": "components/ui/scroll-area.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Contain overflow while preserving native scrolling.", "useWhen": ["A bounded region contains overflowing content."], "doNotUseWhen": ["Content can fit without a nested scroll region."], "rules": [{ "id": "scroll-area-visible-content", "severity": "warning", "check": "Ensure users can discover and reach all overflowing content." }] }
+}

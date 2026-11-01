@@ -1,0 +1,7 @@
+{
+  "name": "popover", "title": "Popover", "description": "Floating content anchored to a trigger.", "category": "overlays", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-popover", "parts": ["Root", "Trigger", "Anchor", "Portal", "Content", "Close", "Arrow"], "propsInherited": true }, "slots": [{ "name": "content", "part": "Content", "required": true }, { "name": "arrow", "part": "Arrow", "required": false }], "axes": {},
+  "styleSurface": { "content": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "lg" }, "shadow": { "type": "enum", "values": ["none", "sm", "md", "lg", "xl"], "default": "md" } } },
+  "tokensUsed": ["--border", "--popover", "--popover-foreground", "--radius", "--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"], "dependencies": ["@radix-ui/react-popover", "class-variance-authority"], "registryDependencies": ["utils"], "files": [{ "name": "popover", "source": "src/templates/popover.tsx", "target": "components/ui/popover.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Show contextual content near its trigger.", "useWhen": ["A small interaction is related to a trigger."], "doNotUseWhen": ["The interaction needs a modal decision."], "rules": [{ "id": "popover-label-content", "severity": "error", "check": "Provide an accessible name for interactive popover content." }] }
+}

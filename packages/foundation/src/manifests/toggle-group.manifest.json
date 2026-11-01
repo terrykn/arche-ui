@@ -1,0 +1,6 @@
+{
+  "name": "toggle-group", "title": "Toggle Group", "description": "A group of related toggle buttons.", "category": "actions", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-toggle-group", "parts": ["Root", "Item"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "item", "part": "Item", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--radius", "--muted", "--ring", "--accent", "--accent-foreground"],
+  "dependencies": ["@radix-ui/react-toggle-group"], "registryDependencies": ["utils"], "files": [{ "name": "toggle-group", "source": "src/templates/toggle-group.tsx", "target": "components/ui/toggle-group.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Group related toggleable options.", "useWhen": ["Related options share an interaction context."], "doNotUseWhen": ["The controls are unrelated actions."], "rules": [{ "id": "toggle-group-accessible-label", "severity": "error", "check": "Provide accessible names for the group and each option." }] }
+}

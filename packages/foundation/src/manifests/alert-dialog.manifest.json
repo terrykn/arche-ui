@@ -1,0 +1,11 @@
+{
+  "name": "alert-dialog", "title": "Alert Dialog", "description": "A modal requiring a response to an important decision.", "category": "overlays", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-alert-dialog", "parts": ["Root", "Trigger", "Portal", "Overlay", "Content", "Title", "Description", "Action", "Cancel"], "propsInherited": true },
+  "slots": [{ "name": "overlay", "part": "Overlay", "required": true }, { "name": "content", "part": "Content", "required": true }, { "name": "header", "part": "div", "partType": "native", "required": false }, { "name": "footer", "part": "div", "partType": "native", "required": false }, { "name": "title", "part": "Title", "required": true }, { "name": "description", "part": "Description", "required": true }, { "name": "action", "part": "Action", "required": true }, { "name": "cancel", "part": "Cancel", "required": false }],
+  "axes": { "size": { "values": ["sm", "default", "lg"], "default": "default" } },
+  "styleSurface": { "content": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "lg" }, "shadow": { "type": "enum", "values": ["none", "sm", "md", "lg", "xl"], "default": "md" } } },
+  "tokensUsed": ["--border", "--popover", "--popover-foreground", "--radius", "--foreground", "--muted-foreground", "--primary", "--primary-foreground", "--ring", "--input", "--background", "--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"],
+  "dependencies": ["@radix-ui/react-alert-dialog", "class-variance-authority"], "registryDependencies": ["utils"],
+  "files": [{ "name": "alert-dialog", "source": "src/templates/alert-dialog.tsx", "target": "components/ui/alert-dialog.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Require acknowledgement or confirmation of an important decision.", "useWhen": ["A destructive action needs confirmation."], "doNotUseWhen": ["A nonurgent interaction can remain in the page."], "rules": [{ "id": "alert-dialog-title-and-description", "severity": "error", "check": "Provide a title and description explaining the decision." }, { "id": "alert-dialog-clear-action", "severity": "error", "check": "Use clear action labels that describe the outcome." }] }
+}

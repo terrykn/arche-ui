@@ -14,7 +14,7 @@
     "build": "tsc --project .",
     "check-types": "tsc --project . --noEmit",
     "lint": "eslint .",
-    "emit": "pnpm build && node dist/cli.js ../../fixtures/identity.fixture.json --out out"
+    "emit": "pnpm build && node dist/cli.js"
   },
   "dependencies": {
     "@arche/foundation": "workspace:*",

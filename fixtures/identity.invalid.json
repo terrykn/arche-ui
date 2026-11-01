@@ -78,6 +78,22 @@
     }
   },
   "components": {
+    "form": {}, "toast": { "radiusFrom": "md", "shadow": "lg" }, "one-time-password-field": { "radiusFrom": "md" }, "password-toggle-field": { "radiusFrom": "md" },
+    "dropdown-menu": { "radiusFrom": "md", "shadow": "md" }, "context-menu": { "radiusFrom": "md", "shadow": "md" }, "menubar": { "radiusFrom": "md", "shadow": "md" }, "navigation-menu": {}, "select": { "radiusFrom": "md", "shadow": "md" }, "toolbar": {},
+    "hover-card": { "radiusFrom": "lg", "shadow": "md" }, "popover": { "radiusFrom": "lg", "shadow": "md" }, "tooltip": { "radiusFrom": "md" }, "scroll-area": {}, "tabs": { "defaultVariant": "default" }, "radio-group": {},
+    "label": {}, "separator": {}, "progress": {}, "switch": {}, "toggle": { "defaultVariant": "default", "defaultSize": "default" }, "toggle-group": {}, "slider": {},
+    "input": { "controlSize": "default", "radiusFrom": "md" },
+    "textarea": { "radiusFrom": "md" },
+    "card": { "radiusFrom": "xl", "shadow": "sm" },
+    "badge": { "defaultVariant": "default" },
+    "skeleton": { "radiusFrom": "md" },
+    "table": { "density": "default" },
+    "accordion": { "spacing": "default" },
+    "alert-dialog": { "size": "default", "radiusFrom": "lg", "shadow": "md" },
+    "aspect-ratio": {},
+    "avatar": { "size": "default" },
+    "checkbox": { "size": "default", "radiusFrom": "sm" },
+    "collapsible": {},
     "button": {
       "defaultVariant": "default",
       "defaultSize": "default",

@@ -1,0 +1,7 @@
+{
+  "name": "tooltip", "title": "Tooltip", "description": "Short contextual text for a trigger.", "category": "overlays", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-tooltip", "parts": ["Provider", "Root", "Trigger", "Portal", "Content", "Arrow"], "propsInherited": true }, "slots": [{ "name": "content", "part": "Content", "required": true }, { "name": "arrow", "part": "Arrow", "required": false }], "axes": {},
+  "styleSurface": { "content": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "md" } } }, "tokensUsed": ["--foreground", "--background", "--radius"],
+  "dependencies": ["@radix-ui/react-tooltip", "class-variance-authority"], "registryDependencies": ["utils"], "files": [{ "name": "tooltip", "source": "src/templates/tooltip.tsx", "target": "components/ui/tooltip.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Provide concise supplementary information.", "useWhen": ["A control needs a short clarification."], "doNotUseWhen": ["Content requires interaction or is essential to task completion."], "rules": [{ "id": "tooltip-concise-content", "severity": "warning", "check": "Keep tooltip content brief and noninteractive." }] }
+}

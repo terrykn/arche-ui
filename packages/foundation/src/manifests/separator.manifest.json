@@ -1,0 +1,6 @@
+{
+  "name": "separator", "title": "Separator", "description": "A divider between related sections.", "category": "layout", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-separator", "parts": ["Root"], "propsInherited": true }, "slots": [{ "name": "separator", "part": "Root", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--border"],
+  "dependencies": ["@radix-ui/react-separator"], "registryDependencies": ["utils"], "files": [{ "name": "separator", "source": "src/templates/separator.tsx", "target": "components/ui/separator.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Separate related sections visually or semantically.", "useWhen": ["A divider clarifies a content boundary."], "doNotUseWhen": ["Spacing alone communicates the boundary."], "rules": [{ "id": "separator-use-decorative-appropriately", "severity": "warning", "check": "Mark purely visual separators decorative." }] }
+}

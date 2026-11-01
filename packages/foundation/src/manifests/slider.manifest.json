@@ -1,0 +1,6 @@
+{
+  "name": "slider", "title": "Slider", "description": "Selects a numeric value or range.", "category": "forms", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-slider", "parts": ["Root", "Track", "Range", "Thumb"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "track", "part": "Track", "required": true }, { "name": "range", "part": "Range", "required": true }, { "name": "thumb", "part": "Thumb", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--border", "--muted", "--primary", "--ring", "--background"],
+  "dependencies": ["@radix-ui/react-slider"], "registryDependencies": ["utils"], "files": [{ "name": "slider", "source": "src/templates/slider.tsx", "target": "components/ui/slider.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Select a value within a bounded range.", "useWhen": ["Approximate numeric selection within a range is useful."], "doNotUseWhen": ["Precise values are easier to enter directly."], "rules": [{ "id": "slider-label-each-thumb", "severity": "error", "check": "Provide an accessible label for each slider thumb." }] }
+}

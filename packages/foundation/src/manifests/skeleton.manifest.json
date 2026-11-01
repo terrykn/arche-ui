@@ -1,0 +1,8 @@
+{
+  "name": "skeleton", "title": "Skeleton", "description": "A placeholder for loading content.", "category": "feedback", "manifestVersion": 1,
+  "native": { "element": "div", "propsInherited": true }, "slots": [{ "name": "skeleton", "part": "div", "partType": "native", "required": true }], "axes": {},
+  "styleSurface": { "skeleton": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "md" } } },
+  "tokensUsed": ["--muted", "--radius"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
+  "files": [{ "name": "skeleton", "source": "src/templates/skeleton.tsx", "target": "components/ui/skeleton.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Reserve the shape of content while it loads.", "useWhen": ["Content is temporarily loading."], "doNotUseWhen": ["Loading has failed or completed."], "rules": [{ "id": "skeleton-loading-context", "severity": "warning", "check": "Provide a meaningful loading status in the surrounding context." }] }
+}

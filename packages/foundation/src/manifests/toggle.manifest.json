@@ -1,0 +1,7 @@
+{
+  "name": "toggle", "title": "Toggle", "description": "A two-state toggle button.", "category": "actions", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-toggle", "parts": ["Root"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }],
+  "axes": { "variant": { "values": ["default", "outline"], "default": "default" }, "size": { "values": ["sm", "default", "lg"], "default": "default" } }, "styleSurface": { "root": { "defaultVariant": { "type": "enum", "values": ["default", "outline"], "default": "default" }, "defaultSize": { "type": "enum", "values": ["sm", "default", "lg"], "default": "default" } } }, "tokensUsed": ["--radius", "--muted", "--ring", "--accent", "--accent-foreground", "--border", "--input"],
+  "dependencies": ["@radix-ui/react-toggle", "class-variance-authority"], "registryDependencies": ["utils"], "files": [{ "name": "toggle", "source": "src/templates/toggle.tsx", "target": "components/ui/toggle.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Toggle a setting or formatting state.", "useWhen": ["A button controls a pressed state."], "doNotUseWhen": ["An immediate one-time action is required."], "rules": [{ "id": "toggle-accessible-label", "severity": "error", "check": "Provide an accessible label describing the toggled state." }] }
+}

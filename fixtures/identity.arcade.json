@@ -1,0 +1,412 @@
+{
+  "meta": {
+    "name": "90s Arcade",
+    "contractVersion": 1
+  },
+  "tokens": {
+    "light": {
+      "--background": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.035 305)"
+      },
+      "--card": {
+        "$type": "color",
+        "$value": "oklch(0.98 0.02 305)"
+      },
+      "--popover": {
+        "$type": "color",
+        "$value": "oklch(0.98 0.02 305)"
+      },
+      "--foreground": {
+        "$type": "color",
+        "$value": "oklch(0.18 0.04 285)"
+      },
+      "--card-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.18 0.04 285)"
+      },
+      "--popover-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.18 0.04 285)"
+      },
+      "--primary": {
+        "$type": "color",
+        "$value": "oklch(0.40 0.22 300)"
+      },
+      "--primary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.99 0 0)"
+      },
+      "--secondary": {
+        "$type": "color",
+        "$value": "oklch(0.88 0.14 195)"
+      },
+      "--secondary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.20 0.04 230)"
+      },
+      "--accent": {
+        "$type": "color",
+        "$value": "oklch(0.9 0.15 100)"
+      },
+      "--accent-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.22 0.04 95)"
+      },
+      "--destructive": {
+        "$type": "color",
+        "$value": "oklch(0.45 0.19 15)"
+      },
+      "--destructive-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.99 0 0)"
+      },
+      "--muted": {
+        "$type": "color",
+        "$value": "oklch(0.9 0.06 300)"
+      },
+      "--muted-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.34 0.09 300)"
+      },
+      "--border": {
+        "$type": "color",
+        "$value": "oklch(0.65 0.15 300)"
+      },
+      "--input": {
+        "$type": "color",
+        "$value": "oklch(0.65 0.15 300)"
+      },
+      "--ring": {
+        "$type": "color",
+        "$value": "oklch(0.50 0.22 300)"
+      },
+      "--chart-1": {
+        "$type": "color",
+        "$value": "oklch(0.646 0.222 41.116)"
+      },
+      "--chart-2": {
+        "$type": "color",
+        "$value": "oklch(0.6 0.118 184.704)"
+      },
+      "--chart-3": {
+        "$type": "color",
+        "$value": "oklch(0.398 0.07 227.392)"
+      },
+      "--chart-4": {
+        "$type": "color",
+        "$value": "oklch(0.828 0.189 84.429)"
+      },
+      "--chart-5": {
+        "$type": "color",
+        "$value": "oklch(0.769 0.188 70.08)"
+      },
+      "--radius": {
+        "$type": "dimension",
+        "$value": "0.625rem"
+      },
+      "--font-sans": {
+        "$type": "fontFamily",
+        "$value": "ui-sans-serif, system-ui, sans-serif"
+      },
+      "--font-display": {
+        "$type": "fontFamily",
+        "$value": "ui-sans-serif, system-ui, sans-serif"
+      },
+      "--font-mono": {
+        "$type": "fontFamily",
+        "$value": "ui-monospace, SFMono-Regular, Menlo, monospace"
+      },
+      "--shadow-sm": {
+        "$type": "shadow",
+        "$value": "0 1px 3px 0 oklch(0.216 0.032 255 / 0.08)"
+      },
+      "--shadow-md": {
+        "$type": "shadow",
+        "$value": "0 4px 6px -1px oklch(0.216 0.032 255 / 0.1)"
+      },
+      "--shadow-lg": {
+        "$type": "shadow",
+        "$value": "0 10px 15px -3px oklch(0.216 0.032 255 / 0.1)"
+      },
+      "--shadow-xl": {
+        "$type": "shadow",
+        "$value": "0 20px 25px -5px oklch(0.216 0.032 255 / 0.1)"
+      },
+      "--motion-fast": {
+        "$type": "motion",
+        "$value": {
+          "duration": "150ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      },
+      "--motion-normal": {
+        "$type": "motion",
+        "$value": {
+          "duration": "250ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      }
+    },
+    "dark": {
+      "--background": {
+        "$type": "color",
+        "$value": "oklch(0.14 0.05 285)"
+      },
+      "--card": {
+        "$type": "color",
+        "$value": "oklch(0.19 0.06 285)"
+      },
+      "--popover": {
+        "$type": "color",
+        "$value": "oklch(0.20 0.06 285)"
+      },
+      "--foreground": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.02 300)"
+      },
+      "--card-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.02 300)"
+      },
+      "--popover-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.02 300)"
+      },
+      "--primary": {
+        "$type": "color",
+        "$value": "oklch(0.83 0.18 195)"
+      },
+      "--primary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.17 0.04 235)"
+      },
+      "--secondary": {
+        "$type": "color",
+        "$value": "oklch(0.33 0.14 310)"
+      },
+      "--secondary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.97 0.02 310)"
+      },
+      "--accent": {
+        "$type": "color",
+        "$value": "oklch(0.34 0.14 345)"
+      },
+      "--accent-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.97 0.02 345)"
+      },
+      "--destructive": {
+        "$type": "color",
+        "$value": "oklch(0.43 0.17 20)"
+      },
+      "--destructive-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.99 0 0)"
+      },
+      "--muted": {
+        "$type": "color",
+        "$value": "oklch(0.26 0.08 285)"
+      },
+      "--muted-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.82 0.06 300)"
+      },
+      "--border": {
+        "$type": "color",
+        "$value": "oklch(0.55 0.18 300)"
+      },
+      "--input": {
+        "$type": "color",
+        "$value": "oklch(0.55 0.18 300)"
+      },
+      "--ring": {
+        "$type": "color",
+        "$value": "oklch(0.83 0.18 195)"
+      },
+      "--chart-1": {
+        "$type": "color",
+        "$value": "oklch(0.646 0.222 41.116)"
+      },
+      "--chart-2": {
+        "$type": "color",
+        "$value": "oklch(0.6 0.118 184.704)"
+      },
+      "--chart-3": {
+        "$type": "color",
+        "$value": "oklch(0.398 0.07 227.392)"
+      },
+      "--chart-4": {
+        "$type": "color",
+        "$value": "oklch(0.828 0.189 84.429)"
+      },
+      "--chart-5": {
+        "$type": "color",
+        "$value": "oklch(0.769 0.188 70.08)"
+      },
+      "--radius": {
+        "$type": "dimension",
+        "$value": "0.625rem"
+      },
+      "--font-sans": {
+        "$type": "fontFamily",
+        "$value": "ui-sans-serif, system-ui, sans-serif"
+      },
+      "--font-display": {
+        "$type": "fontFamily",
+        "$value": "ui-sans-serif, system-ui, sans-serif"
+      },
+      "--font-mono": {
+        "$type": "fontFamily",
+        "$value": "ui-monospace, SFMono-Regular, Menlo, monospace"
+      },
+      "--shadow-sm": {
+        "$type": "shadow",
+        "$value": "0 1px 3px 0 oklch(0.185 0.028 262 / 0.3)"
+      },
+      "--shadow-md": {
+        "$type": "shadow",
+        "$value": "0 4px 6px -1px oklch(0.185 0.028 262 / 0.35)"
+      },
+      "--shadow-lg": {
+        "$type": "shadow",
+        "$value": "0 10px 15px -3px oklch(0.185 0.028 262 / 0.35)"
+      },
+      "--shadow-xl": {
+        "$type": "shadow",
+        "$value": "0 20px 25px -5px oklch(0.185 0.028 262 / 0.4)"
+      },
+      "--motion-fast": {
+        "$type": "motion",
+        "$value": {
+          "duration": "150ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      },
+      "--motion-normal": {
+        "$type": "motion",
+        "$value": {
+          "duration": "250ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      }
+    }
+  },
+  "components": {
+    "accordion": {
+      "spacing": "lg"
+    },
+    "alert-dialog": {
+      "size": "default",
+      "radiusFrom": "sm",
+      "shadow": "xl"
+    },
+    "aspect-ratio": {},
+    "avatar": {
+      "size": "lg"
+    },
+    "badge": {
+      "variant": "secondary",
+      "defaultVariant": "secondary"
+    },
+    "button": {
+      "variant": "secondary",
+      "size": "lg",
+      "defaultVariant": "secondary",
+      "defaultSize": "lg",
+      "shadow": "sm",
+      "fontWeight": "semibold"
+    },
+    "card": {
+      "radiusFrom": "sm",
+      "shadow": "xl"
+    },
+    "checkbox": {
+      "size": "lg",
+      "radiusFrom": "xl"
+    },
+    "collapsible": {},
+    "context-menu": {
+      "radiusFrom": "md",
+      "shadow": "md"
+    },
+    "dialog": {
+      "size": "default",
+      "overlayBackground": "--primary",
+      "overlayOpacity": 0.6,
+      "backdropBlur": "lg",
+      "shadow": "lg",
+      "border": "sm",
+      "radiusFrom": "sm",
+      "motion": "--motion-fast"
+    },
+    "dropdown-menu": {
+      "radiusFrom": "md",
+      "shadow": "md"
+    },
+    "form": {},
+    "hover-card": {
+      "radiusFrom": "lg",
+      "shadow": "md"
+    },
+    "input": {
+      "controlSize": "lg",
+      "radiusFrom": "xl"
+    },
+    "label": {},
+    "menubar": {
+      "radiusFrom": "md",
+      "shadow": "md"
+    },
+    "navigation-menu": {},
+    "one-time-password-field": {
+      "radiusFrom": "md"
+    },
+    "password-toggle-field": {
+      "radiusFrom": "md"
+    },
+    "popover": {
+      "radiusFrom": "sm",
+      "shadow": "xl"
+    },
+    "progress": {},
+    "radio-group": {},
+    "scroll-area": {},
+    "select": {
+      "radiusFrom": "sm",
+      "shadow": "xl"
+    },
+    "separator": {},
+    "skeleton": {
+      "radiusFrom": "md"
+    },
+    "slider": {},
+    "switch": {},
+    "table": {
+      "density": "lg"
+    },
+    "tabs": {
+      "variant": "line",
+      "defaultVariant": "line"
+    },
+    "textarea": {
+      "radiusFrom": "xl"
+    },
+    "toast": {
+      "radiusFrom": "sm",
+      "shadow": "xl"
+    },
+    "toggle-group": {},
+    "toggle": {
+      "variant": "outline",
+      "size": "lg",
+      "defaultVariant": "outline",
+      "defaultSize": "lg"
+    },
+    "toolbar": {},
+    "tooltip": {
+      "radiusFrom": "md"
+    }
+  }
+}

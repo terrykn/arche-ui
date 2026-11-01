@@ -1,0 +1,8 @@
+{
+  "name": "collapsible", "title": "Collapsible", "description": "An expandable region with a trigger.", "category": "layout", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-collapsible", "parts": ["Root", "Trigger", "Content"], "propsInherited": true },
+  "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "trigger", "part": "Trigger", "required": true }, { "name": "content", "part": "Content", "required": true }],
+  "axes": {}, "styleSurface": {}, "tokensUsed": [], "dependencies": ["@radix-ui/react-collapsible"], "registryDependencies": [],
+  "files": [{ "name": "collapsible", "source": "src/templates/collapsible.tsx", "target": "components/ui/collapsible.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Reveal or hide a related region.", "useWhen": ["A single region benefits from progressive disclosure."], "doNotUseWhen": ["The content must always be visible."], "rules": [{ "id": "collapsible-descriptive-trigger", "severity": "error", "check": "The trigger describes the region it reveals." }] }
+}

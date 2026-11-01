@@ -1,0 +1,7 @@
+{
+  "name": "tabs", "title": "Tabs", "description": "Switch between related panels.", "category": "navigation", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-tabs", "parts": ["Root", "List", "Trigger", "Content"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "list", "part": "List", "required": true }, { "name": "trigger", "part": "Trigger", "required": true }, { "name": "content", "part": "Content", "required": true }],
+  "axes": { "variant": { "values": ["default", "line"], "default": "default" } }, "styleSurface": { "list": { "defaultVariant": { "type": "enum", "values": ["default", "line"], "default": "default" } } }, "tokensUsed": ["--radius", "--muted-foreground", "--muted", "--ring", "--background", "--foreground"],
+  "dependencies": ["@radix-ui/react-tabs", "class-variance-authority"], "registryDependencies": ["utils"], "files": [{ "name": "tabs", "source": "src/templates/tabs.tsx", "target": "components/ui/tabs.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Organize related content into alternative panels.", "useWhen": ["Users switch between related views."], "doNotUseWhen": ["Content represents sequential steps."], "rules": [{ "id": "tabs-label-each-panel", "severity": "error", "check": "Each tab clearly identifies its associated panel." }] }
+}

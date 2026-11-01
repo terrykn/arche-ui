@@ -1,0 +1,6 @@
+{
+  "name": "label", "title": "Label", "description": "An accessible label for a form control.", "category": "forms", "manifestVersion": 1,
+  "primitive": { "package": "@radix-ui/react-label", "parts": ["Root"], "propsInherited": true }, "slots": [{ "name": "label", "part": "Root", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--foreground"],
+  "dependencies": ["@radix-ui/react-label"], "registryDependencies": ["utils"], "files": [{ "name": "label", "source": "src/templates/label.tsx", "target": "components/ui/label.tsx", "type": "registry:ui" }],
+  "standards": { "purpose": "Identify a form control.", "useWhen": ["A control requires a visible label."], "doNotUseWhen": ["The content does not label a form control."], "rules": [{ "id": "label-associate-control", "severity": "error", "check": "Associate the label with its corresponding control." }] }
+}

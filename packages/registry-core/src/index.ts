@@ -2,13 +2,11 @@
  * @arche/registry-core — builds a deterministic shadcn-compatible registry from
  * an Arche identity (tokens + per-component knob selections).
  */
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { z } from "zod";
 import { validateTokens, type IdentityTokens } from "@arche/foundation/contract/validate-tokens";
-import buttonManifest from "@arche/foundation/manifests/button" with { type: "json" };
-import dialogManifest from "@arche/foundation/manifests/dialog" with { type: "json" };
 import tokenContract from "@arche/foundation/contract/token-contract.json" with { type: "json" };
 
 const contractData = tokenContract as unknown as {
@@ -76,28 +74,17 @@ const identitySchema = z.object({
   components: z.record(z.string(), z.record(z.string(), z.unknown())),
 });
 
-const MANIFESTS: Manifest[] = [buttonManifest, dialogManifest].map(
-  (manifest) => manifest as unknown as Manifest,
-);
+const manifestDir = join(foundationDir, "src", "manifests");
+const MANIFESTS: Manifest[] = readdirSync(manifestDir)
+  .filter((file) => file.endsWith(".manifest.json"))
+  .sort()
+  .map((file) => JSON.parse(readFileSync(join(manifestDir, file), "utf8")) as Manifest);
 
-/** identity knob name -> template axis name, per component (emission logic) */
-const KNOB_TO_AXIS: Record<string, Record<string, string>> = {
-  button: {
-    defaultVariant: "variant",
-    defaultSize: "size",
-    shadow: "shadow",
-    fontWeight: "fontWeight",
-  },
-  dialog: {
-    size: "size",
-    overlayBackground: "overlayBackground",
-    overlayOpacity: "overlayOpacity",
-    backdropBlur: "backdropBlur",
-    shadow: "shadow",
-    border: "border",
-    radiusFrom: "radius",
-    motion: "motion",
-  },
+/** Names shared by manifest knobs and their cva implementation axes. */
+const KNOB_TO_AXIS: Record<string, string> = {
+  defaultVariant: "variant",
+  defaultSize: "size",
+  radiusFrom: "radius",
 };
 
 function findKnobSpec(
@@ -131,7 +118,7 @@ function validateKnob(
     return;
   }
   if (type === "token") {
-    const values = (spec.values ?? []) as string[];
+    const values = (spec.values ?? spec.scale ?? []) as string[];
     if (values.length > 0 && !values.includes(rawValue as string)) {
       issues.push({
         path: `components.${manifest.name}.${knobName}`,
@@ -186,6 +173,13 @@ export function validateIdentity(identity: ArcheIdentity): ValidationResult {
 
   issues.push(...validateTokens(identity.tokens).issues);
 
+  const manifestNames = new Set(MANIFESTS.map((manifest) => manifest.name));
+  for (const name of Object.keys(identity.components)) {
+    if (!manifestNames.has(name)) {
+      issues.push({ path: `components.${name}`, message: `component '${name}' is not declared in the catalog` });
+    }
+  }
+
   for (const manifest of MANIFESTS) {
     const selections = identity.components[manifest.name];
     if (selections === undefined) {
@@ -195,7 +189,15 @@ export function validateIdentity(identity: ArcheIdentity): ValidationResult {
       });
       continue;
     }
+    const chosenAxes = new Map<string, { name: string; value: unknown }>();
     for (const [knobName, knobValue] of Object.entries(selections)) {
+      const axis = KNOB_TO_AXIS[knobName] ?? knobName;
+      const existing = chosenAxes.get(axis);
+      if (existing && existing.value !== knobValue) {
+        issues.push({ path: `components.${manifest.name}.${knobName}`, message: `selection conflicts with '${existing.name}' for axis '${axis}'` });
+      } else {
+        chosenAxes.set(axis, { name: knobName, value: knobValue });
+      }
       // An axis name is always declared; its value must be one of the values.
       // Knobs that are not axis names resolve against the style surface below.
       if (manifest.axes[knobName]) {
@@ -291,7 +293,7 @@ export function stampDefaultVariants(
   const bodyText = source.slice(openBrace + 1, end);
   const existing = new Map<string, string>();
   for (const match of bodyText.matchAll(
-    /(\w+):\s*("(?:[^"\\]|\\.)*"|\d+(?:\.\d+)?|true|false|undefined|-?\d+(?:\.\d+)?),/g,
+    /(\w+):\s*("(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?|true|false|undefined)\s*,?/g,
   )) {
     existing.set(match[1]!, match[2]!);
   }
@@ -469,37 +471,31 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
   // ---- components ----
   for (const manifest of MANIFESTS) {
     const templateFile = manifest.files[0]!.source.split("/").at(-1)!;
-    const knobAliases = KNOB_TO_AXIS[manifest.name] ?? {};
-
     let content = readTemplate(templateFile);
     // Shadcn installs target lib/utils.ts; templates import it relatively so the
     // workspace package compiles on its own.
     content = content.replace('from "./lib/utils.js"', 'from "@/lib/utils"');
-    if (manifest.name === "dialog") {
-      const overlayOverrides: Record<string, unknown> = {};
-      const contentOverrides: Record<string, unknown> = {};
-      for (const [knobName, knobValue] of Object.entries(identity.components[manifest.name] ?? {})) {
-        const axis = knobAliases[knobName];
-        if (!axis) {
-          continue;
-        }
-        if (["overlayBackground", "overlayOpacity", "backdropBlur"].includes(axis)) {
-          overlayOverrides[axis] = knobValue;
-        } else {
-          contentOverrides[axis] = knobValue;
-        }
-      }
-      content = stampDefaultVariants(content, "dialogOverlayVariants", overlayOverrides);
-      content = stampDefaultVariants(content, "dialogContentVariants", contentOverrides);
-    } else {
+    const selections = identity.components[manifest.name] ?? {};
+    const applied = new Set<string>();
+    const cvas = [...content.matchAll(/const\s+(\w+)\s*=\s*cva\s*\(/g)];
+    for (let index = cvas.length - 1; index >= 0; index--) {
+      const match = cvas[index]!;
+      const start = match.index!;
+      const end = cvas[index + 1]?.index ?? content.length;
+      const block = content.slice(start, end);
+      const defaults = block.match(/defaultVariants\s*:\s*\{([^}]*)\}/)?.[1] ?? "";
       const overrides: Record<string, unknown> = {};
-      for (const [knobName, knobValue] of Object.entries(identity.components[manifest.name] ?? {})) {
-        const axis = knobAliases[knobName];
-        if (axis) {
-          overrides[axis] = knobValue;
+      for (const [knob, value] of Object.entries(selections)) {
+        const axis = KNOB_TO_AXIS[knob] ?? knob;
+        if (new RegExp(`\\b${axis}\\s*:`).test(defaults)) {
+          overrides[axis] = value;
+          applied.add(knob);
         }
       }
-      content = stampDefaultVariants(content, "buttonVariants", overrides);
+      content = stampDefaultVariants(content, match[1]!, overrides);
+    }
+    for (const name of Object.keys(selections)) {
+      if (!applied.has(name)) throw new Error(`${manifest.name}: selection '${name}' cannot be stamped`);
     }
 
     items.set(
@@ -510,11 +506,8 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
         title: manifest.title,
         description: manifest.description,
         dependencies: manifest.dependencies,
-        // Bare names resolve to shadcn's built-ins; this registry ships under
-        // its own namespace, so dependency addresses are namespaced at emission.
-        registryDependencies: manifest.registryDependencies.map(
-          (dependency) => (dependency.startsWith("@") || /^https?:/.test(dependency) ? dependency : `@arche/${dependency}`),
-        ),
+        // Spec 7.7c: canonical plain-name form, copied verbatim.
+        registryDependencies: [...manifest.registryDependencies],
         files: manifest.files.map((file) => ({
           path: file.source,
           target: file.target,
@@ -533,7 +526,12 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
       type: "registry:style",
       title: `Arche UI · ${identity.meta.name} (everything)`,
       description: "All registry items of this identity in one install.",
-      registryDependencies: ["@arche/button", "@arche/dialog", "@arche/utils", "@arche/theme"],
+      // `all` has no manifest; its deps must be namespaced so the CLI resolves
+      // them from this registry. Bare names would resolve to the official
+      // shadcn registry (spec conflict vs 7.7c plain-name form, see report).
+      registryDependencies: [...MANIFESTS.map((manifest) => manifest.name), "utils", "theme"].map(
+        (name) => `@arche/${name}`,
+      ),
       files: [],
     }),
   );
