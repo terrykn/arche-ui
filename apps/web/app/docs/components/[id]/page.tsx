@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getManifests } from "@arche/registry-core";
 import { DocPreview } from "@/components/doc-preview";
 import { CopyButton } from "@/components/copy-button";
+import { ArrowLeft } from "lucide-react";
 
 const DOC_IDS = [
   "button", "card", "input", "dialog", "dropdown-menu", "select", "checkbox",
@@ -64,7 +65,7 @@ export default async function ComponentDoc({ params }: { params: Promise<{ id: s
       </table>
 
       <p style={{ marginTop: 26 }}>
-        <Link href="/docs/components">← All components</Link>
+        <Link href="/docs/components"><ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> All components</Link>
       </p>
     </div>
   );

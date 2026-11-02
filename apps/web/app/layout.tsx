@@ -3,7 +3,7 @@ import "./globals.css";
 import "./theme.css";
 import "./proto.css";
 import "./acme.css";
-import { manrope, jetbrainsMono } from "./fonts";
+import { fontSans, fontDisplay, fontMono } from "./fonts.generated";
 
 export const metadata: Metadata = {
   title: "Arche UI",
@@ -23,7 +23,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className={`${manrope.variable} ${jetbrainsMono.variable}`}>
+      <body className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable}`}>
         {children}
       </body>
     </html>

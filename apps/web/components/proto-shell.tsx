@@ -5,16 +5,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ProtoThemeToggle } from "./proto-theme";
 import { SignInModal } from "./sign-in-modal";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
+import { Separator } from "@/components/ui/separator";
 
+// Backdrop wash derived only from identity tokens (primary/secondary/accent).
+// No hardcoded colors here — the hero headline gradient is the single exception.
 export function ProtoAurora() {
-  return (
-    <div className="proto-aurora" aria-hidden>
-      <i />
-      <i />
-      <i />
-      <i />
-    </div>
-  );
+  return <div className="proto-aurora" aria-hidden />;
 }
 
 const NAV_LINKS = [
@@ -27,27 +31,42 @@ export function ProtoNav() {
   const [signInOpen, setSignInOpen] = React.useState(false);
   return (
     <>
-      <header className="proto-nav">
-        <div className="proto-wrap proto-nav-inner">
-          <Link href="/" className="proto-logo">
-            <span className="proto-logo-mark">AR</span>
+      <header className="sticky top-0 z-40 border-b border-border bg-card/82 backdrop-blur-md">
+        <div className="proto-wrap flex h-[62px] items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-lg font-extrabold text-foreground"
+          >
+            <span className="flex h-[30px] w-[30px] items-center justify-center rounded-md bg-primary text-sm font-extrabold text-primary-foreground">
+              AR
+            </span>
             Arche
           </Link>
-          <nav className="proto-nav-links" aria-label="Public">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href}>
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-          <div className="proto-nav-right">
+          <NavigationMenu aria-label="Public">
+            <NavigationMenuList>
+              {NAV_LINKS.map((link) => (
+                <NavigationMenuItem key={link.href}>
+                  <NavigationMenuLink asChild>
+                    <Link href={link.href}>{link.label}</Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+          <div className="flex items-center gap-2">
             <ProtoThemeToggle compact />
-            <button type="button" className="proto-btn proto-btn-ghost proto-btn-sm" onClick={() => setSignInOpen(true)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSignInOpen(true)}
+            >
               Sign in
-            </button>
-            <Link href="/sign-up" className="proto-btn proto-btn-dark proto-btn-sm">
-              Get Started →
-            </Link>
+            </Button>
+            <Button variant="default" size="sm" asChild>
+              <Link href="/sign-up">
+                Get Started <ArrowRight aria-hidden="true" />
+              </Link>
+            </Button>
           </div>
         </div>
       </header>
@@ -66,21 +85,22 @@ const FOOTER_LINKS = [
 export function ProtoFooter() {
   const pathname = usePathname();
   return (
-    <footer className="proto-footer">
-      <div className="proto-wrap proto-footer-inner">
+    <footer className="border-t border-border py-6 text-sm text-muted-foreground">
+      <div className="proto-wrap flex flex-wrap items-center justify-between gap-4">
         <span>AR Arche © 2026 Arche UI — prototype · Styled by the Arche identity (light + dark)</span>
-        <nav className="proto-footer-links" aria-label="Footer">
+        <nav className="flex items-center gap-1" aria-label="Footer">
           {FOOTER_LINKS.map((link) =>
             link.href === "/sign-in" ? (
               <FooterSignIn key={link.href} label={link.label} current={pathname} />
             ) : (
-              <Link key={link.href} href={link.href}>
-                {link.label}
-              </Link>
+              <Button key={link.href} variant="link" size="sm" asChild>
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
             ),
           )}
         </nav>
       </div>
+      <Separator className="mt-4" />
     </footer>
   );
 }
@@ -89,13 +109,9 @@ function FooterSignIn({ label, current }: { label: string; current: string }) {
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        style={{ background: "none", border: "none", cursor: "pointer", color: "inherit", font: "inherit", padding: 0 }}
-      >
+      <Button variant="link" size="sm" onClick={() => setOpen(true)}>
         {label}
-      </button>
+      </Button>
       <SignInModal open={open} onClose={() => setOpen(false)} redirectTo={current} />
     </>
   );

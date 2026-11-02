@@ -23,6 +23,13 @@ const { buildRegistry } = require("@arche/registry-core");
 const identityPath = join(repoRoot, "fixtures", "identity.arche.json");
 const identity = JSON.parse(readFileSync(identityPath, "utf8"));
 
+// Closed font registry: resolves the identity's font ids to next/font/google
+// loader names, weights, and variable/static status.
+const fontRegistry = JSON.parse(
+  readFileSync(join(repoRoot, "packages", "foundation", "src", "fonts", "font-registry.json"), "utf8")
+);
+const fontById = new Map(fontRegistry.fonts.map((font) => [font.id, font]));
+
 const items = buildRegistry(identity);
 const theme = JSON.parse(items.get("theme"));
 
@@ -97,4 +104,38 @@ updated = updated
   .replace(/\/\* @arche-fonts:begin[\s\S]*?@arche-fonts:end \*\/\n?/, "")
   .replace(/^\n+/, "");
 writeFileSync(globalsPath, updated);
-console.log(`sync-theme: wrote app/theme.css + @theme block from ${identity.meta.name}`);
+// Fonts load via next/font/google, which requires static named imports in the
+// importing file — so this script generates app/fonts.generated.ts from the
+// identity's font selection (one loader call per unique family; slots sharing
+// a family alias the first slot's instance since theme.css defines every
+// slot var with the same family anyway).
+const slotVars = { sans: "--font-sans", display: "--font-display", mono: "--font-mono" };
+const slotNames = { sans: "fontSans", display: "fontDisplay", mono: "fontMono" };
+const seenFamilies = new Map();
+const fontImports = new Set();
+const fontExports = [];
+for (const slot of ["sans", "display", "mono"]) {
+  const entry = fontById.get(identity.fonts[slot]);
+  if (!entry) {
+    throw new Error(`sync-theme: unknown font id '${identity.fonts[slot]}' for slot '${slot}'`);
+  }
+  fontImports.add(entry.nextFontImport);
+  if (seenFamilies.has(entry.family)) {
+    fontExports.push(`export const ${slotNames[slot]} = ${seenFamilies.get(entry.family)};`);
+    continue;
+  }
+  seenFamilies.set(entry.family, slotNames[slot]);
+  const weightArg = entry.variable ? "" : `\n  weight: [${entry.weights.map((w) => `"${w}"`).join(", ")}],`;
+  fontExports.push(
+    `export const ${slotNames[slot]} = ${entry.nextFontImport}({\n  subsets: ["latin"],${weightArg}\n  variable: "${slotVars[slot]}",\n});`
+  );
+}
+const fontsGenerated = `/* GENERATED — do not hand-edit. Source: fixtures/identity.arche.json
+ * Produced by apps/web/scripts/sync-theme.mjs. Edit the payload, then run:
+ * pnpm --filter web sync-theme */
+import { ${[...fontImports].sort().join(", ")} } from "next/font/google";
+
+${fontExports.join("\n\n")}
+`;
+writeFileSync(join(webRoot, "app", "fonts.generated.ts"), fontsGenerated);
+console.log(`sync-theme: wrote app/theme.css + @theme block + fonts.generated.ts from ${identity.meta.name}`);

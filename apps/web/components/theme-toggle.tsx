@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "arche-theme";
 
@@ -27,14 +29,16 @@ export function ThemeToggle() {
   }, []);
 
   return (
-    <button
+    <Button
+      variant="outline"
+      size="sm"
       type="button"
       onClick={toggle}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       aria-pressed={dark ?? false}
-      className="rounded-md border border-border bg-card px-3 py-1.5 text-sm text-card-foreground"
     >
+      {dark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
       {dark === null ? "Theme" : dark ? "Light mode" : "Dark mode"}
-    </button>
+    </Button>
   );
 }

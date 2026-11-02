@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { Sun, Moon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "arche-theme";
 
@@ -28,16 +30,25 @@ export function ProtoThemeToggle({ compact = false }: { compact?: boolean }) {
     setDark(next);
   };
 
+  if (compact) {
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        type="button"
+        onClick={toggle}
+        aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+        title={dark ? "Light mode" : "Dark mode"}
+      >
+        <span aria-hidden>{dark ? <Sun /> : <Moon />}</span>
+      </Button>
+    );
+  }
+
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      title={dark ? "Light mode" : "Dark mode"}
-      className={compact ? "proto-icon-btn" : "proto-toggle"}
-    >
-      <span aria-hidden>{dark ? "☀" : "☾"}</span>
-      {!compact && <span>{dark ? "Light mode" : "Dark mode"}</span>}
-    </button>
+    <Button variant="outline" size="sm" type="button" onClick={toggle}>
+      <span aria-hidden>{dark ? <Sun /> : <Moon />}</span>
+      <span>{dark ? "Light mode" : "Dark mode"}</span>
+    </Button>
   );
 }

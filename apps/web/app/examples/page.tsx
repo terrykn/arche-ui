@@ -6,6 +6,7 @@ import { ProtoAurora, ProtoNav, ProtoFooter } from "@/components/proto-shell";
 import { AcmeTasks } from "@/components/acme-tasks";
 import { DEMO_IDENTITIES } from "@/components/demo-identities";
 import { writeDemoIndex } from "@/lib/demo-sync";
+import { Play, Pause, ArrowRight } from "lucide-react";
 
 const ROTATE_MS = 5000;
 
@@ -98,7 +99,15 @@ export default function Examples() {
                   ))}
                 </span>
                 <button type="button" className="proto-pause-btn" onClick={() => setPaused((p) => !p)}>
-                  {paused ? "▶ Resume rotation" : "⏸ Pause rotation"}
+                  {paused ? (
+                    <>
+                      <Play size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Resume rotation
+                    </>
+                  ) : (
+                    <>
+                      <Pause size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Pause rotation
+                    </>
+                  )}
                 </button>
               </div>
               <div className="proto-progress run" key={`${index}-${paused}-${reduced}`}>
@@ -136,7 +145,7 @@ export default function Examples() {
             </p>
             <div className="proto-cta-row" style={{ marginTop: 22 }}>
               <Link href="/sign-up" className="proto-btn proto-btn-dark">
-                Build a library like these →
+                Build a library like these <ArrowRight size={15} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
               </Link>
               <Link href="/docs/brief-3" className="proto-btn proto-btn-ghost">
                 Read Brief #3 — the web app build

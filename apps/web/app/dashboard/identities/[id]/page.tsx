@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { PublishButton } from "./publish-button";
 import { InstallBlock } from "@/components/install-block";
+import { ArrowLeft } from "lucide-react";
 
 export default async function IdentityDetail({
   params,
@@ -54,7 +55,7 @@ export default async function IdentityDetail({
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <Link href="/dashboard/identities" className="text-sm text-muted-foreground underline">
-        ← Identities
+        <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Identities
       </Link>
       <div className="mt-2 flex items-center justify-between gap-4">
         <h1 className="font-display text-3xl">{row.name}</h1>

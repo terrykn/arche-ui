@@ -4,7 +4,7 @@ export default function CreateEdit() {
       <h1 className="font-display text-3xl">Create / edit an identity</h1>
       <div className="mt-4 flex flex-col gap-3 text-sm leading-relaxed">
         <p>
-          Dashboard → <strong>+ New Identity</strong> starts from the Arche Default payload. The editor
+          Dashboard → <strong>New Identity</strong> starts from the Arche Default payload. The editor
           generates its controls from the foundation data:
         </p>
         <ul className="flex flex-col gap-1">

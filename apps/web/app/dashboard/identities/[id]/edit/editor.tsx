@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ArrowLeft } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { Progress, ProgressIndicator } from "@/components/ui/progress";
 import { savePayload } from "../../actions";
@@ -208,7 +209,7 @@ export function IdentityEditor({
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
       <Link href={`/dashboard/identities/${libraryId}`} className="text-sm text-muted-foreground underline">
-        ← Back to {libraryName}
+        <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Back to {libraryName}
       </Link>
       <div className="mt-2 flex items-center justify-between gap-4">
         <h1 className="font-display text-3xl">Edit {libraryName}</h1>

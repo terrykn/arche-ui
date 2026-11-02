@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { DemoIdentity } from "./demo-identities";
+import { Plus } from "lucide-react";
 
 /**
  * Acme Tasks — the fixed mini app (§4). Identical DOM for every identity;
@@ -59,7 +60,7 @@ export function AcmeTasks({ identity }: { identity: DemoIdentity }) {
           <div className="acme-row">Prepare Friday demo notes <em className="acme-tag">Today</em></div>
         </div>
         <div className="acme-actions">
-          <button type="button" className="acme-btn-primary">+ New task</button>
+          <button type="button" className="acme-btn-primary"><Plus size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> New task</button>
           <button type="button" className="acme-btn-ghost">Share board</button>
           <input className="acme-search" placeholder="Search tasks…" aria-label="Search tasks" />
           <label className="acme-switch">

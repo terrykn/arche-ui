@@ -1,69 +1,73 @@
-/* Arche prototype identity (§1 values verbatim). */
+/* Marketing + dashboard prototype surfaces resolve to the Arche identity
+ * (fixtures/identity.arche.json → theme.css tokens) via the theme pipeline.
+ * No hardcoded colors here — every var below is a token ref or a color-mix
+ * of tokens. Single exception: --grad, the hero headline gradient. */
 :root {
   color-scheme: light dark;
-  --bg: #f5f4f9;
-  --bg2: #edecf3;
-  --surface: #ffffff;
-  --surface2: #faf9fc;
-  --ink: #16131f;
-  --ink2: #3f3c4e;
-  --muted: #6f6c7e;
-  --faint: #a09cb0;
-  --line: #e5e3ec;
-  --line2: #efedf3;
-  --violet: #6d5bd0;
-  --violet-d: #5746b8;
-  --pink: #c06ba8;
-  --orange: #d99a68;
-  --blue: #7ba0d8;
-  --teal: #3aa88c;
-  --accent-soft: #efedf7;
-  --accent-soft-tx: #5746b8;
-  --input-border: #d8d4e2;
-  --nav-bg: rgba(252, 251, 253, 0.82);
-  --code-bg: #1b1826;
-  --code-tx: #e9e6f2;
+  --bg: var(--background);
+  --bg2: var(--muted);
+  --surface: var(--card);
+  --surface2: var(--muted);
+  --ink: var(--foreground);
+  --ink2: var(--muted-foreground);
+  --muted: var(--muted-foreground);
+  --faint: var(--muted-foreground);
+  --line: var(--border);
+  --line2: var(--border);
+  --violet: var(--primary);
+  --violet-d: var(--primary);
+  --pink: var(--accent);
+  --orange: var(--secondary);
+  --blue: var(--accent);
+  --teal: var(--primary);
+  --accent-soft: var(--secondary);
+  --accent-soft-tx: var(--secondary-foreground);
+  --input-border: var(--input);
+  --nav-bg: color-mix(in srgb, var(--card) 82%, transparent);
+  --code-bg: var(--muted);
+  --code-tx: var(--muted-foreground);
+  /* EXCEPTION: hero headline gradient — the one allowed brand treatment. */
   --grad: linear-gradient(92deg, #7d6fd1 0%, #9a7fb8 42%, #bd8cae 72%, #d3a583 100%);
-  --grad-soft: linear-gradient(120deg, #c9c2e2 0%, #dcc9d6 38%, #e6d3c2 70%, #c3cdd9 100%);
-  --shadow-sm: 0 2px 8px rgba(60, 50, 110, 0.04);
-  --shadow: 0 10px 30px rgba(60, 50, 110, 0.07), 0 2px 8px rgba(60, 50, 110, 0.04);
-  --shadow-lg: 0 24px 54px rgba(60, 50, 110, 0.11);
-  --radius: 18px;
+  --grad-soft: var(--muted);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --radius: var(--radius);
   --aurora-opacity: 0.26;
 }
 
 [data-theme="dark"] {
-  --bg: #131118;
-  --bg2: #17151f;
-  --surface: #1e1b28;
-  --surface2: #252231;
-  --ink: #f1eff6;
-  --ink2: #d3cfdd;
-  --muted: #a29eb2;
-  --faint: #767184;
-  --line: #322e42;
-  --line2: #2a2738;
-  --violet: #a99ae0;
-  --violet-d: #c2b6ee;
-  --pink: #d69ac2;
-  --orange: #e0b088;
-  --blue: #9dbde8;
-  --teal: #6cc7ac;
-  --accent-soft: #2c2842;
-  --accent-soft-tx: #c2b6ee;
-  --input-border: #3d3952;
-  --nav-bg: rgba(23, 21, 31, 0.84);
-  --code-bg: #0f0e16;
+  --bg: var(--background);
+  --bg2: var(--muted);
+  --surface: var(--card);
+  --surface2: var(--muted);
+  --ink: var(--foreground);
+  --ink2: var(--muted-foreground);
+  --muted: var(--muted-foreground);
+  --faint: var(--muted-foreground);
+  --line: var(--border);
+  --line2: var(--border);
+  --violet: var(--primary);
+  --violet-d: var(--primary);
+  --pink: var(--accent);
+  --orange: var(--secondary);
+  --blue: var(--accent);
+  --teal: var(--primary);
+  --accent-soft: var(--secondary);
+  --accent-soft-tx: var(--secondary-foreground);
+  --input-border: var(--input);
+  --nav-bg: color-mix(in srgb, var(--card) 82%, transparent);
+  --code-bg: var(--muted);
   --grad: linear-gradient(92deg, #8d7fd6 0%, #a582c0 42%, #c08fb2 72%, #d1a583 100%);
-  --grad-soft: linear-gradient(120deg, #4a4266 0%, #5d4758 38%, #66543f 70%, #3d4a5c 100%);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.32), 0 2px 8px rgba(0, 0, 0, 0.22);
-  --shadow-lg: 0 24px 54px rgba(0, 0, 0, 0.42);
+  --grad-soft: var(--muted);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
   --aurora-opacity: 0.14;
 }
 
 .proto-root {
-  font-family: var(--font-manrope), Manrope, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-sans), Inter, -apple-system, "Segoe UI", sans-serif;
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -79,7 +83,7 @@
 }
 
 .proto-mono {
-  font-family: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+  font-family: var(--font-mono), "Geist Mono", ui-monospace, monospace;
 }
 
 /* Aurora backdrop */
@@ -178,7 +182,7 @@
 
 .proto-btn-grad {
   background: var(--grad);
-  color: #fff;
+  color: var(--primary-foreground);
 }
 
 .proto-btn-ghost {
@@ -188,8 +192,8 @@
 }
 
 .proto-btn-violet {
-  background: #6d5bd0;
-  color: #fff;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 /* Public nav */
@@ -224,8 +228,8 @@
   width: 30px;
   height: 30px;
   border-radius: 9px;
-  background: var(--grad);
-  color: #fff;
+  background: var(--primary);
+  color: var(--primary-foreground);
   font-style: italic;
   font-weight: 800;
   font-size: 14px;
@@ -407,7 +411,7 @@
   width: 30px;
   height: 30px;
   border-radius: 999px;
-  color: #fff;
+  color: var(--primary-foreground);
   font-size: 11px;
   font-weight: 800;
   display: flex;
@@ -1011,7 +1015,7 @@
   left: 50%;
   transform: translateX(-50%);
   background: var(--violet);
-  color: #fff;
+  color: var(--primary-foreground);
   font-size: 12px;
   font-weight: 800;
   border-radius: 999px;
@@ -1271,8 +1275,8 @@
 .proto-create-card {
   margin-top: 18px;
   padding: 26px;
-  background: var(--grad);
-  color: #fff;
+  background: var(--primary);
+  color: var(--primary-foreground);
   border: none;
 }
 

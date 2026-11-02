@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function Brief3() {
   return (
@@ -22,7 +23,7 @@ export default function Brief3() {
         </p>
       </div>
       <p style={{ marginTop: 26 }}>
-        <Link href="/docs/web-app-spec">← Web App Spec (§A1.9)</Link>
+        <Link href="/docs/web-app-spec"><ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Web App Spec (§A1.9)</Link>
       </p>
     </div>
   );

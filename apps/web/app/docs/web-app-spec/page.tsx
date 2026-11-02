@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function WebAppSpec() {
   return (
@@ -39,7 +40,7 @@ export default function WebAppSpec() {
         </p>
       </div>
       <p style={{ marginTop: 26 }}>
-        <Link href="/docs/brief-3">Next: Brief #3 — the web app build →</Link>
+        <Link href="/docs/brief-3">Next: Brief #3 — the web app build <ArrowRight size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /></Link>
       </p>
     </div>
   );

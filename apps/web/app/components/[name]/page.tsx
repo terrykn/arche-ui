@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getManifests, getTokenContract } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
 import { ComponentDetail } from "@/components/catalog-reference";
+import { ArrowLeft } from "lucide-react";
 
 export function generateStaticParams() {
   return getManifests().map((manifest) => ({ name: manifest.name }));
@@ -25,7 +26,7 @@ export default async function ComponentPage({
       <SiteNav />
       <main className="mx-auto max-w-3xl px-6 py-12">
         <Link href="/components" className="text-sm text-muted-foreground underline">
-          ← Components
+          <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Components
         </Link>
         <div className="mt-2">
           <ComponentDetail manifest={manifest} />

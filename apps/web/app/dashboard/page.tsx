@@ -1,4 +1,16 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export default async function DashboardHome() {
   const supabase = await createClient();
@@ -10,26 +22,53 @@ export default async function DashboardHome() {
   if (!libraries || libraries.length === 0) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-16 text-center">
-        <h1 className="font-display text-3xl">Your identities</h1>
-        <p className="mt-3 text-muted-foreground">
-          You don&apos;t have any identities yet. Create one to get an
-          installable component library.
-        </p>
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-display text-3xl">Your identities</CardTitle>
+            <CardDescription>
+              You don&apos;t have any identities yet. Create one to get an installable component library.
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="justify-center">
+            <Button variant="default" asChild>
+              <Link href="/dashboard/identities/new">Create identity</Link>
+            </Button>
+          </CardFooter>
+        </Card>
       </main>
     );
   }
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="font-display text-3xl">Your identities</h1>
-      <ul className="mt-6 grid gap-4">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-display text-3xl text-foreground">Your identities</h1>
+        <Button variant="default" asChild>
+          <Link href="/dashboard/identities/new">New Identity</Link>
+        </Button>
+      </div>
+      <Separator className="my-6" />
+      <ul className="grid gap-4">
         {libraries.map((library) => (
-          <li key={library.id} className="rounded-lg border border-border bg-card p-4 text-card-foreground">
-            <p className="font-medium">{library.name}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {library.visibility} · updated{" "}
-              {new Date(library.updated_at).toLocaleDateString()}
-            </p>
+          <li key={library.id}>
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <Link
+                    href={`/dashboard/identities/${library.id}`}
+                    className="underline-offset-4 hover:underline"
+                  >
+                    {library.name}
+                  </Link>
+                </CardTitle>
+                <CardDescription>
+                  updated {new Date(library.updated_at).toLocaleDateString()}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Badge variant="secondary">{library.visibility}</Badge>
+              </CardContent>
+            </Card>
           </li>
         ))}
       </ul>

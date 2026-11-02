@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const MANAGERS = [
   { id: "npm", label: "npm", command: "npx @arche/cli login" },
@@ -70,7 +71,7 @@ export default function Installation() {
         </div>
       </div>
       <div className="proto-help-banner">
-        Need help? <Link href="/docs/quick-start">Check out our quick start guide →</Link>
+        Need help? <Link href="/docs/quick-start">Check out our quick start guide <ArrowRight size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /></Link>
       </div>
     </div>
   );
