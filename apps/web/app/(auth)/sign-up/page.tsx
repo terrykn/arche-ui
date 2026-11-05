@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { signUp } from "../actions";
+import { signInWithGoogle, signUp } from "../actions";
 
 export default async function SignUp({
   searchParams,
@@ -42,6 +42,14 @@ export default async function SignUp({
           className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
         >
           Create account
+        </button>
+      </form>
+      <form action={signInWithGoogle} className="mt-3">
+        <button
+          type="submit"
+          className="w-full rounded-md border border-input bg-background px-4 py-2 text-sm"
+        >
+          Continue with Google
         </button>
       </form>
       <p className="mt-4 text-sm text-muted-foreground">

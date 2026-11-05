@@ -64,7 +64,7 @@ export default async function SettingsPage({
       <section className="mt-8">
         <h2 className="text-lg font-medium">Registry token</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Bearer token for installing your private libraries. Stored hashed; revocable.
+          Bearer token for installing your private libraries. Stored hashed; revocable. `arche login` stores this token on your machine; revoking it signs the CLI out everywhere.
         </p>
         <TokenManager hasToken={!!row.registry_token_hash} prefix={row.registry_token_prefix} />
       </section>

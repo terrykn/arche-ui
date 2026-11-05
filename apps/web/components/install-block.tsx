@@ -11,6 +11,13 @@ export function InstallBlock({
   authed: boolean;
 }) {
   const lines = [
+    "// Arche CLI (recommended)",
+    "arche login",
+    `arche init ${username}/${slug} && arche install`,
+    "// or install single components:",
+    `// arche add button dialog`,
+    "",
+    "// Manual / advanced (stock shadcn CLI)",
     "// components.json",
     "{",
     '  "registries": {',
@@ -26,7 +33,6 @@ export function InstallBlock({
   if (authed) {
     lines.push("REGISTRY_TOKEN=<paste from dashboard settings>");
   }
-  lines.push("", "// coming with the Arche CLI (Brief #4):", `// arche init ${username}/${slug} && arche install`);
   return (
     <pre className="mt-2 overflow-x-auto rounded-md border border-border bg-card p-3 text-xs text-card-foreground">
       {lines.join("\n")}

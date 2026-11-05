@@ -23,7 +23,7 @@ export default function AllComponents() {
             style={{ padding: 18, textDecoration: "none", color: "inherit", display: "block" }}
           >
             <strong>{manifest.title}</strong>
-            <p style={{ color: "var(--muted)", margin: "6px 0 0", fontSize: 13.5 }}>{manifest.description}</p>
+            <p style={{ color: "var(--muted-foreground)", margin: "6px 0 0", fontSize: 13.5 }}>{manifest.description}</p>
             <p style={{ color: "var(--faint)", margin: "8px 0 0", fontSize: 12.5 }}>{manifest.category}</p>
           </Link>
         ))}

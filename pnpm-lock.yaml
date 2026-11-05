@@ -215,6 +215,31 @@ importers:
         specifier: 7.0.2
         version: 7.0.2
 
+  packages/cli:
+    dependencies:
+      '@arche/foundation':
+        specifier: workspace:*
+        version: link:../foundation
+      '@arche/registry-core':
+        specifier: workspace:*
+        version: link:../registry-core
+    devDependencies:
+      '@arche/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@arche/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 26.4.1
+        version: 26.4.1
+      eslint:
+        specifier: 10.9.1
+        version: 10.9.1(jiti@2.7.0)(supports-color@7.2.0)
+      typescript:
+        specifier: 7.0.2
+        version: 7.0.2
+
   packages/eslint-config:
     devDependencies:
       '@babel/core':
