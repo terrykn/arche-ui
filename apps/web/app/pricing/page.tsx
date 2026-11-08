@@ -59,6 +59,10 @@ export default function PricingPage() {
           <section className="proto-section">
             <h2>Simple, transparent pricing</h2>
             <p className="proto-lede">Start for free. Upgrade anytime.</p>
+            <p className="proto-help-banner" role="note">
+              Arche is a working prototype: there is no billing yet, so everything below is free.
+              Paid tiers will appear here when billing ships.
+            </p>
         <div className="proto-billing" role="group" aria-label="Billing period">
           <button
             type="button"

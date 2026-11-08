@@ -16,6 +16,6 @@ function SliderRange({ className, ...props }: React.ComponentProps<typeof Slider
   return <SliderPrimitive.Range data-slot="slider-range" className={cn("absolute bg-primary data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full", className)} {...props} />;
 }
 function SliderThumb({ className, ...props }: React.ComponentProps<typeof SliderPrimitive.Thumb>) {
-  return <SliderPrimitive.Thumb data-slot="slider-thumb" className={cn("block size-4 shrink-0 rounded-full border border-ring bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50", className)} {...props} />;
+  return <SliderPrimitive.Thumb data-slot="slider-thumb" className={cn("block size-4 shrink-0 rounded-full border-(length:--border-width) border-ring bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50", className)} {...props} />;
 }
 export { Slider, SliderTrack, SliderRange, SliderThumb };

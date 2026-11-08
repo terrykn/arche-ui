@@ -167,6 +167,16 @@
       "params": {}
     },
     {
+      "id": "border-width-profile-bounds",
+      "area": "border",
+      "tier": "enforce",
+      "statement": "The --border-width a generated payload may carry is bounded per profile; hand-authored payloads may use any legal contract value (0-3px).",
+      "params": {
+        "legalValues": ["0px", "1px", "2px", "3px"],
+        "maxWidthByProfile": { "enterprise": "1px", "standard": "2px", "expressive": "3px" }
+      }
+    },
+    {
       "id": "radius-profile-bounds",
       "area": "radius",
       "tier": "enforce",
@@ -191,6 +201,27 @@
         "minMs": 50,
         "maxMs": 400
       }
+    },
+    {
+      "id": "block-one-job",
+      "area": "blocks",
+      "tier": "teach",
+      "statement": "One job per section: a block does exactly what its manifest purpose says — no pricing tables inside feature grids, no second CTAs in footers.",
+      "params": {}
+    },
+    {
+      "id": "block-heading-roles",
+      "area": "blocks",
+      "tier": "teach",
+      "statement": "A page has exactly one h1 (the hero or the app view title carries it); every block declares its heading role and landmark in its manifest composition, and landmark semantics come from the template, never the consumer.",
+      "params": {}
+    },
+    {
+      "id": "block-slot-respect",
+      "area": "blocks",
+      "tier": "teach",
+      "statement": "Compose only through a block's typed content slots; never pass untyped free-form children where a slot exists, and never restyle a block's internals — style is the identity's job.",
+      "params": {}
     }
   ]
 }

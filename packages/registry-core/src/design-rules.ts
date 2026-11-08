@@ -281,6 +281,23 @@ export function checkDesignRules(identity: ArcheIdentity): DesignRuleFinding[] {
     }
   }
 
+  // border-width-profile-bounds (max width per profile; the legal set
+  // itself is enforced by the token contract, not here)
+  const borderBoundPx = profile === "enterprise" ? 1 : profile === "expressive" ? 3 : 2;
+  for (const mode of modes) {
+    const raw = (tokens[mode]?.["--border-width"] as { $value?: unknown } | undefined)?.$value;
+    if (typeof raw === "string") {
+      const match = raw.match(/^(\d+(?:\.\d+)?)px$/);
+      if (match && Number(match[1]) > borderBoundPx) {
+        findings.push({
+          rule: "border-width-profile-bounds",
+          path: `${mode}.--border-width`,
+          message: `--border-width ${raw} exceeds the ${profile} bound ${borderBoundPx}px`,
+        });
+      }
+    }
+  }
+
   // radius-profile-bounds
   const radiusBound = profile === "enterprise" ? 0.5 : profile === "expressive" ? 1.5 : 1;
   for (const mode of modes) {

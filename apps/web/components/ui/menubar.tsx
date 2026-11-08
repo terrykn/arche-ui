@@ -6,11 +6,11 @@ import * as P from "@radix-ui/react-menubar";
 import { Check, ChevronRight, Circle } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-const menubarContentVariants = cva("z-50 min-w-32 overflow-hidden border bg-popover p-1 text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out", { variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } }, defaultVariants: {
+const menubarContentVariants = cva("z-50 min-w-32 overflow-hidden border-(length:--border-width) bg-popover p-1 text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out", { variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } }, defaultVariants: {
       radius: "md",
       shadow: "md",
     } });
-function Menubar({ className, ...props }: React.ComponentProps<typeof P.Root>) { return <P.Root data-slot="menubar" className={cn("flex h-9 items-center gap-1 rounded-md border bg-background p-1", className)} {...props} />; }
+function Menubar({ className, ...props }: React.ComponentProps<typeof P.Root>) { return <P.Root data-slot="menubar" className={cn("flex h-9 items-center gap-1 rounded-md border-(length:--border-width) bg-background p-1", className)} {...props} />; }
 function MenubarMenu(props: React.ComponentProps<typeof P.Menu>) { return <P.Menu data-slot="menubar-menu" {...props} />; }
 function MenubarTrigger({ className, ...props }: React.ComponentProps<typeof P.Trigger>) { return <P.Trigger data-slot="menubar-trigger" className={cn("rounded-sm px-3 py-1 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent", className)} {...props} />; }
 function MenubarPortal(props: React.ComponentProps<typeof P.Portal>) { return <P.Portal data-slot="menubar-portal" {...props} />; }
@@ -24,5 +24,5 @@ function MenubarLabel({ className, ...props }: React.ComponentProps<typeof P.Lab
 function MenubarSeparator({ className, ...props }: React.ComponentProps<typeof P.Separator>) { return <P.Separator data-slot="menubar-separator" className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />; }
 function MenubarSub(props: React.ComponentProps<typeof P.Sub>) { return <P.Sub data-slot="menubar-sub" {...props} />; }
 function MenubarSubTrigger({ className, children, ...props }: React.ComponentProps<typeof P.SubTrigger>) { return <P.SubTrigger data-slot="menubar-sub-trigger" className={cn("flex items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent", className)} {...props}>{children}<ChevronRight className="ml-auto size-4" /></P.SubTrigger>; }
-function MenubarSubContent({ className, ...props }: React.ComponentProps<typeof P.SubContent>) { return <P.SubContent data-slot="menubar-sub-content" className={cn("z-50 min-w-32 rounded-md border bg-popover p-1 text-popover-foreground shadow-(--shadow-md)", className)} {...props} />; }
+function MenubarSubContent({ className, ...props }: React.ComponentProps<typeof P.SubContent>) { return <P.SubContent data-slot="menubar-sub-content" className={cn("z-50 min-w-32 rounded-md border-(length:--border-width) bg-popover p-1 text-popover-foreground shadow-(--shadow-md)", className)} {...props} />; }
 export { Menubar, MenubarMenu, MenubarTrigger, MenubarPortal, MenubarContent, MenubarGroup, MenubarItem, MenubarCheckboxItem, MenubarRadioGroup, MenubarRadioItem, MenubarLabel, MenubarSeparator, MenubarSub, MenubarSubTrigger, MenubarSubContent, menubarContentVariants };

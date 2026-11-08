@@ -1,6 +1,9 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fetchRegistryItem, verifyToken } from "./api.js";
+import { getBlockManifests } from "@arche/registry-core";
+
+const BLOCK_NAMES: string[] = getBlockManifests().map((m) => m.name);
 import {
   TOKEN_PLACEHOLDER,
   componentsJsonPath,
@@ -271,10 +274,13 @@ export async function commandList(options: { library?: string }): Promise<number
     console.error("arche list: the registry answered with invalid JSON.");
     return 1;
   }
+  const blockNames = new Set(BLOCK_NAMES);
+  const components = names.filter((n) => !blockNames.has(n));
+  const blocks = names.filter((n) => blockNames.has(n));
   for (const name of names) {
-    console.log(name);
+    console.log(blockNames.has(name) ? `${name}  (block)` : name);
   }
-  console.log(`\n${names.length} components (theme and all are implicit).`);
+  console.log(`\n${components.length} components + ${blocks.length} blocks (theme and all are implicit).`);
   return 0;
 }
 

@@ -1,17 +1,24 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/service";
+import { deriveTypeScale, getManifests, TYPE_ROLES } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
-import { CatalogShowcase } from "@/components/catalog-showcase";
+import { KitchenSink } from "@/components/kitchen-sink";
 import { InstallBlock } from "@/components/install-block";
+import { VersionSpecimen } from "@/components/version-specimen";
+import { versionAssetUrls } from "@/lib/version-assets";
+import { summarizeChanges, type PayloadLite } from "@/lib/version-diff";
 
 /** Public identity page — full catalog rendered live in the identity's tokens. */
 export default async function PublicIdentityPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ user: string; identity: string }>;
+  searchParams?: Promise<{ mode?: string }>;
 }) {
   const { user: username, identity: slug } = await params;
+  const dark = (await searchParams)?.mode === "dark";
   const service = createServiceClient();
 
   const { data: profile } = await service
@@ -40,6 +47,8 @@ export default async function PublicIdentityPage({
     payload: {
       tokens: Record<string, Record<string, { $value: unknown }>>;
       components: Record<string, Record<string, unknown>>;
+      typeScale?: string;
+      dna?: { profile?: string };
     };
   };
   if (row.visibility === "private") {
@@ -47,20 +56,42 @@ export default async function PublicIdentityPage({
   }
   const { data: versions } = await service
     .from("library_versions")
-    .select("version,published_at")
+    .select("version,published_at,payload")
     .eq("library_id", row.id)
     .order("version", { ascending: false });
-  const versionList = (versions ?? []) as unknown as Array<{ version: number; published_at: string }>;
+  const versionList = (versions ?? []) as unknown as Array<{
+    version: number;
+    published_at: string;
+    payload: PayloadLite | null;
+  }>;
+  // Oldest-first for change summaries: each version narrates prev → next.
+  const chronological = [...versionList].reverse();
+  const summaries = new Map<number, string[]>();
+  chronological.forEach((v, i) => {
+    summaries.set(
+      v.version,
+      summarizeChanges(i === 0 ? null : (chronological[i - 1]!.payload ?? {}), v.payload ?? {}),
+    );
+  });
+  const latestAssets = versionAssetUrls(row.id, versionList[0]?.version ?? 0);
   if (versionList.length === 0) {
     notFound();
   }
 
+  // ?mode=dark renders the sink + strip from the dark token set (same render
+  // path, used by publish-time specimen captures). Defaults to light.
+  const modeTokens = dark ? (row.payload.tokens.dark ?? row.payload.tokens.light) : row.payload.tokens.light;
   const vars: Record<string, string> = {};
-  for (const [name, token] of Object.entries(row.payload.tokens.light ?? {})) {
+  for (const [name, token] of Object.entries(modeTokens ?? {})) {
     if (typeof token.$value === "string") {
       vars[name] = token.$value;
     }
   }
+  const sinkProfile = row.payload.dna?.profile === "enterprise" || row.payload.dna?.profile === "expressive" ? row.payload.dna.profile : "standard";
+  const typeSteps = typeof row.payload.typeScale === "string" ? TYPE_ROLES.map((role) => {
+    const step = deriveTypeScale(row.payload.typeScale as string, sinkProfile)[role]!;
+    return { role, sizePx: step.sizePx, lineHeight: step.lineHeight };
+  }) : [];
   const knobCount = Object.values(row.payload.components).reduce(
     (sum, selections) => sum + Object.keys(selections).length,
     0,
@@ -82,28 +113,68 @@ export default async function PublicIdentityPage({
           {versionList[0]!.version})
         </p>
 
+        {latestAssets ? (
+          <figure className="mt-8">
+            <div className="overflow-hidden rounded-xl border-(length:--border-width) border-border">
+              <VersionSpecimen
+                src={latestAssets.sinkLight}
+                alt={`Kitchen sink rendered under ${row.name}, version ${versionList[0]?.version ?? 1}`}
+                className="w-full"
+              />
+            </div>
+            <figcaption className="mt-2 text-sm text-muted-foreground">
+              Specimen — v{versionList[0]?.version ?? 1} render, captured at publish time.
+            </figcaption>
+          </figure>
+        ) : null}
+
         <section className="mt-8">
           <h2 className="text-lg font-medium">Install</h2>
           <InstallBlock base={base} username={username} slug={slug} authed={false} />
         </section>
 
         <section className="mt-8">
-          <h2 className="text-lg font-medium">Catalog</h2>
-          <div className="mt-2 rounded-xl border border-border p-4">
-            <CatalogShowcase vars={vars} />
+          <h2 className="text-lg font-medium">Kitchen sink</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Every catalog component, live in this identity.</p>
+          <div className="mt-2 rounded-xl border-(length:--border-width) border-border p-4">
+            <KitchenSink manifests={getManifests()} vars={vars} mode={dark ? "dark" : "light"} typeSteps={typeSteps} />
           </div>
         </section>
 
         <section className="mt-8">
-          <h2 className="text-lg font-medium">Versions</h2>
-          <ul className="mt-2 flex flex-col gap-2 text-sm">
-            {versionList.map((v) => (
-              <li key={v.version} className="rounded-md border border-border p-3">
-                v{v.version} · {new Date(v.published_at).toLocaleString()} · pinned:{" "}
-                <code>{base}/v/{v.version}/all.json</code>
-              </li>
-            ))}
-          </ul>
+          <h2 className="text-lg font-medium">Version timeline</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Every publish is an immutable snapshot with its own specimen renders.
+          </p>
+          <ol className="mt-2 flex flex-col gap-3">
+            {versionList.map((v) => {
+              const assets = versionAssetUrls(row.id, v.version);
+              return (
+                <li key={v.version} className="rounded-md border-(length:--border-width) border-border p-4 text-sm">
+                  <p className="font-medium">
+                    v{v.version} · {new Date(v.published_at).toLocaleDateString()}
+                  </p>
+                  <ul className="mt-1 list-disc space-y-0.5 pl-5 text-muted-foreground">
+                    {(summaries.get(v.version) ?? []).map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                  <p className="mt-1 text-muted-foreground">
+                    Pinned: <code>{base}/v/{v.version}/all.json</code>
+                  </p>
+                  {assets ? (
+                    <div className="mt-2 overflow-hidden rounded-md border-(length:--border-width) border-border">
+                      <VersionSpecimen
+                        src={assets.sinkLight}
+                        alt={`${row.name} v${v.version} specimen`}
+                        className="w-full"
+                      />
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ol>
         </section>
       </main>
     </>

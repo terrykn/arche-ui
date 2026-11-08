@@ -2,7 +2,7 @@
   "name": "input", "title": "Input", "description": "A single-line native text input.", "category": "forms", "manifestVersion": 1,
   "native": { "element": "input", "propsInherited": true }, "slots": [{ "name": "input", "part": "input", "partType": "native", "required": true }],
   "axes": { "controlSize": { "values": ["sm", "default", "lg"], "default": "default" } }, "styleSurface": { "input": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "md" } } },
-  "tokensUsed": ["--border", "--input", "--foreground", "--muted-foreground", "--ring", "--destructive", "--radius"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
+  "tokensUsed": ["--border-width", "--input", "--foreground", "--muted-foreground", "--ring", "--destructive", "--radius"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
   "files": [{ "name": "input", "source": "src/templates/input.tsx", "target": "components/ui/input.tsx", "type": "registry:ui" }],
   "standards": { "purpose": "Collect a single line of user input.", "useWhen": ["A short free-form value is required."], "doNotUseWhen": ["The value requires a multi-line editor."], "rules": [{ "id": "input-accessible-label", "severity": "error", "check": "Associate the input with an accessible label." }] }
 }

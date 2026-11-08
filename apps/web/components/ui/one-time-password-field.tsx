@@ -5,7 +5,7 @@ import * as React from "react";
 import * as P from "@radix-ui/react-one-time-password-field";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-const otpInputVariants = cva("size-10 border border-input bg-background text-center text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50", { variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" } }, defaultVariants: {
+const otpInputVariants = cva("size-10 border-(length:--border-width) border-input bg-background text-center text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50", { variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" } }, defaultVariants: {
       radius: "md",
     } });
 function OneTimePasswordField({ className, ...props }: React.ComponentProps<typeof P.Root>) { return <P.Root data-slot="one-time-password-field" className={cn("flex gap-2", className)} {...props} />; }

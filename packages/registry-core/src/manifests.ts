@@ -26,6 +26,18 @@ export interface Manifest {
     doNotUseWhen: string[];
     rules: Array<{ id: string; severity: string; check: string }>;
   };
+  /** Present on block manifests only (Part 6): typed composition contract. */
+  composition?: {
+    contentSlots: Array<{
+      name: string;
+      kind: "text" | "text-list" | "actions" | "media" | "records";
+      required: boolean;
+      max?: number;
+    }>;
+    childComponents: Array<{ name: string; min?: number; max?: number }>;
+    headingRole: "h1" | "h2" | "none";
+    landmark?: "banner" | "main" | "contentinfo" | "navigation" | "complementary";
+  };
 }
 
 // Foundation is located without require.resolve (bundlers rewrite that call).
@@ -50,6 +62,7 @@ function locateFoundation(): string {
 export const foundationDir: string = locateFoundation();
 
 let cached: Manifest[] | null = null;
+let cachedBlocks: Manifest[] | null = null;
 
 /** All component manifests (parsed, sorted by file). Read-only: do not mutate. */
 export function getManifests(): Manifest[] {
@@ -61,6 +74,23 @@ export function getManifests(): Manifest[] {
       .map((file) => JSON.parse(readFileSync(join(manifestDir, file), "utf8")) as Manifest);
   }
   return cached;
+}
+
+/** All block manifests (Part 6; parsed, sorted by file). Read-only: do not mutate. */
+export function getBlockManifests(): Manifest[] {
+  if (!cachedBlocks) {
+    const blocksDir = join(foundationDir, "src", "blocks");
+    cachedBlocks = readdirSync(blocksDir)
+      .filter((file) => file.endsWith(".block.json"))
+      .sort()
+      .map((file) => JSON.parse(readFileSync(join(blocksDir, file), "utf8")) as Manifest);
+  }
+  return cachedBlocks;
+}
+
+/** Components + blocks: the full installable catalog. */
+export function getCatalogManifests(): Manifest[] {
+  return [...getManifests(), ...getBlockManifests()];
 }
 
 /** The token contract (tokens + contrast pairs) for editor UI generation. */

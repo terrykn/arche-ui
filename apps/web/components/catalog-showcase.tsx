@@ -38,7 +38,7 @@ import { Toolbar, ToolbarButton } from "@/components/ui/toolbar";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 function Section({ name, children }: { name: string; children: React.ReactNode }) {
-  return <section data-component={name} className="border-b py-4"><h2 className="mb-2 font-semibold">{name}</h2>{children}</section>;
+  return <section data-component={name} className="border-b-(length:--border-width) py-4"><h2 className="mb-2 font-semibold">{name}</h2>{children}</section>;
 }
 
 /**
@@ -59,7 +59,7 @@ export function CatalogShowcase({ vars, mode = "light" }: { vars: Record<string,
         <Section name="Card"><Card><CardHeader><CardTitle>Card title</CardTitle></CardHeader><CardContent>Card content</CardContent></Card></Section>
         <Section name="Checkbox"><div className="flex gap-4"><Checkbox aria-label="Checkbox default" /><Checkbox aria-label="Checkbox checked" defaultChecked /><Checkbox aria-label="Checkbox disabled" disabled /></div></Section>
         <Section name="Collapsible"><Collapsible><CollapsibleTrigger>Show content</CollapsibleTrigger><CollapsibleContent>Collapsible content</CollapsibleContent></Collapsible></Section>
-        <Section name="Context Menu"><ContextMenu><ContextMenuTrigger className="block border p-4">Context menu target</ContextMenuTrigger><ContextMenuContent><ContextMenuItem>Context first</ContextMenuItem><ContextMenuItem>Context second</ContextMenuItem></ContextMenuContent></ContextMenu></Section>
+        <Section name="Context Menu"><ContextMenu><ContextMenuTrigger className="block border-(length:--border-width) p-4">Context menu target</ContextMenuTrigger><ContextMenuContent><ContextMenuItem>Context first</ContextMenuItem><ContextMenuItem>Context second</ContextMenuItem></ContextMenuContent></ContextMenu></Section>
         <Section name="Dialog"><Dialog><DialogTrigger asChild><Button>Open dialog</Button></DialogTrigger><DialogContent><DialogTitle>Dialog title</DialogTitle><DialogDescription>Dialog description.</DialogDescription><DialogClose>Close</DialogClose></DialogContent></Dialog></Section>
         <Section name="Dropdown Menu"><DropdownMenu><DropdownMenuTrigger asChild><Button>Open menu</Button></DropdownMenuTrigger><DropdownMenuContent><DropdownMenuItem>Dropdown first</DropdownMenuItem><DropdownMenuItem>Dropdown second</DropdownMenuItem></DropdownMenuContent></DropdownMenu></Section>
         <Section name="Form"><Form onSubmit={event=>event.preventDefault()}><FormField name="email"><FormLabel>Email</FormLabel><FormControl type="email" required /><FormMessage match="valueMissing">Email required</FormMessage></FormField><FormSubmit>Submit</FormSubmit></Form></Section>

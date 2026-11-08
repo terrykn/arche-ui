@@ -88,7 +88,7 @@ export function SignInModal({
             />
           </label>
           {error ? (
-            <p role="alert" style={{ color: "#e5484d", fontSize: 13.5, marginTop: 10 }}>
+            <p role="alert" style={{ color: "var(--destructive)", fontSize: 13.5, marginTop: 10 }}>
               {error}
             </p>
           ) : null}

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getManifests, getTokenContract } from "@arche/registry-core";
+import { deriveTypeScale, getManifests, getTokenContract, TYPE_ROLES } from "@arche/registry-core";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { IdentityEditor } from "./editor";
@@ -31,13 +31,18 @@ export default async function EditIdentity({
   if (!library) {
     redirect("/dashboard/identities");
   }
-  const row = library as unknown as { name: string; payload: { dna?: unknown } };
+  const row = library as unknown as { name: string; payload: { dna?: { profile?: string }; typeScale?: string } };
   const hasDna = row.payload != null && typeof row.payload === "object" && "dna" in row.payload && row.payload.dna != null;
+  const sinkProfile = row.payload.dna?.profile === "enterprise" || row.payload.dna?.profile === "expressive" ? row.payload.dna.profile : "standard";
+  const typeSteps = typeof row.payload.typeScale === "string" ? TYPE_ROLES.map((role) => {
+    const step = deriveTypeScale(row.payload.typeScale as string, sinkProfile)[role]!;
+    return { role, sizePx: step.sizePx, lineHeight: step.lineHeight };
+  }) : [];
 
   return (
     <>
       {generated ? (
-        <p role="status" className="mx-auto mt-6 max-w-6xl rounded-md border border-border bg-card px-6 py-3 text-sm text-muted-foreground">
+        <p role="status" className="mx-auto mt-6 max-w-6xl rounded-md border-(length:--border-width) border-border bg-card px-6 py-3 text-sm text-muted-foreground">
           Draft generated — review the DNA-driven tokens below, prompt-edit or hand-tune, then publish when it looks right.
         </p>
       ) : null}
@@ -52,6 +57,7 @@ export default async function EditIdentity({
       initialPayload={row.payload as never}
       manifests={getManifests() as never}
       contract={getTokenContract() as never}
+      typeSteps={typeSteps}
       />
     </>
   );

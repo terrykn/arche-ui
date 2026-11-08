@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils.js";
 
-const checkboxVariants = cva("peer shrink-0 border border-input outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground", {
+const checkboxVariants = cva("peer shrink-0 border-(length:--border-width) border-input outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground", {
   variants: { size: { sm: "size-3", default: "size-4", lg: "size-5" }, radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" } },
   defaultVariants: { size: "default", radius: "sm" },
 });

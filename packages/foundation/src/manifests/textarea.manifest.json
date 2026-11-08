@@ -2,7 +2,7 @@
   "name": "textarea", "title": "Textarea", "description": "A native multiline text input.", "category": "forms", "manifestVersion": 1,
   "native": { "element": "textarea", "propsInherited": true }, "slots": [{ "name": "textarea", "part": "textarea", "partType": "native", "required": true }], "axes": {},
   "styleSurface": { "textarea": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "md" } } },
-  "tokensUsed": ["--border", "--input", "--foreground", "--muted-foreground", "--ring", "--destructive", "--radius"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
+  "tokensUsed": ["--border-width", "--input", "--foreground", "--muted-foreground", "--ring", "--destructive", "--radius"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
   "files": [{ "name": "textarea", "source": "src/templates/textarea.tsx", "target": "components/ui/textarea.tsx", "type": "registry:ui" }],
   "standards": { "purpose": "Collect multiline text.", "useWhen": ["The answer may span multiple lines."], "doNotUseWhen": ["A single short value is expected."], "rules": [{ "id": "textarea-accessible-label", "severity": "error", "check": "Associate the textarea with an accessible label." }] }
 }

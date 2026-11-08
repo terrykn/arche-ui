@@ -4,7 +4,9 @@ import * as React from "react";
 import Link from "next/link";
 import { ProtoAurora, ProtoNav, ProtoFooter } from "@/components/proto-shell";
 import { AcmeTasks } from "@/components/acme-tasks";
+import { BlockPreview } from "@/components/block-preview";
 import { DEMO_IDENTITIES } from "@/components/demo-identities";
+import { LatestIdentities } from "@/components/latest-identities";
 import { writeDemoIndex } from "@/lib/demo-sync";
 import { Play, Pause, ArrowRight } from "lucide-react";
 
@@ -20,7 +22,7 @@ const COMP_CHIPS = [
   "Input",
   "Switch",
   "Avatar",
-  "Sidebar nav",
+  "Table",
 ];
 
 export default function Examples() {
@@ -152,6 +154,25 @@ export default function Examples() {
               </Link>
             </div>
           </section>
+          <section className="proto-section" aria-label="Blocks">
+            <h2>Sections, not just components</h2>
+            <p className="proto-lede">
+              Blocks are complete page sections composed from the same catalog — installed with the same CLI and
+              re-skinned by every identity. Live previews under the site identity.
+            </p>
+            <div className="proto-browser">
+              <div className="proto-chrome">
+                <span className="proto-url">blocks/hero</span>
+              </div>
+              <BlockPreview name="hero" />
+            </div>
+            <div className="proto-cta-row" style={{ marginTop: 22 }}>
+              <Link href="/blocks" className="proto-btn proto-btn-dark">
+                Browse all 20 blocks <ArrowRight size={15} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
+              </Link>
+            </div>
+          </section>
+          <LatestIdentities />
         </div>
       </div>
       <ProtoFooter />

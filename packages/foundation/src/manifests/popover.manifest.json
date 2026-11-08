@@ -57,7 +57,7 @@
     }
   },
   "tokensUsed": [
-    "--border",
+    "--border-width",
     "--popover",
     "--popover-foreground",
     "--radius",

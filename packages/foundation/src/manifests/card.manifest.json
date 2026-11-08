@@ -80,7 +80,7 @@
     }
   },
   "tokensUsed": [
-    "--border",
+    "--border-width",
     "--card",
     "--card-foreground",
     "--muted-foreground",

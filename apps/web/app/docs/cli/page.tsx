@@ -8,7 +8,7 @@ export default function CliDocs() {
           (login, tokens, entitlement). Installation mechanics are shadcn&apos;s — Arche never
           writes component files itself.
         </p>
-        <pre className="overflow-x-auto rounded-md border border-border bg-card p-3 text-xs">{`arche login [--app <url>] [--token | --token-env]
+        <pre className="overflow-x-auto rounded-md border-(length:--border-width) border-border bg-card p-3 text-xs">{`arche login [--app <url>] [--token | --token-env]
   Sign in. Default is the browser loopback flow; --token pastes the
   registry token (headless), --token-env reads ARCHE_TOKEN (CI).
   --app (or ARCHE_TOKEN's cousin ARCHE_APP_URL) picks the app origin.

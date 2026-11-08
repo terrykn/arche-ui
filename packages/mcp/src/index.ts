@@ -1,4 +1,4 @@
-export type { McpBackend, LibrarySummary, IdentityResult, PublishOutcome, GenerateOutcome } from "./backend.js";
+export type { McpBackend, LibrarySummary, IdentityResult, PresentationRef, PublishOutcome, GenerateOutcome } from "./backend.js";
 export { buildToolRegistry } from "./tools.js";
 export type { ToolDef } from "./tools.js";
 export { checkPlacement } from "./check.js";

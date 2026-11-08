@@ -70,7 +70,7 @@ const dialogContentVariants = cva(
       },
       border: {
         none: "border-none",
-        sm: "border",
+        sm: "border-(length:--border-width)",
       },
       // style-surface knob: token ref to --radius with a scale list per manifest
       radius: {

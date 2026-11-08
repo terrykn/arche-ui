@@ -1,0 +1,21 @@
+{
+  "name": "dashboard-home",
+  "title": "Dashboard home",
+  "description": "The operations overview: KPI cards, a capacity bar, and the latest activity beside it.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [{ "name": "title", "part": "text", "required": false }, { "name": "kpis", "part": "records", "required": true }, { "name": "activity", "part": "records", "required": true }],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": ["--muted-foreground"],
+  "dependencies": [],
+  "registryDependencies": ["utils", "card", "badge", "avatar", "progress", "separator"],
+  "files": [{ "name": "dashboard-home", "source": "src/blocks/dashboard-home.tsx", "target": "components/blocks/dashboard-home.tsx", "type": "registry:block" }],
+  "composition": {
+    "contentSlots": [{ "name": "title", "kind": "text", "required": false }, { "name": "kpis", "kind": "records", "required": true }, { "name": "activity", "kind": "records", "required": true }],
+    "childComponents": [{ "name": "card", "min": 1 }, { "name": "badge", "min": 0 }, { "name": "avatar", "min": 0 }, { "name": "progress", "min": 0, "max": 1 }, { "name": "separator", "min": 0 }],
+    "headingRole": "h1"
+  },
+  "standards": { "purpose": "Answer 'how is the operation doing' in one glance.", "useWhen": ["An app opens on its operational overview."], "doNotUseWhen": ["KPIs are not wired to real data — never show static numbers as live."], "rules": [{ "id": "dashboard-home-kpi-deltas", "severity": "warning", "check": "Every KPI states its unit and time window; deltas name the comparison period." }] }
+}

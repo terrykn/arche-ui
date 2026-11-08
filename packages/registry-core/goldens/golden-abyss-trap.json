@@ -131,7 +131,7 @@
       "texture": "none",
       "warmth": 0.2
     },
-    "compilerVersion": 2,
+    "compilerVersion": 3,
     "palette": {
       "accentHue": 210,
       "neutralHue": 240,
@@ -246,6 +246,10 @@
       "--border": {
         "$type": "color",
         "$value": "oklch(0.56 0.006 223)"
+      },
+      "--border-width": {
+        "$type": "dimension",
+        "$value": "2px"
       },
       "--card": {
         "$type": "color",
@@ -390,6 +394,10 @@
       "--border": {
         "$type": "color",
         "$value": "oklch(0.885 0.005 223)"
+      },
+      "--border-width": {
+        "$type": "dimension",
+        "$value": "2px"
       },
       "--card": {
         "$type": "color",

@@ -30,7 +30,7 @@ export function TokenManager({ hasToken, prefix }: { hasToken: boolean; prefix: 
         <p className="text-sm text-muted-foreground">No registry token issued.</p>
       )}
       {raw ? (
-        <pre className="mt-2 overflow-x-auto rounded-md border border-border bg-card p-3 text-xs">
+        <pre className="mt-2 overflow-x-auto rounded-md border-(length:--border-width) border-border bg-card p-3 text-xs">
           {raw}
         </pre>
       ) : null}
@@ -55,7 +55,7 @@ export function TokenManager({ hasToken, prefix }: { hasToken: boolean; prefix: 
         </button>
         {hasToken ? (
           <form action={revokeTokenAction}>
-            <button type="submit" className="rounded-md border border-border px-3 py-1.5 text-sm">
+            <button type="submit" className="rounded-md border-(length:--border-width) border-border px-3 py-1.5 text-sm">
               Revoke
             </button>
           </form>

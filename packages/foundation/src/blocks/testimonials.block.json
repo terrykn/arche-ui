@@ -1,0 +1,21 @@
+{
+  "name": "testimonials",
+  "title": "Testimonials",
+  "description": "Customer quotes with named sources and roles, as cards or a single featured quote.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [{ "name": "headline", "part": "text", "required": false }, { "name": "quotes", "part": "records", "required": true }],
+  "axes": { "layout": { "values": ["grid", "single"], "default": "grid" } },
+  "styleSurface": {},
+  "tokensUsed": ["--foreground", "--muted-foreground"],
+  "dependencies": ["class-variance-authority"],
+  "registryDependencies": ["utils", "card", "avatar"],
+  "files": [{ "name": "testimonials", "source": "src/blocks/testimonials.tsx", "target": "components/blocks/testimonials.tsx", "type": "registry:block" }],
+  "composition": {
+    "contentSlots": [{ "name": "headline", "kind": "text", "required": false }, { "name": "quotes", "kind": "records", "required": true }],
+    "childComponents": [{ "name": "card", "min": 1 }, { "name": "avatar", "min": 0 }],
+    "headingRole": "h2"
+  },
+  "standards": { "purpose": "Let real customers make the case in their own words.", "useWhen": ["Named customers gave quotable, specific praise."], "doNotUseWhen": ["No customer agreed to be quoted — never fabricate testimonials."], "rules": [{ "id": "testimonials-no-fabricated-quotes", "severity": "error", "check": "Every quote carries a named source with a role; anonymous or invented quotes are rejected." }] }
+}

@@ -14,7 +14,7 @@ export default function McpDocs() {
         </p>
         <h2 className="mt-2 text-lg font-medium">Local server (Claude Code / Cursor)</h2>
         <p>Point the client at the built workspace package (npm publishing is out of scope):</p>
-        <pre className="overflow-x-auto rounded-md border border-border bg-card p-3 text-xs">{`// Claude Code: ~/.claude.json (or project .mcp.json)
+        <pre className="overflow-x-auto rounded-md border-(length:--border-width) border-border bg-card p-3 text-xs">{`// Claude Code: ~/.claude.json (or project .mcp.json)
 // ARCHE_MCP_PAYLOADS points at a payload file or a directory of payloads.
 {
   "mcpServers": {
@@ -45,7 +45,7 @@ export default function McpDocs() {
           1. Dashboard → Settings → MCP tokens → Issue MCP token (raw shown once). 2. Configure the
           client with the Streamable HTTP URL and the token:
         </p>
-        <pre className="overflow-x-auto rounded-md border border-border bg-card p-3 text-xs">{`// .mcp.json (hosted)
+        <pre className="overflow-x-auto rounded-md border-(length:--border-width) border-border bg-card p-3 text-xs">{`// .mcp.json (hosted)
 {
   "servers": {
     "arche": {
@@ -61,7 +61,7 @@ export default function McpDocs() {
         <h2 className="mt-2 text-lg font-medium">Tools reference (generated from the shipped registry)</h2>
         <ul className="flex flex-col gap-2">
           {tools.map((t) => (
-            <li key={t.name} className="rounded-md border border-border p-3">
+            <li key={t.name} className="rounded-md border-(length:--border-width) border-border p-3">
               <code className="text-xs font-semibold">{t.name}</code>
               <p className="mt-1 text-sm text-muted-foreground">{t.description}</p>
             </li>

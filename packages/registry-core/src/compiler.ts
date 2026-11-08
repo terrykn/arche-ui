@@ -139,6 +139,21 @@ function voiceOf(axes: DnaObject, palette: DnaPalette): Voice {
 // ---------------------------------------------------------------------------
 
 /**
+ * Border-width mapping (border-width-profile-bounds). Default 1px; maps
+ * upward only on strong sharpness/pixel signals; formality forces 1px and
+ * enterprise caps at 1px regardless of axes.
+ */
+function borderWidthFor(axes: DnaObject, profile: GenerationProfile): string {
+  if (axes.formality >= 0.8 || profile === "enterprise") return "1px";
+  const strong =
+    axes.sharpness >= 0.8 ||
+    (axes.retroFuturism >= 0.7 && axes.playfulness >= 0.5) ||
+    axes.material === "pixel";
+  if (!strong) return "1px";
+  return profile === "expressive" ? "3px" : "2px";
+}
+
+/**
  * sharpness 0 → profile bound, 1 → no radius. The bound is the profile's
  * (radius-profile-bounds): enterprise 0.5rem, standard 1rem, expressive 1.5rem.
  */
@@ -368,6 +383,7 @@ function buildModeTokens(
     "--input": color(scaleColor(N, NC, dark ? 8 : 3)),
     "--ring": color(scaleColor(P, C, dark ? 7 : 6)),
     "--radius": { $type: "dimension", $value: radiusFor(axes.sharpness, profile) },
+    "--border-width": { $type: "dimension", $value: borderWidthFor(axes, profile) },
   };
   chartHues.forEach((hue, i) => {
     tokens[`--chart-${i + 1}`] = color(scaleColor(hue, chartChroma, dark ? 7 : 5));
@@ -827,6 +843,17 @@ function repairDesign(
             // leave for the contract validator
           }
         }
+      }
+    }
+    // border-width-profile-bounds (clamp to the profile max; enterprise never exceeds 1px)
+    const borderBound = profile === "enterprise" ? 1 : profile === "expressive" ? 3 : 2;
+    const borderWidth = set["--border-width"];
+    if (borderWidth && typeof borderWidth.$value === "string") {
+      const match = borderWidth.$value.match(/^(\d+(?:\.\d+)?)px$/);
+      if (match && Number(match[1]) > borderBound) {
+        const before = borderWidth.$value;
+        borderWidth.$value = `${borderBound}px`;
+        adjustments.push({ mode, token: "--border-width", compiledValue: before, adjustedValue: `${borderBound}px`, ruleId: "border-width-profile-bounds" });
       }
     }
     // radius-profile-bounds

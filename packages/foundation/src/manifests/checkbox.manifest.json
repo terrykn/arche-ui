@@ -4,7 +4,7 @@
   "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "indicator", "part": "Indicator", "required": true }],
   "axes": { "size": { "values": ["sm", "default", "lg"], "default": "default" } },
   "styleSurface": { "root": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "sm" } } },
-  "tokensUsed": ["--border", "--input", "--ring", "--primary", "--primary-foreground", "--radius"],
+  "tokensUsed": ["--border-width", "--input", "--ring", "--primary", "--primary-foreground", "--radius"],
   "dependencies": ["@radix-ui/react-checkbox", "class-variance-authority", "lucide-react"], "registryDependencies": ["utils"],
   "files": [{ "name": "checkbox", "source": "src/templates/checkbox.tsx", "target": "components/ui/checkbox.tsx", "type": "registry:ui" }],
   "standards": { "purpose": "Select or clear an independent option.", "useWhen": ["Multiple options can be selected independently."], "doNotUseWhen": ["Only one option is allowed from a group."], "rules": [{ "id": "checkbox-accessible-label", "severity": "error", "check": "Associate every checkbox with an accessible label." }] }

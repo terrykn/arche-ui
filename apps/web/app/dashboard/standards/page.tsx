@@ -10,7 +10,7 @@ export default function DashboardStandards() {
       </p>
       <div className="mt-6 flex flex-col gap-4">
         {manifests.map((manifest) => (
-          <section key={manifest.name} className="rounded-lg border border-border p-4">
+          <section key={manifest.name} className="rounded-lg border-(length:--border-width) border-border p-4">
             <h2 className="font-medium">{manifest.title}</h2>
             <p className="mt-1 text-sm text-muted-foreground">{manifest.standards.purpose}</p>
             <ul className="mt-2 flex flex-col gap-1 text-sm">

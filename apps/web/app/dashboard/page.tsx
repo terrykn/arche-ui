@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { CHANGELOG } from "@/lib/changelog";
 
 export default async function DashboardHome() {
   const supabase = await createClient();
@@ -19,6 +20,22 @@ export default async function DashboardHome() {
     .select("id,name,slug,visibility,updated_at")
     .order("updated_at", { ascending: false });
 
+  const latest = CHANGELOG[0]!;
+  const whatsNew = (
+    <Card className="mt-8">
+      <CardHeader>
+        <CardTitle className="text-lg">What&apos;s new</CardTitle>
+        <CardDescription>
+          {latest.date} — {latest.title}
+        </CardDescription>
+      </CardHeader>
+      <CardFooter>
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/changelog">Read the changelog</Link>
+        </Button>
+      </CardFooter>
+    </Card>
+  );
   if (!libraries || libraries.length === 0) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-16 text-center">
@@ -35,6 +52,7 @@ export default async function DashboardHome() {
             </Button>
           </CardFooter>
         </Card>
+        {whatsNew}
       </main>
     );
   }
@@ -48,7 +66,8 @@ export default async function DashboardHome() {
         </Button>
       </div>
       <Separator className="my-6" />
-      <ul className="grid gap-4">
+      {whatsNew}
+      <ul className="mt-8 grid gap-4">
         {libraries.map((library) => (
           <li key={library.id}>
             <Card>

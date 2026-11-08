@@ -1,5 +1,7 @@
 import { z } from "zod";
 import {
+  getBlockManifests,
+  getCatalogManifests,
   getManifests,
   getTokenContract,
   serializeStable,
@@ -33,6 +35,14 @@ export const GetComponentSchema = z.object({
   name: z.string().min(1).describe("Component name, e.g. button or dialog"),
 });
 
+export const ListBlocksSchema = z.object({
+  category: z.string().optional().describe("Filter by block category: marketing or application"),
+});
+
+export const GetBlockSchema = z.object({
+  name: z.string().min(1).describe("Block name, e.g. hero or dashboard-home"),
+});
+
 export const GetTokenContractSchema = z.object({});
 
 export const ListLibrariesSchema = z.object({});
@@ -48,7 +58,7 @@ export const ValidateIdentitySchema = z.object({
 });
 
 export const CheckPlacementSchema = z.object({
-  component: z.string().min(1).describe("Component to place, e.g. button"),
+  component: z.string().min(1).describe("Component or block to place, e.g. button or hero"),
   variant: z.string().optional(),
   purpose: z.string().optional().describe("Function-fit class: navigation, action, confirmation, data-entry, ..."),
   primaryActionsInRegion: z.number().int().min(0).optional(),
@@ -57,6 +67,7 @@ export const CheckPlacementSchema = z.object({
   hasAccessibleLabel: z.boolean().optional(),
   insideDialog: z.boolean().optional(),
   targetSizePx: z.number().optional(),
+  pageComponents: z.array(z.string()).optional().describe("Names already on the page, for page-level rules (one h1, one header)"),
 });
 
 const IdentityEditSchema = z.object({
@@ -144,6 +155,29 @@ export function buildToolRegistry(): ToolDef[] {
       },
     },
     {
+      name: "list_blocks",
+      description: "List every Arche installable block (name, title, category). Filter by marketing or application.",
+      inputSchema: ListBlocksSchema,      handler: async (args) => {
+            const { category } = ListBlocksSchema.parse(args);
+            return textResult({
+              blocks: getBlockManifests()
+                .filter((m) => !category || m.category === category)
+                .map((m) => ({ name: m.name, title: m.title, category: m.category, description: m.description })),
+            });
+          },
+    },
+    {
+      name: "get_block",
+      description: "Read a block's full composition contract: content slots, child components, layout axes, heading role, install command. Call before installing or composing it.",
+      inputSchema: GetBlockSchema,
+      handler: async (args) => {
+        const { name } = GetBlockSchema.parse(args);
+        const manifest = getBlockManifests().find((m) => m.name === name);
+        if (!manifest) throw new Error(`unknown block '${name}'`);
+        return textResult(manifest);
+      },
+    },
+    {
       name: "get_token_contract",
       description: "Read the DTCG token vocabulary: names, types, contrast pairs. Call before choosing token values.",
       inputSchema: GetTokenContractSchema,
@@ -184,13 +218,13 @@ export function buildToolRegistry(): ToolDef[] {
     },
     {
       name: "check_placement",
-      description: "Call before writing code that places an Arche component. Reports every standards rule plus pass/violation/not-evaluated per rule. A violation is a stop-and-reconsider signal: surface it to your user.",
+      description: "Call before writing code that places an Arche component or block. Reports every standards rule plus pass/violation/not-evaluated per rule. A violation is a stop-and-reconsider signal: surface it to your user.",
       inputSchema: CheckPlacementSchema,
       handler: async (args) => {
         const parsed = CheckPlacementSchema.parse(args);
         const { component, ...ctx } = parsed;
-        if (!getManifests().some((m) => m.name === component)) {
-          throw new Error(`unknown component '${component}'`);
+        if (!getCatalogManifests().some((m) => m.name === component)) {
+          throw new Error(`unknown component or block '${component}'`);
         }
         return textResult(checkPlacement(component, ctx as PlacementContext));
       },

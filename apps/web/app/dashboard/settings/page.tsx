@@ -68,7 +68,7 @@ export default async function SettingsPage({
           <input
             name="username"
             defaultValue={row.username}
-            className="rounded-md border border-input bg-background px-3 py-2"
+            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -76,7 +76,7 @@ export default async function SettingsPage({
           <select
             name="theme"
             defaultValue={row.theme}
-            className="rounded-md border border-input bg-background px-3 py-2"
+            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
           >
             <option value="system">System</option>
             <option value="light">Light</option>

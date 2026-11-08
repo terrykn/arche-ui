@@ -81,6 +81,23 @@ test("repair records rule ids in meta.adjustments", () => {
   });
   const ids = new Set(compiled.meta.adjustments.map((a) => a.ruleId).filter(Boolean));
   assert.ok(ids.has("color-solid-chroma-band"), `expected a solid-band repair, got [${[...ids]}]`);
+  // Sharp pixel DNA under expressive compiles to 3px border width (recorded, compliant).
+  const sharp = compileIdentity({
+    name: "t-borderwidth", source: { type: "manual" },
+    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
+    palette: { primaryHue: 300, accentHue: 100, neutralHue: 305 },
+    profile: "expressive", base,
+  });
+  assert.equal(sharp.tokens.light["--border-width"].$value, "3px", "sharp pixel expressive DNA maps to 3px");
+  assert.deepEqual(rulesFor(sharp), [], "3px expressive payload has no enforce findings");
+  // Same DNA under enterprise caps at 1px.
+  const sharpEnt = compileIdentity({
+    name: "t-borderwidth-ent", source: { type: "manual" },
+    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
+    palette: { primaryHue: 300, accentHue: 100, neutralHue: 305 },
+    profile: "enterprise", base,
+  });
+  assert.equal(sharpEnt.tokens.light["--border-width"].$value, "1px", "enterprise caps border width at 1px");
 });
 
 test("per-rule pass + violation cases", () => {
@@ -127,6 +144,18 @@ test("per-rule pass + violation cases", () => {
   // radius-profile-bounds
   assert.ok(!hasRule(base, "radius-profile-bounds"));
   assert.ok(hasRule(ent(withToken(base, "light", "--radius", { $type: "dimension", $value: "2rem" })), "radius-profile-bounds"));
+
+  // border-width-profile-bounds (default fixture carries 1px: fine everywhere;
+  // 2px violates enterprise only; out-of-set values fail at the contract)
+  assert.ok(!hasRule(base, "border-width-profile-bounds"));
+  const w2 = { $type: "dimension", $value: "2px" };
+  assert.ok(hasRule(ent(withToken(base, "light", "--border-width", w2)), "border-width-profile-bounds"));
+  assert.ok(!hasRule(withToken(base, "light", "--border-width", w2), "border-width-profile-bounds"));
+  const w3exp = { ...withToken(base, "light", "--border-width", { $type: "dimension", $value: "3px" }) };
+  w3exp.dna = { ...w3exp.dna, profile: "expressive" };
+  assert.ok(!hasRule(w3exp, "border-width-profile-bounds"));
+  const w4 = withToken(base, "light", "--border-width", { $type: "dimension", $value: "4px" });
+  assert.equal(validateIdentity(w4).ok, false, "out-of-set border width fails the contract");
 
   // motion-bounds (duration + closed easing set)
   assert.ok(!hasRule(base, "motion-bounds"));

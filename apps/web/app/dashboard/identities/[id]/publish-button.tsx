@@ -37,7 +37,7 @@ export function PublishButton({ libraryId }: { libraryId: string }) {
         <p className="mt-2 text-sm text-muted-foreground">Published v{version}.</p>
       ) : null}
       {issues ? (
-        <ul className="mt-3 rounded-md border border-destructive/40 bg-card p-3 text-sm">
+        <ul className="mt-3 rounded-md border-(length:--border-width) border-destructive/40 bg-card p-3 text-sm">
           {issues.map((issue) => (
             <li key={issue.path} className="mt-1 first:mt-0">
               <code className="text-destructive">{issue.path}</code>: {issue.message}

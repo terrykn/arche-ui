@@ -19,7 +19,7 @@ export default async function IdentitiesPage() {
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {fixtures.map((fixture) => (
-            <div key={fixture.key} className="rounded-xl border border-border p-3">
+            <div key={fixture.key} className="rounded-xl border-(length:--border-width) border-border p-3">
               <div className="mb-2 flex items-baseline justify-between">
                 <h2 className="font-medium">{fixture.payload.meta.name}</h2>
                 <span className="text-xs text-muted-foreground">“{fixture.prompt}” · fixture</span>
@@ -33,7 +33,7 @@ export default async function IdentitiesPage() {
             <h2 className="font-display mt-12 text-2xl">Published by the community</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {published.map((library) => (
-                <div key={library.id} className="rounded-xl border border-border p-4">
+                <div key={library.id} className="rounded-xl border-(length:--border-width) border-border p-4">
                   <Link
                     href={`/p/${library.profiles.username}/${library.slug}`}
                     className="font-medium underline-offset-4 hover:underline"

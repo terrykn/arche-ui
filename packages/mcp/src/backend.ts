@@ -8,10 +8,25 @@ export interface LibrarySummary {
   name?: string;
 }
 
+export interface PresentationRef {
+  imagery: string;
+  motion: {
+    feel: string;
+    durationFast: string | null;
+    durationNormal: string | null;
+    guidance: string[];
+  };
+  specimens: { sinkLight: string; sinkDark: string; og: string } | null;
+  antiSlop: Array<{ rule: string; guidance: string }>;
+  note: string;
+}
+
 export interface IdentityResult {
   payload: ArcheIdentity;
   /** Version that was served (null for local files / unpublished drafts). */
   version: number | null;
+  /** Deterministic presentation guidance (Part 5.2) — zero model calls. */
+  presentation: PresentationRef;
   install: {
     registryUrl: string | null;
     commands: string[];

@@ -31,7 +31,7 @@ export function ProtoNav() {
   const [signInOpen, setSignInOpen] = React.useState(false);
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-border bg-card/82 backdrop-blur-md">
+      <header className="proto-focus-scope sticky top-0 z-40 border-b-(length:--border-width) border-border bg-card/82 backdrop-blur-md">
         <div className="proto-wrap flex h-[62px] items-center justify-between">
           <Link
             href="/"
@@ -75,32 +75,68 @@ export function ProtoNav() {
   );
 }
 
-const FOOTER_LINKS = [
-  { href: "/docs", label: "Docs" },
-  { href: "/examples", label: "Examples" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/sign-in", label: "Sign in" },
+const FOOTER_GROUPS: Array<{ title: string; links: Array<{ href: string; label: string }> }> = [
+  {
+    title: "Product",
+    links: [
+      { href: "/examples", label: "Examples" },
+      { href: "/kitchen-sink", label: "Kitchen Sink" },
+      { href: "/pricing", label: "Pricing" },
+      { href: "/changelog", label: "Changelog" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { href: "/docs", label: "Docs" },
+      { href: "/components", label: "Components" },
+      { href: "/docs/mcp", label: "MCP" },
+      { href: "/accessibility", label: "Accessibility" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [{ href: "/about", label: "About" }],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/privacy", label: "Privacy" },
+      { href: "/terms", label: "Terms" },
+    ],
+  },
 ];
 
 export function ProtoFooter() {
   const pathname = usePathname();
   return (
-    <footer className="border-t border-border py-6 text-sm text-muted-foreground">
-      <div className="proto-wrap flex flex-wrap items-center justify-between gap-4">
-        <span>AR Arche © 2026 Arche UI — prototype · Styled by the Arche identity (light + dark)</span>
-        <nav className="flex items-center gap-1" aria-label="Footer">
-          {FOOTER_LINKS.map((link) =>
-            link.href === "/sign-in" ? (
-              <FooterSignIn key={link.href} label={link.label} current={pathname} />
-            ) : (
-              <Button key={link.href} variant="link" size="sm" asChild>
-                <Link href={link.href}>{link.label}</Link>
-              </Button>
-            ),
-          )}
-        </nav>
+    <footer className="proto-focus-scope border-t-(length:--border-width) border-border py-10 text-sm text-muted-foreground">
+      <div className="proto-wrap grid gap-8 md:grid-cols-[1fr_repeat(4,minmax(0,auto))]">
+        <div>
+          <p className="font-extrabold text-foreground">AR Arche</p>
+          <p className="mt-2 max-w-xs">© 2026 Arche UI — prototype · Styled by the Arche identity (light + dark)</p>
+        </div>
+        {FOOTER_GROUPS.map((group) => (
+          <nav key={group.title} aria-label={`Footer — ${group.title}`}>
+            <p className="font-semibold text-foreground">{group.title}</p>
+            <ul className="mt-2 flex flex-col gap-1.5">
+              {group.links.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="hover:text-foreground hover:underline">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {group.title === "Company" ? (
+                <li>
+                  <FooterSignIn label="Sign in" current={pathname} />
+                </li>
+              ) : null}
+            </ul>
+          </nav>
+        ))}
       </div>
-      <Separator className="mt-4" />
+      <Separator className="mt-8" />
     </footer>
   );
 }
@@ -109,9 +145,9 @@ function FooterSignIn({ label, current }: { label: string; current: string }) {
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <Button variant="link" size="sm" onClick={() => setOpen(true)}>
+      <button type="button" onClick={() => setOpen(true)} className="hover:text-foreground hover:underline">
         {label}
-      </Button>
+      </button>
       <SignInModal open={open} onClose={() => setOpen(false)} redirectTo={current} />
     </>
   );

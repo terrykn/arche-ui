@@ -36,7 +36,7 @@ export function PromptEdit({ libraryId }: { libraryId: string }) {
   };
 
   return (
-    <section className="rounded-lg border border-border p-4">
+    <section className="rounded-lg border-(length:--border-width) border-border p-4">
       <h2 className="font-medium">Prompt edit</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Describe the change (“warmer, less playful”) — only the implicated DNA
@@ -50,7 +50,7 @@ export function PromptEdit({ libraryId }: { libraryId: string }) {
             onChange={(e) => setPrompt(e.target.value)}
             maxLength={280}
             placeholder="make it calmer and more formal"
-            className="rounded-md border border-input bg-background px-3 py-2"
+            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
           />
         </label>
         <button

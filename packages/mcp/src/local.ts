@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSy
 import { basename, join, resolve } from "node:path";
 import { createHash } from "node:crypto";
 import {
+  buildPresentation,
   buildRegistry,
   serializeStable,
   validateIdentity,
@@ -57,6 +58,7 @@ export class LocalBackend implements McpBackend {
     return {
       payload,
       version: null,
+      presentation: buildPresentation(payload),
       install: {
         registryUrl: null,
         commands: [`arche install --library ${library}`, `arche check`],

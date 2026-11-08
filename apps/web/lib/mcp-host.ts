@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import {
+  buildPresentation,
   buildRegistry,
   serializeStable,
   validateIdentity,
@@ -142,9 +143,17 @@ export class HostedBackend implements McpBackend {
       if (v?.payload) servedPayload = v.payload;
     }
     const draft = servedPayload;
+    const assetBase = process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/identity-assets`
+      : undefined;
     return {
       payload: draft,
       version: servedVersion,
+      presentation: buildPresentation(draft, {
+        assetBaseUrl: assetBase,
+        libraryId: row.id,
+        version: servedVersion,
+      }),
       install: {
         registryUrl: `${this.baseUrl}/r/${resolved.ownerUsername}/${row.slug}`,
         commands: [

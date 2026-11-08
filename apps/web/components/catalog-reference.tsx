@@ -16,7 +16,7 @@ export function ComponentIndex({ manifests }: { manifests: Manifest[] }) {
           <h2 className="font-display text-xl capitalize">{category}</h2>
           <ul className="mt-3 grid gap-3 sm:grid-cols-2">
             {items.map((manifest) => (
-              <li key={manifest.name} className="rounded-lg border border-border bg-card p-4 text-card-foreground">
+              <li key={manifest.name} className="rounded-lg border-(length:--border-width) border-border bg-card p-4 text-card-foreground">
                 <Link href={`/components/${manifest.name}`} className="font-medium underline-offset-4 hover:underline">
                   {manifest.title}
                 </Link>

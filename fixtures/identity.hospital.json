@@ -129,6 +129,10 @@
         "$type": "color",
         "$value": "oklch(0.50 0.06 250)"
       },
+      "--border-width": {
+        "$type": "dimension",
+        "$value": "1px"
+      },
       "--radius": {
         "$type": "dimension",
         "$value": "0.75rem"
@@ -272,6 +276,10 @@
       "--chart-5": {
         "$type": "color",
         "$value": "oklch(0.66 0.06 250)"
+      },
+      "--border-width": {
+        "$type": "dimension",
+        "$value": "1px"
       },
       "--radius": {
         "$type": "dimension",

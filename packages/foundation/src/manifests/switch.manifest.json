@@ -1,6 +1,6 @@
 {
   "name": "switch", "title": "Switch", "description": "An on/off control.", "category": "forms", "manifestVersion": 1,
-  "primitive": { "package": "@radix-ui/react-switch", "parts": ["Root", "Thumb"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "thumb", "part": "Thumb", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--border", "--ring", "--primary", "--input", "--background"],
+  "primitive": { "package": "@radix-ui/react-switch", "parts": ["Root", "Thumb"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "thumb", "part": "Thumb", "required": true }], "axes": {}, "styleSurface": {}, "tokensUsed": ["--border-width", "--ring", "--primary", "--input", "--background"],
   "dependencies": ["@radix-ui/react-switch"], "registryDependencies": ["utils"], "files": [{ "name": "switch", "source": "src/templates/switch.tsx", "target": "components/ui/switch.tsx", "type": "registry:ui" }],
   "standards": { "purpose": "Change a persistent on/off setting.", "useWhen": ["The change takes effect immediately."], "doNotUseWhen": ["An option is selected for later submission."], "rules": [{ "id": "switch-accessible-label", "severity": "error", "check": "Provide a clear accessible label for the setting." }] }
 }

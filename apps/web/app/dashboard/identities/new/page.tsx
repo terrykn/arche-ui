@@ -14,12 +14,12 @@ export default async function NewIdentity({
         drafts you edit before publishing.
       </p>
       {error ? (
-        <p role="alert" className="mt-4 rounded-md border border-destructive/40 bg-card p-3 text-sm text-destructive">
+        <p role="alert" className="mt-4 rounded-md border-(length:--border-width) border-destructive/40 bg-card p-3 text-sm text-destructive">
           {error}
         </p>
       ) : null}
 
-      <section className="mt-8 rounded-lg border border-border p-4">
+      <section className="mt-8 rounded-lg border-(length:--border-width) border-border p-4">
         <h2 className="font-medium">Describe a vibe</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           A phrase like “90s arcade” or “quiet hospital calm” becomes design DNA.
@@ -32,7 +32,7 @@ export default async function NewIdentity({
               required
               maxLength={120}
               placeholder="ember glow"
-              className="rounded-md border border-input bg-background px-3 py-2"
+              className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
@@ -41,7 +41,7 @@ export default async function NewIdentity({
               name="name"
               maxLength={80}
               placeholder="My identity"
-              className="rounded-md border border-input bg-background px-3 py-2"
+              className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
             />
           </label>
           <button type="submit" className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">
@@ -50,7 +50,7 @@ export default async function NewIdentity({
         </form>
       </section>
 
-      <section className="mt-4 rounded-lg border border-border p-4">
+      <section className="mt-4 rounded-lg border-(length:--border-width) border-border p-4">
         <h2 className="font-medium">Start blank</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           From the Arche Default payload — manifest defaults, monochrome tokens.
@@ -63,17 +63,17 @@ export default async function NewIdentity({
               required
               maxLength={80}
               placeholder="My identity"
-              className="rounded-md border border-input bg-background px-3 py-2"
+              className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Visibility
-            <select name="visibility" className="rounded-md border border-input bg-background px-3 py-2">
+            <select name="visibility" className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2">
               <option value="private">Private</option>
               <option value="public">Public</option>
             </select>
           </label>
-          <button type="submit" className="rounded-md border border-border px-4 py-2 text-sm">
+          <button type="submit" className="rounded-md border-(length:--border-width) border-border px-4 py-2 text-sm">
             Create and edit
           </button>
         </form>

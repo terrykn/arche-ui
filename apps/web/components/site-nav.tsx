@@ -16,7 +16,7 @@ export async function SiteNav() {
   } = await supabase.auth.getUser();
 
   return (
-    <header className="border-b border-border">
+    <header className="border-b-(length:--border-width) border-border">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
         <Link href="/" className="font-display text-xl">
           Arche UI
@@ -35,7 +35,7 @@ export async function SiteNav() {
               Dashboard
             </Link>
           ) : (
-            <Link href="/sign-in" className="rounded-md border border-border px-3 py-1.5 text-sm">
+            <Link href="/sign-in" className="rounded-md border-(length:--border-width) border-border px-3 py-1.5 text-sm">
               Sign in
             </Link>
           )}

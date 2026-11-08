@@ -1,0 +1,21 @@
+{
+  "name": "hero",
+  "title": "Hero",
+  "description": "The page's opening section: eyebrow, headline, subhead, up to two actions, and optional media. Carries the page's h1.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [{ "name": "eyebrow", "part": "text", "required": false }, { "name": "headline", "part": "text", "required": true }, { "name": "subhead", "part": "text", "required": false }, { "name": "actions", "part": "actions", "required": false }, { "name": "media", "part": "media", "required": false }],
+  "axes": { "alignment": { "values": ["center", "left"], "default": "center" }, "mediaLayout": { "values": ["none", "right", "below"], "default": "none" } },
+  "styleSurface": {},
+  "tokensUsed": ["--foreground", "--muted-foreground"],
+  "dependencies": ["class-variance-authority"],
+  "registryDependencies": ["utils", "button", "badge"],
+  "files": [{ "name": "hero", "source": "src/blocks/hero.tsx", "target": "components/blocks/hero.tsx", "type": "registry:block" }],
+  "composition": {
+    "contentSlots": [{ "name": "eyebrow", "kind": "text", "required": false }, { "name": "headline", "kind": "text", "required": true }, { "name": "subhead", "kind": "text", "required": false }, { "name": "actions", "kind": "actions", "required": false, "max": 2 }, { "name": "media", "kind": "media", "required": false }],
+    "childComponents": [{ "name": "button", "min": 0, "max": 2 }, { "name": "badge", "min": 0, "max": 1 }],
+    "headingRole": "h1"
+  },
+  "standards": { "purpose": "State the page's promise in one headline and route visitors to one or two next steps.", "useWhen": ["A page needs an opening statement of value."], "doNotUseWhen": ["The page is a tool or dashboard surface (no marketing hero inside apps)."], "rules": [{ "id": "hero-one-primary-cta", "severity": "error", "check": "At most two actions and at most one primary (default-variant) action." }, { "id": "blocks-one-h1-per-page", "severity": "error", "check": "The hero carries the page's single h1; a second hero on the same page is a violation." }] }
+}

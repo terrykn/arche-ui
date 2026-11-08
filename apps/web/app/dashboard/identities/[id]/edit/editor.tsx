@@ -2,15 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
-import { Toggle } from "@/components/ui/toggle";
-import { Progress, ProgressIndicator } from "@/components/ui/progress";
+import { KitchenSink } from "@/components/kitchen-sink";
 import { savePayload } from "../../actions";
 
 interface TokenDef {
@@ -29,6 +23,8 @@ interface KnobSpec {
 interface Manifest {
   name: string;
   title: string;
+  description: string;
+  category: string;
   axes: Record<string, { values: Array<string | number>; default: string | number }>;
   styleSurface: Record<string, Record<string, KnobSpec>>;
   tokensUsed: string[];
@@ -38,6 +34,8 @@ interface Payload {
   meta: { name: string; contractVersion: number };
   fonts: { sans: string; display: string; mono: string };
   icons: string;
+  typeScale?: string;
+  dna?: { profile?: string };
   tokens: Record<string, Record<string, { $type: string; $value: unknown }>>;
   components: Record<string, Record<string, unknown>>;
 }
@@ -61,7 +59,7 @@ function KnobControl({
         <select
           value={key(value)}
           onChange={(e) => onChange(JSON.parse(e.target.value))}
-          className="rounded-md border border-input bg-background px-2 py-1"
+          className="rounded-md border-(length:--border-width) border-input bg-background px-2 py-1"
         >
           {spec.values.map((v) => (
             <option key={key(v)} value={key(v)}>
@@ -79,7 +77,7 @@ function KnobControl({
         <select
           value={String(value)}
           onChange={(e) => onChange(e.target.value)}
-          className="rounded-md border border-input bg-background px-2 py-1"
+          className="rounded-md border-(length:--border-width) border-input bg-background px-2 py-1"
         >
           {spec.values.map((v) => (
             <option key={String(v)} value={String(v)}>
@@ -99,7 +97,7 @@ function KnobControl({
         <select
           value={String(value)}
           onChange={(e) => onChange(e.target.value)}
-          className="rounded-md border border-input bg-background px-2 py-1"
+          className="rounded-md border-(length:--border-width) border-input bg-background px-2 py-1"
         >
           {spec.scale.map((v) => (
             <option key={v} value={v}>
@@ -118,7 +116,7 @@ function KnobControl({
           type="number"
           value={Number(value)}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-24 rounded-md border border-input bg-background px-2 py-1"
+          className="w-24 rounded-md border-(length:--border-width) border-input bg-background px-2 py-1"
         />
       </label>
     );
@@ -136,12 +134,14 @@ export function IdentityEditor({
   initialPayload,
   manifests,
   contract,
+  typeSteps,
 }: {
   libraryId: string;
   libraryName: string;
   initialPayload: Payload;
   manifests: Manifest[];
   contract: { tokens: TokenDef[] };
+  typeSteps: Array<{ role: string; sizePx: number; lineHeight: number }>;
 }) {
   const [tokens, setTokens] = React.useState(initialPayload.tokens);
   const [components, setComponents] = React.useState(initialPayload.components);
@@ -186,6 +186,8 @@ export function IdentityEditor({
       // Closed-registry selections are preserved as-is (edited elsewhere, not here).
       fonts: initialPayload.fonts,
       icons: initialPayload.icons,
+      typeScale: initialPayload.typeScale,
+      dna: initialPayload.dna,
       tokens,
       components,
     });
@@ -198,13 +200,11 @@ export function IdentityEditor({
   };
 
   // Live preview: the working payload's token set applied as CSS vars.
-  const previewVars = Object.fromEntries(
-    Object.entries(tokens[mode] ?? {}).map(([name, token]) => [
-      name,
-      typeof token.$value === "string" ? token.$value : undefined,
-    ]),
+  const previewVars: Record<string, string> = Object.fromEntries(
+    Object.entries(tokens[mode] ?? {}).flatMap(([name, token]) =>
+      typeof token.$value === "string" ? [[name, token.$value]] : [],
+    ),
   );
-  const buttonVariant = (components.button?.variant as string) ?? "default";
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
@@ -226,7 +226,7 @@ export function IdentityEditor({
         </div>
       </div>
       {issues ? (
-        <ul className="mt-4 rounded-md border border-destructive/40 bg-card p-3 text-sm">
+        <ul className="mt-4 rounded-md border-(length:--border-width) border-destructive/40 bg-card p-3 text-sm">
           {issues.map((issue) => (
             <li key={issue.path} className="mt-1 first:mt-0">
               <code className="text-destructive">{issue.path}</code>: {issue.message}
@@ -237,7 +237,7 @@ export function IdentityEditor({
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-6">
-          <section className="rounded-lg border border-border p-4">
+          <section className="rounded-lg border-(length:--border-width) border-border p-4">
             <div className="flex items-center justify-between">
               <h2 className="font-medium">Tokens</h2>
               <div className="flex gap-1 text-sm">
@@ -267,13 +267,13 @@ export function IdentityEditor({
                           value={pair.duration ?? ""}
                           onChange={(e) => setToken(token.name, "duration", e.target.value)}
                           aria-label={`${token.name} duration`}
-                          className="w-20 rounded-md border border-input bg-background px-2 py-1"
+                          className="w-20 rounded-md border-(length:--border-width) border-input bg-background px-2 py-1"
                         />
                         <input
                           value={pair.easing ?? ""}
                           onChange={(e) => setToken(token.name, "easing", e.target.value)}
                           aria-label={`${token.name} easing`}
-                          className="w-40 rounded-md border border-input bg-background px-2 py-1"
+                          className="w-40 rounded-md border-(length:--border-width) border-input bg-background px-2 py-1"
                         />
                       </span>
                     </div>
@@ -286,7 +286,7 @@ export function IdentityEditor({
                       {token.$type === "color" ? (
                         <span
                           aria-hidden
-                          className="inline-block h-5 w-5 rounded border border-border"
+                          className="inline-block h-5 w-5 rounded border-(length:--border-width) border-border"
                           style={{ background: String(raw) }}
                         />
                       ) : null}
@@ -295,7 +295,7 @@ export function IdentityEditor({
                         onChange={(e) => setToken(token.name, null, e.target.value)}
                         aria-label={token.name}
                         spellCheck={false}
-                        className="w-56 rounded-md border border-input bg-background px-2 py-1 font-mono text-xs"
+                        className="w-56 rounded-md border-(length:--border-width) border-input bg-background px-2 py-1 font-mono text-xs"
                       />
                     </span>
                   </div>
@@ -304,12 +304,12 @@ export function IdentityEditor({
             </div>
           </section>
 
-          <section className="rounded-lg border border-border p-4">
+          <section className="rounded-lg border-(length:--border-width) border-border p-4">
             <h2 className="font-medium">Components</h2>
             <select
               value={activeComponent}
               onChange={(e) => setActiveComponent(e.target.value)}
-              className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+              className="mt-2 w-full rounded-md border-(length:--border-width) border-input bg-background px-2 py-1.5 text-sm"
             >
               {manifests.map((m) => (
                 <option key={m.name} value={m.name}>
@@ -346,9 +346,9 @@ export function IdentityEditor({
         </div>
 
         <div>
-          <section className="rounded-lg border border-border p-4 lg:sticky lg:top-4">
+          <section className="rounded-lg border-(length:--border-width) border-border p-4 lg:sticky lg:top-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-medium">Live preview</h2>
+              <h2 className="font-medium">Live preview · kitchen sink</h2>
               <div className="flex gap-1 text-sm">
                 {(["light", "dark"] as const).map((m) => (
                   <button
@@ -362,37 +362,8 @@ export function IdentityEditor({
                 ))}
               </div>
             </div>
-            <div className={mode === "dark" ? "dark" : ""}>
-              <div style={previewVars as React.CSSProperties} className="mt-3 flex flex-col gap-4 rounded-md bg-background p-4 text-foreground">
-                <div className="flex flex-wrap gap-2">
-                  <Button variant={buttonVariant as never}>Primary</Button>
-                  <Button variant="secondary">Secondary</Button>
-                  <Button variant="outline">Outline</Button>
-                </div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Card title</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex items-center gap-3">
-                    <Badge>New</Badge>
-                    <Input placeholder="Type here" aria-label="Preview input" className="max-w-40" />
-                    <Switch aria-label="Preview switch" defaultChecked />
-                    <Toggle aria-label="Preview toggle">T</Toggle>
-                  </CardContent>
-                </Card>
-                <Tabs defaultValue="one">
-                  <TabsList>
-                    <TabsTrigger value="one">One</TabsTrigger>
-                    <TabsTrigger value="two">Two</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="one">
-                    <Progress value={60} aria-label="Preview progress">
-                      <ProgressIndicator style={{ width: "60%" }} />
-                    </Progress>
-                  </TabsContent>
-                  <TabsContent value="two">Second panel</TabsContent>
-                </Tabs>
-              </div>
+            <div className="mt-3 max-h-[70vh] overflow-y-auto rounded-md border-(length:--border-width) border-border">
+              <KitchenSink manifests={manifests} vars={previewVars} mode={mode} typeSteps={typeSteps} />
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
               Token edits re-skin live; axis selections apply as props. Knob stamps bake in at publish.

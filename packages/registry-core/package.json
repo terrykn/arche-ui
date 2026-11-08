@@ -21,7 +21,9 @@
     "emit": "pnpm build && node dist/cli.js",
     "test:goldens": "pnpm build && node scripts/check-goldens.mjs",
     "test:goldens:write": "pnpm build && node scripts/check-goldens.mjs --write",
-    "test:rules": "pnpm build && node --test scripts/test-design-rules.mjs"
+    "test:rules": "pnpm build && node --test scripts/test-design-rules.mjs",
+    "test:presentation": "pnpm build && node --test scripts/test-presentation.mjs",
+    "test:blocks": "pnpm build && node --test scripts/test-blocks.mjs"
   },
   "dependencies": {
     "@arche/foundation": "workspace:*",

@@ -19,7 +19,7 @@ export default async function SignIn({
             type="email"
             required
             autoComplete="email"
-            className="rounded-md border border-input bg-background px-3 py-2"
+            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -29,7 +29,7 @@ export default async function SignIn({
             type="password"
             required
             autoComplete="current-password"
-            className="rounded-md border border-input bg-background px-3 py-2"
+            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
           />
         </label>
         {error ? (
@@ -47,7 +47,7 @@ export default async function SignIn({
       <form action={signInWithGoogle} className="mt-3">
         <button
           type="submit"
-          className="w-full rounded-md border border-input bg-background px-4 py-2 text-sm"
+          className="w-full rounded-md border-(length:--border-width) border-input bg-background px-4 py-2 text-sm"
         >
           Continue with Google
         </button>

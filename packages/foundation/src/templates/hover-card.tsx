@@ -3,7 +3,7 @@ import * as React from "react";
 import * as Primitive from "@radix-ui/react-hover-card";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils.js";
-const hoverCardContentVariants = cva("z-50 w-64 border bg-popover p-4 text-sm text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0", {
+const hoverCardContentVariants = cva("z-50 w-64 border-(length:--border-width) bg-popover p-4 text-sm text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0", {
   variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } },
   defaultVariants: { radius: "lg", shadow: "md" },
 });

@@ -17,7 +17,7 @@ export default function DashboardDocs() {
       <h1 className="font-display text-3xl">Docs</h1>
       <ul className="mt-6 flex flex-col gap-2">
         {DOCS.map((doc) => (
-          <li key={doc.href} className="rounded-lg border border-border p-3">
+          <li key={doc.href} className="rounded-lg border-(length:--border-width) border-border p-3">
             <Link href={doc.href} className="underline-offset-4 hover:underline">
               {doc.label}
             </Link>

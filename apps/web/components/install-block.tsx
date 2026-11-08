@@ -1,3 +1,9 @@
+"use client";
+
+import * as React from "react";
+import { Check, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 /** Shared install instructions (dashboard detail + public identity page). */
 export function InstallBlock({
   base,
@@ -10,6 +16,8 @@ export function InstallBlock({
   slug: string;
   authed: boolean;
 }) {
+  const [copied, setCopied] = React.useState(false);
+  const hero = "arche install";
   const lines = [
     "// Arche CLI (recommended)",
     "arche login",
@@ -34,8 +42,28 @@ export function InstallBlock({
     lines.push("REGISTRY_TOKEN=<paste from dashboard settings>");
   }
   return (
-    <pre className="mt-2 overflow-x-auto rounded-md border border-border bg-card p-3 text-xs text-card-foreground">
-      {lines.join("\n")}
-    </pre>
+    <div className="mt-2 overflow-hidden rounded-lg border-(length:--border-width) border-border">
+      <div className="flex items-center justify-between gap-3 bg-muted px-4 py-3">
+        <code className="truncate font-mono text-sm">{hero}</code>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            void navigator.clipboard.writeText(hero).then(() => {
+              setCopied(true);
+              window.setTimeout(() => setCopied(false), 2600);
+            });
+          }}
+          aria-live="polite"
+        >
+          {copied ? <Check aria-hidden /> : <Copy aria-hidden />}
+          {copied ? "Copied" : "Copy"}
+        </Button>
+      </div>
+      <pre className="overflow-x-auto bg-card p-4 font-mono text-xs leading-relaxed text-card-foreground">
+        {lines.join("\n")}
+      </pre>
+    </div>
   );
 }

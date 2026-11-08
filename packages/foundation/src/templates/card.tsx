@@ -2,7 +2,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils.js";
 
-const cardVariants = cva("flex flex-col gap-6 border bg-card py-6 text-card-foreground", {
+const cardVariants = cva("flex flex-col gap-6 border-(length:--border-width) bg-card py-6 text-card-foreground", {
   variants: { radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } },
   defaultVariants: { radius: "xl", shadow: "sm" },
 });

@@ -85,6 +85,11 @@ export async function generatePhraseAction(formData: FormData) {
     revalidatePath("/dashboard");
     redirect(`/dashboard/identities/${outcome.libraryId}/edit?generated=1`);
   } catch (err) {
+    // Next.js success-path redirect() surfaces as a NEXT_REDIRECT throwable —
+    // rethrow it instead of reporting it as a generation failure.
+    if (err instanceof Error && (err as { digest?: string }).digest?.startsWith("NEXT_REDIRECT")) {
+      throw err;
+    }
     const message = err instanceof Error ? err.message : String(err);
     redirect(`/dashboard/identities/new?error=${encodeURIComponent(message)}`);
   }
@@ -149,6 +154,7 @@ export async function publishAction(libraryId: string): Promise<SaveState & { ve
     return { ok: false, issues: result.issues };
   }
   revalidatePath("/dashboard");
+  revalidatePath(`/dashboard/identities/${libraryId}`);
   return { ok: true, version: result.version };
 }
 

@@ -38,7 +38,7 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
       ) : (
         <ul className="mt-2 flex flex-col gap-2">
           {tokens.map((t) => (
-            <li key={t.id} className="flex items-center justify-between gap-3 rounded-md border border-border p-3 text-sm">
+            <li key={t.id} className="flex items-center justify-between gap-3 rounded-md border-(length:--border-width) border-border p-3 text-sm">
               <span>
                 <code>{t.label}</code>
                 <span className="ml-2 text-muted-foreground">
@@ -48,7 +48,7 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
               </span>
               <form action={revokeMcpTokenAction}>
                 <input type="hidden" name="id" value={t.id} />
-                <button type="submit" className="rounded-md border border-border px-3 py-1.5 text-sm">
+                <button type="submit" className="rounded-md border-(length:--border-width) border-border px-3 py-1.5 text-sm">
                   Revoke
                 </button>
               </form>
@@ -57,7 +57,7 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
         </ul>
       )}
       {raw ? (
-        <pre className="mt-2 overflow-x-auto rounded-md border border-border bg-card p-3 text-xs">{raw}</pre>
+        <pre className="mt-2 overflow-x-auto rounded-md border-(length:--border-width) border-border bg-card p-3 text-xs">{raw}</pre>
       ) : null}
       {raw ? (
         <p className="mt-1 text-sm text-destructive">Copy it now — it will never be shown again.</p>
@@ -72,7 +72,7 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
           name="label"
           placeholder="Token label (e.g. claude-code)"
           maxLength={60}
-          className="rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+          className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-1.5 text-sm"
         />
         <button
           type="submit"

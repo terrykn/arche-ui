@@ -29,6 +29,7 @@
     { "name": "--chart-4", "$type": "color", "group": "data" },
     { "name": "--chart-5", "$type": "color", "group": "data" },
     { "name": "--radius", "$type": "dimension", "group": "shape", "$note": "sm/md/lg/xl are derived by calc() at emission; only the base is a token." },
+    { "name": "--border-width", "$type": "dimension", "group": "shape", "values": ["0px", "1px", "2px", "3px"], "$note": "Mode-independent: same value light/dark. Component templates use border-(length:--border-width); never hardcode a border width. Per-profile bounds for generated payloads live in design rule border-width-profile-bounds." },
     { "name": "--font-sans", "$type": "fontFamily", "group": "type" },
     { "name": "--font-display", "$type": "fontFamily", "group": "type" },
     { "name": "--font-mono", "$type": "fontFamily", "group": "type" },

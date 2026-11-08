@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const accordionItemVariants = cva("border-b", {
+const accordionItemVariants = cva("border-b-(length:--border-width)", {
   variants: {
     spacing: { sm: "py-1", default: "py-2", lg: "py-4" },
   },

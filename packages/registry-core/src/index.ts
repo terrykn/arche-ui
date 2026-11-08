@@ -5,7 +5,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
-import { foundationDir } from "./manifests.js";
+import { foundationDir, getBlockManifests } from "./manifests.js";
 import { validateTokens, type IdentityTokens } from "@arche/foundation/contract/validate-tokens";
 import {
   fontEntriesById,
@@ -25,19 +25,20 @@ const contractData = tokenContract as unknown as {
 // ---------------------------------------------------------------------------
 
 export type { Manifest } from "./manifests.js";
-export { getManifests, getTokenContract } from "./manifests.js";
+export { getManifests, getBlockManifests, getCatalogManifests, getTokenContract } from "./manifests.js";
 
 export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
 export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, Plan, SelfCheck } from "@arche/foundation/dna";
 export { dnaSectionSchema, dnaDeltaSchema, modelOutputSchema, modelDeltaOutputSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
 export { checkDesignRules, assertGeneratedCompliant, CLOSED_EASINGS, type DesignRuleFinding } from "./design-rules.js";
+export { buildPresentation, type PresentationBlock, type PresentationMotion, type PresentationContext } from "./presentation.js";
 export {
   buildTeachBlock,
   designRulesVersion,
   teachStatements,
   loadDesignRules,
 } from "@arche/foundation/design-rules";
-export { deriveTypeScale, DISPLAY_CAP_BY_PROFILE, DISPLAY_CAP_ABSOLUTE_PX, type GenerationProfile as TypeProfile } from "@arche/foundation/typography";
+export { deriveTypeScale, DISPLAY_CAP_BY_PROFILE, DISPLAY_CAP_ABSOLUTE_PX, TYPE_ROLES, type GenerationProfile as TypeProfile } from "@arche/foundation/typography";
 
 export interface ArcheIdentity {
   meta: { name: string; contractVersion: number } & Record<string, unknown>;
@@ -134,6 +135,7 @@ import {
 } from "@arche/foundation/typography";
 
 const MANIFESTS: Manifest[] = getManifests();
+const BLOCK_MANIFESTS: Manifest[] = getBlockManifests();
 
 /** Names shared by manifest knobs and their cva implementation axes. */
 const KNOB_TO_AXIS: Record<string, string> = {
@@ -386,6 +388,10 @@ export function stampDefaultVariants(
 
 function readTemplate(fileName: string): string {
   return readFileSync(join(foundationDir, "src", "templates", fileName), "utf8");
+}
+
+function readBlockTemplate(fileName: string): string {
+  return readFileSync(join(foundationDir, "src", "blocks", fileName), "utf8");
 }
 
 function readUtils(): string {
@@ -651,6 +657,36 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
     );
   }
 
+  // ---- blocks (Part 6): one registry:block item per block manifest. Blocks
+  // compose catalog components, so their files land under components/blocks
+  // and their component deps resolve from the same registry.
+  for (const manifest of BLOCK_MANIFESTS) {
+    const templateFile = manifest.files[0]!.source.split("/").at(-1)!;
+    let content = readBlockTemplate(templateFile);
+    // Same rewrites as components, plus catalog-component import relocation:
+    // foundation cross-imports become the installed @/components/ui paths.
+    content = content
+      .replace('from "../templates/lib/utils.js"', 'from "@/lib/utils"')
+      .replace(/from "\.\.\/templates\/([a-z-]+)\.js"/g, 'from "@/components/ui/$1"');
+    items.set(
+      manifest.name,
+      serializeStable({
+        name: manifest.name,
+        type: "registry:block",
+        title: manifest.title,
+        description: manifest.description,
+        dependencies: manifest.dependencies,
+        registryDependencies: ["utils", ...manifest.registryDependencies.filter((dep) => dep !== "utils")],
+        files: manifest.files.map((file) => ({
+          path: file.source,
+          target: file.target,
+          type: file.type,
+          content,
+        })),
+      }),
+    );
+  }
+
   // ---- all ----
   items.set(
     "all",
@@ -664,6 +700,7 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
       // shadcn registry (spec conflict vs 7.7c plain-name form, see report).
       registryDependencies: [
         ...MANIFESTS.map((manifest) => manifest.name),
+        ...BLOCK_MANIFESTS.map((manifest) => manifest.name),
         "utils",
         "theme",
         "base",

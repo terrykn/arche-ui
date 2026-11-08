@@ -36,6 +36,19 @@ export default function TokenContractPage() {
         ))}
       </div>
       <section className="mt-4">
+        <h2 className="font-medium">Amendments</h2>
+        <ul className="mt-1 text-sm text-muted-foreground">
+          <li>
+            <strong>2026-11-08 — border width becomes a token.</strong> <code>--border-width</code> added
+            to the contract (append-only; legal values <code>0px 1px 2px 3px</code>, mode-independent).
+            Component templates now use <code>border-(length:--border-width)</code> instead of a hardcoded
+            1px; the token-only lint&apos;s 1px border-width exception is removed. Generated payloads are
+            bounded per profile by design rule <code>border-width-profile-bounds</code> (enterprise ≤ 1px,
+            standard ≤ 2px, expressive ≤ 3px); hand-authored payloads may use any legal value.
+          </li>
+        </ul>
+      </section>
+      <section className="mt-4">
         <h2 className="font-medium">Contrast pairs (WCAG AA)</h2>
         <ul className="mt-1 text-sm text-muted-foreground">
           {contract.contrastPairs.map((pair) => (

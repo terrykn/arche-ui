@@ -99,6 +99,24 @@ export async function publishLibrary(
     .update({ updated_at: new Date().toISOString() })
     .eq("id", libraryId);
 
+  // Part 5.1: versioned specimen assets. Awaited but non-fatal — publish
+  // succeeds even when headless rendering or storage is unavailable.
+  try {
+    const { captureVersionAssets } = await import("./specimen-assets");
+    const ownerProfile = await supabase.from("profiles").select("username").eq("id", library.owner).maybeSingle();
+    const username =
+      (ownerProfile.data as unknown as { username: string } | null)?.username ?? "user";
+    const outcome = await captureVersionAssets({
+      libraryId,
+      username,
+      slug: row.slug as string,
+      version: nextVersion,
+    });
+    console.info(`[publish] specimen assets v${nextVersion}: ${outcome.mechanism}`);
+  } catch (err) {
+    console.warn(`[publish] specimen assets skipped: ${err instanceof Error ? err.message : String(err)}`);
+  }
+
   return { ok: true, version: nextVersion };
 }
 

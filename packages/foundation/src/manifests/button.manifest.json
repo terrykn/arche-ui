@@ -42,7 +42,7 @@
     "--destructive-foreground",
     "--ring",
     "--input",
-    "--border",
+    "--border-width",
     "--radius",
     "--shadow-sm"
   ],

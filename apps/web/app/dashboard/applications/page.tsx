@@ -41,7 +41,7 @@ export default async function ApplicationsPage({
           maxLength={80}
           placeholder="New application"
           aria-label="Application name"
-          className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className="flex-1 rounded-md border-(length:--border-width) border-input bg-background px-3 py-2 text-sm"
         />
         <button type="submit" className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">
           Create
@@ -49,16 +49,16 @@ export default async function ApplicationsPage({
       </form>
       <ul className="mt-6 flex flex-col gap-4">
         {apps.map((app) => (
-          <li key={app.id} className="rounded-lg border border-border bg-card p-4 text-card-foreground">
+          <li key={app.id} className="rounded-lg border-(length:--border-width) border-border bg-card p-4 text-card-foreground">
             <form action={renameApplication} className="flex items-center gap-2">
               <input type="hidden" name="id" value={app.id} />
               <input
                 name="name"
                 defaultValue={app.name}
                 aria-label={`Rename ${app.name}`}
-                className="flex-1 rounded-md border border-input bg-background px-2 py-1 text-sm"
+                className="flex-1 rounded-md border-(length:--border-width) border-input bg-background px-2 py-1 text-sm"
               />
-              <button type="submit" className="rounded-md border border-border px-3 py-1 text-sm">
+              <button type="submit" className="rounded-md border-(length:--border-width) border-border px-3 py-1 text-sm">
                 Rename
               </button>
             </form>

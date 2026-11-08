@@ -131,7 +131,7 @@
       "texture": "marble-vein",
       "warmth": 0.7
     },
-    "compilerVersion": 2,
+    "compilerVersion": 3,
     "palette": {
       "accentHue": 90,
       "neutralHue": 80,
@@ -239,6 +239,10 @@
       "--border": {
         "$type": "color",
         "$value": "oklch(0.56 0.011 76.5)"
+      },
+      "--border-width": {
+        "$type": "dimension",
+        "$value": "1px"
       },
       "--card": {
         "$type": "color",
@@ -383,6 +387,10 @@
       "--border": {
         "$type": "color",
         "$value": "oklch(0.885 0.01 76.5)"
+      },
+      "--border-width": {
+        "$type": "dimension",
+        "$value": "1px"
       },
       "--card": {
         "$type": "color",

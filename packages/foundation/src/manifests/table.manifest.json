@@ -3,7 +3,7 @@
   "native": { "element": "table", "propsInherited": true },
   "slots": [{ "name": "container", "part": "div", "partType": "native", "required": true }, { "name": "table", "part": "table", "partType": "native", "required": true }, { "name": "header", "part": "thead", "partType": "native", "required": false }, { "name": "body", "part": "tbody", "partType": "native", "required": true }, { "name": "footer", "part": "tfoot", "partType": "native", "required": false }, { "name": "row", "part": "tr", "partType": "native", "required": true }, { "name": "head", "part": "th", "partType": "native", "required": false }, { "name": "cell", "part": "td", "partType": "native", "required": true }, { "name": "caption", "part": "caption", "partType": "native", "required": false }],
   "axes": { "density": { "values": ["sm", "default", "lg"], "default": "default" } }, "styleSurface": { "table": { "density": { "type": "enum", "values": ["sm", "default", "lg"], "default": "default" } } },
-  "tokensUsed": ["--border", "--muted", "--foreground", "--muted-foreground"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
+  "tokensUsed": ["--border-width", "--muted", "--foreground", "--muted-foreground"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
   "files": [{ "name": "table", "source": "src/templates/table.tsx", "target": "components/ui/table.tsx", "type": "registry:ui" }],
   "standards": { "purpose": "Present structured data in rows and columns.", "useWhen": ["Values are compared across rows and columns."], "doNotUseWhen": ["Content is not tabular data."], "rules": [{ "id": "table-use-headers", "severity": "error", "check": "Provide appropriate table headers for data cells." }] }
 }

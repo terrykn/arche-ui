@@ -9,7 +9,6 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 
 const DASH_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -70,7 +69,6 @@ export default async function DashboardLayout({
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{user.email}</span>
-          <Badge variant="secondary">Pro</Badge>
         </div>
         <Separator className="my-3" />
         <div className="flex items-center justify-between gap-2">

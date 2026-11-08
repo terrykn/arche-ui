@@ -3,7 +3,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+// Test hook (Part 6 negative tests): ARCHE_FOUNDATION_ROOT redirects the whole
+// scanned tree (src/manifests, src/templates, src/blocks, src/contract).
+const root = process.env.ARCHE_FOUNDATION_ROOT ?? join(dirname(fileURLToPath(import.meta.url)), "..");
 const manifestsDir = join(root, "src/manifests");
 const templatesDir = join(root, "src/templates");
 const contract = JSON.parse(readFileSync(join(root, "src/contract/token-contract.json"), "utf8")) as {
@@ -74,21 +76,43 @@ const findTokens = (text: string, found: Set<string>) => {
   }
 };
 
+const blocksDir = join(root, "src", "blocks");
+const blockTemplatesDir = blocksDir;
+
+/** Template files a block may compose: catalog components + the shared cn helper + sibling blocks (none yet). */
+function checkBlockImports(manifest: Manifest & { composition?: { childComponents: Array<{ name: string }> } }, source: string) {
+  const allowed = new Set((manifest.composition?.childComponents ?? []).map((c) => c.name));
+  for (const match of source.matchAll(/from\s+["']\.\.\/templates\/([^"'./]+)(?:\.js)?["']/g)) {
+    const dep = match[1];
+    if (dep === "lib/utils") continue;
+    if (!allowed.has(dep)) {
+      report(manifest.name, `imports undeclared component '${dep}' (not in composition.childComponents)`);
+    }
+  }
+  for (const match of source.matchAll(/from\s+["']\.\/([^"'./]+)(?:\.js)?["']/g)) {
+    report(manifest.name, `imports sibling block '${match[1]}' — blocks compose catalog components only`);
+  }
+}
+
 const manifestFiles = readdirSync(manifestsDir).filter((name) => name.endsWith(".manifest.json")).sort();
 const componentTemplates = readdirSync(templatesDir).filter((name) => name.endsWith(".tsx")).sort();
+const blockFiles = readdirSync(blocksDir).filter((name) => name.endsWith(".block.json")).sort();
+const blockTemplates = readdirSync(blockTemplatesDir).filter((name) => name.endsWith(".tsx")).sort();
 const covered = new Set<string>();
-for (const file of manifestFiles) {
-  const manifest = JSON.parse(readFileSync(join(manifestsDir, file), "utf8")) as Manifest;
+const coveredBlocks = new Set<string>();
+function checkPair(manifestDir: string, file: string, coveredSet: Set<string>, isBlock: boolean) {
+  const manifest = JSON.parse(readFileSync(join(manifestDir, file), "utf8")) as Manifest;
   const sourceFile = manifest.files[0]?.source;
-  if (!sourceFile) { report(manifest.name, "missing template source"); continue; }
+  if (!sourceFile) { report(manifest.name, "missing template source"); return; }
   const templateName = sourceFile.split("/").at(-1)!;
-  covered.add(templateName);
+  coveredSet.add(templateName);
   let source: string;
   try { source = readFileSync(join(root, sourceFile), "utf8"); }
-  catch { report(manifest.name, `template not found: ${sourceFile}`); continue; }
+  catch { report(manifest.name, `template not found: ${sourceFile}`); return; }
+  if (isBlock) checkBlockImports(manifest, source);
   let ast: unknown;
   try { ast = parse(source, { sourceType: "module", plugins: ["typescript", "jsx"] }); }
-  catch (error) { report(manifest.name, `cannot parse template: ${String(error)}`); continue; }
+  catch (error) { report(manifest.name, `cannot parse template: ${String(error)}`); return; }
 
   const implemented = new Map<string, Set<string>>();
   const defaults = new Map<string, Set<string>>();
@@ -138,6 +162,7 @@ for (const file of manifestFiles) {
     if (!actual) { report(manifest.name, `declared axis or knob ${axis} is not implemented`); continue; }
     for (const value of values) if (!actual.has(value)) report(manifest.name, `${axis}: declared value ${value} is not implemented`);
   }
+  void 0;
   for (const [axis, values] of implemented) {
     const expected = declared.get(axis);
     if (!expected) { report(manifest.name, `implemented axis or knob ${axis} is not declared`); continue; }
@@ -151,11 +176,14 @@ for (const file of manifestFiles) {
   for (const token of declaredTokens) if (!referencedTokens.has(token)) report(manifest.name, `declared token ${token} is not referenced`);
   for (const token of referencedTokens) if (!declaredTokens.has(token)) report(manifest.name, `referenced token ${token} is not declared`);
 }
+for (const file of manifestFiles) checkPair(manifestsDir, file, covered, false);
+for (const file of blockFiles) checkPair(blocksDir, file, coveredBlocks, true);
 for (const template of componentTemplates) if (!covered.has(template)) report(template, "template has no manifest");
+for (const template of blockTemplates) if (!coveredBlocks.has(template)) report(template, "block template has no manifest");
 for (const issue of issues) console.error(issue);
 if (issues.length) {
   console.error(`check-manifest-template: failed with ${issues.length} issue(s)`);
   process.exitCode = 1;
 } else {
-  console.log(`check-manifest-template: passed (${manifestFiles.length} components)`);
+  console.log(`check-manifest-template: passed (${manifestFiles.length} components, ${blockFiles.length} blocks)`);
 }

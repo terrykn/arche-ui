@@ -65,7 +65,7 @@ export function IdentityDemo({
       className={mode === "dark" ? "dark" : ""}
     >
       <div className="mx-auto max-w-md">
-        <p aria-live="polite" className="mb-3 rounded-full border border-border bg-card px-4 py-1.5 text-center text-sm text-card-foreground">
+        <p aria-live="polite" className="mb-3 rounded-full border-(length:--border-width) border-border bg-card px-4 py-1.5 text-center text-sm text-card-foreground">
           “{fixture.prompt}”
         </p>
         <div
@@ -81,7 +81,7 @@ export function IdentityDemo({
                 data-testid={`demo-chip-${f.key}`}
                 onClick={() => setIndex(i)}
                 aria-pressed={i === index}
-              className={`rounded-full border px-3 py-1 text-xs ${i === index ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground"}`}
+              className={`rounded-full border-(length:--border-width) px-3 py-1 text-xs ${i === index ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground"}`}
             >
               {f.prompt}
             </button>

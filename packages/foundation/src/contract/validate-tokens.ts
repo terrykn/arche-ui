@@ -19,6 +19,12 @@ export interface TokenDefinition {
   group: string;
   contrastPair?: { fg: string; bg: string };
   subValues?: Array<{ $type: string; key: string }>;
+  /**
+   * Closed legal value set (e.g. --border-width). When present, values
+   * outside the set fail like any contract violation. Optional so older
+   * definitions without a set keep validating by type only.
+   */
+  values?: string[];
 }
 
 export interface TokenContract {
@@ -100,6 +106,10 @@ function checkType(
     case "dimension": {
       if (typeof token.$value !== "string" || !DIMENSION_RE.test(token.$value)) {
         return { path, message: `dimension must be a length string, got '${String(token.$value)}'` };
+      }
+      const legal = (contract.tokens.find((tokenDef) => tokenDef.name === defName)?.values ?? []);
+      if (legal.length > 0 && !legal.includes(token.$value)) {
+        return { path, message: `dimension must be one of [${legal.join(", ")}], got '${String(token.$value)}'` };
       }
       return null;
     }

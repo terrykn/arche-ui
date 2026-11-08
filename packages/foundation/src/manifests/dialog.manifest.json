@@ -148,7 +148,7 @@
     "--muted-foreground",
     "--accent",
     "--ring",
-    "--border",
+    "--border-width",
     "--shadow-sm",
     "--shadow-md",
     "--shadow-lg",
@@ -209,6 +209,11 @@
         "id": "radius-concentric",
         "severity": "info",
         "check": "Nested surfaces follow outer radius = inner radius + gap (Arche design rule radius-concentric)."
+      },
+      {
+        "id": "dialog-presentation-entrance",
+        "severity": "info",
+        "check": "Dialog entrance follows the identity presentation: backdrop fades on motion-fast, panel settles on motion-normal with the identity radius."
       }
     ]
   }

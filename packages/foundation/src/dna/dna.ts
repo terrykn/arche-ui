@@ -201,4 +201,4 @@ export const dnaDeltaSchema = z.object({
 export type DnaDelta = z.infer<typeof dnaDeltaSchema>;
 
 /** Current compiler version stamped on newly compiled DNA sections. */
-export const DNA_COMPILER_VERSION = 2;
+export const DNA_COMPILER_VERSION = 3;
