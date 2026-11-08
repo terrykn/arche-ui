@@ -19,6 +19,7 @@ const GROUPS: Array<{ heading: string; links: Array<{ href: string; label: strin
   {
     heading: "Advanced",
     links: [
+      { href: "/docs/generate", label: "Generate with AI" },
       { href: "/docs/ai-mcp", label: "AI & MCP" },
       { href: "/docs/theming", label: "Theming" },
       { href: "/docs/customization", label: "Customization" },

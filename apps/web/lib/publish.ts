@@ -64,6 +64,7 @@ export async function publishLibrary(
     version: nextVersion,
     payload_hash: payloadHash,
     snapshot,
+    payload: JSON.parse(serializeStable(row.payload)),
   });
   if (insertError) {
     return {

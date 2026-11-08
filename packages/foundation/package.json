@@ -34,7 +34,11 @@
       "types": "./src/icons/icons.ts",
       "default": "./dist/icons/icons.js"
     },
-    "./icons/icon-registry.json": "./src/icons/icon-registry.json"
+    "./icons/icon-registry.json": "./src/icons/icon-registry.json",
+    "./dna": {
+      "types": "./src/dna/dna.ts",
+      "default": "./dist/dna/dna.js"
+    }
   },
   "scripts": {
     "build": "tsc --project . && tsx scripts/copy-assets.ts",

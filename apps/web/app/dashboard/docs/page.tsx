@@ -4,6 +4,7 @@ const DOCS = [
   { href: "/docs/getting-started", label: "Getting started" },
   { href: "/docs/install-identity", label: "Install an identity" },
   { href: "/docs/create-edit", label: "Create / edit an identity" },
+  { href: "/docs/generate", label: "Generate with AI" },
   { href: "/docs/token-contract", label: "Token contract" },
   { href: "/docs/mcp", label: "MCP overview + setup" },
   { href: "/docs/cli", label: "CLI (as specced)" },

@@ -16,6 +16,10 @@ export default function CreateEdit() {
           <strong>Save draft</strong> validates before storing. <strong>Publish</strong> runs the same
           gate plus emission and stores an immutable versioned snapshot.
         </p>
+        <p>
+          Prefer a head start? <a className="underline" href="/docs/generate">Generate with AI</a> turns
+          a phrase or an image into a validated draft you then edit here.
+        </p>
       </div>
     </div>
   );

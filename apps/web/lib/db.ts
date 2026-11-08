@@ -26,5 +26,16 @@ export interface LibraryVersion {
   version: number;
   payload_hash: string;
   snapshot: Record<string, string>;
+  payload?: unknown;
   published_at: string;
+}
+
+export interface McpToken {
+  id: string;
+  user_id: string;
+  token_hash: string;
+  label: string;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  created_at: string;
 }

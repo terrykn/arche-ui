@@ -19,9 +19,13 @@ export function ThemeToggle() {
 
   const toggle = React.useCallback(() => {
     const next = !currentIsDark();
+    const value = next ? "dark" : "light";
     document.documentElement.classList.toggle("dark", next);
+    document.documentElement.dataset.theme = value;
     try {
-      localStorage.setItem(STORAGE_KEY, next ? "dark" : "light");
+      localStorage.setItem(STORAGE_KEY, value);
+      // Mirror to the cookie so the server renders the theme on next load.
+      document.cookie = `arche-theme=${value}; path=/; max-age=31536000; SameSite=Lax`;
     } catch {
       // storage unavailable — theme still applies for this visit
     }

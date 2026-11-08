@@ -8,13 +8,19 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./dist/index.js"
+    },
+    "./compiler": {
+      "types": "./src/compiler.ts",
+      "default": "./dist/compiler.js"
     }
   },
   "scripts": {
     "build": "tsc --project .",
     "check-types": "tsc --project . --noEmit",
     "lint": "eslint .",
-    "emit": "pnpm build && node dist/cli.js"
+    "emit": "pnpm build && node dist/cli.js",
+    "test:goldens": "pnpm build && node scripts/check-goldens.mjs",
+    "test:goldens:write": "pnpm build && node scripts/check-goldens.mjs --write"
   },
   "dependencies": {
     "@arche/foundation": "workspace:*",

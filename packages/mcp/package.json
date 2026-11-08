@@ -1,0 +1,35 @@
+{
+  "name": "@arche/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "arche-mcp": "./dist/stdio.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc --project .",
+    "check-types": "tsc --project . --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@arche/foundation": "workspace:*",
+    "@arche/registry-core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.20.1",
+    "zod": "^4.1.14"
+  },
+  "devDependencies": {
+    "@arche/eslint-config": "workspace:*",
+    "@arche/typescript-config": "workspace:*",
+    "@types/node": "26.4.1",
+    "eslint": "10.9.1",
+    "typescript": "7.0.2"
+  }
+}

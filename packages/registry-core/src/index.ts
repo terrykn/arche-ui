@@ -2,10 +2,10 @@
  * @arche/registry-core — builds a deterministic shadcn-compatible registry from
  * an Arche identity (tokens + per-component knob selections).
  */
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { z } from "zod";
+import { foundationDir } from "./manifests.js";
 import { validateTokens, type IdentityTokens } from "@arche/foundation/contract/validate-tokens";
 import {
   fontEntriesById,
@@ -13,59 +13,23 @@ import {
   type ArcheIdentityFonts,
 } from "@arche/foundation/fonts";
 import { validateIconSelection } from "@arche/foundation/icons";
+import { dnaSectionSchema, type DnaSection } from "@arche/foundation/dna";
 import tokenContract from "@arche/foundation/contract/token-contract.json" with { type: "json" };
 
 const contractData = tokenContract as unknown as {
   contractVersion: number;
 };
 
-// Foundation is located without require.resolve (bundlers rewrite that call).
-// From dist/index.js, up two levels lands on the package root's parent, so
-// both the monorepo layout (packages/registry-core -> packages/foundation)
-// and an installed layout (node_modules/@arche/registry-core ->
-// node_modules/@arche/foundation) resolve statically.
-function locateFoundation(): string {
-  const distDir = dirname(fileURLToPath(import.meta.url));
-  const candidates = [
-    join(distDir, "..", "..", "foundation"),
-    join(distDir, "..", "..", "@arche", "foundation"),
-  ];
-  const found = candidates.find((dir) => existsSync(join(dir, "src", "manifests")));
-  if (!found) {
-    throw new Error("@arche/foundation manifests not found from registry-core");
-  }
-  return found;
-}
-const foundationDir: string = locateFoundation();
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-export interface Manifest {
-  name: string;
-  title: string;
-  description: string;
-  category: string;
-  manifestVersion: number;
-  primitive?: { package: string; parts: string[]; propsInherited: boolean };
-  native?: { element: string; parts?: string[]; propsInherited: boolean };
-  slots: Array<{ name: string; part: string; required: boolean }>;
-  axes: Record<string, { values: Array<string | number>; default: string | number }>;
-  styleSurface: Record<string, Record<string, Record<string, unknown>>>;
-  tokensUsed: string[];
-  dependencies: string[];
-  registryDependencies: string[];
-  files: Array<{ name: string; source: string; target: string; type: string }>;
-  standards: {
-    purpose: string;
-    useWhen: string[];
-    doNotUseWhen: string[];
-    rules: Array<{ id: string; severity: string; check: string }>;
-  };
-}
+export type { Manifest } from "./manifests.js";
+export { getManifests, getTokenContract } from "./manifests.js";
 
 export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
+export type { DnaSection, DnaAxes, DnaEnums, DnaPalette, DnaDelta, DnaSource, ModelOutput } from "@arche/foundation/dna";
+export { dnaSectionSchema, dnaDeltaSchema, modelOutputSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
 
 export interface ArcheIdentity {
   meta: { name: string; contractVersion: number } & Record<string, unknown>;
@@ -75,6 +39,12 @@ export interface ArcheIdentity {
   fonts: ArcheIdentityFonts;
   /** Closed-registry icon library id (exactly one per identity). */
   icons: string;
+  /**
+   * Design DNA (Brief #6). Optional: older payloads without it remain valid;
+   * required for generated identities. Descriptive metadata only — the
+   * compiler never reads hand-authored token sets from it.
+   */
+  dna?: DnaSection;
 }
 
 export interface ValidationIssue {
@@ -104,6 +74,7 @@ const identitySchema = z.object({
     mono: z.string().min(1),
   }),
   icons: z.string().min(1),
+  dna: dnaSectionSchema.optional(),
 });
 
 /**
@@ -132,21 +103,10 @@ function validateRegistries(identity: ArcheIdentity, issues: ValidationIssue[]):
   }
 }
 
-const manifestDir = join(foundationDir, "src", "manifests");
-const MANIFESTS: Manifest[] = readdirSync(manifestDir)
-  .filter((file) => file.endsWith(".manifest.json"))
-  .sort()
-  .map((file) => JSON.parse(readFileSync(join(manifestDir, file), "utf8")) as Manifest);
+import type { Manifest } from "./manifests.js";
+import { getManifests } from "./manifests.js";
 
-/** All component manifests (parsed, sorted by file). Read-only: do not mutate. */
-export function getManifests(): Manifest[] {
-  return MANIFESTS;
-}
-
-/** The token contract (tokens + contrast pairs) for editor UI generation. */
-export function getTokenContract(): unknown {
-  return tokenContract;
-}
+const MANIFESTS: Manifest[] = getManifests();
 
 /** Names shared by manifest knobs and their cva implementation axes. */
 const KNOB_TO_AXIS: Record<string, string> = {

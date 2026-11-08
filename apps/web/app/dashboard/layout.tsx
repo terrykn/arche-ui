@@ -19,6 +19,7 @@ const DASH_LINKS = [
   { href: "/dashboard/standards", label: "Standards" },
   { href: "/dashboard/mcp", label: "MCP" },
   { href: "/dashboard/docs", label: "Docs" },
+  { href: "/dashboard/settings", label: "Settings" },
 ];
 
 export default async function DashboardLayout({

@@ -9,6 +9,26 @@
     "mono": "geist-mono"
   },
   "icons": "lucide",
+  "dna": {
+    "source": { "type": "manual" },
+    "axes": {
+      "warmth": 0.5,
+      "energy": 0.5,
+      "playfulness": 0.4,
+      "sharpness": 0.5,
+      "density": 0.5,
+      "ornament": 0.35,
+      "retroFuturism": 0.2,
+      "formality": 0.5,
+      "material": "flat",
+      "motionFeel": "smooth",
+      "texture": "none",
+      "minContrast": "AA",
+      "respectReducedMotion": true
+    },
+    "palette": { "primaryHue": 0, "accentHue": 0, "neutralHue": 0 },
+    "compilerVersion": 1
+  },
   "tokens": {
     "light": {
       "--background": {

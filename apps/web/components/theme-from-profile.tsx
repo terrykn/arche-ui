@@ -10,11 +10,15 @@ export function ThemeFromProfile({ theme }: { theme: "light" | "dark" | "system"
       if (localStorage.getItem("arche-theme")) {
         return;
       }
-      if (theme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else if (theme === "light") {
-        document.documentElement.classList.remove("dark");
+      if (theme !== "dark" && theme !== "light") {
+        return;
       }
+      const dark = theme === "dark";
+      document.documentElement.classList.toggle("dark", dark);
+      document.documentElement.dataset.theme = theme;
+      // Persist so the server renders it on the next load (no script needed).
+      localStorage.setItem("arche-theme", theme);
+      document.cookie = `arche-theme=${theme}; path=/; max-age=31536000; SameSite=Lax`;
     } catch {
       // ignore
     }

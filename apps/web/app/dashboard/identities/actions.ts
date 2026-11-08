@@ -3,10 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { validateIdentity } from "@arche/registry-core";
+import { applyPromptEdit, generateFromPhrase } from "@/lib/generation/service";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { publishLibrary } from "@/lib/publish";
 import { issueRegistryToken } from "@/lib/registry-token";
+import { ensureProfileExists } from "@/lib/profiles";
 import { slugify, starterPayload } from "@/lib/starter";
 
 async function requireUserId(): Promise<string> {
@@ -28,6 +30,18 @@ export async function createIdentity(formData: FormData) {
     redirect("/dashboard/identities/new?error=Name%20is%20required");
   }
   const service = createServiceClient();
+  // Self-healing: accounts predating the new-user trigger have no profiles
+  // row, which the libraries.owner FK requires. Ensure it before inserting.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  await ensureProfileExists(
+    service,
+    owner,
+    user?.email ?? null,
+    ((user?.user_metadata?.full_name ?? user?.user_metadata?.name ?? null) as string | null),
+  );
   const payload = starterPayload() as Record<string, unknown>;
   const { data, error } = await service
     .from("libraries")
@@ -41,7 +55,13 @@ export async function createIdentity(formData: FormData) {
     .select("id")
     .single();
   if (error || !data) {
-    redirect(`/dashboard/identities/new?error=${encodeURIComponent(error?.message ?? "create failed")}`);
+    // Friendly duplicate message: the (owner, slug) key is unique, so this
+    // means an earlier attempt already created it — point at Identities.
+    const message =
+      (error as unknown as { code?: string } | null)?.code === "23505"
+        ? `You already have an identity named "${name}" — open it from Dashboard → Identities instead of creating it again.`
+        : (error?.message ?? "create failed");
+    redirect(`/dashboard/identities/new?error=${encodeURIComponent(message)}`);
   }
   revalidatePath("/dashboard");
   redirect(`/dashboard/identities/${(data as unknown as { id: string }).id}/edit`);
@@ -50,6 +70,48 @@ export async function createIdentity(formData: FormData) {
 export interface SaveState {
   ok: boolean;
   issues?: Array<{ path: string; message: string }>;
+}
+
+/** Text door (Brief #6 §7): phrase → validated draft, then edit it. */
+export async function generatePhraseAction(formData: FormData) {
+  const owner = await requireUserId();
+  const prompt = String(formData.get("prompt") ?? "").trim().slice(0, 120);
+  const name = String(formData.get("name") ?? "").trim().slice(0, 80);
+  if (!prompt) {
+    redirect("/dashboard/identities/new?error=Describe%20the%20vibe%20in%20a%20phrase%20first");
+  }
+  try {
+    const outcome = await generateFromPhrase(owner, prompt, name || undefined);
+    revalidatePath("/dashboard");
+    redirect(`/dashboard/identities/${outcome.libraryId}/edit?generated=1`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    redirect(`/dashboard/identities/new?error=${encodeURIComponent(message)}`);
+  }
+}
+
+export interface EditState {
+  ok: boolean;
+  delta?: Record<string, unknown>;
+  diffCount?: number;
+  issues?: Array<{ path: string; message: string }>;
+}
+
+/** Prompt edit (Brief #6 §7): natural-language nudge → delta-only recompile, stays draft. */
+export async function applyPromptEditAction(libraryId: string, prompt: string): Promise<EditState> {
+  const owner = await requireUserId();
+  const trimmed = prompt.trim().slice(0, 280);
+  if (!trimmed) {
+    return { ok: false, issues: [{ path: "prompt", message: "describe the change first" }] };
+  }
+  try {
+    const { delta, diff } = await applyPromptEdit(owner, libraryId, trimmed);
+    revalidatePath("/dashboard");
+    return { ok: true, delta: delta as Record<string, unknown>, diffCount: diff.length };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, issues: [{ path: "prompt", message }] };
+  }
 }
 
 export async function savePayload(libraryId: string, payload: unknown): Promise<SaveState> {

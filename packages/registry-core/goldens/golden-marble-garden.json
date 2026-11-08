@@ -1,0 +1,465 @@
+{
+  "components": {
+    "accordion": {
+      "spacing": "default"
+    },
+    "alert-dialog": {
+      "radiusFrom": "lg",
+      "shadow": "lg",
+      "size": "sm"
+    },
+    "aspect-ratio": {},
+    "avatar": {
+      "size": "sm"
+    },
+    "badge": {
+      "defaultVariant": "default",
+      "variant": "default"
+    },
+    "button": {
+      "defaultSize": "sm",
+      "defaultVariant": "default",
+      "fontWeight": "medium",
+      "shadow": "sm",
+      "size": "sm",
+      "variant": "default"
+    },
+    "card": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "checkbox": {
+      "radiusFrom": "lg",
+      "size": "sm"
+    },
+    "collapsible": {},
+    "context-menu": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "dialog": {
+      "backdropBlur": "sm",
+      "border": "sm",
+      "motion": "--motion-normal",
+      "overlayBackground": "--foreground",
+      "overlayOpacity": 0.4,
+      "radiusFrom": "lg",
+      "shadow": "lg",
+      "size": "sm"
+    },
+    "dropdown-menu": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "form": {},
+    "hover-card": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "input": {
+      "controlSize": "default",
+      "radiusFrom": "lg"
+    },
+    "label": {},
+    "menubar": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "navigation-menu": {},
+    "one-time-password-field": {
+      "radiusFrom": "lg"
+    },
+    "password-toggle-field": {
+      "radiusFrom": "lg"
+    },
+    "popover": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "progress": {},
+    "radio-group": {},
+    "scroll-area": {},
+    "select": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "separator": {},
+    "skeleton": {
+      "radiusFrom": "lg"
+    },
+    "slider": {},
+    "switch": {},
+    "table": {
+      "density": "default"
+    },
+    "tabs": {
+      "defaultVariant": "default",
+      "variant": "default"
+    },
+    "textarea": {
+      "radiusFrom": "lg"
+    },
+    "toast": {
+      "radiusFrom": "lg",
+      "shadow": "lg"
+    },
+    "toggle": {
+      "defaultSize": "sm",
+      "defaultVariant": "default",
+      "size": "sm",
+      "variant": "default"
+    },
+    "toggle-group": {},
+    "toolbar": {},
+    "tooltip": {
+      "radiusFrom": "lg"
+    }
+  },
+  "dna": {
+    "axes": {
+      "density": 0.3,
+      "energy": 0.4,
+      "formality": 0.4,
+      "material": "marble",
+      "minContrast": "AA",
+      "motionFeel": "smooth",
+      "ornament": 0.85,
+      "playfulness": 0.6,
+      "respectReducedMotion": true,
+      "retroFuturism": 0.15,
+      "sharpness": 0.25,
+      "texture": "marble-vein",
+      "warmth": 0.7
+    },
+    "compilerVersion": 1,
+    "palette": {
+      "accentHue": 90,
+      "neutralHue": 80,
+      "primaryHue": 150
+    },
+    "source": {
+      "promptText": "marble garden party",
+      "type": "phrase"
+    }
+  },
+  "fonts": {
+    "display": "fraunces",
+    "mono": "dm-mono",
+    "sans": "nunito-sans"
+  },
+  "icons": "phosphor",
+  "meta": {
+    "adjustments": [
+      {
+        "adjustedValue": "oklch(0.12 0.01 250)",
+        "compiledValue": "oklch(0.2 0.01 250)",
+        "mode": "dark",
+        "pair": "--primary-foreground on --primary",
+        "ratioAfter": 4.52,
+        "ratioBefore": 4.03,
+        "token": "--primary-foreground"
+      },
+      {
+        "adjustedValue": "oklch(0.14 0.01 250)",
+        "compiledValue": "oklch(0.2 0.01 250)",
+        "mode": "dark",
+        "pair": "--destructive-foreground on --destructive",
+        "ratioAfter": 4.52,
+        "ratioBefore": 4.11,
+        "token": "--destructive-foreground"
+      }
+    ],
+    "contractVersion": 1,
+    "name": "golden-garden"
+  },
+  "tokens": {
+    "dark": {
+      "--accent": {
+        "$type": "color",
+        "$value": "oklch(0.475 0.055 90)"
+      },
+      "--accent-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.038 90)"
+      },
+      "--background": {
+        "$type": "color",
+        "$value": "oklch(0.27 0.005 76.5)"
+      },
+      "--border": {
+        "$type": "color",
+        "$value": "oklch(0.56 0.011 76.5)"
+      },
+      "--card": {
+        "$type": "color",
+        "$value": "oklch(0.38 0.008 76.5)"
+      },
+      "--card-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.985 0.006 76.5)"
+      },
+      "--chart-1": {
+        "$type": "color",
+        "$value": "oklch(0.645 0.086 150)"
+      },
+      "--chart-2": {
+        "$type": "color",
+        "$value": "oklch(0.645 0.086 90)"
+      },
+      "--chart-3": {
+        "$type": "color",
+        "$value": "oklch(0.645 0.086 200)"
+      },
+      "--chart-4": {
+        "$type": "color",
+        "$value": "oklch(0.645 0.086 220)"
+      },
+      "--chart-5": {
+        "$type": "color",
+        "$value": "oklch(0.645 0.086 350)"
+      },
+      "--destructive": {
+        "$type": "color",
+        "$value": "oklch(0.6 0.22 25)"
+      },
+      "--destructive-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.14 0.01 250)"
+      },
+      "--font-display": {
+        "$type": "fontFamily",
+        "$value": "Fraunces, ui-sans-serif, system-ui, sans-serif"
+      },
+      "--font-mono": {
+        "$type": "fontFamily",
+        "$value": "DM Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+      },
+      "--font-sans": {
+        "$type": "fontFamily",
+        "$value": "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+      },
+      "--foreground": {
+        "$type": "color",
+        "$value": "oklch(0.985 0.006 76.5)"
+      },
+      "--input": {
+        "$type": "color",
+        "$value": "oklch(0.56 0.011 76.5)"
+      },
+      "--motion-fast": {
+        "$type": "motion",
+        "$value": {
+          "duration": "150ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      },
+      "--motion-normal": {
+        "$type": "motion",
+        "$value": {
+          "duration": "250ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      },
+      "--muted": {
+        "$type": "color",
+        "$value": "oklch(0.475 0.015 76.5)"
+      },
+      "--muted-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.925 0.015 76.5)"
+      },
+      "--popover": {
+        "$type": "color",
+        "$value": "oklch(0.38 0.008 76.5)"
+      },
+      "--popover-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.985 0.006 76.5)"
+      },
+      "--primary": {
+        "$type": "color",
+        "$value": "oklch(0.56 0.079 150)"
+      },
+      "--primary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.12 0.01 250)"
+      },
+      "--radius": {
+        "$type": "dimension",
+        "$value": "0.75rem"
+      },
+      "--ring": {
+        "$type": "color",
+        "$value": "oklch(0.645 0.086 150)"
+      },
+      "--secondary": {
+        "$type": "color",
+        "$value": "oklch(0.475 0.031 150)"
+      },
+      "--secondary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.038 150)"
+      },
+      "--shadow-lg": {
+        "$type": "shadow",
+        "$value": "0 10px 15px -3px oklch(0.2 0.01 76.5 / 0.08)"
+      },
+      "--shadow-md": {
+        "$type": "shadow",
+        "$value": "0 4px 6px -1px oklch(0.2 0.01 76.5 / 0.07)"
+      },
+      "--shadow-sm": {
+        "$type": "shadow",
+        "$value": "0 1px 2px 0 oklch(0.2 0.01 76.5 / 0.05)"
+      },
+      "--shadow-xl": {
+        "$type": "shadow",
+        "$value": "0 20px 25px -5px oklch(0.2 0.01 76.5 / 0.1)"
+      }
+    },
+    "light": {
+      "--accent": {
+        "$type": "color",
+        "$value": "oklch(0.925 0.044 90)"
+      },
+      "--accent-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.38 0.055 90)"
+      },
+      "--background": {
+        "$type": "color",
+        "$value": "oklch(0.985 0.003 76.5)"
+      },
+      "--border": {
+        "$type": "color",
+        "$value": "oklch(0.885 0.01 76.5)"
+      },
+      "--card": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.005 76.5)"
+      },
+      "--card-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.27 0.011 76.5)"
+      },
+      "--chart-1": {
+        "$type": "color",
+        "$value": "oklch(0.785 0.086 150)"
+      },
+      "--chart-2": {
+        "$type": "color",
+        "$value": "oklch(0.785 0.086 90)"
+      },
+      "--chart-3": {
+        "$type": "color",
+        "$value": "oklch(0.785 0.086 200)"
+      },
+      "--chart-4": {
+        "$type": "color",
+        "$value": "oklch(0.785 0.086 220)"
+      },
+      "--chart-5": {
+        "$type": "color",
+        "$value": "oklch(0.785 0.086 350)"
+      },
+      "--destructive": {
+        "$type": "color",
+        "$value": "oklch(0.55 0.22 25)"
+      },
+      "--destructive-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.99 0 0)"
+      },
+      "--font-display": {
+        "$type": "fontFamily",
+        "$value": "Fraunces, ui-sans-serif, system-ui, sans-serif"
+      },
+      "--font-mono": {
+        "$type": "fontFamily",
+        "$value": "DM Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+      },
+      "--font-sans": {
+        "$type": "fontFamily",
+        "$value": "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+      },
+      "--foreground": {
+        "$type": "color",
+        "$value": "oklch(0.27 0.011 76.5)"
+      },
+      "--input": {
+        "$type": "color",
+        "$value": "oklch(0.885 0.01 76.5)"
+      },
+      "--motion-fast": {
+        "$type": "motion",
+        "$value": {
+          "duration": "150ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      },
+      "--motion-normal": {
+        "$type": "motion",
+        "$value": {
+          "duration": "250ms",
+          "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
+        }
+      },
+      "--muted": {
+        "$type": "color",
+        "$value": "oklch(0.925 0.012 76.5)"
+      },
+      "--muted-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.475 0.019 76.5)"
+      },
+      "--popover": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.005 76.5)"
+      },
+      "--popover-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.27 0.011 76.5)"
+      },
+      "--primary": {
+        "$type": "color",
+        "$value": "oklch(0.785 0.086 150)"
+      },
+      "--primary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.2 0.01 250)"
+      },
+      "--radius": {
+        "$type": "dimension",
+        "$value": "0.75rem"
+      },
+      "--ring": {
+        "$type": "color",
+        "$value": "oklch(0.72 0.088 150)"
+      },
+      "--secondary": {
+        "$type": "color",
+        "$value": "oklch(0.925 0.025 150)"
+      },
+      "--secondary-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.38 0.055 150)"
+      },
+      "--shadow-lg": {
+        "$type": "shadow",
+        "$value": "0 10px 15px -3px oklch(0.2 0.01 76.5 / 0.08)"
+      },
+      "--shadow-md": {
+        "$type": "shadow",
+        "$value": "0 4px 6px -1px oklch(0.2 0.01 76.5 / 0.07)"
+      },
+      "--shadow-sm": {
+        "$type": "shadow",
+        "$value": "0 1px 2px 0 oklch(0.2 0.01 76.5 / 0.05)"
+      },
+      "--shadow-xl": {
+        "$type": "shadow",
+        "$value": "0 20px 25px -5px oklch(0.2 0.01 76.5 / 0.1)"
+      }
+    }
+  }
+}
