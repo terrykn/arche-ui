@@ -131,12 +131,13 @@
       "texture": "none",
       "warmth": 0.3
     },
-    "compilerVersion": 1,
+    "compilerVersion": 2,
     "palette": {
       "accentHue": 220,
       "neutralHue": 230,
       "primaryHue": 220
     },
+    "profile": "standard",
     "source": {
       "promptText": "formal institutional ink",
       "type": "phrase"
@@ -151,12 +152,68 @@
   "meta": {
     "adjustments": [
       {
-        "adjustedValue": "oklch(0.08 0.01 250)",
+        "adjustedValue": "oklch(0.785 0.08 220)",
+        "compiledValue": "oklch(0.785 0.019 220)",
+        "mode": "light",
+        "ruleId": "color-solid-chroma-band",
+        "token": "--primary"
+      },
+      {
+        "adjustedValue": "oklch(0.925 0.08 220)",
+        "compiledValue": "oklch(0.925 0.01 220)",
+        "mode": "light",
+        "ruleId": "color-solid-chroma-band",
+        "token": "--accent"
+      },
+      {
+        "adjustedValue": "oklch(0.475 0.088 220)",
+        "compiledValue": "oklch(0.785 0.088 220)",
+        "mode": "light",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-2"
+      },
+      {
+        "adjustedValue": "oklch(0.925 0.088 270)",
+        "compiledValue": "oklch(0.785 0.088 270)",
+        "mode": "light",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-3"
+      },
+      {
+        "adjustedValue": "oklch(0.56 0.08 220)",
+        "compiledValue": "oklch(0.56 0.018 220)",
+        "mode": "dark",
+        "ruleId": "color-solid-chroma-band",
+        "token": "--primary"
+      },
+      {
+        "adjustedValue": "oklch(0.475 0.08 220)",
+        "compiledValue": "oklch(0.475 0.013 220)",
+        "mode": "dark",
+        "ruleId": "color-solid-chroma-band",
+        "token": "--accent"
+      },
+      {
+        "adjustedValue": "oklch(0.925 0.088 220)",
+        "compiledValue": "oklch(0.645 0.088 220)",
+        "mode": "dark",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-2"
+      },
+      {
+        "adjustedValue": "oklch(0.885 0.088 270)",
+        "compiledValue": "oklch(0.645 0.088 270)",
+        "mode": "dark",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-3"
+      },
+      {
+        "adjustedValue": "oklch(0.11 0.01 250)",
         "compiledValue": "oklch(0.2 0.01 250)",
         "mode": "dark",
         "pair": "--primary-foreground on --primary",
-        "ratioAfter": 4.5,
-        "ratioBefore": 3.91,
+        "ratioAfter": 4.51,
+        "ratioBefore": 3.99,
         "token": "--primary-foreground"
       },
       {
@@ -176,7 +233,7 @@
     "dark": {
       "--accent": {
         "$type": "color",
-        "$value": "oklch(0.475 0.013 220)"
+        "$value": "oklch(0.475 0.08 220)"
       },
       "--accent-foreground": {
         "$type": "color",
@@ -200,23 +257,23 @@
       },
       "--chart-1": {
         "$type": "color",
-        "$value": "oklch(0.645 0.019 220)"
+        "$value": "oklch(0.645 0.088 220)"
       },
       "--chart-2": {
         "$type": "color",
-        "$value": "oklch(0.645 0.019 220)"
+        "$value": "oklch(0.925 0.088 220)"
       },
       "--chart-3": {
         "$type": "color",
-        "$value": "oklch(0.645 0.019 270)"
+        "$value": "oklch(0.885 0.088 270)"
       },
       "--chart-4": {
         "$type": "color",
-        "$value": "oklch(0.645 0.019 350)"
+        "$value": "oklch(0.645 0.088 350)"
       },
       "--chart-5": {
         "$type": "color",
-        "$value": "oklch(0.645 0.019 60)"
+        "$value": "oklch(0.645 0.088 60)"
       },
       "--destructive": {
         "$type": "color",
@@ -256,7 +313,7 @@
       "--motion-normal": {
         "$type": "motion",
         "$value": {
-          "duration": "450ms",
+          "duration": "400ms",
           "easing": "ease-in-out"
         }
       },
@@ -278,11 +335,11 @@
       },
       "--primary": {
         "$type": "color",
-        "$value": "oklch(0.56 0.018 220)"
+        "$value": "oklch(0.56 0.08 220)"
       },
       "--primary-foreground": {
         "$type": "color",
-        "$value": "oklch(0.08 0.01 250)"
+        "$value": "oklch(0.11 0.01 250)"
       },
       "--radius": {
         "$type": "dimension",
@@ -320,7 +377,7 @@
     "light": {
       "--accent": {
         "$type": "color",
-        "$value": "oklch(0.925 0.01 220)"
+        "$value": "oklch(0.925 0.08 220)"
       },
       "--accent-foreground": {
         "$type": "color",
@@ -344,23 +401,23 @@
       },
       "--chart-1": {
         "$type": "color",
-        "$value": "oklch(0.785 0.019 220)"
+        "$value": "oklch(0.785 0.088 220)"
       },
       "--chart-2": {
         "$type": "color",
-        "$value": "oklch(0.785 0.019 220)"
+        "$value": "oklch(0.475 0.088 220)"
       },
       "--chart-3": {
         "$type": "color",
-        "$value": "oklch(0.785 0.019 270)"
+        "$value": "oklch(0.925 0.088 270)"
       },
       "--chart-4": {
         "$type": "color",
-        "$value": "oklch(0.785 0.019 350)"
+        "$value": "oklch(0.785 0.088 350)"
       },
       "--chart-5": {
         "$type": "color",
-        "$value": "oklch(0.785 0.019 60)"
+        "$value": "oklch(0.785 0.088 60)"
       },
       "--destructive": {
         "$type": "color",
@@ -400,7 +457,7 @@
       "--motion-normal": {
         "$type": "motion",
         "$value": {
-          "duration": "450ms",
+          "duration": "400ms",
           "easing": "ease-in-out"
         }
       },
@@ -422,7 +479,7 @@
       },
       "--primary": {
         "$type": "color",
-        "$value": "oklch(0.785 0.019 220)"
+        "$value": "oklch(0.785 0.08 220)"
       },
       "--primary-foreground": {
         "$type": "color",
@@ -461,5 +518,6 @@
         "$value": "0 20px 25px -5px oklch(0.2 0.01 206 / 0.1)"
       }
     }
-  }
+  },
+  "typeScale": "compact-1.2"
 }

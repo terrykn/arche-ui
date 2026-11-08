@@ -9,6 +9,7 @@
     "mono": "ibm-plex-mono"
   },
   "icons": "lucide",
+  "typeScale": "standard-1.25",
   "dna": {
     "source": { "type": "fixture", "promptText": "calm hospital" },
     "axes": {
@@ -27,7 +28,8 @@
       "respectReducedMotion": true
     },
     "palette": { "primaryHue": 200, "accentHue": 175, "neutralHue": 230 },
-    "compilerVersion": 1
+    "compilerVersion": 1,
+    "profile": "standard"
   },
   "tokens": {
     "light": {

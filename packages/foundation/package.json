@@ -38,6 +38,14 @@
     "./dna": {
       "types": "./src/dna/dna.ts",
       "default": "./dist/dna/dna.js"
+    },
+    "./design-rules": {
+      "types": "./src/design-rules/design-rules.ts",
+      "default": "./dist/design-rules/design-rules.js"
+    },
+    "./typography": {
+      "types": "./src/typography/typography.ts",
+      "default": "./dist/typography/typography.js"
     }
   },
   "scripts": {

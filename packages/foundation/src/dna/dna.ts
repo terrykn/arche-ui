@@ -68,6 +68,15 @@ export const dnaPaletteSchema = z.object({
 
 export type DnaPalette = z.infer<typeof dnaPaletteSchema>;
 
+/**
+ * Generation profile (design-rules envelope preset). The model classifies
+ * the request alongside the DNA; the user never picks it manually in v1.
+ * Recorded on the compiled payload; never relaxes WCAG AA or the taper rule.
+ */
+export const generationProfileSchema = z.enum(["enterprise", "standard", "expressive"]);
+
+export type GenerationProfile = z.infer<typeof generationProfileSchema>;
+
 export const dnaSourceSchema = z.object({
   type: z.enum(["phrase", "image", "fixture", "remix", "manual"]),
   /** present when type = phrase */
@@ -84,30 +93,92 @@ export const dnaSectionSchema = z.object({
   source: dnaSourceSchema,
   axes: dnaObjectSchema,
   palette: dnaPaletteSchema,
+  /** Envelope preset the compiler mapped under; recorded per Deliverable 1. */
+  profile: generationProfileSchema,
   /** Bump when compiler mappings change; goldens regenerate deliberately. */
   compilerVersion: z.number().int().min(1),
 });
 
 export type DnaSection = z.infer<typeof dnaSectionSchema>;
 
+const optionalAxis = axis.optional();
+
 /**
- * Exactly the §4 axes + palette anchors — the generation service's model
- * output schema contains this and nothing else (Brief #6 Rule 1).
+ * Plan section of the single-call response (Deliverable 3): 4-6 named
+ * colors with intended roles, already revised per the self-check.
+ */
+export const planColorSchema = z.object({
+  name: z.string().min(1).max(40),
+  role: z.enum(["background", "surface", "primary", "accent", "neutral", "text", "semantic-fixed"]),
+  /** Free-form value note (e.g. an oklch guess); the compiler owns real values. */
+  note: z.string().max(120).optional(),
+});
+
+export const planSchema = z.object({
+  colors: z.array(planColorSchema).min(4).max(6),
+});
+
+export type Plan = z.infer<typeof planSchema>;
+
+/** Self-check section: the plan checked against the taught calibration list. */
+export const selfCheckSchema = z.object({
+  verdict: z.enum(["pass", "revised"]),
+  notes: z.string().min(1).max(500),
+});
+
+export type SelfCheck = z.infer<typeof selfCheckSchema>;
+
+/**
+ * The generation service's single model response (Deliverable 3): plan +
+ * self-check + final inputs (DNA + palette anchors + profile). The checkable
+ * half of the taught rules is enforced on the compiled payload, so the
+ * revision happens inside this one completion — no second model call.
  */
 export const modelOutputSchema = z.object({
+  plan: planSchema,
+  selfCheck: selfCheckSchema,
   axes: dnaObjectSchema,
   palette: dnaPaletteSchema,
+  profile: generationProfileSchema,
 });
 
 export type ModelOutput = z.infer<typeof modelOutputSchema>;
+
+/**
+ * Prompt-edit single-call response: same shape (plan + self-check), with the
+ * revised inputs expressed as a delta plus an optional profile change.
+ */
+export const modelDeltaOutputSchema = z.object({
+  plan: planSchema,
+  selfCheck: selfCheckSchema,
+  delta: z.object({
+    axes: z
+      .object({
+        warmth: optionalAxis,
+        energy: optionalAxis,
+        playfulness: optionalAxis,
+        sharpness: optionalAxis,
+        density: optionalAxis,
+        ornament: optionalAxis,
+        retroFuturism: optionalAxis,
+        formality: optionalAxis,
+        material: dnaEnumsSchema.shape.material.optional(),
+        motionFeel: dnaEnumsSchema.shape.motionFeel.optional(),
+        texture: dnaEnumsSchema.shape.texture.optional(),
+      })
+      .optional(),
+    palette: dnaPaletteSchema.partial().optional(),
+  }),
+  profile: generationProfileSchema.optional(),
+});
+
+export type ModelDeltaOutput = z.infer<typeof modelDeltaOutputSchema>;
 
 /**
  * Prompt-edit delta (Brief #6 §7): only the axes/enums the prompt implicates,
  * with new values. Applied onto the stored DNA, then recompiled — unrelated
  * payload fields stay byte-identical.
  */
-const optionalAxis = axis.optional();
-
 export const dnaDeltaSchema = z.object({
   axes: z
     .object({
@@ -130,4 +201,4 @@ export const dnaDeltaSchema = z.object({
 export type DnaDelta = z.infer<typeof dnaDeltaSchema>;
 
 /** Current compiler version stamped on newly compiled DNA sections. */
-export const DNA_COMPILER_VERSION = 1;
+export const DNA_COMPILER_VERSION = 2;

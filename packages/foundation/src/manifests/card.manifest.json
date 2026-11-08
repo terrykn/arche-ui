@@ -1,9 +1,133 @@
 {
-  "name": "card", "title": "Card", "description": "A container for related content.", "category": "layout", "manifestVersion": 1,
-  "native": { "element": "div", "propsInherited": true },
-  "slots": [{ "name": "card", "part": "div", "partType": "native", "required": true }, { "name": "header", "part": "div", "partType": "native", "required": false }, { "name": "title", "part": "div", "partType": "native", "required": false }, { "name": "description", "part": "div", "partType": "native", "required": false }, { "name": "action", "part": "div", "partType": "native", "required": false }, { "name": "content", "part": "div", "partType": "native", "required": false }, { "name": "footer", "part": "div", "partType": "native", "required": false }], "axes": {},
-  "styleSurface": { "card": { "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "xl" }, "shadow": { "type": "enum", "values": ["none", "sm", "md", "lg", "xl"], "default": "sm" } } },
-  "tokensUsed": ["--border", "--card", "--card-foreground", "--muted-foreground", "--radius", "--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"], "dependencies": ["class-variance-authority"], "registryDependencies": ["utils"],
-  "files": [{ "name": "card", "source": "src/templates/card.tsx", "target": "components/ui/card.tsx", "type": "registry:ui" }],
-  "standards": { "purpose": "Group related content in a distinct surface.", "useWhen": ["Related content benefits from a container."], "doNotUseWhen": ["The container would add hierarchy without meaning."], "rules": [{ "id": "card-meaningful-group", "severity": "warning", "check": "Keep the contents of a card related to one subject." }] }
+  "name": "card",
+  "title": "Card",
+  "description": "A container for related content.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "native": {
+    "element": "div",
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "card",
+      "part": "div",
+      "partType": "native",
+      "required": true
+    },
+    {
+      "name": "header",
+      "part": "div",
+      "partType": "native",
+      "required": false
+    },
+    {
+      "name": "title",
+      "part": "div",
+      "partType": "native",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "div",
+      "partType": "native",
+      "required": false
+    },
+    {
+      "name": "action",
+      "part": "div",
+      "partType": "native",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "div",
+      "partType": "native",
+      "required": false
+    },
+    {
+      "name": "footer",
+      "part": "div",
+      "partType": "native",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "card": {
+      "radiusFrom": {
+        "type": "token",
+        "value": "--radius",
+        "scale": [
+          "sm",
+          "md",
+          "lg",
+          "xl"
+        ],
+        "default": "xl"
+      },
+      "shadow": {
+        "type": "enum",
+        "values": [
+          "none",
+          "sm",
+          "md",
+          "lg",
+          "xl"
+        ],
+        "default": "sm"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--border",
+    "--card",
+    "--card-foreground",
+    "--muted-foreground",
+    "--radius",
+    "--shadow-sm",
+    "--shadow-md",
+    "--shadow-lg",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "card",
+      "source": "src/templates/card.tsx",
+      "target": "components/ui/card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Group related content in a distinct surface.",
+    "useWhen": [
+      "Related content benefits from a container."
+    ],
+    "doNotUseWhen": [
+      "The container would add hierarchy without meaning."
+    ],
+    "rules": [
+      {
+        "id": "card-meaningful-group",
+        "severity": "warning",
+        "check": "Keep the contents of a card related to one subject."
+      },
+      {
+        "id": "radius-concentric",
+        "severity": "info",
+        "check": "Nested surfaces follow outer radius = inner radius + gap (Arche design rule radius-concentric)."
+      },
+      {
+        "id": "type-measure-prose",
+        "severity": "info",
+        "check": "Body copy inside prose surfaces keeps a 65-75 character measure (Arche design rule type-measure)."
+      }
+    ]
+  }
 }

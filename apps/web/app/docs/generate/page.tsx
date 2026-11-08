@@ -20,11 +20,26 @@ export default function Generate() {
           DNA fields — unrelated payload fields stay byte-identical, and the diff is inspectable.
           Hand-recorded token overrides survive recompilation.
         </p>
+        <p>
+          <strong>Design rulebook.</strong> The model works inside published rules, not raw taste.
+          The taught half (color roles, one accent, tinted neutrals, closed type scales, radius
+          and spacing discipline, slop avoidance) is injected into its instructions from the{" "}
+          <code>design-rules</code> registry in <code>@arche/foundation</code> — one static block
+          per rules version, so taught and enforced rules cannot drift. The checkable half is
+          enforced on the compiled payload: out-of-envelope values are repaired into it (recorded
+          in <code>meta.adjustments</code> with the rule id), and anything unrepairable fails the
+          generation loudly instead of shipping. The model also classifies each request into a{" "}
+          <strong>profile</strong> — enterprise, standard, or expressive — recorded on the payload;
+          profiles scale the envelopes (tighter radius, chroma, and type for enterprise) but never
+          relax AA. Calibration evidence lives in{" "}
+          <code>design-rules/CALIBRATION.md</code>.
+        </p>
         <p>Guarantees, enforced in code rather than promised in prose:</p>
         <ul className="flex flex-col gap-1">
           <li>· The model outputs DNA only — tokens, classes, and component code are unrepresentable.</li>
           <li>· Every compile passes the absolute AA contrast gate; failures change nothing.</li>
-          <li>· Every attempt is logged with model and token counts, including failures.</li>
+          <li>· Every compile also passes the design-rule gate (repair-or-fail); survivors never publish.</li>
+          <li>· Every attempt is logged with model and token counts, including failures, plus the plan and self-check verdict.</li>
           <li>· A 24-hour generation allowance applies per account (failed checks don&apos;t consume it).</li>
           <li>· Provider keys live server-side only; the browser never sees them.</li>
         </ul>

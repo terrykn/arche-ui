@@ -25,7 +25,7 @@ const guardrails = { minContrast: "AA", respectReducedMotion: true };
 const inputs = [
   ...["arcade", "hospital", "default", "arche"].map((key) => {
     const f = readFixture(`identity.${key}.json`);
-    return { key, name: `golden-${key}`, source: f.dna.source, axes: f.dna.axes, palette: f.dna.palette };
+    return { key, name: `golden-${key}`, source: f.dna.source, axes: f.dna.axes, palette: f.dna.palette, profile: f.dna.profile ?? "standard" };
   }),
   {
     key: "ember-phrase",

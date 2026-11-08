@@ -8,6 +8,8 @@
     "sync-theme": "node scripts/sync-theme.mjs",
     "sync-components": "node scripts/sync-components.mjs",
     "prebuild": "pnpm sync-theme && pnpm sync-components",
+    "test:rules": "../../packages/foundation/node_modules/.bin/tsx scripts/test-single-call.ts",
+    "battery": "../../packages/foundation/node_modules/.bin/tsx --env-file=.env.local scripts/battery-shapeshift.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --max-warnings 0",

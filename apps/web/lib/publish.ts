@@ -1,5 +1,10 @@
 import { createHash } from "node:crypto";
-import { buildRegistry, serializeStable, validateIdentity } from "@arche/registry-core";
+import {
+  assertGeneratedCompliant,
+  buildRegistry,
+  serializeStable,
+  validateIdentity,
+} from "@arche/registry-core";
 import { createServiceClient } from "./supabase/service";
 import type { Library, LibraryVersion } from "./db";
 
@@ -41,6 +46,22 @@ export async function publishLibrary(
   const validation = validateIdentity(row.payload as Parameters<typeof validateIdentity>[0]);
   if (!validation.ok) {
     return { ok: false, issues: validation.issues };
+  }
+
+  // Design-rule enforcement binds generated payloads at publish too: a
+  // payload carrying DNA must be strictly compliant (the generator
+  // repairs-or-fails, so this only fires on post-generation hand edits).
+  // Hand-authored payloads (no DNA) publish with lint findings attached.
+  const payload = row.payload as Parameters<typeof validateIdentity>[0];
+  if (payload.dna) {
+    try {
+      assertGeneratedCompliant(payload);
+    } catch (err) {
+      return {
+        ok: false,
+        issues: [{ path: "design-rules", message: err instanceof Error ? err.message : String(err) }],
+      };
+    }
   }
 
   const items = buildRegistry(row.payload as Parameters<typeof buildRegistry>[0]);

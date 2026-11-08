@@ -28,8 +28,16 @@ export type { Manifest } from "./manifests.js";
 export { getManifests, getTokenContract } from "./manifests.js";
 
 export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
-export type { DnaSection, DnaAxes, DnaEnums, DnaPalette, DnaDelta, DnaSource, ModelOutput } from "@arche/foundation/dna";
-export { dnaSectionSchema, dnaDeltaSchema, modelOutputSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
+export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, Plan, SelfCheck } from "@arche/foundation/dna";
+export { dnaSectionSchema, dnaDeltaSchema, modelOutputSchema, modelDeltaOutputSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
+export { checkDesignRules, assertGeneratedCompliant, CLOSED_EASINGS, type DesignRuleFinding } from "./design-rules.js";
+export {
+  buildTeachBlock,
+  designRulesVersion,
+  teachStatements,
+  loadDesignRules,
+} from "@arche/foundation/design-rules";
+export { deriveTypeScale, DISPLAY_CAP_BY_PROFILE, DISPLAY_CAP_ABSOLUTE_PX, type GenerationProfile as TypeProfile } from "@arche/foundation/typography";
 
 export interface ArcheIdentity {
   meta: { name: string; contractVersion: number } & Record<string, unknown>;
@@ -39,6 +47,12 @@ export interface ArcheIdentity {
   fonts: ArcheIdentityFonts;
   /** Closed-registry icon library id (exactly one per identity). */
   icons: string;
+  /**
+   * Closed-registry type-scale id. Optional so older hand-authored payloads
+   * still parse (missing/unknown ids surface as design-rule lint, not a
+   * contract failure); the compiler always stamps it on generated payloads.
+   */
+  typeScale?: string;
   /**
    * Design DNA (Brief #6). Optional: older payloads without it remain valid;
    * required for generated identities. Descriptive metadata only — the
@@ -55,6 +69,12 @@ export interface ValidationIssue {
 export interface ValidationResult {
   ok: boolean;
   issues: ValidationIssue[];
+  /**
+   * Design-rule findings for hand-authored payloads: informational only,
+   * never affect `ok` (scope decision — hand authors are not blocked).
+   * Generated payloads are held to these strictly at generation + publish.
+   */
+  lint: ValidationIssue[];
 }
 
 // ---------------------------------------------------------------------------
@@ -74,6 +94,7 @@ const identitySchema = z.object({
     mono: z.string().min(1),
   }),
   icons: z.string().min(1),
+  typeScale: z.string().min(1).optional(),
   dna: dnaSectionSchema.optional(),
 });
 
@@ -105,6 +126,12 @@ function validateRegistries(identity: ArcheIdentity, issues: ValidationIssue[]):
 
 import type { Manifest } from "./manifests.js";
 import { getManifests } from "./manifests.js";
+import { checkDesignRules } from "./design-rules.js";
+import {
+  deriveTypeScale,
+  TYPE_ROLES,
+  type GenerationProfile as TypographyProfile,
+} from "@arche/foundation/typography";
 
 const MANIFESTS: Manifest[] = getManifests();
 
@@ -179,7 +206,9 @@ function validateKnob(
 
 /**
  * Validates an identity against the token contract and per-component manifests.
- * Reports undeclared knobs and failing contrast pairs by name.
+ * Reports undeclared knobs and failing contrast pairs by name. Design-rule
+ * findings are appended as non-blocking `lint` (hand authors are informed,
+ * not blocked — generated payloads face the strict gate elsewhere).
  */
 export function validateIdentity(identity: ArcheIdentity): ValidationResult {
   const issues: ValidationIssue[] = [];
@@ -190,7 +219,7 @@ export function validateIdentity(identity: ArcheIdentity): ValidationResult {
       path: "identity",
       message: `payload malformed: ${parsed.error.issues.map((i) => `${i.path.join(".")} ${i.message}`).join("; ")}`,
     });
-    return { ok: false, issues };
+    return { ok: false, issues, lint: [] };
   }
   if (identity.meta.contractVersion !== contractData.contractVersion) {
     issues.push({
@@ -252,7 +281,12 @@ export function validateIdentity(identity: ArcheIdentity): ValidationResult {
     }
   }
 
-  return { ok: issues.length === 0, issues };
+  const lint: ValidationIssue[] = checkDesignRules(identity).map((finding) => ({
+    path: finding.path,
+    message: `[${finding.rule}] ${finding.message}`,
+  }));
+
+  return { ok: issues.length === 0, issues, lint };
 }
 
 // ---------------------------------------------------------------------------
@@ -430,6 +464,21 @@ function emitTheme(identity: ArcheIdentity): ThemeEmission {
     "radius-lg": "var(--radius)",
     "radius-xl": "calc(var(--radius) + 4px)",
   };
+  // Type scale derived at emission (Deliverable 5): the AI selects the scale
+  // id only; every --text-* step is derived (base * ratio^n per role) with
+  // the entry's line-height and letter-spacing per role as Tailwind v4 vars.
+  const profile = (identity.dna as { profile?: unknown } | undefined)?.profile;
+  const typeProfile: TypographyProfile =
+    profile === "enterprise" || profile === "expressive" ? profile : "standard";
+  if (typeof identity.typeScale === "string") {
+    const derived = deriveTypeScale(identity.typeScale, typeProfile);
+    for (const role of TYPE_ROLES) {
+      const step = derived[role];
+      themeVars[`text-${role}`] = `${step.sizePx}px`;
+      themeVars[`text-${role}--line-height`] = String(step.lineHeight);
+      themeVars[`tracking-${role}`] = step.letterSpacing;
+    }
+  }
   for (const colorVar of HEX_COLOR_VARS) {
     themeVars[`color-${colorVar}`] = `var(--${colorVar})`;
   }

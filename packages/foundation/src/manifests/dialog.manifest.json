@@ -6,35 +6,138 @@
   "manifestVersion": 1,
   "primitive": {
     "package": "@radix-ui/react-dialog",
-    "parts": ["Root", "Trigger", "Portal", "Overlay", "Content", "Title", "Description", "Close"],
+    "parts": [
+      "Root",
+      "Trigger",
+      "Portal",
+      "Overlay",
+      "Content",
+      "Title",
+      "Description",
+      "Close"
+    ],
     "propsInherited": true
   },
   "slots": [
-    { "name": "overlay", "part": "Overlay", "required": true },
-    { "name": "content", "part": "Content", "required": true },
-    { "name": "title", "part": "Title", "required": true },
-    { "name": "description", "part": "Description", "required": false },
-    { "name": "close", "part": "Close", "required": false },
-    { "name": "header", "part": "header", "partType": "native", "required": false },
-    { "name": "footer", "part": "footer", "partType": "native", "required": false }
+    {
+      "name": "overlay",
+      "part": "Overlay",
+      "required": true
+    },
+    {
+      "name": "content",
+      "part": "Content",
+      "required": true
+    },
+    {
+      "name": "title",
+      "part": "Title",
+      "required": true
+    },
+    {
+      "name": "description",
+      "part": "Description",
+      "required": false
+    },
+    {
+      "name": "close",
+      "part": "Close",
+      "required": false
+    },
+    {
+      "name": "header",
+      "part": "header",
+      "partType": "native",
+      "required": false
+    },
+    {
+      "name": "footer",
+      "part": "footer",
+      "partType": "native",
+      "required": false
+    }
   ],
   "axes": {
     "size": {
-      "values": ["sm", "default", "lg", "full"],
+      "values": [
+        "sm",
+        "default",
+        "lg",
+        "full"
+      ],
       "default": "default"
     }
   },
   "styleSurface": {
     "overlay": {
-      "overlayBackground": { "type": "token", "values": ["--foreground", "--primary", "--muted"], "default": "--foreground" },
-      "overlayOpacity": { "type": "enum", "values": [0.3, 0.4, 0.5, 0.6], "default": 0.4 },
-      "backdropBlur": { "type": "enum", "values": ["none", "sm", "md", "lg"], "default": "sm" }
+      "overlayBackground": {
+        "type": "token",
+        "values": [
+          "--foreground",
+          "--primary",
+          "--muted"
+        ],
+        "default": "--foreground"
+      },
+      "overlayOpacity": {
+        "type": "enum",
+        "values": [
+          0.3,
+          0.4,
+          0.5,
+          0.6
+        ],
+        "default": 0.4
+      },
+      "backdropBlur": {
+        "type": "enum",
+        "values": [
+          "none",
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "sm"
+      }
     },
     "content": {
-      "shadow": { "type": "enum", "values": ["none", "sm", "md", "lg"], "default": "md" },
-      "border": { "type": "enum", "values": ["none", "sm"], "default": "sm" },
-      "radiusFrom": { "type": "token", "value": "--radius", "scale": ["sm", "md", "lg", "xl"], "default": "lg" },
-      "motion": { "type": "token", "values": ["--motion-fast", "--motion-normal"], "default": "--motion-normal" }
+      "shadow": {
+        "type": "enum",
+        "values": [
+          "none",
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md"
+      },
+      "border": {
+        "type": "enum",
+        "values": [
+          "none",
+          "sm"
+        ],
+        "default": "sm"
+      },
+      "radiusFrom": {
+        "type": "token",
+        "value": "--radius",
+        "scale": [
+          "sm",
+          "md",
+          "lg",
+          "xl"
+        ],
+        "default": "lg"
+      },
+      "motion": {
+        "type": "token",
+        "values": [
+          "--motion-fast",
+          "--motion-normal"
+        ],
+        "default": "--motion-normal"
+      }
     }
   },
   "tokensUsed": [
@@ -57,7 +160,9 @@
     "@radix-ui/react-dialog",
     "class-variance-authority"
   ],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [
+    "utils"
+  ],
   "files": [
     {
       "name": "dialog",
@@ -80,10 +185,31 @@
       "Dialogs would nest inside an open dialog"
     ],
     "rules": [
-      { "id": "dialog-requires-title", "severity": "error", "check": "Dialog Content requires a Title (visually hidden is allowed)." },
-      { "id": "dialog-no-nesting", "severity": "error", "check": "Dialogs may not nest inside another open dialog." },
-      { "id": "dialog-not-longform", "severity": "error", "check": "Long-form content does not belong in a dialog; use a page or a dedicated layout." },
-      { "id": "dialog-destructive-use-alert-dialog", "severity": "warning", "check": "Destructive confirmations should use Alert Dialog rather than Dialog." }
+      {
+        "id": "dialog-requires-title",
+        "severity": "error",
+        "check": "Dialog Content requires a Title (visually hidden is allowed)."
+      },
+      {
+        "id": "dialog-no-nesting",
+        "severity": "error",
+        "check": "Dialogs may not nest inside another open dialog."
+      },
+      {
+        "id": "dialog-not-longform",
+        "severity": "error",
+        "check": "Long-form content does not belong in a dialog; use a page or a dedicated layout."
+      },
+      {
+        "id": "dialog-destructive-use-alert-dialog",
+        "severity": "warning",
+        "check": "Destructive confirmations should use Alert Dialog rather than Dialog."
+      },
+      {
+        "id": "radius-concentric",
+        "severity": "info",
+        "check": "Nested surfaces follow outer radius = inner radius + gap (Arche design rule radius-concentric)."
+      }
     ]
   }
 }

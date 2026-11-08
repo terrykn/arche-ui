@@ -21,8 +21,15 @@ import {
   type DnaObject,
   type DnaPalette,
   type DnaSource,
+  type GenerationProfile,
 } from "@arche/foundation/dna";
 import { expectedFontStack, fontEntriesById } from "@arche/foundation/fonts";
+import {
+  deriveTypeScale,
+  DISPLAY_CAP_ABSOLUTE_PX,
+  DISPLAY_CAP_BY_PROFILE,
+} from "@arche/foundation/typography";
+import { assertGeneratedCompliant, CLOSED_EASINGS } from "./design-rules.js";
 import type { ArcheIdentity } from "./index.js";
 import { getManifests, type Manifest } from "./manifests.js";
 
@@ -36,6 +43,8 @@ export interface CompileInput {
   source: DnaSource;
   axes: DnaObject;
   palette: DnaPalette;
+  /** Envelope preset the mappings build under (default standard). */
+  profile?: GenerationProfile;
   /** Complete payload the mappings build on (Arche aurora in practice). */
   base: ArcheIdentity;
 }
@@ -45,9 +54,11 @@ export interface Adjustment {
   token: string;
   compiledValue: string;
   adjustedValue: string;
-  pair: string;
-  ratioBefore: number;
-  ratioAfter: number;
+  /** Design-rule id for design-repair entries; undefined for AA-pass entries. */
+  ruleId?: string;
+  pair?: string;
+  ratioBefore?: number;
+  ratioAfter?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -127,9 +138,13 @@ function voiceOf(axes: DnaObject, palette: DnaPalette): Voice {
 // Mapping tables (this is Arche's design IP — explicit, versioned, readable)
 // ---------------------------------------------------------------------------
 
-/** sharpness 0 → fully rounded scale head, 1 → no radius. */
-function radiusFor(sharpness: number): string {
-  const rem = Math.round((1 - clamp01(sharpness)) * 1000) / 1000;
+/**
+ * sharpness 0 → profile bound, 1 → no radius. The bound is the profile's
+ * (radius-profile-bounds): enterprise 0.5rem, standard 1rem, expressive 1.5rem.
+ */
+function radiusFor(sharpness: number, profile: GenerationProfile): string {
+  const bound = profile === "enterprise" ? 0.5 : profile === "expressive" ? 1.5 : 1;
+  const rem = Math.round((1 - clamp01(sharpness)) * bound * 1000) / 1000;
   return `${rem}rem`;
 }
 
@@ -231,8 +246,9 @@ function motionFor(feel: DnaObject["motionFeel"]): MotionPair {
       };
     case "stately":
       return {
+        // motion-bounds caps component transitions at 400ms.
         fast: { duration: "300ms", easing: "ease-in-out" },
-        normal: { duration: "450ms", easing: "ease-in-out" },
+        normal: { duration: "400ms", easing: "ease-in-out" },
       };
     case "glitchy":
       return {
@@ -299,6 +315,7 @@ function buildModeTokens(
   axes: DnaObject,
   palette: DnaPalette,
   voice: Voice,
+  profile: GenerationProfile,
 ): TokenRecord {
   const dark = mode === "dark";
   const P = palette.primaryHue;
@@ -314,13 +331,22 @@ function buildModeTokens(
   const primaryInk = autoText(primary);
   const secondary = scaleColor(P, C * 0.45, dark ? 9 : 2);
   const secondaryInk = scaleColor(P, C, dark ? 1 : 10);
-  const accent = scaleColor(A, C * 0.8, dark ? 9 : 2);
-  const accentInk = scaleColor(A, C, dark ? 1 : 10);
+  // Enterprise disallows the accent family: accent derives from the primary
+  // hue (primary + semantics only). Other profiles use the accent anchor.
+  const AH = profile === "enterprise" ? P : A;
+  const accent = scaleColor(AH, C * 0.8, dark ? 9 : 2);
+  const accentInk = scaleColor(AH, C, dark ? 1 : 10);
   const muted = scaleColor(N, NC * 1.5, dark ? 9 : 2);
   const mutedInk = scaleColor(N, NC * 2, dark ? 2 : 9);
   const destructive = formatOklch({ l: dark ? 0.6 : 0.55, c: 0.22, h: 25 });
   const destructiveInk = autoText(destructive);
-  const chartHues = [P, A, P + 50, A + 130, P + 200];
+  // Charts reference the brand hues; enterprise uses a primary-anchored
+  // pentagon (no accent family). Chroma floor keeps chart separation alive
+  // at low voice (the repair pass spreads lightness where hues collide).
+  const chartHues = profile === "enterprise"
+    ? [P, P + 72, P + 144, P + 216, P + 288]
+    : [P, A, P + 50, A + 130, P + 200];
+  const chartChroma = Math.min(0.18, Math.max(C, 0.09));
   const tokens: TokenRecord = {
     "--background": color(bg),
     "--card": color(surface),
@@ -341,10 +367,10 @@ function buildModeTokens(
     "--border": color(scaleColor(N, NC, dark ? 8 : 3)),
     "--input": color(scaleColor(N, NC, dark ? 8 : 3)),
     "--ring": color(scaleColor(P, C, dark ? 7 : 6)),
-    "--radius": { $type: "dimension", $value: radiusFor(axes.sharpness) },
+    "--radius": { $type: "dimension", $value: radiusFor(axes.sharpness, profile) },
   };
   chartHues.forEach((hue, i) => {
-    tokens[`--chart-${i + 1}`] = color(scaleColor(hue, Math.min(0.18, C), dark ? 7 : 5));
+    tokens[`--chart-${i + 1}`] = color(scaleColor(hue, chartChroma, dark ? 7 : 5));
   });
   const motion = motionFor(axes.motionFeel);
   tokens["--motion-fast"] = { $type: "motion", $value: { ...motion.fast } };
@@ -435,6 +461,20 @@ function applyKnobs(
   }
 }
 
+/**
+ * Type-scale mapping (Deliverable 5, deterministic table). High formality or
+ * the enterprise profile → compact/standard; high energy/playfulness under
+ * expressive → expressive/editorial; default standard. Enterprise never
+ * takes editorial-1.5 (the validator enforces this too).
+ */
+function typeScaleFor(axes: DnaObject, profile: GenerationProfile): string {
+  if (axes.formality >= 0.7 || profile === "enterprise") return "compact-1.2";
+  if (profile === "expressive" && (axes.energy >= 0.65 || axes.playfulness >= 0.65)) {
+    return axes.energy >= 0.85 && axes.playfulness >= 0.7 ? "editorial-1.5" : "expressive-1.333";
+  }
+  return "standard-1.25";
+}
+
 // ---------------------------------------------------------------------------
 // AA adjustment pass (Rule 3: lightness-only, every change recorded)
 // ---------------------------------------------------------------------------
@@ -518,6 +558,7 @@ function adjustPair(
  */
 export function compileIdentity(input: CompileInput): ArcheIdentity {
   const { name, source, axes, palette, base } = input;
+  const profile = input.profile ?? "standard";
   const voice = voiceOf(axes, palette);
   const compiled: ArcheIdentity = JSON.parse(JSON.stringify(base)) as ArcheIdentity;
 
@@ -526,10 +567,12 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
     name,
     contractVersion: tokenContract.contractVersion,
   };
+  // Type scale is selected, never derived free-form (Deliverable 5).
+  compiled.typeScale = typeScaleFor(axes, profile);
 
   const tokens: Record<string, TokenRecord> = {
-    light: buildModeTokens("light", axes, palette, voice),
-    dark: buildModeTokens("dark", axes, palette, voice),
+    light: buildModeTokens("light", axes, palette, voice, profile),
+    dark: buildModeTokens("dark", axes, palette, voice, profile),
   };
 
   // Font stacks must mirror the selected registry families exactly.
@@ -573,8 +616,13 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   const treatment = materialTreatment(axes.material, axes.ornament, voice.neutralHue);
   applyKnobs(compiled.components, axes, treatment.shadowTarget);
 
-  // AA pass per mode, pairs in contract order (deterministic).
+  // Design-repair pass (after emission, before AA): envelope violations are
+  // clamped into the envelope with hue/lightness preserved where the rule
+  // allows it; every repair is recorded with its design-rule id.
   const adjustments: Adjustment[] = [];
+  repairDesign(tokens, profile, adjustments);
+
+  // AA pass per mode, pairs in contract order (deterministic).
   for (const mode of ["light", "dark"] as const) {
     for (const pair of tokenContract.contrastPairs) {
       adjustPair(tokens[mode]!, mode, pair.fg, pair.bg, pair.minRatio, adjustments);
@@ -586,10 +634,353 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
     source: { ...source },
     axes: { ...axes },
     palette: { ...palette },
+    profile,
     compilerVersion: COMPILER_VERSION,
   };
 
+  // Final gate: AA re-verified (repair must not break it) and no enforce-tier
+  // finding may survive. Anything left fails loudly — never ship a
+  // violating generated payload.
+  for (const mode of ["light", "dark"] as const) {
+    for (const pair of tokenContract.contrastPairs) {
+      const ratio = contrastRatio(
+        String(tokens[mode]![pair.fg]!.$value),
+        String(tokens[mode]![pair.bg]!.$value),
+      );
+      if (!Number.isNaN(ratio) && ratio < pair.minRatio) {
+        throw new Error(
+          `compiler design repair broke the AA gate: ${mode}.${pair.fg} on ${pair.bg} ratio ${ratio} < ${pair.minRatio}`,
+        );
+      }
+    }
+  }
+  assertGeneratedCompliant(compiled);
+
   return compiled;
+}
+
+// ---------------------------------------------------------------------------
+// Design repair pass (Deliverable 2: clamp into the envelope, record all)
+// ---------------------------------------------------------------------------
+
+function setChroma(token: TokenRecord[string], c: number): void {
+  const parsed = parseOklch(String(token.$value));
+  // Floor to 3 decimals: a ceiling repair must never round back above the cap.
+  parsed.c = Math.floor(Math.min(Math.max(c, 0), 0.4) * 1000) / 1000;
+  token.$value = formatOklch(parsed);
+}
+
+function repairTokenChroma(
+  tokens: Record<string, TokenRecord>,
+  mode: "light" | "dark",
+  token: string,
+  c: number,
+  ruleId: string,
+  adjustments: Adjustment[],
+): void {
+  const entry = tokens[mode]![token];
+  if (!entry || typeof entry.$value !== "string") return;
+  const before = entry.$value;
+  setChroma(entry, c);
+  if (entry.$value !== before) {
+    adjustments.push({ mode, token, compiledValue: before, adjustedValue: entry.$value as string, ruleId });
+  }
+}
+
+/** Circularly nearest hue to target within maxDelta of reference. */
+function nearestHueInBand(hue: number, reference: number, maxDelta: number): number {
+  const rel = ((hue - reference) % 360 + 360) % 360;
+  if (rel <= maxDelta || rel >= 360 - maxDelta) return hue;
+  return rel < 180
+    ? ((reference + maxDelta) % 360 + 360) % 360
+    : ((reference - maxDelta) % 360 + 360) % 360;
+}
+
+function repairTokenHue(
+  tokens: Record<string, TokenRecord>,
+  mode: "light" | "dark",
+  token: string,
+  hue: number,
+  ruleId: string,
+  adjustments: Adjustment[],
+): void {
+  const entry = tokens[mode]![token];
+  if (!entry || typeof entry.$value !== "string") return;
+  const parsed = parseOklch(String(entry.$value));
+  if (Math.abs(parsed.h - hue) < 1e-9) return;
+  const before = entry.$value;
+  parsed.h = Math.round(hue * 1000) / 1000;
+  entry.$value = formatOklch(parsed);
+  adjustments.push({ mode, token, compiledValue: before, adjustedValue: entry.$value as string, ruleId });
+}
+
+const SOLID_FLOOR = 0.08;
+const CHART_STEP_POOL = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+function repairDesign(
+  tokens: Record<string, TokenRecord>,
+  profile: GenerationProfile,
+  adjustments: Adjustment[],
+): void {
+  const bgCap = (mode: "light" | "dark"): number =>
+    Math.round(
+      (mode === "light" ? 0.025 : 0.035) *
+        (profile === "enterprise" ? 0.6 : profile === "expressive" ? 1.5 : 1) *
+        10000,
+    ) / 10000;
+  const solidCeiling = profile === "enterprise" ? 0.19 : profile === "expressive" ? 0.26 : 0.24;
+
+  for (const mode of ["light", "dark"] as const) {
+    const set = tokens[mode]!;
+    const chromaOf = (token: string): number | null => {
+      const entry = set[token];
+      if (!entry || typeof entry.$value !== "string") return null;
+      try {
+        return parseOklch(entry.$value).c;
+      } catch {
+        return null;
+      }
+    };
+    // color-bg-chroma-cap
+    for (const token of ["--background", "--card", "--popover", "--muted", "--secondary"]) {
+      const c = chromaOf(token);
+      if (c !== null && c > bgCap(mode)) {
+        repairTokenChroma(tokens, mode, token, bgCap(mode), "color-bg-chroma-cap", adjustments);
+      }
+    }
+    // color-text-chroma-cap (calibrated 0.18) / color-border-chroma-cap (calibrated 0.15)
+    for (const token of [
+      "--foreground", "--card-foreground", "--popover-foreground", "--primary-foreground",
+      "--secondary-foreground", "--accent-foreground", "--destructive-foreground", "--muted-foreground",
+    ]) {
+      const c = chromaOf(token);
+      if (c !== null && c > 0.18) {
+        repairTokenChroma(tokens, mode, token, 0.18, "color-text-chroma-cap", adjustments);
+      }
+    }
+    for (const token of ["--border", "--input"]) {
+      const c = chromaOf(token);
+      if (c !== null && c > 0.15) {
+        repairTokenChroma(tokens, mode, token, 0.15, "color-border-chroma-cap", adjustments);
+      }
+    }
+    // color-solid-chroma-band (floor and ceiling both clamp)
+    for (const token of ["--primary", "--accent", "--destructive"]) {
+      const c = chromaOf(token);
+      if (c !== null && c < SOLID_FLOOR) {
+        repairTokenChroma(tokens, mode, token, SOLID_FLOOR, "color-solid-chroma-band", adjustments);
+      } else if (c !== null && c > solidCeiling) {
+        repairTokenChroma(tokens, mode, token, solidCeiling, "color-solid-chroma-band", adjustments);
+      }
+    }
+    // color-chroma-taper
+    for (const [token, entry] of Object.entries(set)) {
+      if (typeof entry.$value !== "string" || !entry.$value.startsWith("oklch(")) continue;
+      try {
+        const parsed = parseOklch(entry.$value);
+        if ((parsed.l >= 0.95 || parsed.l <= 0.08) && parsed.c > 0.03) {
+          repairTokenChroma(tokens, mode, token, 0.03, "color-chroma-taper", adjustments);
+        }
+      } catch {
+        continue;
+      }
+    }
+    // color-neutral-tint + color-enterprise-accent (hue repairs toward band)
+    const primaryHue = (() => {
+      const entry = set["--primary"];
+      if (!entry || typeof entry.$value !== "string") return null;
+      try {
+        const parsed = parseOklch(entry.$value);
+        return parsed.c >= 0.03 ? parsed.h : null;
+      } catch {
+        return null;
+      }
+    })();
+    if (primaryHue !== null) {
+      for (const token of [
+        "--background", "--card", "--popover", "--muted", "--secondary", "--border", "--input",
+      ]) {
+        const entry = set[token];
+        if (!entry || typeof entry.$value !== "string") continue;
+        try {
+          const parsed = parseOklch(entry.$value);
+          const rel = ((parsed.h - primaryHue) % 360 + 360) % 360;
+          const dist = Math.min(rel, 360 - rel);
+          if (parsed.c > 0.015 && dist > 15) {
+            repairTokenHue(tokens, mode, token, nearestHueInBand(parsed.h, primaryHue, 15), "color-neutral-tint", adjustments);
+          }
+        } catch {
+          continue;
+        }
+      }
+      if (profile === "enterprise") {
+        const entry = set["--accent"];
+        if (entry && typeof entry.$value === "string") {
+          try {
+            const parsed = parseOklch(entry.$value);
+            const rel = ((parsed.h - primaryHue) % 360 + 360) % 360;
+            const dist = Math.min(rel, 360 - rel);
+            if (parsed.c > 0.015 && dist > 25) {
+              repairTokenHue(tokens, mode, "--accent", primaryHue, "color-enterprise-accent", adjustments);
+            }
+          } catch {
+            // leave for the contract validator
+          }
+        }
+      }
+    }
+    // radius-profile-bounds
+    const bound = profile === "enterprise" ? 0.5 : profile === "expressive" ? 1.5 : 1;
+    const radius = set["--radius"];
+    if (radius && typeof radius.$value === "string") {
+      const match = radius.$value.match(/^([\d.]+)(rem|px)$/);
+      if (match) {
+        const rem = match[2] === "px" ? Number(match[1]) / 16 : Number(match[1]);
+        if (rem > bound) {
+          const before = radius.$value;
+          const after = `${Math.round(bound * 1000) / 1000}rem`;
+          radius.$value = after;
+          if (after !== before) {
+            adjustments.push({ mode, token: "--radius", compiledValue: before, adjustedValue: after, ruleId: "radius-profile-bounds" });
+          }
+        }
+      }
+    }
+    // motion-bounds (duration clamp; unknown easings fall back to the set)
+    for (const token of ["--motion-fast", "--motion-normal"] as const) {
+      const entry = set[token];
+      if (!entry || typeof entry.$value !== "object" || entry.$value === null) continue;
+      const record = entry.$value as Record<string, unknown>;
+      const before = JSON.stringify(record);
+      const match = typeof record.duration === "string" ? record.duration.match(/^(\d+(?:\.\d+)?)(ms|s)$/) : null;
+      if (match) {
+        const ms = match[2] === "s" ? Number(match[1]) * 1000 : Number(match[1]);
+        if (ms < 50 || ms > 400) {
+          record.duration = `${Math.min(400, Math.max(50, Math.round(ms)))}ms`;
+        }
+      }
+      if (typeof record.easing === "string" && !CLOSED_EASINGS.has(record.easing)) {
+        record.easing = "cubic-bezier(0.4, 0, 0.2, 1)";
+      }
+      const after = JSON.stringify(record);
+      if (after !== before) {
+        adjustments.push({
+          mode,
+          token,
+          compiledValue: before,
+          adjustedValue: after,
+          ruleId: "motion-bounds",
+        });
+      }
+    }
+    repairCharts(set, mode, adjustments);
+  }
+}
+
+/**
+ * Chart separation repair: colliding charts move to the free scale step with
+ * the most lightness separation (charts carry no contrast pairs, so L moves
+ * are safe). Deterministic iteration order; throws naming the rule when the
+ * pool cannot separate a pair.
+ */
+function repairCharts(
+  set: TokenRecord,
+  mode: "light" | "dark",
+  adjustments: Adjustment[],
+): void {
+  const names = ["--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5"];
+  const read = (token: string): { l: number; c: number; h: number } | null => {
+    const entry = set[token];
+    if (!entry || typeof entry.$value !== "string") return null;
+    try {
+      return parseOklch(entry.$value);
+    } catch {
+      return null;
+    }
+  };
+  const labOf = (v: { l: number; c: number; h: number }): [number, number, number] => {
+    const rad = (v.h * Math.PI) / 180;
+    return [v.l, v.c * Math.cos(rad), v.c * Math.sin(rad)];
+  };
+  const dist = (a: [number, number, number], b: [number, number, number]): number =>
+    Math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2);
+  const hueDist = (a: number, b: number): number => {
+    const d = Math.abs(((a - b) % 360 + 360) % 360);
+    return Math.min(d, 360 - d);
+  };
+  const violates = (a: { l: number; c: number; h: number }, b: { l: number; c: number; h: number }): boolean => {
+    if (dist(labOf(a), labOf(b)) < 0.08) return true;
+    return hueDist(a.h, b.h) < 25 && Math.abs(a.l - b.l) < 0.25;
+  };
+  const moveResolves = (self: string, candidate: { l: number; c: number; h: number }): boolean => {
+    for (const other of names) {
+      if (other === self) continue;
+      const o = read(other);
+      if (o && violates(candidate, o)) return false;
+    }
+    return true;
+  };
+  const move = (name: string): boolean => {
+    const current = read(name);
+    if (!current) return false;
+    // First pool step (fixed order → deterministic) that resolves every
+    // pair the moved chart participates in.
+    for (const step of CHART_STEP_POOL) {
+      const candidate = { ...current, l: LADDER[step]! };
+      if (!moveResolves(name, candidate)) continue;
+      const entry = set[name]!;
+      const before = String(entry.$value);
+      const parsed = parseOklch(before);
+      parsed.l = LADDER[step]!;
+      entry.$value = formatOklch(parsed);
+      if (String(entry.$value) !== before) {
+        adjustments.push({
+          mode,
+          token: name,
+          compiledValue: before,
+          adjustedValue: String(entry.$value),
+          ruleId: "color-chart-separation",
+        });
+      }
+      return true;
+    }
+    return false;
+  };
+  for (let iter = 0; iter < 12; iter++) {
+    let moved = false;
+    for (let i = 0; i < names.length; i++) {
+      for (let j = i + 1; j < names.length; j++) {
+        const a = read(names[i]!);
+        const b = read(names[j]!);
+        if (!a || !b || !violates(a, b)) continue;
+        // Try the higher-index chart first, then the lower one; neither
+        // movable means the pool cannot separate this pair → loud failure.
+        if (move(names[j]!)) {
+          moved = true;
+          continue;
+        }
+        if (move(names[i]!)) {
+          moved = true;
+          continue;
+        }
+        throw new Error(`compiler design repair failed [color-chart-separation]: no scale step separates ${mode}.${names[i]}/${names[j]}`);
+      }
+    }
+    if (!moved) return;
+  }
+  const leftover = (() => {
+    for (let i = 0; i < names.length; i++) {
+      for (let j = i + 1; j < names.length; j++) {
+        const a = read(names[i]!);
+        const b = read(names[j]!);
+        if (a && b && violates(a, b)) return `${names[i]}/${names[j]}`;
+      }
+    }
+    return null;
+  })();
+  if (leftover) {
+    throw new Error(`compiler design repair failed [color-chart-separation]: ${mode}.${leftover} still collides after lightness spread`);
+  }
 }
 
 /**

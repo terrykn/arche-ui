@@ -9,6 +9,7 @@
     "mono": "geist-mono"
   },
   "icons": "lucide",
+  "typeScale": "standard-1.25",
   "tokens": {
     "light": {
       "--background": { "$type": "color", "$value": "oklch(0.99 0.008 250)" },

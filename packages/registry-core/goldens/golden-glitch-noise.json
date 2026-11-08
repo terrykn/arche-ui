@@ -131,12 +131,13 @@
       "texture": "scanlines",
       "warmth": 0.4
     },
-    "compilerVersion": 1,
+    "compilerVersion": 2,
     "palette": {
       "accentHue": 180,
       "neutralHue": 260,
       "primaryHue": 320
     },
+    "profile": "standard",
     "source": {
       "promptText": "glitch noise broadcast",
       "type": "phrase"
@@ -150,6 +151,62 @@
   "icons": "lucide",
   "meta": {
     "adjustments": [
+      {
+        "adjustedValue": "oklch(0.925 0.025 320)",
+        "compiledValue": "oklch(0.925 0.049 320)",
+        "mode": "light",
+        "ruleId": "color-bg-chroma-cap",
+        "token": "--secondary"
+      },
+      {
+        "adjustedValue": "oklch(0.475 0.172 310)",
+        "compiledValue": "oklch(0.785 0.172 310)",
+        "mode": "light",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-4"
+      },
+      {
+        "adjustedValue": "oklch(0.475 0.172 160)",
+        "compiledValue": "oklch(0.785 0.172 160)",
+        "mode": "light",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-5"
+      },
+      {
+        "adjustedValue": "oklch(0.475 0.035 320)",
+        "compiledValue": "oklch(0.475 0.062 320)",
+        "mode": "dark",
+        "ruleId": "color-bg-chroma-cap",
+        "token": "--secondary"
+      },
+      {
+        "adjustedValue": "oklch(0.96 0.03 320)",
+        "compiledValue": "oklch(0.96 0.076 320)",
+        "mode": "dark",
+        "ruleId": "color-chroma-taper",
+        "token": "--secondary-foreground"
+      },
+      {
+        "adjustedValue": "oklch(0.96 0.03 180)",
+        "compiledValue": "oklch(0.96 0.076 180)",
+        "mode": "dark",
+        "ruleId": "color-chroma-taper",
+        "token": "--accent-foreground"
+      },
+      {
+        "adjustedValue": "oklch(0.925 0.172 310)",
+        "compiledValue": "oklch(0.645 0.172 310)",
+        "mode": "dark",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-4"
+      },
+      {
+        "adjustedValue": "oklch(0.925 0.172 160)",
+        "compiledValue": "oklch(0.645 0.172 160)",
+        "mode": "dark",
+        "ruleId": "color-chart-separation",
+        "token": "--chart-5"
+      },
       {
         "adjustedValue": "oklch(0.14 0.01 250)",
         "compiledValue": "oklch(0.2 0.01 250)",
@@ -171,7 +228,7 @@
       },
       "--accent-foreground": {
         "$type": "color",
-        "$value": "oklch(0.96 0.076 180)"
+        "$value": "oklch(0.96 0.03 180)"
       },
       "--background": {
         "$type": "color",
@@ -203,11 +260,11 @@
       },
       "--chart-4": {
         "$type": "color",
-        "$value": "oklch(0.645 0.172 310)"
+        "$value": "oklch(0.925 0.172 310)"
       },
       "--chart-5": {
         "$type": "color",
-        "$value": "oklch(0.645 0.172 160)"
+        "$value": "oklch(0.925 0.172 160)"
       },
       "--destructive": {
         "$type": "color",
@@ -285,11 +342,11 @@
       },
       "--secondary": {
         "$type": "color",
-        "$value": "oklch(0.475 0.062 320)"
+        "$value": "oklch(0.475 0.035 320)"
       },
       "--secondary-foreground": {
         "$type": "color",
-        "$value": "oklch(0.96 0.076 320)"
+        "$value": "oklch(0.96 0.03 320)"
       },
       "--shadow-lg": {
         "$type": "shadow",
@@ -347,11 +404,11 @@
       },
       "--chart-4": {
         "$type": "color",
-        "$value": "oklch(0.785 0.172 310)"
+        "$value": "oklch(0.475 0.172 310)"
       },
       "--chart-5": {
         "$type": "color",
-        "$value": "oklch(0.785 0.172 160)"
+        "$value": "oklch(0.475 0.172 160)"
       },
       "--destructive": {
         "$type": "color",
@@ -429,7 +486,7 @@
       },
       "--secondary": {
         "$type": "color",
-        "$value": "oklch(0.925 0.049 320)"
+        "$value": "oklch(0.925 0.025 320)"
       },
       "--secondary-foreground": {
         "$type": "color",
@@ -452,5 +509,6 @@
         "$value": "0 28px 56px -8px oklch(0.2 0.01 222 / 0.14)"
       }
     }
-  }
+  },
+  "typeScale": "standard-1.25"
 }

@@ -1,8 +1,13 @@
 import {
-  dnaDeltaSchema,
+  buildTeachBlock,
+  designRulesVersion,
+  modelDeltaOutputSchema,
   modelOutputSchema,
   type DnaDelta,
+  type GenerationProfile,
   type ModelOutput,
+  type Plan,
+  type SelfCheck,
 } from "@arche/registry-core";
 
 /**
@@ -13,7 +18,11 @@ import {
  */
 
 export interface DnaCallResult {
-  output: ModelOutput;
+  output: Pick<ModelOutput, "axes" | "palette">;
+  /** Model-classified envelope preset, recorded on the payload. */
+  profile: GenerationProfile;
+  plan: Plan;
+  selfCheck: SelfCheck;
   model: string;
   tokensIn: number | null;
   tokensOut: number | null;
@@ -21,6 +30,10 @@ export interface DnaCallResult {
 
 export interface DeltaCallResult {
   delta: DnaDelta;
+  /** Optional profile change from the same single-call response. */
+  profile?: GenerationProfile;
+  plan: Plan;
+  selfCheck: SelfCheck;
   model: string;
   tokensIn: number | null;
   tokensOut: number | null;
@@ -83,9 +96,44 @@ export function assertModelCapable(): string {
 // names under allOf and returned its own axis names).
 // ---------------------------------------------------------------------------
 
+const PLAN_RESPONSE_SCHEMA = {
+  type: "object",
+  properties: {
+    colors: {
+      type: "array",
+      minItems: 4,
+      maxItems: 6,
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          role: {
+            type: "string",
+            enum: ["background", "surface", "primary", "accent", "neutral", "text", "semantic-fixed"],
+          },
+          note: { type: "string" },
+        },
+        required: ["name", "role"],
+      },
+    },
+  },
+  required: ["colors"],
+} as const;
+
+const SELF_CHECK_RESPONSE_SCHEMA = {
+  type: "object",
+  properties: {
+    verdict: { type: "string", enum: ["pass", "revised"] },
+    notes: { type: "string" },
+  },
+  required: ["verdict", "notes"],
+} as const;
+
 const DNA_RESPONSE_SCHEMA = {
   type: "object",
   properties: {
+    plan: PLAN_RESPONSE_SCHEMA,
+    selfCheck: SELF_CHECK_RESPONSE_SCHEMA,
     axes: {
       type: "object",
       properties: {
@@ -118,16 +166,22 @@ const DNA_RESPONSE_SCHEMA = {
       },
       required: ["primaryHue", "accentHue", "neutralHue"],
     },
+    profile: { type: "string", enum: ["enterprise", "standard", "expressive"] },
   },
-  required: ["axes", "palette"],
+  required: ["plan", "selfCheck", "axes", "palette", "profile"],
 } as const;
 
-// Delta schema: every field optional — the model returns ONLY what the
-// prompt implicates.
+// Delta schema: same single-call shape (plan + self-check) with the revised
+// inputs as a delta; every delta field optional — ONLY implicated fields.
 const DELTA_RESPONSE_SCHEMA = {
   type: "object",
   properties: {
-    axes: {
+    plan: PLAN_RESPONSE_SCHEMA,
+    selfCheck: SELF_CHECK_RESPONSE_SCHEMA,
+    delta: {
+      type: "object",
+      properties: {
+        axes: {
       type: "object",
       properties: {
         warmth: { type: "number", minimum: 0, maximum: 1 },
@@ -143,15 +197,19 @@ const DELTA_RESPONSE_SCHEMA = {
         texture: { type: "string", enum: ["none", "grain", "scanlines", "grid", "marble-vein", "halftone"] },
       },
     },
-    palette: {
-      type: "object",
-      properties: {
-        primaryHue: { type: "number", minimum: 0, maximum: 360 },
-        accentHue: { type: "number", minimum: 0, maximum: 360 },
-        neutralHue: { type: "number", minimum: 0, maximum: 360 },
+        palette: {
+          type: "object",
+          properties: {
+            primaryHue: { type: "number", minimum: 0, maximum: 360 },
+            accentHue: { type: "number", minimum: 0, maximum: 360 },
+            neutralHue: { type: "number", minimum: 0, maximum: 360 },
+          },
+        },
       },
     },
+    profile: { type: "string", enum: ["enterprise", "standard", "expressive"] },
   },
+  required: ["plan", "selfCheck", "delta"],
 } as const;
 
 interface GeminiPart {
@@ -205,38 +263,65 @@ async function callGeminiJson(args: {
   };
 }
 
-const PHRASE_SYSTEM = [
-  "You judge a word or phrase as design DNA for a UI identity.",
-  "Rate each axis 0-1:",
-  "warmth (cold/clinical→warm/organic), energy (calm→loud), playfulness (serious→playful),",
-  "sharpness (soft/round→sharp/angular), density (airy→compact), ornament (minimal→ornate),",
-  "retroFuturism (contemporary→era-styled), formality (casual→formal/institutional).",
-  "Reply with a JSON object ONLY — no prose, no markdown, no token values, no class names —",
-  "with EXACTLY this shape and no extra keys:",
-  '{"axes":{"warmth":0.5,"energy":0.5,"playfulness":0.5,"sharpness":0.5,"density":0.5,"ornament":0.5,',
+/**
+ * Static output-shape instructions shared by both doors. The taught rulebook
+ * (buildTeachBlock, generated from design-rules.json) is prepended at call
+ * time — one static block per rules version, placed so providers can cache it.
+ */
+const AXES_TEMPLATE = [
+  '{"warmth":0.5,"energy":0.5,"playfulness":0.5,"sharpness":0.5,"density":0.5,"ornament":0.5,',
   '"retroFuturism":0.5,"formality":0.5,"material":"metal","motionFeel":"snappy","texture":"grain",',
-  '"minContrast":"AA","respectReducedMotion":true},',
-  '"palette":{"primaryHue":20,"accentHue":200,"neutralHue":40}}',
-  "Rules: every axis is a number 0-1.",
+  '"minContrast":"AA","respectReducedMotion":true}',
+].join("");
+
+const SHAPE_PREAMBLE = [
+  "You respond with ONE JSON object — no prose, no markdown — with these sections in order:",
+  '1. "plan": {"colors": [4-6 entries {"name", "role", "note"?}]} — your palette plan: 4-6 named colors with intended roles',
+  '(background, surface, primary, accent, neutral, text, semantic-fixed). Name each color; note is optional.',
+  '2. "selfCheck": {"verdict": "pass"|"revised", "notes": "..."} — check the plan against the taught rules: name any item that reads as a',
+  'generic default or violates a taught rule, or state the no-change verdict. Revise the final inputs accordingly inside this same response.',
+].join(" ");
+
+const VALUE_RULES = [
+  "Value rules: every axis is a number 0-1.",
   "material is EXACTLY one of: flat, paper, glass, metal, marble, pixel, clay (lowercase, no other value).",
   "motionFeel is EXACTLY one of: snappy, smooth, bouncy, stately, glitchy.",
   "texture is EXACTLY one of: none, grain, scanlines, grid, marble-vein, halftone.",
-  "minContrast is ALWAYS the string \"AA\", respectReducedMotion is ALWAYS true.",
-  "Each palette hue is a NUMBER in degrees 0-360 that the phrase evokes (never a string, never hex).",
+  'minContrast is ALWAYS the string "AA", respectReducedMotion is ALWAYS true.',
+  "Each palette hue is a NUMBER in degrees 0-360 (never a string, never hex).",
+  'profile classifies the request: "enterprise" for fintech, healthcare-admin, legal, or institutional work;',
+  '"expressive" for playful, loud, or artistic work; "standard" otherwise.',
 ].join(" ");
 
-const DELTA_SYSTEM = [
-  "You edit stored design DNA. Given the current DNA and an edit prompt, return ONLY",
-  "the fields the prompt implicates, with their new values. Omit every field the prompt",
-  "does not touch — unrelated fields must be absent from your reply, not repeated.",
-  "Reply with a JSON object ONLY — no prose, no markdown. ",
-  "Shape: an object with optional \"axes\" and \"palette\" objects; inside, include ONLY implicated fields.",
-  "Same value rules as creation: axes numbers 0-1;",
-  "material EXACTLY one of flat|paper|glass|metal|marble|pixel|clay;",
-  "motionFeel EXACTLY one of snappy|smooth|bouncy|stately|glitchy;",
-  "texture EXACTLY one of none|grain|scanlines|grid|marble-vein|halftone;",
-  "palette hues are NUMBERS 0-360 (never strings or hex).",
-].join(" ");
+function phraseSystem(): string {
+  return [
+    buildTeachBlock(),
+    "You judge a word or phrase as design DNA for a UI identity. Rate each axis 0-1:",
+    "warmth (cold/clinical→warm/organic), energy (calm→loud), playfulness (serious→playful),",
+    "sharpness (soft/round→sharp/angular), density (airy→compact), ornament (minimal→ornate),",
+    "retroFuturism (contemporary→era-styled), formality (casual→formal/institutional).",
+    SHAPE_PREAMBLE,
+    `3. final inputs: "axes": ${AXES_TEMPLATE},`,
+    '"palette": {"primaryHue":20,"accentHue":200,"neutralHue":40}, "profile": "standard".',
+    VALUE_RULES,
+  ].join(" ");
+}
+
+function deltaSystem(): string {
+  return [
+    buildTeachBlock(),
+    "You edit stored design DNA. Given the current DNA and an edit prompt,",
+    SHAPE_PREAMBLE,
+    '3. revised inputs as "delta": an object with optional "axes" and "palette" objects containing ONLY the fields the prompt',
+    'implicates, with new values (unrelated fields absent, not repeated), plus an optional "profile" when the edit changes the register.',
+    VALUE_RULES,
+  ].join(" ");
+}
+
+/** Rules version the teach block was built from (logged per generation). */
+export function teachRulesVersion(): number {
+  return designRulesVersion();
+}
 
 function parseJson(text: string): unknown {
   try {
@@ -301,24 +386,43 @@ async function callGroqJson(args: {
   };
 }
 
-/** Text door: phrase → DNA + palette. One retry with validator feedback, then fail. */
-export async function generateDna(prompt: string): Promise<DnaCallResult> {
+/**
+ * Text door: phrase → plan + self-check + DNA + palette + profile in ONE
+ * model call. A second call happens only on the failure path (invalid
+ * output → one retry with validation errors, then fail + log, store
+ * nothing) or when compilation reports an unrepairable design-rule
+ * violation (retry carries the named rule findings). Compliant generations
+ * cost exactly one call, as today.
+ */
+export async function generateDna(prompt: string, repairFeedback?: string): Promise<DnaCallResult> {
   const trimmed = prompt.trim().slice(0, 120);
   if (!trimmed) {
     throw new Error("prompt must not be empty");
   }
+  const system = phraseSystem();
+  const user = repairFeedback
+    ? `Phrase: ${trimmed}\n\nYour previous output compiled to a payload that violates these design rules — revise the DNA, palette, and profile to comply, keeping the same character:\n${repairFeedback}`
+    : `Phrase: ${trimmed}`;
   const call = await callChatJson({
-    system: PHRASE_SYSTEM,
-    user: `Phrase: ${trimmed}`,
+    system,
+    user,
     schema: DNA_RESPONSE_SCHEMA,
   });
   const first = modelOutputSchema.safeParse(parseJson(call.text));
   if (first.success) {
-    return { output: first.data, model: call.model, tokensIn: call.tokensIn, tokensOut: call.tokensOut };
+    return {
+      output: { axes: first.data.axes, palette: first.data.palette },
+      profile: first.data.profile,
+      plan: first.data.plan,
+      selfCheck: first.data.selfCheck,
+      model: call.model,
+      tokensIn: call.tokensIn,
+      tokensOut: call.tokensOut,
+    };
   }
   const retry = await callChatJson({
-    system: PHRASE_SYSTEM,
-    user: `Phrase: ${trimmed}`,
+    system,
+    user,
     schema: DNA_RESPONSE_SCHEMA,
     feedback: JSON.stringify(first.error.issues.map((i) => ({ path: i.path, message: i.message }))),
   });
@@ -329,29 +433,49 @@ export async function generateDna(prompt: string): Promise<DnaCallResult> {
     );
   }
   return {
-    output: second.data,
+    output: { axes: second.data.axes, palette: second.data.palette },
+    profile: second.data.profile,
+    plan: second.data.plan,
+    selfCheck: second.data.selfCheck,
     model: retry.model,
     tokensIn: (call.tokensIn ?? 0) + (retry.tokensIn ?? 0),
     tokensOut: (call.tokensOut ?? 0) + (retry.tokensOut ?? 0),
   };
 }
 
-/** Prompt edit: current DNA + prompt → DNA delta (only implicated fields). */
-export async function generateDnaDelta(current: ModelOutput, prompt: string): Promise<DeltaCallResult> {
+/**
+ * Prompt edit: same single-call shape (plan + self-check + delta + optional
+ * profile). Only implicated fields change; unrelated payload fields stay
+ * byte-identical.
+ */
+export async function generateDnaDelta(
+  current: Pick<ModelOutput, "axes" | "palette"> & { profile?: GenerationProfile },
+  prompt: string,
+): Promise<DeltaCallResult> {
   const trimmed = prompt.trim().slice(0, 280);
   if (!trimmed) {
     throw new Error("edit prompt must not be empty");
   }
+  const system = deltaSystem();
+  const user = `Current DNA: ${JSON.stringify(current.axes)}\nCurrent palette: ${JSON.stringify(current.palette)}\nCurrent profile: ${current.profile ?? "standard"}\nEdit: ${trimmed}`;
   const call = await callChatJson({
-    system: DELTA_SYSTEM,
-    user: `Current DNA: ${JSON.stringify(current.axes)}\nCurrent palette: ${JSON.stringify(current.palette)}\nEdit: ${trimmed}`,
+    system,
+    user,
     schema: DELTA_RESPONSE_SCHEMA,
   });
-  const parsed = dnaDeltaSchema.safeParse(parseJson(call.text));
+  const parsed = modelDeltaOutputSchema.safeParse(parseJson(call.text));
   if (!parsed.success) {
     throw new Error(
       `provider delta output failed validation: ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`,
     );
   }
-  return { delta: parsed.data, model: call.model, tokensIn: call.tokensIn, tokensOut: call.tokensOut };
+  return {
+    delta: parsed.data.delta,
+    profile: parsed.data.profile,
+    plan: parsed.data.plan,
+    selfCheck: parsed.data.selfCheck,
+    model: call.model,
+    tokensIn: call.tokensIn,
+    tokensOut: call.tokensOut,
+  };
 }

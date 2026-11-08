@@ -9,6 +9,7 @@
     "mono": "space-mono"
   },
   "icons": "lucide",
+  "typeScale": "standard-1.25",
   "dna": {
     "source": { "type": "fixture", "promptText": "90s arcade" },
     "axes": {
@@ -27,7 +28,8 @@
       "respectReducedMotion": true
     },
     "palette": { "primaryHue": 300, "accentHue": 100, "neutralHue": 305 },
-    "compilerVersion": 1
+    "compilerVersion": 1,
+    "profile": "expressive"
   },
   "tokens": {
     "light": {

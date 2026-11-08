@@ -1,5 +1,10 @@
 import { compileValidIdentity } from "@arche/registry-core/compiler";
-import { validateIdentity, type ArcheIdentity, type DnaDelta } from "@arche/registry-core";
+import {
+  designRulesVersion,
+  validateIdentity,
+  type ArcheIdentity,
+  type DnaDelta,
+} from "@arche/registry-core";
 import { createServiceClient } from "@/lib/supabase/service";
 import { fixturesDir, slugify } from "@/lib/starter";
 import { readFileSync } from "node:fs";
@@ -69,6 +74,13 @@ interface LogRow {
   error?: string | null;
 }
 
+/**
+ * Stored `dna` shape for generations (Deliverable 3): the model's full
+ * single-call response — plan + self-check verdict + final inputs +
+ * profile + rules version — from the ONE completion. `dna_delta` holds the
+ * same shape for prompt edits ({plan, selfCheck, delta, profile}).
+ * No table migration: the existing jsonb columns carry the sections.
+ */
 async function logAttempt(row: LogRow): Promise<void> {
   const service = createServiceClient();
   await service.from("generation_logs").insert({
@@ -152,22 +164,54 @@ export async function generateFromPhrase(
   userId: string,
   prompt: string,
   name?: string,
-): Promise<GenerationOutcome> {
+): Promise<GenerationOutcome & { profile: string }> {
   await checkCap(userId);
   const base = auroraBase();
+  const rulesVersion = designRulesVersion();
   try {
     const call = await generateDna(prompt);
     const identityName = (name?.trim() || titleFromPrompt(prompt, "Untouched Idea")).slice(0, 80);
-    const compiled = await compileValidIdentity(
-      {
-        name: identityName,
-        source: { type: "phrase", promptText: prompt.trim().slice(0, 120) },
-        axes: call.output.axes,
-        palette: call.output.palette,
-        base,
-      },
-      validateIdentity,
-    );
+    let compiled: ArcheIdentity;
+    try {
+      compiled = await compileValidIdentity(
+        {
+          name: identityName,
+          source: { type: "phrase", promptText: prompt.trim().slice(0, 120) },
+          axes: call.output.axes,
+          palette: call.output.palette,
+          profile: call.profile,
+          base,
+        },
+        validateIdentity,
+      );
+    } catch (err) {
+      // Unrepairable enforce-tier violation: one follow-up model call
+      // carrying the named rule findings, then recompile once. Anything
+      // else throws straight to the failed-log path below.
+      if (!(err instanceof Error) || !err.message.startsWith("generated payload violates design rules")) {
+        throw err;
+      }
+      const retry = await generateDna(prompt, err.message);
+      // Attribute the single follow-up call's tokens alongside the first.
+      call.tokensIn = (call.tokensIn ?? 0) + (retry.tokensIn ?? 0);
+      call.tokensOut = (call.tokensOut ?? 0) + (retry.tokensOut ?? 0);
+      const final = retry;
+      compiled = await compileValidIdentity(
+        {
+          name: identityName,
+          source: { type: "phrase", promptText: prompt.trim().slice(0, 120) },
+          axes: final.output.axes,
+          palette: final.output.palette,
+          profile: final.profile,
+          base,
+        },
+        validateIdentity,
+      );
+      call.plan = final.plan;
+      call.selfCheck = final.selfCheck;
+      call.profile = final.profile;
+      call.output = final.output;
+    }
     const service = createServiceClient();
     const slug = await uniqueSlug(service, userId, identityName);
     const { data, error } = await service
@@ -184,7 +228,14 @@ export async function generateFromPhrase(
       library_id: libraryId,
       kind: "generate",
       prompt: prompt.trim().slice(0, 120),
-      dna: call.output,
+      dna: {
+        plan: call.plan,
+        selfCheck: call.selfCheck,
+        axes: call.output.axes,
+        palette: call.output.palette,
+        profile: call.profile,
+        rulesVersion,
+      },
       payload_diff: diffPayloads(base, compiled),
       adjustments: (compiled.meta as Record<string, unknown>).adjustments ?? [],
       model: call.model,
@@ -196,6 +247,7 @@ export async function generateFromPhrase(
       libraryId,
       slug,
       name: identityName,
+      profile: call.profile,
       adjustments: ((compiled.meta as Record<string, unknown>).adjustments as unknown[]).length,
     };
   } catch (err) {
@@ -241,7 +293,7 @@ export async function applyPromptEdit(
   }
   try {
     const call = await generateDnaDelta(
-      { axes: storedDna.axes, palette: storedDna.palette },
+      { axes: storedDna.axes, palette: storedDna.palette, profile: storedDna.profile },
       editPrompt,
     );
     const next = await compileValidIdentity(
@@ -250,6 +302,7 @@ export async function applyPromptEdit(
         source: storedDna.source,
         axes: { ...storedDna.axes, ...(call.delta.axes ?? {}) },
         palette: { ...storedDna.palette, ...(call.delta.palette ?? {}) },
+        profile: call.profile ?? storedDna.profile ?? "standard",
         base: current,
       },
       validateIdentity,
@@ -269,8 +322,15 @@ export async function applyPromptEdit(
       library_id: libraryId,
       kind: "edit",
       prompt: editPrompt.trim().slice(0, 280),
-      dna: { axes: next.dna!.axes, palette: next.dna!.palette },
-      dna_delta: call.delta,
+      dna: {
+        plan: call.plan,
+        selfCheck: call.selfCheck,
+        axes: next.dna!.axes,
+        palette: next.dna!.palette,
+        profile: next.dna!.profile ?? "standard",
+        rulesVersion: designRulesVersion(),
+      },
+      dna_delta: { plan: call.plan, selfCheck: call.selfCheck, delta: call.delta, profile: call.profile ?? null },
       payload_diff: diff,
       adjustments: (next.meta as Record<string, unknown>).adjustments ?? [],
       model: call.model,

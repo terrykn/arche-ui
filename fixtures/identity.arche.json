@@ -9,6 +9,7 @@
     "mono": "geist-mono"
   },
   "icons": "lucide",
+  "typeScale": "standard-1.25",
   "dna": {
     "source": { "type": "manual" },
     "axes": {
@@ -27,7 +28,8 @@
       "respectReducedMotion": true
     },
     "palette": { "primaryHue": 0, "accentHue": 0, "neutralHue": 0 },
-    "compilerVersion": 1
+    "compilerVersion": 1,
+    "profile": "standard"
   },
   "tokens": {
     "light": {

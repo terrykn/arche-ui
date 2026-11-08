@@ -167,7 +167,7 @@ export function buildToolRegistry(): ToolDef[] {
     },
     {
       name: "validate_identity",
-      description: "Run the shared publish-gate validator over a stored library or an inline payload. Returns pass or the named token/pair/knob failures.",
+      description: "Run the shared publish-gate validator over a stored library or an inline payload. Returns pass (plus informational design-rule lint) or the named token/pair/knob failures.",
       inputSchema: ValidateIdentitySchema,
       handler: async (args, backend) => {
         const parsed = ValidateIdentitySchema.parse(args);
