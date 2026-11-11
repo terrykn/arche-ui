@@ -30,7 +30,7 @@ export default async function SettingsPage({
   );
   const { data: profile } = await service
     .from("profiles")
-    .select("username,display_name,theme,registry_token_hash,registry_token_prefix")
+    .select("username,display_name,registry_token_hash,registry_token_prefix")
     .eq("id", user!.id)
     .single();
   const { data: mcpRows } = await service
@@ -48,7 +48,6 @@ export default async function SettingsPage({
   const row = profile as unknown as {
     username: string;
     display_name: string | null;
-    theme: string;
     registry_token_hash: string | null;
     registry_token_prefix: string | null;
   };
@@ -70,18 +69,6 @@ export default async function SettingsPage({
             defaultValue={row.username}
             className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
           />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Theme
-          <select
-            name="theme"
-            defaultValue={row.theme}
-            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
-          >
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
         </label>
         <button type="submit" className="w-fit rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">
           Save

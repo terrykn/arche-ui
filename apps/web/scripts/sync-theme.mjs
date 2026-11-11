@@ -104,11 +104,14 @@ updated = updated
   .replace(/\/\* @arche-fonts:begin[\s\S]*?@arche-fonts:end \*\/\n?/, "")
   .replace(/^\n+/, "");
 writeFileSync(globalsPath, updated);
-// Fonts load via next/font/google, which requires static named imports in the
-// importing file — so this script generates app/fonts.generated.ts from the
-// identity's font selection (one loader call per unique family; slots sharing
-// a family alias the first slot's instance since theme.css defines every
-// slot var with the same family anyway).
+// Google fonts load via next/font/google, which requires static named imports
+// in the importing file. Fontshare fonts are not available to next/font and
+// instead load through the official Fontshare CSS API in app/layout.tsx; the
+// generated export exposes the theme variable already set by theme.css. This
+// script generates app/fonts.generated.ts from the identity's font selection
+// (one loader call per unique family; slots sharing a family alias the first
+// slot's instance since theme.css defines every slot var with the same family
+// anyway).
 const slotVars = { sans: "--font-sans", display: "--font-display", mono: "--font-mono" };
 const slotNames = { sans: "fontSans", display: "fontDisplay", mono: "fontMono" };
 const seenFamilies = new Map();
@@ -119,7 +122,20 @@ for (const slot of ["sans", "display", "mono"]) {
   if (!entry) {
     throw new Error(`sync-theme: unknown font id '${identity.fonts[slot]}' for slot '${slot}'`);
   }
-  fontImports.add(entry.nextFontImport);
+  const isGoogle = entry.source === "google" && entry.loading?.kind === "google";
+  if (!isGoogle && entry.source === "fontshare" && entry.loading?.kind === "fontshare") {
+    if (seenFamilies.has(entry.family)) {
+      fontExports.push(`export const ${slotNames[slot]} = ${seenFamilies.get(entry.family)};`);
+      continue;
+    }
+    seenFamilies.set(entry.family, slotNames[slot]);
+    fontExports.push(`export const ${slotNames[slot]} = { variable: "${slotVars[slot]}" } as const;`);
+    continue;
+  }
+  if (!isGoogle) {
+    throw new Error(`sync-theme: font id '${identity.fonts[slot]}' has an unsupported loading method`);
+  }
+  fontImports.add(entry.loading.import);
   if (seenFamilies.has(entry.family)) {
     fontExports.push(`export const ${slotNames[slot]} = ${seenFamilies.get(entry.family)};`);
     continue;
@@ -127,15 +143,35 @@ for (const slot of ["sans", "display", "mono"]) {
   seenFamilies.set(entry.family, slotNames[slot]);
   const weightArg = entry.variable ? "" : `\n  weight: [${entry.weights.map((w) => `"${w}"`).join(", ")}],`;
   fontExports.push(
-    `export const ${slotNames[slot]} = ${entry.nextFontImport}({\n  subsets: ["latin"],${weightArg}\n  variable: "${slotVars[slot]}",\n});`
+    `export const ${slotNames[slot]} = ${entry.loading.import}({\n  subsets: ["latin"],${weightArg}\n  variable: "${slotVars[slot]}",\n});`
   );
 }
 const fontsGenerated = `/* GENERATED — do not hand-edit. Source: fixtures/identity.arche.json
  * Produced by apps/web/scripts/sync-theme.mjs. Edit the payload, then run:
  * pnpm --filter web sync-theme */
-import { ${[...fontImports].sort().join(", ")} } from "next/font/google";
-
-${fontExports.join("\n\n")}
+${fontImports.size > 0 ? `import { ${[...fontImports].sort().join(", ")} } from "next/font/google";\n\n` : ""}${fontExports.join("\n\n")}
 `;
 writeFileSync(join(webRoot, "app", "fonts.generated.ts"), fontsGenerated);
+// Every Google registry family is statically loaded once through
+// next/font/google, so identity previews can use any selected Google family
+// without runtime font CSS. Fontshare families remain dynamic official API
+// links because next/font cannot load them.
+const googleEntries = fontRegistry.fonts
+  .filter((entry) => entry.source === "google" && entry.loading?.kind === "google")
+  .sort((a, b) => a.id.localeCompare(b.id));
+const googleLoaderNames = googleEntries.map((entry) => `googleFont_${entry.id.replace(/-/g, "_")}`);
+const googleFontExports = googleEntries.map((entry, index) => {
+  const weightArg = entry.variable ? "" : `\n  weight: [${entry.weights.map((w) => `"${w}"`).join(", ")}],`;
+  return `export const ${googleLoaderNames[index]} = ${entry.loading.import}({\n  subsets: ["latin"],${weightArg}\n  variable: "--arche-font-${entry.id}",\n});`;
+});
+const googleFontsGenerated = `/* GENERATED — do not hand-edit. Source: packages/foundation/src/fonts/font-registry.json
+ * Produced by apps/web/scripts/sync-theme.mjs. Edit the registry, then run:
+ * pnpm --filter web sync-theme */
+import { ${[...new Set(googleEntries.map((entry) => entry.loading.import))].sort().join(", ")} } from "next/font/google";
+
+${googleFontExports.join("\n\n")}
+
+export const googleFontVariables = [${googleLoaderNames.map((name) => `${name}.variable`).join(", ")}];
+`;
+writeFileSync(join(webRoot, "app", "google-fonts.generated.ts"), googleFontsGenerated);
 console.log(`sync-theme: wrote app/theme.css + @theme block + fonts.generated.ts from ${identity.meta.name}`);

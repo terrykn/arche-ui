@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { SINK_EXAMPLES } from "@/components/sink-examples";
 import { BlockPreview } from "@/components/block-preview";
+import { EnterpriseDemo } from "@/components/enterprise-demo";
 import { Copy, Pencil, X } from "lucide-react";
 
 export interface PreviewIdentity {
@@ -52,9 +52,10 @@ export function PreviewShell({
     [overrides, mode],
   );
 
-  const preview = isBlock ? <BlockPreview name={name} /> : (SINK_EXAMPLES[name] ?? (
-    <p className="text-sm text-muted-foreground">No live example for “{name}” yet.</p>
-  ));
+  // Full-app preview: every entry renders the reusable enterprise demo in
+  // situ (blocks appear inside it too). The manifest reference below stays
+  // per-name, so each preview page still documents its own entry.
+  const preview = isBlock ? <BlockPreview name={name} /> : <EnterpriseDemo vars={merged} mode={mode} />;
 
   async function copyDiff() {
     try {
@@ -69,7 +70,7 @@ export function PreviewShell({
   return (
     <>
       <div className={mode === "dark" ? "dark" : ""}>
-        <div style={merged as React.CSSProperties} className="rounded-xl border border-border bg-background px-5 py-6 text-foreground">
+        <div style={merged as React.CSSProperties} className="arche-identity-scope rounded-xl border border-border bg-background px-5 py-6 text-foreground">
           {preview}
         </div>
       </div>

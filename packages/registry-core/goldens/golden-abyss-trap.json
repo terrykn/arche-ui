@@ -131,7 +131,7 @@
       "texture": "none",
       "warmth": 0.2
     },
-    "compilerVersion": 3,
+    "compilerVersion": 4,
     "palette": {
       "accentHue": 210,
       "neutralHue": 240,
@@ -144,9 +144,9 @@
     }
   },
   "fonts": {
-    "display": "source-serif-4",
-    "mono": "ibm-plex-mono",
-    "sans": "inter"
+    "display": "zodiak",
+    "mono": "jetbrains-mono",
+    "sans": "switzer"
   },
   "icons": "lucide",
   "meta": {
@@ -289,15 +289,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Source Serif 4, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Zodiak, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Inter, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Switzer, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",
@@ -437,15 +437,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Source Serif 4, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Zodiak, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Inter, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Switzer, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",

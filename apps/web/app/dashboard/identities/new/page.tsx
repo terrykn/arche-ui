@@ -3,9 +3,10 @@ import { createIdentity, generatePhraseAction } from "../actions";
 export default async function NewIdentity({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; prompt?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, prompt } = await searchParams;
+  const prefill = (prompt ?? "").slice(0, 120);
   return (
     <main className="mx-auto max-w-md px-6 py-16">
       <h1 className="font-display text-3xl">New identity</h1>
@@ -22,7 +23,7 @@ export default async function NewIdentity({
       <section className="mt-8 rounded-lg border-(length:--border-width) border-border p-4">
         <h2 className="font-medium">Describe a vibe</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          A phrase like “90s arcade” or “quiet hospital calm” becomes design DNA.
+          A phrase like “booking app for a dental clinic” or “retro game shop” becomes design DNA.
         </p>
         <form action={generatePhraseAction} className="mt-3 flex flex-col gap-3">
           <label className="flex flex-col gap-1 text-sm">
@@ -32,6 +33,7 @@ export default async function NewIdentity({
               required
               maxLength={120}
               placeholder="ember glow"
+              defaultValue={prefill}
               className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
             />
           </label>

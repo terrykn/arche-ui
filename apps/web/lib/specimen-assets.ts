@@ -82,10 +82,10 @@ async function uploadPng(objectPath: string, bytes: Uint8Array): Promise<boolean
 
 /**
  * Publish-time specimen assets (Part 5.1): render the identity's public page
- * (hero + kitchen sink) in light and dark through headless Chrome and store
- * the captures as versioned, immutable assets. Republishing creates new
- * versioned assets, never overwrites. Failures degrade to { ok: false } —
- * publish itself must never fail because of captures.
+ * (hero + enterprise demo site) in light and dark through headless Chrome
+ * and store the captures as versioned, immutable assets. Republishing
+ * creates new versioned assets, never overwrites. Failures degrade to
+ * { ok: false } — publish itself must never fail because of captures.
  */
 export async function captureVersionAssets(args: {
   libraryId: string;
@@ -122,7 +122,7 @@ export async function captureVersionAssets(args: {
     });
     const page = await browser.newPage();
 
-    // Light: full public page (hero + kitchen sink).
+    // Light: full public page (hero + demo site).
     await page.goto(pageUrl, { waitUntil: "networkidle2", timeout: 60000 });
     await new Promise((r) => setTimeout(r, 1500));
     const light = (await page.screenshot({ fullPage: true, type: "png" })) as Uint8Array;

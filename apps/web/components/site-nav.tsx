@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { ThemeToggle } from "./theme-toggle";
+import { ArcheLogo } from "./arche-logo";
 
 const LINKS = [
   { href: "/identities", label: "Identities" },
@@ -18,8 +18,8 @@ export async function SiteNav() {
   return (
     <header className="border-b-(length:--border-width) border-border">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
-        <Link href="/" className="font-display text-xl">
-          Arche UI
+        <Link href="/" aria-label="Arche UI home" className="inline-flex items-center">
+          <ArcheLogo size={36} />
         </Link>
         <nav className="flex items-center gap-4 text-sm">
           {LINKS.map((link) => (
@@ -29,7 +29,6 @@ export async function SiteNav() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <ThemeToggle />
           {user ? (
             <Link href="/dashboard" className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground">
               Dashboard

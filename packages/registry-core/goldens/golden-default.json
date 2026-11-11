@@ -131,7 +131,7 @@
       "texture": "none",
       "warmth": 0.5
     },
-    "compilerVersion": 3,
+    "compilerVersion": 4,
     "palette": {
       "accentHue": 0,
       "neutralHue": 0,
@@ -144,9 +144,9 @@
     }
   },
   "fonts": {
-    "display": "inter",
+    "display": "satoshi",
     "mono": "geist-mono",
-    "sans": "inter"
+    "sans": "satoshi"
   },
   "icons": "lucide",
   "meta": {
@@ -280,15 +280,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Inter, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Inter, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",
@@ -428,15 +428,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Inter, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Inter, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",

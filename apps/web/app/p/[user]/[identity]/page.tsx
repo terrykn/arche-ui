@@ -1,15 +1,16 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/service";
-import { deriveTypeScale, getManifests, TYPE_ROLES } from "@arche/registry-core";
+import { deriveTypeScale, TYPE_ROLES } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
-import { KitchenSink } from "@/components/kitchen-sink";
+import { IdentityFontLinks } from "@/components/identity-fonts";
+import { EnterpriseDemo } from "@/components/enterprise-demo";
 import { InstallBlock } from "@/components/install-block";
 import { VersionSpecimen } from "@/components/version-specimen";
 import { versionAssetUrls } from "@/lib/version-assets";
 import { summarizeChanges, type PayloadLite } from "@/lib/version-diff";
 
-/** Public identity page — full catalog rendered live in the identity's tokens. */
+/** Public identity page — the enterprise demo rendered live in the identity's tokens. */
 export default async function PublicIdentityPage({
   params,
   searchParams,
@@ -45,6 +46,7 @@ export default async function PublicIdentityPage({
     slug: string;
     visibility: "public" | "private";
     payload: {
+      fonts: { sans: string; display: string; mono: string };
       tokens: Record<string, Record<string, { $value: unknown }>>;
       components: Record<string, Record<string, unknown>>;
       typeScale?: string;
@@ -103,6 +105,7 @@ export default async function PublicIdentityPage({
 
   return (
     <>
+      <IdentityFontLinks fonts={row.payload.fonts} />
       <SiteNav />
       <main className="mx-auto max-w-4xl px-6 py-12">
         <p className="text-sm text-muted-foreground">by {username}</p>
@@ -118,7 +121,7 @@ export default async function PublicIdentityPage({
             <div className="overflow-hidden rounded-xl border-(length:--border-width) border-border">
               <VersionSpecimen
                 src={latestAssets.sinkLight}
-                alt={`Kitchen sink rendered under ${row.name}, version ${versionList[0]?.version ?? 1}`}
+                alt={`Demo site rendered under ${row.name}, version ${versionList[0]?.version ?? 1}`}
                 className="w-full"
               />
             </div>
@@ -131,13 +134,11 @@ export default async function PublicIdentityPage({
         <section className="mt-8">
           <h2 className="text-lg font-medium">Install</h2>
           <InstallBlock base={base} username={username} slug={slug} authed={false} />
-        </section>
-
-        <section className="mt-8">
-          <h2 className="text-lg font-medium">Kitchen sink</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Every catalog component, live in this identity.</p>
-          <div className="mt-2 rounded-xl border-(length:--border-width) border-border p-4">
-            <KitchenSink manifests={getManifests()} vars={vars} mode={dark ? "dark" : "light"} typeSteps={typeSteps} />
+        </section>            <section className="mt-8">
+          <h2 className="text-lg font-medium">Live site</h2>
+          <p className="mt-1 text-sm text-muted-foreground">The Acme Fulfillment demo, live in this identity — every catalog component in situ.</p>
+          <div className="mt-2 overflow-hidden rounded-xl border-(length:--border-width) border-border">
+            <EnterpriseDemo vars={vars} mode={dark ? "dark" : "light"} typeSteps={typeSteps} />
           </div>
         </section>
 

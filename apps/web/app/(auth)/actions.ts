@@ -1,9 +1,23 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import {
+  HERO_PROMPT_COOKIE,
+  newIdentityHref,
+  sanitizeHeroPrompt,
+} from "@/lib/hero-prompt";
+
+/** One-shot handoff: read the saved hero prompt and delete the cookie. */
+async function consumeHeroPrompt(): Promise<string | null> {
+  const store = await cookies();
+  const raw = store.get(HERO_PROMPT_COOKIE)?.value;
+  if (!raw) return null;
+  store.delete(HERO_PROMPT_COOKIE);
+  return sanitizeHeroPrompt(raw);
+}
 
 export async function signUp(formData: FormData) {
   const supabase = await createClient();
@@ -14,7 +28,8 @@ export async function signUp(formData: FormData) {
     redirect(`/sign-up?error=${encodeURIComponent(error.message)}`);
   }
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  const prompt = await consumeHeroPrompt();
+  redirect(prompt ? newIdentityHref(prompt) : "/dashboard");
 }
 
 function safeNext(raw: string): string {
@@ -31,7 +46,8 @@ export async function signIn(formData: FormData) {
     redirect(`/sign-in?error=${encodeURIComponent(error.message)}&next=${encodeURIComponent(next)}`);
   }
   revalidatePath("/", "layout");
-  redirect(next);
+  const prompt = await consumeHeroPrompt();
+  redirect(next === "/dashboard" && prompt ? newIdentityHref(prompt) : next);
 }
 
 export async function signInWithGoogle() {

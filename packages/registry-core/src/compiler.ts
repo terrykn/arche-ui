@@ -285,21 +285,34 @@ interface TypePick {
   mono: string;
 }
 
-/** Deterministic registry picks. Priority: pixel > era-playful > formal > warm > neutral. */
-function typeFor(axes: DnaObject): TypePick {
+/**
+ * Deterministic registry pair picks. The display face is selected first from
+ * DNA; the body face is its registered compatible partner (or the same
+ * expressive family when the profile calls for a single-family treatment).
+ * Mono is always the registry default, Geist Mono, unless a formal or warm
+ * identity calls for JetBrains Mono's technical texture. Priority: pixel >
+ * era-playful > formal > warm > enterprise > expressive > neutral.
+ */
+function typeFor(axes: DnaObject, profile: GenerationProfile): TypePick {
   if (axes.material === "pixel") {
-    return { sans: "space-grotesk", display: "press-start-2p", mono: "space-mono" };
+    return { sans: "general-sans", display: "clash-display", mono: "geist-mono" };
   }
   if (axes.retroFuturism >= 0.6 && axes.playfulness >= 0.5) {
-    return { sans: "space-grotesk", display: "bungee", mono: "space-mono" };
+    return { sans: "general-sans", display: "melodrama", mono: "geist-mono" };
   }
   if (axes.formality >= 0.65) {
-    return { sans: "inter", display: "source-serif-4", mono: "ibm-plex-mono" };
+    return { sans: "switzer", display: "zodiak", mono: "jetbrains-mono" };
   }
   if (axes.warmth >= 0.65) {
-    return { sans: "nunito-sans", display: "fraunces", mono: "dm-mono" };
+    return { sans: "cabinet-grotesk", display: "sentient", mono: "jetbrains-mono" };
   }
-  return { sans: "inter", display: "inter", mono: "geist-mono" };
+  if (profile === "enterprise") {
+    return { sans: "public-sans", display: "archivo", mono: "geist-mono" };
+  }
+  if (profile === "expressive") {
+    return { sans: "clash-grotesk", display: "clash-grotesk", mono: "geist-mono" };
+  }
+  return { sans: "satoshi", display: "satoshi", mono: "geist-mono" };
 }
 
 /** Icon library: lucide unless the table says otherwise (ornate ↔ phosphor weights). */
@@ -593,7 +606,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
 
   // Font stacks must mirror the selected registry families exactly.
   const byId = fontEntriesById();
-  const pick = typeFor(axes);
+  const pick = typeFor(axes, profile);
   const sans = byId.get(pick.sans)!;
   const display = byId.get(pick.display)!;
   const mono = byId.get(pick.mono)!;

@@ -1,350 +1,595 @@
 {
-  "$comment": "Arche UI closed font registry. Identities select fonts by id only — never raw stacks. Roles bound which token slot a font may fill (sans/display/mono). Weights verified against Google Fonts metadata (2026-11-01). fontsourcePackage verified against npm.",
-  "registryVersion": 1,
+  "$comment": "Arche UI closed font registry v2. Identities select fonts by id only — never raw stacks. Slots use body/display/mono. Weights and italics were verified against the Fontshare v2 API and Google Fonts CSS API. Fontshare families load only through the official Fontshare CSS API; Google families load only through next/font/google or registry font items.",
+  "registryVersion": 2,
   "fonts": [
     {
-      "id": "inter",
-      "family": "Inter",
-      "nextFontImport": "Inter",
-      "fontsourcePackage": "@fontsource-variable/inter",
+      "id": "satoshi",
+      "family": "Satoshi",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "weights": [300, 400, 500, 700, 900],
+      "italics": true,
       "variable": true,
-      "defaultFor": "sans"
+      "weightRange": [300, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "satoshi",
+        "css": "https://api.fontshare.com/v2/css?f[]=satoshi@1,2&display=swap"
+      },
+      "fallback": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "geist",
-      "family": "Geist",
-      "nextFontImport": "Geist",
-      "fontsourcePackage": "@fontsource-variable/geist",
+      "id": "general-sans",
+      "family": "General Sans",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
+      "weights": [200, 300, 400, 500, 600, 700],
+      "italics": true,
+      "variable": true,
+      "weightRange": [200, 700],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "general-sans",
+        "css": "https://api.fontshare.com/v2/css?f[]=general-sans@1,2&display=swap"
+      },
+      "fallback": "General Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+    },
+    {
+      "id": "cabinet-grotesk",
+      "family": "Cabinet Grotesk",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "expressive",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
+      "weights": [100, 200, 300, 400, 500, 700, 800, 900],
+      "italics": false,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "cabinet-grotesk",
+        "css": "https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@1&display=swap"
+      },
+      "fallback": "Cabinet Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+    },
+    {
+      "id": "switzer",
+      "family": "Switzer",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
       "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "switzer",
+        "css": "https://api.fontshare.com/v2/css?f[]=switzer@1,2&display=swap"
+      },
+      "fallback": "Switzer, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "manrope",
-      "family": "Manrope",
-      "nextFontImport": "Manrope",
-      "fontsourcePackage": "@fontsource-variable/manrope",
+      "id": "clash-grotesk",
+      "family": "Clash Grotesk",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "expressive",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
-      "weights": [200, 300, 400, 500, 600, 700, 800],
-      "variable": true
+      "weights": [200, 300, 400, 500, 600, 700],
+      "italics": false,
+      "variable": true,
+      "weightRange": [200, 700],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "clash-grotesk",
+        "css": "https://api.fontshare.com/v2/css?f[]=clash-grotesk@1&display=swap"
+      },
+      "fallback": "Clash Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "plus-jakarta-sans",
-      "family": "Plus Jakarta Sans",
-      "nextFontImport": "Plus_Jakarta_Sans",
-      "fontsourcePackage": "@fontsource-variable/plus-jakarta-sans",
-      "roles": ["sans", "display"],
-      "weights": [200, 300, 400, 500, 600, 700, 800],
-      "variable": true
+      "id": "author",
+      "family": "Author",
+      "source": "fontshare",
+      "classification": "humanist",
+      "expression": "neutral",
+      "slots": ["body"],
+      "roles": ["sans"],
+      "weights": [200, 300, 400, 500, 600, 700],
+      "italics": true,
+      "variable": true,
+      "weightRange": [200, 700],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "author",
+        "css": "https://api.fontshare.com/v2/css?f[]=author@1,2&display=swap"
+      },
+      "fallback": "Author, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "dm-sans",
-      "family": "DM Sans",
-      "nextFontImport": "DM_Sans",
-      "fontsourcePackage": "@fontsource-variable/dm-sans",
+      "id": "ranade",
+      "family": "Ranade",
+      "source": "fontshare",
+      "classification": "humanist",
+      "expression": "neutral",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "weights": [100, 300, 400, 500, 700],
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 700],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "ranade",
+        "css": "https://api.fontshare.com/v2/css?f[]=ranade@1,2&display=swap"
+      },
+      "fallback": "Ranade, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "public-sans",
-      "family": "Public Sans",
-      "nextFontImport": "Public_Sans",
-      "fontsourcePackage": "@fontsource-variable/public-sans",
+      "id": "chillax",
+      "family": "Chillax",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "expressive",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "weights": [200, 300, 400, 500, 600, 700],
+      "italics": false,
+      "variable": true,
+      "weightRange": [200, 700],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "chillax",
+        "css": "https://api.fontshare.com/v2/css?f[]=chillax@1&display=swap"
+      },
+      "fallback": "Chillax, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "figtree",
-      "family": "Figtree",
-      "nextFontImport": "Figtree",
-      "fontsourcePackage": "@fontsource-variable/figtree",
-      "roles": ["sans", "display"],
-      "weights": [300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "id": "excon",
+      "family": "Excon",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "expressive",
+      "slots": ["display"],
+      "roles": ["display"],
+      "weights": [100, 300, 400, 500, 700, 900],
+      "italics": false,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": true,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "excon",
+        "css": "https://api.fontshare.com/v2/css?f[]=excon@1&display=swap"
+      },
+      "fallback": "Excon, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "outfit",
-      "family": "Outfit",
-      "nextFontImport": "Outfit",
-      "fontsourcePackage": "@fontsource-variable/outfit",
+      "id": "zodiak",
+      "family": "Zodiak",
+      "source": "fontshare",
+      "classification": "serif",
+      "expression": "serif",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "weights": [100, 300, 400, 700, 800, 900],
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "zodiak",
+        "css": "https://api.fontshare.com/v2/css?f[]=zodiak@1,2&display=swap"
+      },
+      "fallback": "Zodiak, ui-serif, Georgia, Times New Roman, serif"
     },
     {
-      "id": "ibm-plex-sans",
-      "family": "IBM Plex Sans",
-      "nextFontImport": "IBM_Plex_Sans",
-      "fontsourcePackage": "@fontsource-variable/ibm-plex-sans",
+      "id": "sentient",
+      "family": "Sentient",
+      "source": "fontshare",
+      "classification": "serif",
+      "expression": "serif",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700],
-      "variable": true
+      "weights": [200, 300, 400, 500, 700],
+      "italics": true,
+      "variable": true,
+      "weightRange": [200, 700],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "sentient",
+        "css": "https://api.fontshare.com/v2/css?f[]=sentient@1,2&display=swap"
+      },
+      "fallback": "Sentient, ui-serif, Georgia, Times New Roman, serif"
     },
     {
-      "id": "work-sans",
-      "family": "Work Sans",
-      "nextFontImport": "Work_Sans",
-      "fontsourcePackage": "@fontsource-variable/work-sans",
+      "id": "bespoke-serif",
+      "family": "Bespoke Serif",
+      "source": "fontshare",
+      "classification": "serif",
+      "expression": "serif",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "weights": [300, 400, 500, 700, 800],
+      "italics": true,
+      "variable": true,
+      "weightRange": [300, 800],
+      "displayOnly": false,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "bespoke-serif",
+        "css": "https://api.fontshare.com/v2/css?f[]=bespoke-serif@1,2&display=swap"
+      },
+      "fallback": "Bespoke Serif, ui-serif, Georgia, Times New Roman, serif"
     },
     {
-      "id": "source-sans-3",
-      "family": "Source Sans 3",
-      "nextFontImport": "Source_Sans_3",
-      "fontsourcePackage": "@fontsource-variable/source-sans-3",
-      "roles": ["sans", "display"],
-      "weights": [200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "id": "clash-display",
+      "family": "Clash Display",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "expressive",
+      "slots": ["display"],
+      "roles": ["display"],
+      "weights": [200, 300, 400, 500, 600, 700],
+      "italics": false,
+      "variable": true,
+      "weightRange": [200, 700],
+      "displayOnly": true,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "clash-display",
+        "css": "https://api.fontshare.com/v2/css?f[]=clash-display@1&display=swap"
+      },
+      "fallback": "Clash Display, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "roboto",
-      "family": "Roboto",
-      "nextFontImport": "Roboto",
-      "fontsourcePackage": "@fontsource-variable/roboto",
-      "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "id": "pally",
+      "family": "Pally",
+      "source": "fontshare",
+      "classification": "grotesque",
+      "expression": "expressive",
+      "slots": ["display"],
+      "roles": ["display"],
+      "weights": [400, 500, 700],
+      "italics": false,
+      "variable": true,
+      "weightRange": [400, 700],
+      "displayOnly": true,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "pally",
+        "css": "https://api.fontshare.com/v2/css?f[]=pally@1&display=swap"
+      },
+      "fallback": "Pally, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "open-sans",
-      "family": "Open Sans",
-      "nextFontImport": "Open_Sans",
-      "fontsourcePackage": "@fontsource-variable/open-sans",
-      "roles": ["sans", "display"],
-      "weights": [300, 400, 500, 600, 700, 800],
-      "variable": true
+      "id": "pencerio",
+      "family": "Pencerio",
+      "source": "fontshare",
+      "classification": "calligraphic",
+      "expression": "expressive",
+      "slots": ["display"],
+      "roles": ["display"],
+      "weights": [50],
+      "italics": false,
+      "variable": false,
+      "displayOnly": true,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "pencerio",
+        "css": "https://api.fontshare.com/v2/css?f[]=pencerio@50&display=swap"
+      },
+      "fallback": "Pencerio, Segoe Script, Comic Sans MS, cursive"
     },
     {
-      "id": "lato",
-      "family": "Lato",
-      "nextFontImport": "Lato",
-      "fontsourcePackage": "@fontsource/lato",
-      "roles": ["sans", "display"],
-      "weights": [100, 300, 400, 700, 900],
-      "variable": false
+      "id": "comico",
+      "family": "Comico",
+      "source": "fontshare",
+      "classification": "handwritten",
+      "expression": "expressive",
+      "slots": ["display"],
+      "roles": ["display"],
+      "weights": [400],
+      "italics": false,
+      "variable": false,
+      "displayOnly": true,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "comico",
+        "css": "https://api.fontshare.com/v2/css?f[]=comico@400&display=swap"
+      },
+      "fallback": "Comico, Segoe Script, Comic Sans MS, cursive"
     },
     {
-      "id": "montserrat",
-      "family": "Montserrat",
-      "nextFontImport": "Montserrat",
-      "fontsourcePackage": "@fontsource-variable/montserrat",
-      "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
-    },
-    {
-      "id": "poppins",
-      "family": "Poppins",
-      "nextFontImport": "Poppins",
-      "fontsourcePackage": "@fontsource/poppins",
-      "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": false
-    },
-    {
-      "id": "nunito-sans",
-      "family": "Nunito Sans",
-      "nextFontImport": "Nunito_Sans",
-      "fontsourcePackage": "@fontsource-variable/nunito-sans",
-      "roles": ["sans", "display"],
-      "weights": [200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
-    },
-    {
-      "id": "rubik",
-      "family": "Rubik",
-      "nextFontImport": "Rubik",
-      "fontsourcePackage": "@fontsource-variable/rubik",
-      "roles": ["sans", "display"],
-      "weights": [300, 400, 500, 600, 700, 800, 900],
-      "variable": true
-    },
-    {
-      "id": "sora",
-      "family": "Sora",
-      "nextFontImport": "Sora",
-      "fontsourcePackage": "@fontsource-variable/sora",
-      "roles": ["sans", "display"],
-      "weights": [100, 200, 300, 400, 500, 600, 700, 800],
-      "variable": true
+      "id": "melodrama",
+      "family": "Melodrama",
+      "source": "fontshare",
+      "classification": "display-serif",
+      "expression": "expressive",
+      "slots": ["display"],
+      "roles": ["display"],
+      "weights": [300, 400, 500, 600, 700],
+      "italics": false,
+      "variable": true,
+      "weightRange": [300, 700],
+      "displayOnly": true,
+      "loading": {
+        "kind": "fontshare",
+        "slug": "melodrama",
+        "css": "https://api.fontshare.com/v2/css?f[]=melodrama@1&display=swap"
+      },
+      "fallback": "Melodrama, ui-serif, Georgia, Times New Roman, serif"
     },
     {
       "id": "space-grotesk",
       "family": "Space Grotesk",
-      "nextFontImport": "Space_Grotesk",
-      "fontsourcePackage": "@fontsource-variable/space-grotesk",
+      "source": "google",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body", "display"],
       "roles": ["sans", "display"],
       "weights": [300, 400, 500, 600, 700],
-      "variable": true
+      "italics": false,
+      "variable": true,
+      "weightRange": [300, 700],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Space_Grotesk",
+        "subsets": ["latin"]
+      },
+      "fallback": "Space Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "fraunces",
-      "family": "Fraunces",
-      "nextFontImport": "Fraunces",
-      "fontsourcePackage": "@fontsource-variable/fraunces",
-      "roles": ["display"],
+      "id": "montserrat",
+      "family": "Montserrat",
+      "source": "google",
+      "classification": "geometric",
+      "expression": "neutral",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
       "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Montserrat",
+        "subsets": ["latin"]
+      },
+      "fallback": "Montserrat, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "playfair-display",
-      "family": "Playfair Display",
-      "nextFontImport": "Playfair_Display",
-      "fontsourcePackage": "@fontsource-variable/playfair-display",
-      "roles": ["display"],
-      "weights": [400, 500, 600, 700, 800, 900],
-      "variable": true
+      "id": "work-sans",
+      "family": "Work Sans",
+      "source": "google",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body"],
+      "roles": ["sans"],
+      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Work_Sans",
+        "subsets": ["latin"]
+      },
+      "fallback": "Work Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "lora",
-      "family": "Lora",
-      "nextFontImport": "Lora",
-      "fontsourcePackage": "@fontsource-variable/lora",
-      "roles": ["display"],
-      "weights": [400, 500, 600, 700],
-      "variable": true
+      "id": "be-vietnam-pro",
+      "family": "Be Vietnam Pro",
+      "source": "google",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body"],
+      "roles": ["sans"],
+      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": true,
+      "variable": false,
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Be_Vietnam_Pro",
+        "subsets": ["latin"]
+      },
+      "fallback": "Be Vietnam Pro, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "source-serif-4",
-      "family": "Source Serif 4",
-      "nextFontImport": "Source_Serif_4",
-      "fontsourcePackage": "@fontsource-variable/source-serif-4",
-      "roles": ["display"],
-      "weights": [200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
+      "id": "poppins",
+      "family": "Poppins",
+      "source": "google",
+      "classification": "geometric",
+      "expression": "neutral",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
+      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": true,
+      "variable": false,
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Poppins",
+        "subsets": ["latin"]
+      },
+      "fallback": "Poppins, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
-      "id": "newsreader",
-      "family": "Newsreader",
-      "nextFontImport": "Newsreader",
-      "fontsourcePackage": "@fontsource-variable/newsreader",
-      "roles": ["display"],
+      "id": "outfit",
+      "family": "Outfit",
+      "source": "google",
+      "classification": "geometric",
+      "expression": "neutral",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
+      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": false,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Outfit",
+        "subsets": ["latin"]
+      },
+      "fallback": "Outfit, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+    },
+    {
+      "id": "public-sans",
+      "family": "Public Sans",
+      "source": "google",
+      "classification": "humanist",
+      "expression": "neutral",
+      "slots": ["body"],
+      "roles": ["sans"],
+      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Public_Sans",
+        "subsets": ["latin"]
+      },
+      "fallback": "Public Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+    },
+    {
+      "id": "epilogue",
+      "family": "Epilogue",
+      "source": "google",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
+      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Epilogue",
+        "subsets": ["latin"]
+      },
+      "fallback": "Epilogue, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+    },
+    {
+      "id": "archivo",
+      "family": "Archivo",
+      "source": "google",
+      "classification": "grotesque",
+      "expression": "neutral",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
+      "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Archivo",
+        "subsets": ["latin"]
+      },
+      "fallback": "Archivo, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+    },
+    {
+      "id": "manrope",
+      "family": "Manrope",
+      "source": "google",
+      "classification": "humanist",
+      "expression": "neutral",
+      "slots": ["body", "display"],
+      "roles": ["sans", "display"],
       "weights": [200, 300, 400, 500, 600, 700, 800],
-      "variable": true
-    },
-    {
-      "id": "instrument-serif",
-      "family": "Instrument Serif",
-      "nextFontImport": "Instrument_Serif",
-      "fontsourcePackage": "@fontsource/instrument-serif",
-      "roles": ["display"],
-      "weights": [400],
-      "variable": false
-    },
-    {
-      "id": "dm-serif-display",
-      "family": "DM Serif Display",
-      "nextFontImport": "DM_Serif_Display",
-      "fontsourcePackage": "@fontsource/dm-serif-display",
-      "roles": ["display"],
-      "weights": [400],
-      "variable": false
-    },
-    {
-      "id": "bricolage-grotesque",
-      "family": "Bricolage Grotesque",
-      "nextFontImport": "Bricolage_Grotesque",
-      "fontsourcePackage": "@fontsource-variable/bricolage-grotesque",
-      "roles": ["display"],
-      "weights": [200, 300, 400, 500, 600, 700, 800],
-      "variable": true
-    },
-    {
-      "id": "bungee",
-      "family": "Bungee",
-      "nextFontImport": "Bungee",
-      "fontsourcePackage": "@fontsource/bungee",
-      "roles": ["display"],
-      "weights": [400],
-      "variable": false
-    },
-    {
-      "id": "press-start-2p",
-      "family": "Press Start 2P",
-      "nextFontImport": "Press_Start_2P",
-      "fontsourcePackage": "@fontsource/press-start-2p",
-      "roles": ["display"],
-      "weights": [400],
-      "variable": false
+      "italics": false,
+      "variable": true,
+      "weightRange": [200, 800],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Manrope",
+        "subsets": ["latin"]
+      },
+      "fallback": "Manrope, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
     },
     {
       "id": "geist-mono",
       "family": "Geist Mono",
-      "nextFontImport": "Geist_Mono",
-      "fontsourcePackage": "@fontsource-variable/geist-mono",
+      "source": "google",
+      "classification": "monospace",
+      "expression": "neutral",
+      "slots": ["mono"],
       "roles": ["mono"],
       "weights": [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      "italics": false,
       "variable": true,
-      "defaultFor": "mono"
+      "weightRange": [100, 900],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "Geist_Mono",
+        "subsets": ["latin"]
+      },
+      "fallback": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
     },
     {
       "id": "jetbrains-mono",
       "family": "JetBrains Mono",
-      "nextFontImport": "JetBrains_Mono",
-      "fontsourcePackage": "@fontsource-variable/jetbrains-mono",
+      "source": "google",
+      "classification": "monospace",
+      "expression": "neutral",
+      "slots": ["mono"],
       "roles": ["mono"],
       "weights": [100, 200, 300, 400, 500, 600, 700, 800],
-      "variable": true
-    },
-    {
-      "id": "ibm-plex-mono",
-      "family": "IBM Plex Mono",
-      "nextFontImport": "IBM_Plex_Mono",
-      "fontsourcePackage": "@fontsource/ibm-plex-mono",
-      "roles": ["mono"],
-      "weights": [100, 200, 300, 400, 500, 600, 700],
-      "variable": false
-    },
-    {
-      "id": "roboto-mono",
-      "family": "Roboto Mono",
-      "nextFontImport": "Roboto_Mono",
-      "fontsourcePackage": "@fontsource-variable/roboto-mono",
-      "roles": ["mono"],
-      "weights": [100, 200, 300, 400, 500, 600, 700],
-      "variable": true
-    },
-    {
-      "id": "source-code-pro",
-      "family": "Source Code Pro",
-      "nextFontImport": "Source_Code_Pro",
-      "fontsourcePackage": "@fontsource-variable/source-code-pro",
-      "roles": ["mono"],
-      "weights": [200, 300, 400, 500, 600, 700, 800, 900],
-      "variable": true
-    },
-    {
-      "id": "space-mono",
-      "family": "Space Mono",
-      "nextFontImport": "Space_Mono",
-      "fontsourcePackage": "@fontsource/space-mono",
-      "roles": ["mono"],
-      "weights": [400, 700],
-      "variable": false
-    },
-    {
-      "id": "dm-mono",
-      "family": "DM Mono",
-      "nextFontImport": "DM_Mono",
-      "fontsourcePackage": "@fontsource/dm-mono",
-      "roles": ["mono"],
-      "weights": [300, 400, 500],
-      "variable": false
-    },
-    {
-      "id": "fira-code",
-      "family": "Fira Code",
-      "nextFontImport": "Fira_Code",
-      "fontsourcePackage": "@fontsource-variable/fira-code",
-      "roles": ["mono"],
-      "weights": [300, 400, 500, 600, 700],
-      "variable": true
+      "italics": true,
+      "variable": true,
+      "weightRange": [100, 800],
+      "displayOnly": false,
+      "loading": {
+        "kind": "google",
+        "import": "JetBrains_Mono",
+        "subsets": ["latin"]
+      },
+      "fallback": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
     }
-  ]
+  ],
+  "pairing": {
+    "recommended": [
+      ["cabinet-grotesk", "satoshi"],
+      ["clash-display", "general-sans"],
+      ["clash-grotesk", "clash-grotesk"],
+      ["zodiak", "switzer"],
+      ["sentient", "cabinet-grotesk"],
+      ["bespoke-serif", "satoshi"],
+      ["melodrama", "general-sans"],
+      ["space-grotesk", "work-sans"],
+      ["archivo", "public-sans"]
+    ]
+  }
 }

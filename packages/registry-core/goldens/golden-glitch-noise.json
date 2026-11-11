@@ -131,7 +131,7 @@
       "texture": "scanlines",
       "warmth": 0.4
     },
-    "compilerVersion": 3,
+    "compilerVersion": 4,
     "palette": {
       "accentHue": 180,
       "neutralHue": 260,
@@ -144,9 +144,9 @@
     }
   },
   "fonts": {
-    "display": "bungee",
-    "mono": "space-mono",
-    "sans": "space-grotesk"
+    "display": "melodrama",
+    "mono": "geist-mono",
+    "sans": "general-sans"
   },
   "icons": "lucide",
   "meta": {
@@ -280,15 +280,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Bungee, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Melodrama, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Space Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Space Grotesk, ui-sans-serif, system-ui, sans-serif"
+        "$value": "General Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",
@@ -428,15 +428,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Bungee, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Melodrama, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Space Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Space Grotesk, ui-sans-serif, system-ui, sans-serif"
+        "$value": "General Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",

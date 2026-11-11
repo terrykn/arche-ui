@@ -1,21 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { ThemeFromProfile } from "@/components/theme-from-profile";
-import { createServiceClient } from "@/lib/supabase/service";
+import { ArcheLogo } from "@/components/arche-logo";
 import { signOut } from "../(auth)/actions";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const DASH_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/dashboard/applications", label: "Applications" },
   { href: "/dashboard/identities", label: "Identities" },
-  { href: "/dashboard/components", label: "Components" },
-  { href: "/dashboard/standards", label: "Standards" },
   { href: "/dashboard/mcp", label: "MCP" },
   { href: "/dashboard/docs", label: "Docs" },
   { href: "/dashboard/settings", label: "Settings" },
@@ -34,21 +28,11 @@ export default async function DashboardLayout({
     redirect("/sign-in");
   }
 
-  const service = createServiceClient();
-  const { data: profile } = await service
-    .from("profiles")
-    .select("theme")
-    .eq("id", user.id)
-    .maybeSingle();
-  const theme = (profile as unknown as { theme?: "light" | "dark" | "system" } | null)?.theme ?? "system";
-  const initials = (user.email ?? "A").slice(0, 2).toUpperCase();
-
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <ThemeFromProfile theme={theme} />
-      <aside className="flex w-60 shrink-0 flex-col gap-1 border-r border-border bg-card p-4 text-card-foreground">
-        <Link href="/" className="px-2 py-2 font-display text-lg text-foreground">
-          Arche UI
+      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col gap-1 overflow-y-auto border-r border-border bg-card p-4 text-card-foreground">
+        <Link href="/" aria-label="Arche UI home" className="inline-flex items-center px-2 py-2">
+          <ArcheLogo size={36} />
         </Link>
         <nav className="mt-2 flex flex-col gap-1" aria-label="Dashboard">
           {DASH_LINKS.map((link) => (
@@ -64,18 +48,12 @@ export default async function DashboardLayout({
             </Link>
           </Button>
         </div>
-        <div className="mt-auto flex items-center gap-2 pt-3">
-          <Avatar size="sm">
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{user.email}</span>
+        <div className="mt-auto pt-3">
+          <span className="block truncate text-sm text-muted-foreground">{user.email}</span>
         </div>
         <Separator className="my-3" />
-        <div className="flex items-center justify-between gap-2">
-          <ThemeToggle />
-        </div>
         <form action={signOut}>
-          <Button variant="outline" size="sm" type="submit" className="mt-2 w-full">
+          <Button variant="outline" size="sm" type="submit" className="w-full">
             Sign out
           </Button>
         </form>

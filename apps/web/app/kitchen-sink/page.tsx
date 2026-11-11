@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { deriveTypeScale, getManifests, TYPE_ROLES } from "@arche/registry-core";
-import { KitchenSink } from "@/components/kitchen-sink";
+import { deriveTypeScale, TYPE_ROLES } from "@arche/registry-core";
+import { EnterpriseDemo } from "@/components/enterprise-demo";
+import { IdentityFontLinks } from "@/components/identity-fonts";
 import { SiteNav } from "@/components/site-nav";
 
 const FIXTURE_FILES: Record<string, { file: string; label: string; prompt: string }> = {
@@ -26,7 +27,7 @@ function loadFixture(file: string) {
 }
 
 /**
- * Kitchen-sink QA surface (Part 2): the full catalog under any fixture
+ * Demo-site QA surface: the reusable enterprise demo under any fixture
  * identity, light or dark, via ?identity=&mode=. Used for visual QA and
  * the specimen captures — same page, zero code changes per identity.
  */
@@ -40,6 +41,7 @@ export default async function KitchenSinkPage({
   const mode = params.mode === "dark" ? "dark" : "light";
   const fixture = FIXTURE_FILES[key]!;
   const payload = loadFixture(fixture.file) as {
+    fonts: { sans: string; display: string; mono: string };
     tokens: Record<string, Record<string, { $value: unknown }>>;
     typeScale?: string;
     dna?: { profile?: string };
@@ -59,14 +61,14 @@ export default async function KitchenSinkPage({
 
   return (
     <>
+      <IdentityFontLinks fonts={payload.fonts} />
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-6 py-8">
-        <p className="text-sm text-muted-foreground">
-          <Link href="/" className="underline">Arche</Link> · kitchen sink
+      <main className="mx-auto max-w-6xl px-6 py-8">          <p className="text-sm text-muted-foreground">
+          <Link href="/" className="underline">Arche</Link> · demo site
         </p>
-        <h1 className="font-display text-3xl">Kitchen sink</h1>
+        <h1 className="font-display text-3xl">Demo site</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {fixture.label} · from “{fixture.prompt}” · {mode} mode. Every catalog component, one page.
+          {fixture.label} · from “{fixture.prompt}” · {mode} mode. The Acme Fulfillment site, one page, every catalog component in situ.
         </p>
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
           <span>
@@ -88,7 +90,7 @@ export default async function KitchenSinkPage({
           </span>
         </div>
         <div className="mt-4 rounded-xl border-(length:--border-width) border-border p-4">
-          <KitchenSink manifests={getManifests()} vars={vars} mode={mode} typeSteps={typeSteps} />
+          <EnterpriseDemo vars={vars} mode={mode} typeSteps={typeSteps} />
         </div>
       </main>
     </>

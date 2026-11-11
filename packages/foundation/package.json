@@ -29,6 +29,10 @@
       "types": "./src/fonts/fonts.ts",
       "default": "./dist/fonts/fonts.js"
     },
+    "./font-data": {
+      "types": "./src/fonts/font-data.ts",
+      "default": "./dist/fonts/font-data.js"
+    },
     "./fonts/font-registry.json": "./src/fonts/font-registry.json",
     "./icons": {
       "types": "./src/icons/icons.ts",

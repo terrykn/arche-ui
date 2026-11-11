@@ -560,7 +560,9 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
 
   // ---- fonts ----
   // One registry:font item per unique family across the three slots (sans,
-  // display, mono). The font item's variable is the first slot using it.
+  // display, mono). Google families load through next/font/google. Fontshare
+  // families load only through the official Fontshare CSS API. The font
+  // item's variable is the first slot using it.
   const byId = fontEntriesById();
   const fontItemNames: string[] = [];
   const seenFamilies = new Set<string>();
@@ -573,22 +575,38 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
     seenFamilies.add(entry.family);
     const itemName = `font-${entry.id}`;
     fontItemNames.push(itemName);
+    const loading =
+      entry.loading.kind === "google"
+        ? {
+            family: entry.family,
+            provider: "google" as const,
+            import: entry.loading.import,
+            variable: slotVars[slot],
+            weight: entry.weights.map(String),
+            subsets: entry.loading.subsets,
+          }
+        : {
+            family: entry.family,
+            provider: "fontshare" as const,
+            variable: slotVars[slot],
+            weight: entry.weights.map(String),
+            subsets: ["latin"],
+            stylesheet: entry.loading.css,
+          };
+    const description =
+      entry.loading.kind === "google"
+        ? `Webfont loading for the ${slot} slot of ${identity.meta.name} through next/font/google.`
+        : `Webfont loading for the ${slot} slot of ${identity.meta.name} through the official Fontshare CSS API.`;
     items.set(
       itemName,
       serializeStable({
         name: itemName,
         type: "registry:font",
         title: `Arche font · ${entry.family}`,
-        description: `Webfont loading for the ${slot} slot of ${identity.meta.name} (next/font/google in apps, ${entry.fontsourcePackage} elsewhere).`,
-        font: {
-          family: entry.family,
-          provider: "google",
-          import: entry.nextFontImport,
-          variable: slotVars[slot],
-          weight: entry.weights.map(String),
-          subsets: ["latin"],
-          dependency: entry.fontsourcePackage,
-        },
+        description,
+        dependencies: [],
+        registryDependencies: [],
+        font: loading,
       }),
     );
   }

@@ -131,7 +131,7 @@
       "texture": "grain",
       "warmth": 0.85
     },
-    "compilerVersion": 3,
+    "compilerVersion": 4,
     "palette": {
       "accentHue": 45,
       "neutralHue": 60,
@@ -144,9 +144,9 @@
     }
   },
   "fonts": {
-    "display": "fraunces",
-    "mono": "dm-mono",
-    "sans": "nunito-sans"
+    "display": "sentient",
+    "mono": "jetbrains-mono",
+    "sans": "cabinet-grotesk"
   },
   "icons": "lucide",
   "meta": {
@@ -287,15 +287,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Fraunces, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Sentient, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "DM Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Cabinet Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",
@@ -435,15 +435,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Fraunces, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Sentient, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "DM Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Nunito Sans, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Cabinet Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",

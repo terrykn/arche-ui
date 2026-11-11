@@ -31,8 +31,8 @@ export default function AboutPage() {
                 Postgres database. Libraries you publish as public are visible to anyone with the link.
               </p>
               <p>
-                Start with <Link href="/examples" className="underline">the Examples</Link>, inspect any page in{" "}
-                <Link href="/kitchen-sink" className="underline">the kitchen sink</Link>, or read{" "}
+                Start with <Link href="/examples" className="underline">the Examples</Link>, inspect the{" "}
+                <Link href="/kitchen-sink" className="underline">demo site</Link>, or read{" "}
                 <Link href="/docs" className="underline">the docs</Link>.
               </p>
             </div>

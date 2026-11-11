@@ -131,7 +131,7 @@
       "texture": "scanlines",
       "warmth": 0.55
     },
-    "compilerVersion": 3,
+    "compilerVersion": 4,
     "palette": {
       "accentHue": 100,
       "neutralHue": 305,
@@ -144,9 +144,9 @@
     }
   },
   "fonts": {
-    "display": "press-start-2p",
-    "mono": "space-mono",
-    "sans": "space-grotesk"
+    "display": "clash-display",
+    "mono": "geist-mono",
+    "sans": "general-sans"
   },
   "icons": "lucide",
   "meta": {
@@ -252,15 +252,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Press Start 2P, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Clash Display, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Space Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Space Grotesk, ui-sans-serif, system-ui, sans-serif"
+        "$value": "General Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",
@@ -400,15 +400,15 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Press Start 2P, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Clash Display, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Space Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Space Grotesk, ui-sans-serif, system-ui, sans-serif"
+        "$value": "General Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--foreground": {
         "$type": "color",

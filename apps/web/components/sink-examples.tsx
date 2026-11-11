@@ -38,10 +38,10 @@ import { Toolbar, ToolbarButton } from "@/components/ui/toolbar";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 /**
- * Single source of default-state examples (Part 2 §3): the docs component
- * pages (DocPreview) and the kitchen sink import these same definitions —
+ * Single source of default-state examples: the docs component pages
+ * (DocPreview) and the enterprise demo import these same definitions —
  * never a second hand-written copy. Sample content is coherent Acme Inc.
- * material from the Acme Tasks demo world — no lorem ipsum.
+ * material from the Acme demo world — no lorem ipsum.
  */
 export const SINK_EXAMPLES: Record<string, React.ReactNode> = {
   button: (

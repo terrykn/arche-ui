@@ -8,7 +8,7 @@
     "sync-theme": "node scripts/sync-theme.mjs",
     "sync-components": "node scripts/sync-components.mjs",
     "prebuild": "pnpm sync-theme && pnpm sync-components",
-    "sink:check": "node scripts/check-kitchen-sink.mjs",
+    "demo:check": "node scripts/check-enterprise-demo.mjs",
     "test:rules": "../../packages/foundation/node_modules/.bin/tsx scripts/test-single-call.ts",
     "battery": "../../packages/foundation/node_modules/.bin/tsx --env-file=.env.local scripts/battery-shapeshift.ts",
     "build": "next build",
@@ -17,6 +17,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@arche/foundation": "workspace:*",
     "@arche/mcp": "workspace:*",
     "@arche/registry-core": "workspace:*",
     "@arche/ui": "workspace:*",
@@ -55,11 +56,14 @@
     "@supabase/supabase-js": "^2.118.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "gsap": "^3.15.1",
     "lucide-react": "^1.66.0",
     "next": "16.3.8",
     "puppeteer-core": "^25.16.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "sharp": "^0.35.5",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.4.3"

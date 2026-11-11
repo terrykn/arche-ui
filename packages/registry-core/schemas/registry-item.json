@@ -222,12 +222,16 @@
         },
         "provider": {
           "type": "string",
-          "enum": ["google"],
-          "description": "The font provider. Currently only 'google' is supported."
+          "enum": ["google", "fontshare"],
+          "description": "The font provider. Google items load through next/font/google; Fontshare items load through the official Fontshare CSS API."
         },
         "import": {
           "type": "string",
-          "description": "The import name for the font from next/font/google (e.g., 'Inter', 'JetBrains_Mono')."
+          "description": "The import name for the font from next/font/google (e.g., 'Space_Grotesk', 'JetBrains_Mono'). Required for Google items."
+        },
+        "stylesheet": {
+          "type": "string",
+          "description": "The official Fontshare CSS API stylesheet URL. Required for Fontshare items."
         },
         "variable": {
           "type": "string",
@@ -256,7 +260,7 @@
           "description": "The npm package to install for the font in non-Next.js projects (e.g., '@fontsource-variable/inter', '@fontsource/lato')."
         }
       },
-      "required": ["family", "provider", "import", "variable"]
+      "required": ["family", "provider", "variable"]
     }
   },
   "required": ["name", "type"],
@@ -275,6 +279,50 @@
       "else": {
         "properties": {
           "font": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "font": {
+            "properties": {
+              "provider": {
+                "const": "google"
+              }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["font"]
+      },
+      "then": {
+        "properties": {
+          "font": {
+            "required": ["family", "provider", "import", "variable"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "font": {
+            "properties": {
+              "provider": {
+                "const": "fontshare"
+              }
+            },
+            "required": ["provider"]
+          }
+        },
+        "required": ["font"]
+      },
+      "then": {
+        "properties": {
+          "font": {
+            "required": ["family", "provider", "variable", "stylesheet"]
+          }
         }
       }
     },

@@ -3,7 +3,7 @@
  * No hardcoded colors here — every var below is a token ref or a color-mix
  * of tokens. Single exception: --grad, the hero headline gradient. */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: var(--background);
   --bg2: var(--muted);
   --surface: var(--card);
@@ -30,34 +30,8 @@
   --aurora-opacity: 0.26;
 }
 
-[data-theme="dark"] {
-  --bg: var(--background);
-  --bg2: var(--muted);
-  --surface: var(--card);
-  --surface2: var(--muted);
-  --ink: var(--foreground);
-  --ink2: var(--muted-foreground);
-  --faint: var(--muted-foreground);
-  --line: var(--border);
-  --line2: var(--border);
-  --violet: var(--primary);
-  --violet-d: var(--primary);
-  --pink: var(--accent);
-  --orange: var(--secondary);
-  --blue: var(--accent);
-  --teal: var(--primary);
-  --accent-soft: var(--secondary);
-  --accent-soft-tx: var(--secondary-foreground);
-  --input-border: var(--input);
-  --nav-bg: color-mix(in srgb, var(--card) 82%, transparent);
-  --code-bg: var(--muted);
-  --grad-soft: var(--muted);
-  --shadow: var(--shadow-md);
-  --aurora-opacity: 0.14;
-}
-
 .proto-root {
-  font-family: var(--font-sans), Inter, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-sans), Satoshi, -apple-system, Segoe UI, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -69,11 +43,12 @@
 .proto-root h1,
 .proto-root h2,
 .proto-root h3 {
+  font-family: var(--font-display), Satoshi, -apple-system, Segoe UI, sans-serif;
   letter-spacing: -0.02em;
 }
 
 .proto-mono {
-  font-family: var(--font-mono), "Geist Mono", ui-monospace, monospace;
+  font-family: var(--font-mono), JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 /* Aurora backdrop */
@@ -117,11 +92,6 @@
   bottom: -10rem;
   background: radial-gradient(closest-side, var(--blue), transparent);
   opacity: 0.32;
-}
-
-[data-theme="dark"] .proto-aurora i:nth-child(3),
-[data-theme="dark"] .proto-aurora i:nth-child(4) {
-  opacity: 0.24;
 }
 
 .proto-aurora i:nth-child(4) {
@@ -315,6 +285,14 @@
   border: var(--border-width) solid var(--line2);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+}
+
+/* Live block preview frame: breathing room between the card border and the
+   block itself. Padding lives on the frame — never inside the installable
+   block templates. Overflow clips full-bleed blocks to the card radius. */
+.proto-block-frame {
+  padding: 28px;
+  overflow: hidden;
 }
 
 .proto-code {
@@ -805,34 +783,65 @@
   padding: 48px 0 70px;
 }
 
+/* Sticky without its own scroll: the panel is compact enough to fit the
+   viewport, so no internal scrollbar appears next to the page one. */
 .proto-docs-side {
   position: sticky;
   top: 86px;
   align-self: start;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 10px;
+}
+
+/* Dashboard docs sit beside the full-height app sidebar (no public header
+   above them), so the docs panel docks to the viewport instead. */
+.dash-docs .proto-docs-side {
+  top: 12px;
+}
+
+/* The dashboard already supplies page padding — drop the public docs gutter. */
+.dash-docs .proto-docs {
+  padding: 0 0 40px;
+}
+
+.proto-docs-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .proto-docs-group h4 {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--faint);
   margin: 0 0 6px;
+  padding: 0 2px;
 }
 
 .proto-docs-group a {
   display: block;
-  padding: 7px 12px;
-  border-radius: 10px;
-  color: var(--ink2);
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: var(--ink);
   text-decoration: none;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
 }
 
-.proto-docs-group a.active {
+/* Hover is the selected pill at reduced strength; selection keeps it full. */
+.proto-docs-group a:hover {
+  background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+}
+
+.proto-docs-group a.active,
+.proto-docs-group a.active:hover {
   background: var(--accent-soft);
   color: var(--accent-soft-tx);
 }
@@ -847,6 +856,270 @@
   margin: 14px 0 0;
 }
 
+/* Title row: heading left, copy-page + pager right. */
+.proto-docs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+
+.proto-docs-head h1 {
+  margin: 0;
+}
+
+.proto-docs-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proto-docs-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  /* Same radius as every other button (Arche button = rounded-md). */
+  border-radius: var(--radius-md);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.proto-docs-copy:hover {
+  background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+}
+
+.proto-docs-pager {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.proto-docs-pager > a,
+.proto-docs-pager > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.proto-docs-pager > a + a,
+.proto-docs-pager > a + button,
+.proto-docs-pager > button + a,
+.proto-docs-pager > button + button {
+  border-left: 1px solid var(--line);
+}
+
+.proto-docs-pager > a:hover,
+.proto-docs-pager > button:not(:disabled):hover {
+  background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+}
+
+.proto-docs-pager > button:disabled {
+  color: var(--faint);
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Docs prev/next footer: previous left, next right, one row. */
+.proto-docs-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 44px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.proto-docs-foot-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* Same inner padding as the Get Started button (Button size sm). */
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  /* Same radius as every other button (Arche button = rounded-md). */
+  border-radius: var(--radius-md);
+  background: var(--card);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.proto-docs-foot-btn:hover {
+  background: color-mix(in srgb, var(--accent-soft) 55%, transparent);
+}
+
+/* Docs search — trigger in the public nav, command palette in the center. */
+.proto-search-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  color: var(--ink2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.proto-search-trigger:hover {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--foreground) 22%, transparent);
+}
+
+.proto-search-trigger kbd {
+  margin-left: 2px;
+}
+
+.proto-search-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--foreground) 45%, transparent);
+  animation: proto-fade-up 0.2s ease both;
+}
+
+.proto-search-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 640px;
+  max-height: min(72vh, 640px);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.proto-search-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--faint);
+}
+
+.proto-search-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+}
+
+.proto-search-field input::placeholder {
+  color: var(--faint);
+}
+
+.proto-search-trigger kbd,
+.proto-search-field kbd,
+.proto-search-foot kbd {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  padding: 1px 5px;
+  color: var(--faint);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.proto-search-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.proto-search-group + .proto-search-group {
+  margin-top: 6px;
+}
+
+.proto-search-group-label {
+  margin: 0;
+  padding: 6px 10px 4px;
+  color: var(--faint);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.proto-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.proto-search-item.active {
+  background: var(--accent-soft);
+  color: var(--accent-soft-tx);
+}
+
+.proto-search-item-path {
+  color: var(--faint);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.proto-search-item.active .proto-search-item-path {
+  color: var(--accent-soft-tx);
+  opacity: 0.75;
+}
+
+.proto-search-empty {
+  margin: 0;
+  padding: 22px 12px;
+  color: var(--ink2);
+  font-size: 14px;
+  text-align: center;
+}
+
+.proto-search-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--faint);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
 .proto-docs-main h2 {
   font-size: 22px;
   margin-top: 34px;
@@ -857,39 +1130,102 @@
   color: var(--ink2);
 }
 
+/* Markdown-rendered docs content. */
+.proto-docs-main ul,
+.proto-docs-main ol {
+  margin: 10px 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+}
+
+.proto-docs-main code {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.92em;
+}
+
+.proto-docs-link {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.proto-docs-link:hover {
+  color: var(--accent-soft-tx);
+}
+
+.proto-code-caption {
+  margin: 12px 0 6px;
+  color: var(--ink2);
+  font-size: 13.5px;
+}
+
+/* Package manager install — tabs, command and copy grouped in one box. */
+.proto-pm {
+  margin-top: 28px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--code-bg);
+  color: var(--code-tx);
+  overflow: hidden;
+}
+
 .proto-pm-tabs {
   display: flex;
-  gap: 6px;
-  margin-top: 20px;
   align-items: center;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  border-radius: calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0 0;
+  background: transparent;
 }
 
 .proto-pm-tab {
-  border: var(--border-width) solid var(--line);
-  background: var(--surface);
-  border-radius: 999px;
-  padding: 6px 16px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-md);
+  padding: 5px 12px;
+  font-family: var(--font-mono), JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   cursor: pointer;
   color: var(--muted-foreground);
 }
 
+.proto-pm-tab:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+}
+
 .proto-pm-tab.active {
-  background: var(--ink);
-  color: var(--bg);
-  border-color: var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  border-color: var(--line);
 }
 
 .proto-copy-btn {
   margin-left: auto;
-  border: var(--border-width) solid var(--line);
-  background: var(--surface);
-  border-radius: 999px;
-  padding: 6px 16px;
-  font-size: 13px;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-md);
+  padding: 6px;
   cursor: pointer;
+  color: var(--faint);
+}
+
+.proto-copy-btn:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+}
+
+.proto-pm .proto-code {
+  border-radius: 0;
+  background: transparent;
   color: var(--ink);
 }
 
@@ -1349,6 +1685,18 @@
   .proto-nav-links {
     display: none;
   }
+  /* Keep the nav compact: icon-only search trigger, no shortcut hint. */
+  .proto-search-trigger {
+    padding: 7px;
+  }
+  .proto-docs-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .proto-search-trigger span,
+  .proto-search-trigger kbd {
+    display: none;
+  }
   .proto-hero {
     padding: 44px 0 60px;
   }
@@ -1360,8 +1708,17 @@
   .proto-docs {
     grid-template-columns: 1fr;
   }
+  .proto-block-frame {
+    padding: 16px;
+  }
   .proto-docs-side {
     position: static;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    background: none;
+    border: none;
+    padding: 0;
   }
   .proto-app {
     grid-template-columns: 1fr;

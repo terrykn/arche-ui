@@ -4,9 +4,9 @@
     "contractVersion": 1
   },
   "fonts": {
-    "sans": "public-sans",
-    "display": "source-serif-4",
-    "mono": "ibm-plex-mono"
+    "sans": "switzer",
+    "display": "zodiak",
+    "mono": "jetbrains-mono"
   },
   "icons": "lucide",
   "typeScale": "standard-1.25",
@@ -139,15 +139,15 @@
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Public Sans, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Switzer, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Source Serif 4, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Zodiak, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",
@@ -287,15 +287,15 @@
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Public Sans, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Switzer, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Source Serif 4, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Zodiak, ui-serif, Georgia, Times New Roman, serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",

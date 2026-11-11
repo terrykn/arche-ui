@@ -1,11 +1,12 @@
-import Link from "next/link";
+import { DocsLink } from "@/components/docs-base";
 import { notFound } from "next/navigation";
 import { getManifests } from "@arche/registry-core";
 import { DocPreview } from "@/components/doc-preview";
 import { CopyButton } from "@/components/copy-button";
 import { ArrowLeft } from "lucide-react";
+import { DocsPageHeader } from "@/components/docs-page-header";
 
-const DOC_IDS = [
+export const DOC_IDS = [
   "button", "card", "input", "dialog", "dropdown-menu", "select", "checkbox",
   "switch", "tabs", "accordion", "tooltip", "popover", "badge", "avatar",
   "slider", "progress", "toast", "alert-dialog",
@@ -31,8 +32,7 @@ export default async function ComponentDoc({ params }: { params: Promise<{ id: s
 
   return (
     <div>
-      <span className="proto-chip">Components · {manifest.category}</span>
-      <h1>{manifest.title}</h1>
+      <DocsPageHeader title={manifest.title} />
       <p className="proto-lede">{manifest.description}</p>
 
       <div className="proto-card" style={{ marginTop: 22 }}>
@@ -65,7 +65,7 @@ export default async function ComponentDoc({ params }: { params: Promise<{ id: s
       </table>
 
       <p style={{ marginTop: 26 }}>
-        <Link href="/docs/components"><ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> All components</Link>
+        <DocsLink path="/components"><ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> All components</DocsLink>
       </p>
     </div>
   );

@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { getCatalogManifests } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
+import { IdentityFontLinks } from "@/components/identity-fonts";
 import { ComponentDetail } from "@/components/catalog-reference";
 import { PreviewShell } from "@/components/preview-shell";
 import { ArrowLeft } from "lucide-react";
@@ -16,7 +17,10 @@ const FIXTURE_FILES: Record<string, { file: string; label: string }> = {
   "border-2px": { file: "identity.border-2px.json", label: "Border 2px" },
 };
 
-function loadFixture(file: string): { tokens: Record<string, Record<string, { $value: unknown }>> } {
+function loadFixture(file: string): {
+  fonts: { sans: string; display: string; mono: string };
+  tokens: Record<string, Record<string, { $value: unknown }>>;
+} {
   // Fixtures live at the repo root; the dev server cwd is apps/web.
   const found = [process.cwd(), join(process.cwd(), "..", "..")];
   for (const base of found) {
@@ -67,6 +71,7 @@ export default async function PreviewPage({
 
   return (
     <>
+      <IdentityFontLinks fonts={payload.fonts} />
       <SiteNav />
       <main className="mx-auto max-w-6xl px-6 py-12 pb-28">
         <Link href="/components" className="text-sm text-muted-foreground underline">
@@ -74,7 +79,7 @@ export default async function PreviewPage({
         </Link>
         <h1 className="font-display mt-2 text-4xl">{manifest.title}</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
-          Live preview under the {FIXTURE_FILES[key]!.label} fixture identity ({mode} mode). Swap identity or mode
+          Full-app preview: the enterprise demo under the {FIXTURE_FILES[key]!.label} fixture identity ({mode} mode), with every catalog entry in situ. Swap identity or mode
           from the floating bar — Edit opens the remix drawer.
         </p>
         <div className="mt-6">

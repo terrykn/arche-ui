@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ProtoThemeToggle } from "./proto-theme";
+import { ArcheLogo } from "./arche-logo";
 import { SignInModal } from "./sign-in-modal";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { Separator } from "@/components/ui/separator";
+import { DocsSearch } from "@/components/docs-search";
 
 // Backdrop wash derived only from identity tokens (primary/secondary/accent).
 // No hardcoded colors here — the hero headline gradient is the single exception.
@@ -31,16 +32,10 @@ export function ProtoNav() {
   const [signInOpen, setSignInOpen] = React.useState(false);
   return (
     <>
-      <header className="proto-focus-scope sticky top-0 z-40 border-b-(length:--border-width) border-border bg-card/82 backdrop-blur-md">
+      <header className="proto-focus-scope sticky top-0 z-40 bg-card/82 backdrop-blur-md">
         <div className="proto-wrap flex h-[62px] items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-lg font-extrabold text-foreground"
-          >
-            <span className="flex h-[30px] w-[30px] items-center justify-center rounded-md bg-primary text-sm font-extrabold text-primary-foreground">
-              AR
-            </span>
-            Arche
+          <Link href="/" aria-label="Arche home" className="inline-flex items-center">
+            <ArcheLogo size={36} />
           </Link>
           <NavigationMenu aria-label="Public">
             <NavigationMenuList>
@@ -54,14 +49,7 @@ export function ProtoNav() {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center gap-2">
-            <ProtoThemeToggle compact />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSignInOpen(true)}
-            >
-              Sign in
-            </Button>
+            <DocsSearch />
             <Button variant="default" size="sm" asChild>
               <Link href="/sign-up">
                 Get Started <ArrowRight aria-hidden="true" />
@@ -80,7 +68,7 @@ const FOOTER_GROUPS: Array<{ title: string; links: Array<{ href: string; label: 
     title: "Product",
     links: [
       { href: "/examples", label: "Examples" },
-      { href: "/kitchen-sink", label: "Kitchen Sink" },
+      { href: "/kitchen-sink", label: "Demo site" },
       { href: "/pricing", label: "Pricing" },
       { href: "/changelog", label: "Changelog" },
     ],
@@ -113,8 +101,10 @@ export function ProtoFooter() {
     <footer className="proto-focus-scope border-t-(length:--border-width) border-border py-10 text-sm text-muted-foreground">
       <div className="proto-wrap grid gap-8 md:grid-cols-[1fr_repeat(4,minmax(0,auto))]">
         <div>
-          <p className="font-extrabold text-foreground">AR Arche</p>
-          <p className="mt-2 max-w-xs">© 2026 Arche UI — prototype · Styled by the Arche identity (light + dark)</p>
+          <p>
+            <ArcheLogo size={36} />
+          </p>
+          <p className="mt-2 max-w-xs">© 2026 Arche UI</p>
         </div>
         {FOOTER_GROUPS.map((group) => (
           <nav key={group.title} aria-label={`Footer — ${group.title}`}>

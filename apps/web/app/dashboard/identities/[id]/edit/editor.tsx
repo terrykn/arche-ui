@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { IdentityFontLinks } from "@/components/identity-fonts";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
-import { KitchenSink } from "@/components/kitchen-sink";
+import { EnterpriseDemo } from "@/components/enterprise-demo";
 import { savePayload } from "../../actions";
 
 interface TokenDef {
@@ -157,14 +158,19 @@ export function IdentityEditor({
 
   const setToken = (name: string, field: "duration" | "easing" | null, raw: string) => {
     setTokens((prev) => {
-      const current = prev[tokenMode]![name]!;
+      // Payloads compiled under an older contract may lack newer tokens
+      // (e.g. --border-width): tolerate the gap and create the entry on edit.
+      const current = prev[tokenMode]?.[name];
       const nextValue =
         field === null
           ? raw
-          : { ...((current.$value as Record<string, string>) ?? {}), [field]: raw };
+          : { ...((current?.$value as Record<string, string>) ?? {}), [field]: raw };
       return {
         ...prev,
-        [tokenMode]: { ...prev[tokenMode], [name]: { ...current, $value: nextValue } },
+        [tokenMode]: {
+          ...prev[tokenMode],
+          [name]: { $type: current?.$type ?? "other", $value: nextValue },
+        },
       };
     });
     setSavedAt(null);
@@ -208,6 +214,7 @@ export function IdentityEditor({
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
+      <IdentityFontLinks fonts={initialPayload.fonts} />
       <Link href={`/dashboard/identities/${libraryId}`} className="text-sm text-muted-foreground underline">
         <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Back to {libraryName}
       </Link>
@@ -255,8 +262,8 @@ export function IdentityEditor({
             </div>
             <div className="mt-3 flex max-h-96 flex-col gap-2 overflow-y-auto">
               {contract.tokens.map((token) => {
-                const entry = tokens[tokenMode]![token.name]!;
-                const raw = entry.$value;
+                const entry = tokens[tokenMode]?.[token.name];
+                const raw: unknown = entry?.$value ?? "";
                 if (typeof raw === "object" && raw !== null) {
                   const pair = raw as Record<string, string>;
                   return (
@@ -348,7 +355,7 @@ export function IdentityEditor({
         <div>
           <section className="rounded-lg border-(length:--border-width) border-border p-4 lg:sticky lg:top-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-medium">Live preview · kitchen sink</h2>
+              <h2 className="font-medium">Live preview · demo site</h2>
               <div className="flex gap-1 text-sm">
                 {(["light", "dark"] as const).map((m) => (
                   <button
@@ -363,7 +370,7 @@ export function IdentityEditor({
               </div>
             </div>
             <div className="mt-3 max-h-[70vh] overflow-y-auto rounded-md border-(length:--border-width) border-border">
-              <KitchenSink manifests={manifests} vars={previewVars} mode={mode} typeSteps={typeSteps} />
+              <EnterpriseDemo vars={previewVars} mode={mode} typeSteps={typeSteps} />
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
               Token edits re-skin live; axis selections apply as props. Knob stamps bake in at publish.

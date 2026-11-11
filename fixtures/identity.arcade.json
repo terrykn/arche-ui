@@ -4,9 +4,9 @@
     "contractVersion": 1
   },
   "fonts": {
-    "sans": "space-grotesk",
-    "display": "press-start-2p",
-    "mono": "space-mono"
+    "sans": "general-sans",
+    "display": "clash-display",
+    "mono": "geist-mono"
   },
   "icons": "lucide",
   "typeScale": "standard-1.25",
@@ -139,15 +139,15 @@
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Space Grotesk, ui-sans-serif, system-ui, sans-serif"
+        "$value": "General Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Press Start 2P, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Clash Display, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Space Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",
@@ -287,15 +287,15 @@
       },
       "--font-sans": {
         "$type": "fontFamily",
-        "$value": "Space Grotesk, ui-sans-serif, system-ui, sans-serif"
+        "$value": "General Sans, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Press Start 2P, ui-sans-serif, system-ui, sans-serif"
+        "$value": "Clash Display, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Space Mono, ui-monospace, SFMono-Regular, Menlo, monospace"
+        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",

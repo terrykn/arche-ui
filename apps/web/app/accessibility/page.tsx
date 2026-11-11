@@ -32,7 +32,7 @@ export default function AccessibilityPage() {
               <p>
                 The components themselves are Radix primitives: focus management, keyboard interaction, and ARIA
                 semantics come from the primitive, and Arche templates add visible focus rings without altering
-                behavior. The kitchen sink (<Link href="/kitchen-sink" className="underline">/kitchen-sink</Link>) is
+                behavior. The demo site (<Link href="/kitchen-sink" className="underline">/kitchen-sink</Link>) is
                 the visual QA surface where every state ships screenshot-stable.
               </p>
               <p className="text-muted-foreground">

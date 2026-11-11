@@ -1,181 +1,44 @@
-"use client";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { ExamplesDemo } from "@/components/examples-demo";
 
-import * as React from "react";
-import Link from "next/link";
-import { ProtoAurora, ProtoNav, ProtoFooter } from "@/components/proto-shell";
-import { AcmeTasks } from "@/components/acme-tasks";
-import { BlockPreview } from "@/components/block-preview";
-import { DEMO_IDENTITIES } from "@/components/demo-identities";
-import { LatestIdentities } from "@/components/latest-identities";
-import { writeDemoIndex } from "@/lib/demo-sync";
-import { Play, Pause, ArrowRight } from "lucide-react";
+const FIXTURE_FILES: Record<string, { file: string; label: string; prompt: string }> = {
+  arche: { file: "identity.arche.json", label: "Arche", prompt: "ancient Greece" },
+  arcade: { file: "identity.arcade.json", label: "90s Arcade", prompt: "90s arcade" },
+  hospital: { file: "identity.hospital.json", label: "Hospital", prompt: "calm hospital" },
+  default: { file: "identity.default.json", label: "Arche Default", prompt: "Arche Default" },
+  "border-2px": { file: "identity.border-2px.json", label: "Border 2px", prompt: "2px border-width test" },
+};
 
-const ROTATE_MS = 5000;
+function loadFixture(file: string) {
+  const found = [process.cwd(), join(process.cwd(), "..", "..")];
+  for (const base of found) {
+    try {
+      return JSON.parse(readFileSync(join(base, "fixtures", file), "utf8")) as {
+        tokens: Record<string, Record<string, { $value: unknown }>>;
+      };
+    } catch {
+      continue;
+    }
+  }
+  throw new Error(`fixture not found: ${file}`);
+}
 
-const COMP_CHIPS = [
-  "Button",
-  "Card",
-  "Tabs",
-  "Checkbox",
-  "Badge",
-  "Progress",
-  "Input",
-  "Switch",
-  "Avatar",
-  "Table",
-];
-
+/**
+ * Examples: the reusable enterprise demo rotating through the fixture
+ * identities — the same site, re-skinned live. Server loads the fixture
+ * token sets; the client rotator swaps them without refetching.
+ */
 export default function Examples() {
-  const [index, setIndex] = React.useState(0);
-  const [paused, setPaused] = React.useState(false);
-  const [visible, setVisible] = React.useState(true);
-  const [reduced, setReduced] = React.useState(false);
-  const [swapping, setSwapping] = React.useState(false);
-  const frameRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry!.isIntersecting), {
-      threshold: 0.2,
-    });
-    if (frameRef.current) {
-      observer.observe(frameRef.current);
+  const identities = Object.entries(FIXTURE_FILES).map(([id, f]) => {
+    const payload = loadFixture(f.file);
+    const vars: Record<string, string> = {};
+    for (const [name, token] of Object.entries(payload.tokens.light ?? {})) {
+      if (typeof token.$value === "string") {
+        vars[name] = token.$value;
+      }
     }
-    return () => observer.disconnect();
-  }, []);
-
-  const go = React.useCallback((next: number) => {
-    setSwapping(true);
-    window.setTimeout(() => {
-      setIndex(next % DEMO_IDENTITIES.length);
-      writeDemoIndex(next % DEMO_IDENTITIES.length);
-      setSwapping(false);
-    }, 180);
-  }, []);
-
-  React.useEffect(() => {
-    writeDemoIndex(index);
-  }, [index]);
-
-  React.useEffect(() => {
-    if (paused || !visible || reduced) {
-      return;
-    }
-    const timer = setTimeout(() => go(index + 1), ROTATE_MS);
-    return () => clearTimeout(timer);
-  }, [index, paused, visible, reduced, go]);
-
-  const identity = DEMO_IDENTITIES[index]!;
-
-  return (
-    <div className="proto-root">
-      <ProtoAurora />
-      <ProtoNav />
-      <div className="proto-view">
-        <div className="proto-wrap">
-          <section className="proto-section">
-            <h2>One app. Every library.</h2>
-            <p className="proto-lede">
-              The same mini application — Acme Tasks — never changes its layout, content, or components. Only the
-              library changes. Watch it cycle through generated identities on its own, or jump to one below.
-            </p>
-            <div className="proto-promptbar">
-              <p className="proto-prompt-line proto-mono">
-                <span>$ arche generate</span>
-                <span className={`proto-prompt-text${swapping ? " swap" : ""}`}>{identity.prompt}</span>
-              </p>
-              <div className="proto-prompt-meta">
-                <span className="proto-lib-chip">{identity.name}</span>
-                <span className="proto-lib-chip">{identity.components} components</span>
-                <span className="proto-dots" role="tablist" aria-label="Identities">
-                  {DEMO_IDENTITIES.map((item, i) => (
-                    <button
-                      key={item.name}
-                      type="button"
-                      role="tab"
-                      aria-selected={i === index}
-                      aria-label={item.name}
-                      className={`proto-dot${i === index ? " active" : ""}`}
-                      onClick={() => go(i)}
-                    />
-                  ))}
-                </span>
-                <button type="button" className="proto-pause-btn" onClick={() => setPaused((p) => !p)}>
-                  {paused ? (
-                    <>
-                      <Play size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Resume rotation
-                    </>
-                  ) : (
-                    <>
-                      <Pause size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Pause rotation
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="proto-progress run" key={`${index}-${paused}-${reduced}`}>
-                {!paused && visible && !reduced ? <i /> : null}
-              </div>
-            </div>
-            <div
-              ref={frameRef}
-              className={`proto-browser${swapping ? " swap" : ""}`}
-              onMouseEnter={() => setPaused(true)}
-              onMouseLeave={() => setPaused(false)}
-            >
-              <div className="proto-chrome">
-                <span className="proto-chrome-dots" aria-hidden>
-                  <span />
-                  <span />
-                  <span />
-                </span>
-                <span className="proto-url">acme.app/tasks</span>
-                <span className="proto-lib-tag">{identity.name}</span>
-              </div>
-              <AcmeTasks identity={identity} />
-            </div>
-            <div className="proto-comp-chips">
-              {COMP_CHIPS.map((chip) => (
-                <span key={chip} className="proto-chip">
-                  {chip}
-                </span>
-              ))}
-            </div>
-            <p className="proto-demo-caption">
-              Same Radix behavior underneath every version — focus, keyboard, and ARIA never change. An identity only
-              picks tokens and legal knob values, and the whole interface follows. That&apos;s the demo the web-app
-              spec (§A1.9) now requires, in the hero and here.
-            </p>
-            <div className="proto-cta-row" style={{ marginTop: 22 }}>
-              <Link href="/sign-up" className="proto-btn proto-btn-dark">
-                Build a library like these <ArrowRight size={15} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
-              </Link>
-              <Link href="/docs/brief-3" className="proto-btn proto-btn-ghost">
-                Read Brief #3 — the web app build
-              </Link>
-            </div>
-          </section>
-          <section className="proto-section" aria-label="Blocks">
-            <h2>Sections, not just components</h2>
-            <p className="proto-lede">
-              Blocks are complete page sections composed from the same catalog — installed with the same CLI and
-              re-skinned by every identity. Live previews under the site identity.
-            </p>
-            <div className="proto-browser">
-              <div className="proto-chrome">
-                <span className="proto-url">blocks/hero</span>
-              </div>
-              <BlockPreview name="hero" />
-            </div>
-            <div className="proto-cta-row" style={{ marginTop: 22 }}>
-              <Link href="/blocks" className="proto-btn proto-btn-dark">
-                Browse all 20 blocks <ArrowRight size={15} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
-              </Link>
-            </div>
-          </section>
-          <LatestIdentities />
-        </div>
-      </div>
-      <ProtoFooter />
-    </div>
-  );
+    return { id, name: f.label, prompt: f.prompt, components: 37, vars };
+  });
+  return <ExamplesDemo identities={identities} />;
 }

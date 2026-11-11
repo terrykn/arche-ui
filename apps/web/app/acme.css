@@ -1,218 +1,138 @@
-/* Acme Tasks mini app — skinned per rotation identity via --d-* vars. */
-.acme {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  min-height: 460px;
-  font-size: 13.5px;
-  background: var(--d-bg);
-  color: var(--d-ink);
-  border-radius: var(--d-radius);
+/* Homepage story demo — the AppShell block in a compact strip, skinned per
+   rotation identity via component theme variables set inline. Structural
+   overrides below only shrink the block's chrome for the demo; the block
+   template itself is untouched. */
+.acme-compact {
+  overflow: hidden;
+  font-size: 13px;
   transition: background-color 0.55s ease, color 0.55s ease;
 }
 
-.acme-side {
-  border-right: 1px solid var(--d-line);
-  padding: 18px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.acme-compact [data-block="app-shell"] {
+  font-size: 13px;
 }
 
-.acme-brand {
-  font-weight: 800;
-  margin: 0 0 12px;
+.acme-compact [data-block="app-shell"] > aside {
+  width: 10rem;
 }
 
-.acme-nav {
-  padding: 7px 10px;
-  border-radius: 10px;
-  opacity: 0.7;
+.acme-compact [data-block="app-shell"] > aside > div:first-child {
+  height: calc(2.75rem - var(--border-width));
+  padding-inline: 0.75rem;
 }
 
-.acme-nav.active {
-  font-weight: 700;
-  opacity: 1;
-  background: var(--d-accent-bg);
-  color: var(--d-accent-text);
+/* Sidebar separators match the identity border weight so every stroke is uniform. */
+.acme-compact [data-block="app-shell"] > aside > [data-slot="separator"] {
+  height: var(--border-width);
 }
 
-.acme-user {
-  margin-top: auto;
-  font-weight: 700;
+.acme-compact [data-block="app-shell"] > aside nav {
+  padding: 0.5rem;
+  gap: 2px;
 }
 
-.acme-main {
-  padding: 20px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background: var(--d-bg);
-  border-radius: 0 var(--d-radius) var(--d-radius) 0;
-  transition: background-color 0.55s ease;
+.acme-compact [data-block="app-shell"] > aside nav button {
+  font-size: 12.5px;
 }
 
-.acme-h {
-  font-size: 20px;
+.acme-compact [data-block="app-shell"] > aside > div:last-child {
+  padding: 0.5rem;
+}
+
+.acme-compact [data-block="app-shell"] > div > div:first-child {
+  height: 2.75rem;
+  padding-inline: 0.875rem;
+}
+
+.acme-compact [data-block="app-shell"] > div > main {
+  padding: 0.875rem;
+  /* Outer strokes live only on the content panel: sidebar keeps just its
+     right divider, the top bar just its bottom divider. */
+  border-right: var(--border-width) solid var(--border);
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+.acme-big {
+  font-size: 44px;
+  line-height: 1;
   font-weight: 800;
   letter-spacing: -0.02em;
   margin: 0;
 }
 
-.acme-sub {
-  font-size: 12.5px;
-  opacity: 0.7;
-  margin: 0;
-}
-
-.acme-tabs {
-  display: flex;
-  gap: 6px;
-}
-
-.acme-tab {
-  padding: 6px 14px;
-  border-radius: var(--d-btn-radius);
-  opacity: 0.7;
-  font-weight: 600;
-}
-
-.acme-tab.active {
-  background: var(--d-primary);
-  color: #fff;
-  opacity: 1;
-}
-
-.acme-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.acme-stat {
-  border-radius: var(--d-radius);
-  padding: 12px;
-  background: var(--d-surface);
-  border: 1px solid var(--d-line);
-}
-
-.acme-bar {
-  display: block;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--d-line);
-  margin-top: 8px;
+/* Story screen flourishes — scoped to the homepage demo strip. */
+.demo-ticker {
   overflow: hidden;
 }
 
-.acme-bar i {
-  display: block;
-  height: 100%;
-  background: var(--d-primary);
-  border-radius: 999px;
+.demo-ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: demo-marquee 16s linear infinite;
 }
 
-.acme-task {
-  border-radius: var(--d-radius);
-  padding: 6px 14px;
-  background: var(--d-surface);
-  border: 1px solid var(--d-line);
-}
-
-.acme-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--d-line);
-}
-
-.acme-row:last-child {
-  border-bottom: none;
-}
-
-.acme-tag {
-  margin-left: auto;
-  font-style: normal;
-  font-size: 11.5px;
-  font-weight: 700;
-  border-radius: 999px;
-  padding: 3px 10px;
-  background: var(--d-accent-bg);
-  color: var(--d-accent-text);
-}
-
-.acme-tag.done {
-  background: var(--d-primary);
-  color: #fff;
-}
-
-.acme-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.acme-btn-primary {
-  border: none;
-  cursor: pointer;
-  background: var(--d-primary);
-  color: #fff;
-  border-radius: var(--d-btn-radius);
-  padding: 9px 18px;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.acme-btn-ghost {
-  cursor: pointer;
-  background: transparent;
-  color: inherit;
-  border: 1px solid var(--d-line);
-  border-radius: var(--d-btn-radius);
-  padding: 8px 18px;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.acme-search {
-  border: 1px solid var(--d-line);
-  border-radius: var(--d-btn-radius);
-  padding: 8px 14px;
-  font-size: 13px;
-  background: var(--d-surface);
-  color: inherit;
-  min-width: 160px;
-}
-
-.acme-switch {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  margin-left: auto;
-}
-
-@media (max-width: 1020px) {
-  .acme {
-    grid-template-columns: 1fr;
+@keyframes demo-marquee {
+  to {
+    transform: translateX(-50%);
   }
-  .acme-side {
-    border-right: none;
-    border-bottom: 1px solid var(--d-line);
-    flex-direction: row;
-    align-items: center;
-    overflow-x: auto;
+}
+
+/* CRT scanlines over pixel label art. */
+.demo-scanlines {
+  position: relative;
+}
+
+.demo-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.22) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* Dot-matrix texture for handheld hardware. */
+.demo-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1.6px);
+  background-size: 8px 8px;
+}
+
+/* Red pulse line that draws itself across the Meridian stats band. */
+.demo-pulse-line {
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  animation: demo-pulse 2.6s ease-out infinite;
+}
+
+@keyframes demo-pulse {
+  0% {
+    stroke-dashoffset: 220;
   }
-  .acme-user {
-    margin-top: 0;
-    margin-left: auto;
-    white-space: nowrap;
+  55% {
+    stroke-dashoffset: 0;
   }
-  .acme-stats {
-    grid-template-columns: 1fr;
+  100% {
+    stroke-dashoffset: 0;
   }
-  .acme-main {
-    border-radius: 0 0 var(--d-radius) var(--d-radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-ticker-track,
+  .demo-pulse-line {
+    animation: none;
+  }
+  .demo-pulse-line {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .acme-compact [data-block="app-shell"] > aside {
+    width: 8.5rem;
   }
 }

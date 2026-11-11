@@ -14,7 +14,6 @@ export async function saveSettings(formData: FormData) {
     redirect("/sign-in");
   }
   const username = String(formData.get("username") ?? "").trim();
-  const theme = String(formData.get("theme") ?? "system");
   if (username && !/^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/.test(username)) {
     redirect("/dashboard/settings?error=Invalid%20username");
   }
@@ -23,7 +22,6 @@ export async function saveSettings(formData: FormData) {
     .from("profiles")
     .update({
       ...(username ? { username } : {}),
-      theme: ["light", "dark", "system"].includes(theme) ? theme : "system",
     })
     .eq("id", user.id);
   if (error) {

@@ -79,8 +79,20 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans font-medium antialiased;
   }
+}
+
+/* Identity demo scope: the wrapper carries the identity's font tokens, so
+   everything inside it renders in the selected body font and its headings in
+   the selected display font — the pair stays consistent across every block
+   and preview without touching the site chrome outside this scope. */
+.arche-identity-scope {
+  font-family: var(--font-sans);
+}
+
+.arche-identity-scope :is(h1, h2, h3) {
+  font-family: var(--font-display);
 }
 
 /* Subtle identity gradient wash behind content only.
@@ -108,6 +120,10 @@ body::before {
       color-mix(in oklch, var(--accent) 6%, transparent),
       transparent 70%
     );
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 .dark body::before {
