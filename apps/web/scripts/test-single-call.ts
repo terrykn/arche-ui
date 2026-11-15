@@ -15,7 +15,7 @@ process.env.LLM_API_KEY = "stub-key";
 
 const AXES: DnaObject = {
   warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5,
-  density: 0.5, ornament: 0.5, retroFuturism: 0.2, formality: 0.4,
+  density: 0.5, ornament: 0.5, retroFuturism: 0.2, formality: 0.4, chroma: 0.5,
   material: "metal", motionFeel: "smooth", texture: "grain",
   minContrast: "AA", respectReducedMotion: true,
 };

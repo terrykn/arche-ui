@@ -9,6 +9,7 @@ import {
   type Plan,
   type SelfCheck,
 } from "@arche/registry-core";
+import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
 /**
  * Provider layer (Brief #6 §6, FR-GEN-4). All LLM access goes through
@@ -66,7 +67,7 @@ function apiKey(): string {
 /**
  * Startup/config-time capability check (§6): text-only generation needs a
  * JSON-capable chat model. The table is explicit so a typo fails plainly
- * instead of half-working. Image input is not supported (text door only).
+ * instead of half-working. Text door only — no image input.
  */
 export function assertModelCapable(): string {
   const provider = providerName();
@@ -145,6 +146,7 @@ const DNA_RESPONSE_SCHEMA = {
         ornament: { type: "number", minimum: 0, maximum: 1 },
         retroFuturism: { type: "number", minimum: 0, maximum: 1 },
         formality: { type: "number", minimum: 0, maximum: 1 },
+        chroma: { type: "number", minimum: 0, maximum: 1 },
         material: { type: "string", enum: ["flat", "paper", "glass", "metal", "marble", "pixel", "clay"] },
         motionFeel: { type: "string", enum: ["snappy", "smooth", "bouncy", "stately", "glitchy"] },
         texture: { type: "string", enum: ["none", "grain", "scanlines", "grid", "marble-vein", "halftone"] },
@@ -153,7 +155,7 @@ const DNA_RESPONSE_SCHEMA = {
       },
       required: [
         "warmth", "energy", "playfulness", "sharpness", "density",
-        "ornament", "retroFuturism", "formality",
+        "ornament", "retroFuturism", "formality", "chroma",
         "material", "motionFeel", "texture", "minContrast", "respectReducedMotion",
       ],
     },
@@ -192,6 +194,7 @@ const DELTA_RESPONSE_SCHEMA = {
         ornament: { type: "number", minimum: 0, maximum: 1 },
         retroFuturism: { type: "number", minimum: 0, maximum: 1 },
         formality: { type: "number", minimum: 0, maximum: 1 },
+        chroma: { type: "number", minimum: 0, maximum: 1 },
         material: { type: "string", enum: ["flat", "paper", "glass", "metal", "marble", "pixel", "clay"] },
         motionFeel: { type: "string", enum: ["snappy", "smooth", "bouncy", "stately", "glitchy"] },
         texture: { type: "string", enum: ["none", "grain", "scanlines", "grid", "marble-vein", "halftone"] },
@@ -268,9 +271,10 @@ async function callGeminiJson(args: {
  * (buildTeachBlock, generated from design-rules.json) is prepended at call
  * time — one static block per rules version, placed so providers can cache it.
  */
-const AXES_TEMPLATE = [
-  '{"warmth":0.5,"energy":0.5,"playfulness":0.5,"sharpness":0.5,"density":0.5,"ornament":0.5,',
-  '"retroFuturism":0.5,"formality":0.5,"material":"metal","motionFeel":"snappy","texture":"grain",',
+const AXES_SHAPE = [
+  '{"warmth":<0-1>,"energy":<0-1>,"playfulness":<0-1>,"sharpness":<0-1>,"density":<0-1>,"ornament":<0-1>,',
+  '"retroFuturism":<0-1>,"formality":<0-1>,"chroma":<0-1>,"material":<flat|paper|glass|metal|marble|pixel|clay>,',
+  '"motionFeel":<snappy|smooth|bouncy|stately|glitchy>,"texture":<none|grain|scanlines|grid|marble-vein|halftone>,',
   '"minContrast":"AA","respectReducedMotion":true}',
 ].join("");
 
@@ -289,6 +293,12 @@ const VALUE_RULES = [
   "texture is EXACTLY one of: none, grain, scanlines, grid, marble-vein, halftone.",
   'minContrast is ALWAYS the string "AA", respectReducedMotion is ALWAYS true.',
   "Each palette hue is a NUMBER in degrees 0-360 (never a string, never hex).",
+  "The <...> placeholders above show field names and value types ONLY — never emit them.",
+  "Derive every axis, hue, and enum from the phrase itself; repeating placeholder values is a generic default and fails your self-check.",
+  "Choose hues from the phrase's own color language (crimson ~5, amber ~40, emerald ~150, ocean ~210, violet ~280;",
+  "warm neutrals ~40-60, cool neutrals ~220-250). Monochrome, single-hue, or grayscale briefs: set primaryHue,",
+  "accentHue, AND neutralHue to the SAME degree and chroma near 0. Spread the three hues apart only when the phrase",
+  "asks for contrast, energy, or multiple color families.",
   'profile classifies the request: "enterprise" for fintech, healthcare-admin, legal, or institutional work;',
   '"expressive" for playful, loud, or artistic work; "standard" otherwise.',
 ].join(" ");
@@ -299,10 +309,11 @@ function phraseSystem(): string {
     "You judge a word or phrase as design DNA for a UI identity. Rate each axis 0-1:",
     "warmth (cold/clinical→warm/organic), energy (calm→loud), playfulness (serious→playful),",
     "sharpness (soft/round→sharp/angular), density (airy→compact), ornament (minimal→ornate),",
-    "retroFuturism (contemporary→era-styled), formality (casual→formal/institutional).",
+    "retroFuturism (contemporary→era-styled), formality (casual→formal/institutional),",
+    "chroma (muted→vivid: how much color, not which color — vivid signal on quiet ground; default low for enterprise/institutional briefs).",
     SHAPE_PREAMBLE,
-    `3. final inputs: "axes": ${AXES_TEMPLATE},`,
-    '"palette": {"primaryHue":20,"accentHue":200,"neutralHue":40}, "profile": "standard".',
+    `3. final inputs: "axes": ${AXES_SHAPE},`,
+    '"palette": {"primaryHue":<degrees 0-360>,"accentHue":<degrees 0-360>,"neutralHue":<degrees 0-360>}, "profile": "standard".',
     VALUE_RULES,
   ].join(" ");
 }
@@ -323,18 +334,33 @@ export function teachRulesVersion(): number {
   return designRulesVersion();
 }
 
-function parseJson(text: string): unknown {
+/**
+ * Non-throwing JSON parse for the validation-retry path. A parse failure is
+ * returned as data so the caller can feed it into the single retry exactly
+ * like a schema-validation failure (previously the throw skipped the retry).
+ */
+function tryParseJson(text: string): { ok: true; value: unknown } | { ok: false; message: string } {
   try {
-    return JSON.parse(text);
+    return { ok: true, value: JSON.parse(text) };
   } catch {
-    throw new Error("provider returned non-JSON output");
+    return { ok: false, message: "previous reply was not valid JSON — reply with a single JSON object and no other text" };
   }
+}
+
+/** Feedback payload for the retry call: validation issues, or the parse failure. */
+function retryFeedback(parseOk: boolean, issues: Array<{ path: Array<PropertyKey>; message: string }>, parseMessage: string): string {
+  if (parseOk) {
+    return JSON.stringify(issues);
+  }
+  return JSON.stringify([{ path: [], message: parseMessage }]);
 }
 
 async function callChatJson(args: {
   system: string;
   user: string;
   schema: unknown;
+  /** Schema name for providers whose schema mode requires one (Groq json_schema). */
+  schemaName: string;
   feedback?: string;
 }): Promise<{ text: string; tokensIn: number | null; tokensOut: number | null; model: string }> {
   if (providerName() === "groq") {
@@ -349,35 +375,53 @@ interface GroqResponse {
   error?: { message?: string };
 }
 
-/** Groq (OpenAI-compatible): text-only, JSON object mode, validator retry. */
+/**
+ * Groq (OpenAI-compatible): text-only. Sends the response schema via
+ * `json_schema` (best-effort mode — no `strict: true`, since the delta shape
+ * has optional fields strict decoding would reject), falling back to plain
+ * `json_object` on models that refuse the schema mode. The zod parse +
+ * single retry stays the real guard either way.
+ */
 async function callGroqJson(args: {
   system: string;
   user: string;
   schema: unknown;
+  schemaName: string;
   feedback?: string;
 }): Promise<{ text: string; tokensIn: number | null; tokensOut: number | null; model: string }> {
   const model = assertModelCapable();
+  const key = apiKey();
   const user = args.feedback ? `${args.user}\n\nYour previous reply was rejected by the schema validator with these errors — fix them and reply with valid JSON only:\n${args.feedback}` : args.user;
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: { "content-type": "application/json", authorization: `Bearer ${apiKey()}` },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: "system", content: args.system },
-        { role: "user", content: user },
-      ],
-      response_format: { type: "json_object" },
-    }),
-  });
-  const json = (await res.json()) as GroqResponse;
+  const messages = [
+    { role: "system", content: args.system },
+    { role: "user", content: user },
+  ];
+  const post = (responseFormat: unknown) =>
+    fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
+      body: JSON.stringify({ model, messages, response_format: responseFormat }),
+    });
+  const readText = async (res: Response): Promise<{ json: GroqResponse; text: string }> => {
+    const json = (await res.json()) as GroqResponse;
+    if (!res.ok) {
+      throw new Error(`provider error (HTTP ${res.status}): ${json.error?.message ?? "unknown"}`);
+    }
+    const text = json.choices?.[0]?.message?.content ?? "";
+    if (!text) {
+      throw new Error("provider returned no content");
+    }
+    return { json, text };
+  };
+  let res = await post({ type: "json_schema", json_schema: { name: args.schemaName, schema: args.schema } });
   if (!res.ok) {
-    throw new Error(`provider error (HTTP ${res.status}): ${json.error?.message ?? "unknown"}`);
+    const probe = (await res.json().catch(() => null)) as GroqResponse | null;
+    const msg = probe?.error?.message ?? "";
+    if (res.status === 400 && /response_format|json_schema|strict|schema/i.test(msg)) {
+      res = await post({ type: "json_object" });
+    }
   }
-  const text = json.choices?.[0]?.message?.content ?? "";
-  if (!text) {
-    throw new Error("provider returned no content");
-  }
+  const { json, text } = await readText(res);
   return {
     text,
     tokensIn: json.usage?.prompt_tokens ?? null,
@@ -395,7 +439,7 @@ async function callGroqJson(args: {
  * cost exactly one call, as today.
  */
 export async function generateDna(prompt: string, repairFeedback?: string): Promise<DnaCallResult> {
-  const trimmed = prompt.trim().slice(0, 120);
+  const trimmed = prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH);
   if (!trimmed) {
     throw new Error("prompt must not be empty");
   }
@@ -407,9 +451,11 @@ export async function generateDna(prompt: string, repairFeedback?: string): Prom
     system,
     user,
     schema: DNA_RESPONSE_SCHEMA,
+    schemaName: "dna_response",
   });
-  const first = modelOutputSchema.safeParse(parseJson(call.text));
-  if (first.success) {
+  const firstRaw = tryParseJson(call.text);
+  const first = firstRaw.ok ? modelOutputSchema.safeParse(firstRaw.value) : null;
+  if (first?.success) {
     return {
       output: { axes: first.data.axes, palette: first.data.palette },
       profile: first.data.profile,
@@ -420,16 +466,25 @@ export async function generateDna(prompt: string, repairFeedback?: string): Prom
       tokensOut: call.tokensOut,
     };
   }
+  const firstFeedback = retryFeedback(
+    firstRaw.ok,
+    first && !first.success ? first.error.issues.map((i) => ({ path: i.path, message: i.message })) : [],
+    !firstRaw.ok ? firstRaw.message : "",
+  );
   const retry = await callChatJson({
     system,
     user,
     schema: DNA_RESPONSE_SCHEMA,
-    feedback: JSON.stringify(first.error.issues.map((i) => ({ path: i.path, message: i.message }))),
+    schemaName: "dna_response",
+    feedback: firstFeedback,
   });
-  const second = modelOutputSchema.safeParse(parseJson(retry.text));
-  if (!second.success) {
+  const secondRaw = tryParseJson(retry.text);
+  const second = secondRaw.ok ? modelOutputSchema.safeParse(secondRaw.value) : null;
+  if (!second?.success) {
     throw new Error(
-      `provider output failed schema validation twice: ${second.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`,
+      secondRaw.ok && second && !second.success
+        ? `provider output failed schema validation twice: ${second.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`
+        : `provider output failed schema validation twice: ${!secondRaw.ok ? secondRaw.message : "unknown error"}`,
     );
   }
   return {
@@ -445,8 +500,10 @@ export async function generateDna(prompt: string, repairFeedback?: string): Prom
 
 /**
  * Prompt edit: same single-call shape (plan + self-check + delta + optional
- * profile). Only implicated fields change; unrelated payload fields stay
- * byte-identical.
+ * profile) with the same single validation retry as the text door — a bad
+ * first output (unparseable or schema-invalid) gets one retry with the
+ * failure fed back, then fails + logs and stores nothing. Only implicated
+ * fields change; unrelated payload fields stay byte-identical.
  */
 export async function generateDnaDelta(
   current: Pick<ModelOutput, "axes" | "palette"> & { profile?: GenerationProfile },
@@ -462,20 +519,48 @@ export async function generateDnaDelta(
     system,
     user,
     schema: DELTA_RESPONSE_SCHEMA,
+    schemaName: "dna_delta_response",
   });
-  const parsed = modelDeltaOutputSchema.safeParse(parseJson(call.text));
-  if (!parsed.success) {
+  const firstRaw = tryParseJson(call.text);
+  const first = firstRaw.ok ? modelDeltaOutputSchema.safeParse(firstRaw.value) : null;
+  if (first?.success) {
+    return {
+      delta: first.data.delta,
+      profile: first.data.profile,
+      plan: first.data.plan,
+      selfCheck: first.data.selfCheck,
+      model: call.model,
+      tokensIn: call.tokensIn,
+      tokensOut: call.tokensOut,
+    };
+  }
+  const retry = await callChatJson({
+    system,
+    user,
+    schema: DELTA_RESPONSE_SCHEMA,
+    schemaName: "dna_delta_response",
+    feedback: retryFeedback(
+      firstRaw.ok,
+      first && !first.success ? first.error.issues.map((i) => ({ path: i.path, message: i.message })) : [],
+      !firstRaw.ok ? firstRaw.message : "",
+    ),
+  });
+  const secondRaw = tryParseJson(retry.text);
+  const second = secondRaw.ok ? modelDeltaOutputSchema.safeParse(secondRaw.value) : null;
+  if (!second?.success) {
     throw new Error(
-      `provider delta output failed validation: ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`,
+      secondRaw.ok && second && !second.success
+        ? `provider delta output failed validation twice: ${second.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ")}`
+        : `provider delta output failed validation twice: ${!secondRaw.ok ? secondRaw.message : "unknown error"}`,
     );
   }
   return {
-    delta: parsed.data.delta,
-    profile: parsed.data.profile,
-    plan: parsed.data.plan,
-    selfCheck: parsed.data.selfCheck,
-    model: call.model,
-    tokensIn: call.tokensIn,
-    tokensOut: call.tokensOut,
+    delta: second.data.delta,
+    profile: second.data.profile,
+    plan: second.data.plan,
+    selfCheck: second.data.selfCheck,
+    model: retry.model,
+    tokensIn: (call.tokensIn ?? 0) + (retry.tokensIn ?? 0),
+    tokensOut: (call.tokensOut ?? 0) + (retry.tokensOut ?? 0),
   };
 }

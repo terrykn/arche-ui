@@ -1,6 +1,6 @@
 {
   "$comment": "Arche UI design-rules registry (post-Brief #6). Single source of truth for the Shapeshift rulebook. tier 'teach' statements are injected into the generation model's instructions (generated at runtime — never hand-maintain a second copy in a prompt string). tier 'enforce' rules are deterministic validator checks with the numbers in params. Rule ids are permanent once shipped. Color budgets are Arche's own (see CALIBRATION.md); WCAG 2.2 AA stays absolute and unchanged.",
-  "registryVersion": 1,
+  "registryVersion": 2,
   "rules": [
     {
       "id": "color-step-jobs",
@@ -38,6 +38,125 @@
       "params": {}
     },
     {
+      "id": "slop-eyebrow-heading",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "No eyebrow label above every heading — eyebrows are rare seasoning, never the default section opener.",
+      "params": {}
+    },
+    {
+      "id": "slop-tracked-labels",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "No tracked-out uppercase micro-labels as a texture; labels look designed only when rare.",
+      "params": {}
+    },
+    {
+      "id": "slop-one-colored-word",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "At most one coloured word per headline, and only the focal word the accent placement names — never a decorative rainbow word.",
+      "params": {}
+    },
+    {
+      "id": "slop-hero-viewport",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "The hero must own its first viewport: headline, proof, and one CTA visible without scrolling on desktop.",
+      "params": {}
+    },
+    {
+      "id": "slop-email-everywhere",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "No email capture at the end of every page — one newsletter moment per site at most, and only where the genre recipe allows it.",
+      "params": {}
+    },
+    {
+      "id": "slop-default-shadcn",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "Never ship the untouched default look: if radius, shadows, motion, and type read as stock shadcn, the identity failed to land.",
+      "params": {}
+    },
+    {
+      "id": "slop-three-feature-cards",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "No three feature cards in a row by default — vary the rhythm (bento, split, editorial) unless the genre recipe asks for the grid.",
+      "params": {}
+    },
+    {
+      "id": "slop-generic-pricing",
+      "area": "slop",
+      "tier": "teach",
+      "statement": "No generic 3-tier pricing with a highlighted middle column unless the product's pricing story earns it; comparison beats decoration.",
+      "params": {}
+    },
+    {
+      "id": "taste-accent-surprise",
+      "area": "taste",
+      "tier": "teach",
+      "statement": "The accent hue family must contrast with the base pair — accent overlapping the primary family is predictable and scores low; the compiler reports the surprise score (enterprise monochrome-by-design is exempt).",
+      "params": {}
+    },
+    {
+      "id": "taste-accent-placement",
+      "area": "taste",
+      "tier": "teach",
+      "statement": "Spend the accent in exactly two places: the primary CTA and the focal word. Never on backgrounds, body text, or borders.",
+      "params": { "homes": ["primary-cta", "focal-word"] }
+    },
+    {
+      "id": "taste-evocative-names",
+      "area": "taste",
+      "tier": "teach",
+      "statement": "Every generated palette's colors carry evocative names (Sakura Pink, Neon Pear) persisted into payload metadata and shown in Studio — never bare hexes in the user-facing surface.",
+      "params": {}
+    },
+    {
+      "id": "taste-art-direction",
+      "area": "taste",
+      "tier": "teach",
+      "statement": "Every generated identity lands on exactly one art direction from the closed registry (selected from DNA by the compiler, never by the model); the direction is stored on the identity and shown in Studio.",
+      "params": {}
+    },
+    {
+      "id": "taste-fix-order",
+      "area": "taste",
+      "tier": "teach",
+      "statement": "Fix in this order and stop at the first failing layer: layout, contrast, typography, spacing/clutter, accent, decoration last. Never decorate a broken layout.",
+      "params": { "order": ["layout", "contrast", "typography", "spacing", "accent", "decoration"] }
+    },
+    {
+      "id": "imagery-full-bleed",
+      "area": "imagery",
+      "tier": "teach",
+      "statement": "Full-bleed imagery over filler stock: product-as-background and photo-forward cards beat decorative thumbnails; boring stock is a website killer.",
+      "params": {}
+    },
+    {
+      "id": "imagery-duotone",
+      "area": "imagery",
+      "tier": "teach",
+      "statement": "Imagery treatment derives from the identity: duotone or tint from the palette so photography reads as the brand's, not the stock site's.",
+      "params": {}
+    },
+    {
+      "id": "imagery-grain",
+      "area": "imagery",
+      "tier": "teach",
+      "statement": "Grain overlay 0.04-0.08 opacity via SVG feTurbulence over neutral surfaces — never a baked grain hero image.",
+      "params": { "minOpacity": 0.04, "maxOpacity": 0.08 }
+    },
+    {
+      "id": "imagery-headline-length",
+      "area": "imagery",
+      "tier": "teach",
+      "statement": "Headline discipline: 11 words max — a checkable block standard, not a suggestion.",
+      "params": { "maxWords": 11 }
+    },
+    {
       "id": "color-bg-chroma-cap",
       "area": "color",
       "tier": "enforce",
@@ -73,10 +192,11 @@
       "id": "color-solid-chroma-band",
       "area": "color",
       "tier": "enforce",
-      "statement": "Solid action tokens carry the chroma voice: a floor (washed-out primaries fail) and a profile-scaled ceiling.",
+      "statement": "Solid action tokens carry the chroma voice: a floor that scales with the chroma axis (washed-out primaries fail only when the DNA asks for vivid) and a profile-scaled ceiling.",
       "params": {
         "tokens": ["--primary", "--accent", "--destructive"],
         "min": 0.08,
+        "floorScalesWith": "dna.axes.chroma",
         "ceilingByProfile": { "enterprise": 0.19, "standard": 0.24, "expressive": 0.26 }
       }
     },

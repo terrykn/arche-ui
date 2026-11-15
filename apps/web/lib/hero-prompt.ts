@@ -5,7 +5,9 @@
  */
 export const HERO_PROMPT_COOKIE = "arche-hero-prompt";
 export const HERO_PROMPT_MAX_AGE_SECONDS = 900;
-export const HERO_PROMPT_MAX_LENGTH = 280;
+export const HERO_PROMPT_MAX_LENGTH = 500;
+/** Shared cap for generation phrases: hero pill, dashboard dock, provider, logs. */
+export const GENERATION_PROMPT_MAX_LENGTH = HERO_PROMPT_MAX_LENGTH;
 
 export function sanitizeHeroPrompt(raw: string): string | null {
   let value = raw;
@@ -19,5 +21,5 @@ export function sanitizeHeroPrompt(raw: string): string | null {
 }
 
 export function newIdentityHref(prompt: string): string {
-  return `/dashboard/identities/new?prompt=${encodeURIComponent(prompt)}`;
+  return `/dashboard?prompt=${encodeURIComponent(prompt)}`;
 }

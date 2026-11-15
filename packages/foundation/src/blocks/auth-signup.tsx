@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../templates/lib/utils.js";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../templates/card.js";
 import { Label } from "../templates/label.js";
@@ -9,12 +10,22 @@ import { PasswordToggleField, PasswordToggleFieldInput } from "../templates/pass
 import { Checkbox } from "../templates/checkbox.js";
 import { Button } from "../templates/button.js";
 
-export interface AuthSignupProps {
+const authSignupVariants = cva("", {
+  variants: {
+    layout: {
+      centered: "mx-auto w-full max-w-md py-16",
+      split: "mx-auto grid w-full max-w-4xl items-stretch gap-6 px-6 py-16 md:grid-cols-2",
+    },
+  },
+  defaultVariants: { layout: "centered" },
+});
+
+export interface AuthSignupProps extends VariantProps<typeof authSignupVariants> {
   headline?: string;
   className?: string;
 }
 
-function AuthSignup({ headline = "Create your account", className }: AuthSignupProps) {
+function AuthSignup({ headline = "Create your account", layout, className }: AuthSignupProps) {
   const [email, setEmail] = React.useState("");
   const [accepted, setAccepted] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -27,7 +38,10 @@ function AuthSignup({ headline = "Create your account", className }: AuthSignupP
     setError(null);
   };
   return (
-    <section data-block="auth-signup" className={cn("mx-auto w-full max-w-md py-16", className)}>
+    <section data-block="auth-signup" className={cn(authSignupVariants({ layout }), className)}>
+      {layout === "split" ? (
+        <div aria-hidden className="hidden rounded-xl border border-(length:--border-width) border-border bg-gradient-to-br from-primary/25 via-card to-card md:block" />
+      ) : null}
       <Card>
         <CardHeader>
           <CardTitle>{headline}</CardTitle>
@@ -70,4 +84,4 @@ function AuthSignup({ headline = "Create your account", className }: AuthSignupP
   );
 }
 
-export { AuthSignup };
+export { AuthSignup, authSignupVariants };

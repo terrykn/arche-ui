@@ -7,7 +7,7 @@ import { DocsNav } from "@/components/docs-nav";
 export default function DashboardDocsLayout({ children }: { children: React.ReactNode }) {
   return (
     <DocsBaseProvider base="/dashboard/docs">
-      <div className="dash-docs mx-auto max-w-5xl px-6 pb-10 pt-4">
+      <div className="dash-docs mx-auto max-w-6xl px-6 pb-10 pt-4">
         <div className="proto-docs">
           <DocsNav />
           <div className="proto-docs-main">{children}</div>

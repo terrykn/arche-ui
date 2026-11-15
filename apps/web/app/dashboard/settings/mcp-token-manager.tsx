@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { createMcpTokenAction, revokeMcpTokenAction } from "./mcp-actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export interface McpTokenListItem {
   id: string;
@@ -48,9 +50,9 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
               </span>
               <form action={revokeMcpTokenAction}>
                 <input type="hidden" name="id" value={t.id} />
-                <button type="submit" className="rounded-md border-(length:--border-width) border-border px-3 py-1.5 text-sm">
+                <Button type="submit" variant="outline" size="sm">
                   Revoke
-                </button>
+                </Button>
               </form>
             </li>
           ))}
@@ -68,19 +70,10 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
         </p>
       ) : null}
       <form action={create} className="mt-2 flex gap-2">
-        <input
-          name="label"
-          placeholder="Token label (e.g. claude-code)"
-          maxLength={60}
-          className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-1.5 text-sm"
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground disabled:opacity-50"
-        >
+        <Input name="label" placeholder="Token label (e.g. claude-code)" maxLength={60} />
+        <Button type="submit" size="sm" disabled={pending}>
           Issue MCP token
-        </button>
+        </Button>
       </form>
       <p className="mt-2 text-sm text-muted-foreground">
         Setup guides: <a className="underline" href="/docs/mcp">MCP docs</a> · endpoint{" "}

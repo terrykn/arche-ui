@@ -32,7 +32,7 @@ const repoRoot = join(root, "..", "..");
 const readFixture = (file) => JSON.parse(readFileSync(join(repoRoot, "fixtures", file), "utf8"));
 const readApp = (file) => readFileSync(join(repoRoot, "apps", "web", file), "utf8");
 const base = readFixture("identity.arche.json");
-const guardrails = { minContrast: "AA", respectReducedMotion: true };
+const guardrails = { chroma: 1, minContrast: "AA", respectReducedMotion: true };
 const byId = fontEntriesById();
 
 const selectionStacks = (selection) => ({
@@ -352,10 +352,10 @@ test("registry items use the correct provider and stylesheet or next/font import
   assert.equal(monoItem.font.stylesheet, undefined);
 });
 
-test("Arche application uses Satoshi for display and body and loads Fontshare from the root layout", () => {
+test("Arche application uses Cabinet Grotesk display + Satoshi body and loads Fontshare from the root layout", () => {
   const app = readFixture("identity.arche.json");
-  assert.deepEqual(app.fonts, { sans: "satoshi", display: "satoshi", mono: "jetbrains-mono" });
-  assert.equal(app.tokens.light["--font-display"].$value, expectedFontStack(byId.get("satoshi"), "display"));
+  assert.deepEqual(app.fonts, { sans: "satoshi", display: "cabinet-grotesk", mono: "jetbrains-mono" });
+  assert.equal(app.tokens.light["--font-display"].$value, expectedFontStack(byId.get("cabinet-grotesk"), "display"));
   assert.equal(app.tokens.light["--font-sans"].$value, expectedFontStack(byId.get("satoshi"), "sans"));
   assert.deepEqual(validateFontSelection(app.fonts, {
     sans: app.tokens.light["--font-sans"].$value,
@@ -365,22 +365,21 @@ test("Arche application uses Satoshi for display and body and loads Fontshare fr
 
   const layout = readApp("app/layout.tsx");
   assert.ok(layout.includes("https://api.fontshare.com/v2/css?f[]=satoshi@1,2&display=swap"));
-  assert.ok(!layout.includes("cabinet-grotesk"), "the application no longer loads Cabinet Grotesk");
-  assert.ok(!readApp("app/theme.css").includes("Cabinet Grotesk"), "the application display token is not Cabinet Grotesk");
+  assert.ok(layout.includes("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@1&display=swap"));
+  assert.ok(readApp("app/theme.css").includes("Cabinet Grotesk"), "the application display token is Cabinet Grotesk");
   assert.ok(!layout.includes("cdn.fontshare.com/wf/"), "the application must not vendor Fontshare files");
 
   const generated = readApp("app/fonts.generated.ts");
   assert.ok(generated.includes('export const fontSans = { variable: "--font-sans" } as const;'));
-  // Satoshi fills both slots, so the generator aliases display to the same loader.
   assert.ok(
-    generated.includes('export const fontDisplay = { variable: "--font-display" } as const;') ||
-      generated.includes("export const fontDisplay = fontSans;"),
-    "display slot is bound to the Satoshi loader",
+    generated.includes('export const fontDisplay = { variable: "--font-display" } as const;'),
+    "display slot is bound to its own loader",
   );
   assert.ok(generated.includes('import { JetBrains_Mono } from "next/font/google";'));
   assert.ok(!generated.includes("@import"), "Google Fonts must not load through CSS @import");
   assert.deepEqual(identityFontStylesheets(app.fonts), [
     "https://api.fontshare.com/v2/css?f[]=satoshi@1,2&display=swap",
+    "https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@1&display=swap",
   ]);
   const googleGenerated = readApp("app/google-fonts.generated.ts");
   for (const name of [

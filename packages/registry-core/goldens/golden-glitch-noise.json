@@ -117,6 +117,7 @@
   },
   "dna": {
     "axes": {
+      "chroma": 1,
       "density": 0.9,
       "energy": 1,
       "formality": 0,
@@ -131,7 +132,7 @@
       "texture": "scanlines",
       "warmth": 0.4
     },
-    "compilerVersion": 4,
+    "compilerVersion": 6,
     "palette": {
       "accentHue": 180,
       "neutralHue": 260,
@@ -218,7 +219,64 @@
       }
     ],
     "contractVersion": 1,
-    "name": "golden-glitch"
+    "name": "golden-glitch",
+    "selfCheck": {
+      "notes": "clean: no findings in fix order",
+      "verdict": "pass"
+    },
+    "taste": {
+      "accentPlacement": [
+        "primary-cta",
+        "focal-word"
+      ],
+      "artDirection": {
+        "id": "y2k-futurism",
+        "reason": "Chrome Memory: retroFuturism in [0.7, 1]; material glass; motion glitchy"
+      },
+      "palette": [
+        {
+          "name": "Paper White",
+          "role": "background",
+          "token": "--background",
+          "value": "oklch(0.985 0.002 222)"
+        },
+        {
+          "name": "Paper White",
+          "role": "surface",
+          "token": "--card",
+          "value": "oklch(0.96 0.004 222)"
+        },
+        {
+          "name": "Magenta Beat",
+          "role": "primary",
+          "token": "--primary",
+          "value": "oklch(0.785 0.172 320)"
+        },
+        {
+          "name": "Sea Glass",
+          "role": "accent",
+          "token": "--accent",
+          "value": "oklch(0.925 0.088 180)"
+        },
+        {
+          "name": "Gallery Gray",
+          "role": "neutral",
+          "token": "--muted",
+          "value": "oklch(0.925 0.008 222)"
+        },
+        {
+          "name": "Slate Gray",
+          "role": "text",
+          "token": "--foreground",
+          "value": "oklch(0.27 0.008 222)"
+        }
+      ],
+      "surprise": {
+        "band": "surprising",
+        "hueDistance": 140,
+        "score": 78
+      }
+    }
   },
   "tokens": {
     "dark": {

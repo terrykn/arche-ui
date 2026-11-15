@@ -53,7 +53,7 @@ test("teach block is registry-built and byte-stable", () => {
 
 test("compiled payloads pass every enforce-tier check post-repair", async () => {
   const base = readFixture("identity.arche.json");
-  const guardrails = { minContrast: "AA", respectReducedMotion: true };
+  const guardrails = { chroma: 1, minContrast: "AA", respectReducedMotion: true };
   const cases = [
     { name: "balanced", profile: "standard", axes: { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, retroFuturism: 0.2, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", ...guardrails }, palette: { primaryHue: 210, accentHue: 280, neutralHue: 220 } },
     { name: "ent", profile: "enterprise", axes: { warmth: 0.3, energy: 0.2, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, retroFuturism: 0, formality: 1, material: "flat", motionFeel: "stately", texture: "none", ...guardrails }, palette: { primaryHue: 220, accentHue: 30, neutralHue: 230 } },
@@ -75,7 +75,7 @@ test("repair records rule ids in meta.adjustments", () => {
   // Low-voice formal DNA: solids start under the 0.08 floor → repair raises them.
   const compiled = compileIdentity({
     name: "t-repair", source: { type: "manual" },
-    axes: { warmth: 0.3, energy: 0.1, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, retroFuturism: 0, formality: 1, material: "flat", motionFeel: "stately", texture: "none", minContrast: "AA", respectReducedMotion: true },
+    axes: { warmth: 0.3, energy: 0.1, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, retroFuturism: 0, formality: 1, chroma: 1, material: "flat", motionFeel: "stately", texture: "none", minContrast: "AA", respectReducedMotion: true },
     palette: { primaryHue: 220, accentHue: 220, neutralHue: 230 },
     profile: "standard", base,
   });
@@ -84,7 +84,7 @@ test("repair records rule ids in meta.adjustments", () => {
   // Sharp pixel DNA under expressive compiles to 3px border width (recorded, compliant).
   const sharp = compileIdentity({
     name: "t-borderwidth", source: { type: "manual" },
-    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
+    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, chroma: 1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
     palette: { primaryHue: 300, accentHue: 100, neutralHue: 305 },
     profile: "expressive", base,
   });
@@ -93,11 +93,39 @@ test("repair records rule ids in meta.adjustments", () => {
   // Same DNA under enterprise caps at 1px.
   const sharpEnt = compileIdentity({
     name: "t-borderwidth-ent", source: { type: "manual" },
-    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
+    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, chroma: 1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
     palette: { primaryHue: 300, accentHue: 100, neutralHue: 305 },
     profile: "enterprise", base,
   });
   assert.equal(sharpEnt.tokens.light["--border-width"].$value, "1px", "enterprise caps border width at 1px");
+});
+
+test("chroma axis: 0 collapses the ladder, 1 keeps the voice, findings stay empty", async () => {
+  const base = readFixture("identity.arche.json");
+  const axes = { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, retroFuturism: 0.2, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", minContrast: "AA", respectReducedMotion: true };
+  const palette = { primaryHue: 20, accentHue: 200, neutralHue: 40 };
+  const chromaOf = (compiled, token) => {
+    const value = compiled.tokens.light[token].$value;
+    const match = String(value).match(/^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+    assert.ok(match, `${token} compiles to oklch`);
+    return Number(match[2]);
+  };
+  const build = (chroma) =>
+    compileValidIdentity(
+      { name: `t-chroma-${chroma}`, source: { type: "phrase", promptText: "gallery wall" }, axes: { ...axes, chroma }, palette, profile: "standard", base },
+      validateIdentity,
+    );
+  // Gallery wall: near-zero solids, calm ground, zero findings.
+  const quiet = await build(0);
+  assert.deepEqual(rulesFor(quiet), [], "chroma 0: no enforce findings");
+  assert.ok(chromaOf(quiet, "--primary") < 0.01, `chroma 0: primary near-neutral (got ${chromaOf(quiet, "--primary")})`);
+  assert.ok(chromaOf(quiet, "--accent") < 0.01, "chroma 0: accent near-neutral");
+  // Full voice: solids carry color, backgrounds stay calm, zero findings.
+  const vivid = await build(1);
+  assert.deepEqual(rulesFor(vivid), [], "chroma 1: no enforce findings");
+  const primary = chromaOf(vivid, "--primary");
+  assert.ok(primary > 0.05 && primary <= 0.24, `chroma 1: primary carries the voice within the ceiling (got ${primary})`);
+  assert.ok(chromaOf(vivid, "--background") <= 0.025, "chroma 1: background stays calm");
 });
 
 test("per-rule pass + violation cases", () => {

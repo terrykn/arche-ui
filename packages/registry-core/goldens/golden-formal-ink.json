@@ -117,6 +117,7 @@
   },
   "dna": {
     "axes": {
+      "chroma": 1,
       "density": 0.45,
       "energy": 0.2,
       "formality": 1,
@@ -131,7 +132,7 @@
       "texture": "none",
       "warmth": 0.3
     },
-    "compilerVersion": 4,
+    "compilerVersion": 6,
     "palette": {
       "accentHue": 220,
       "neutralHue": 230,
@@ -227,7 +228,64 @@
       }
     ],
     "contractVersion": 1,
-    "name": "golden-ink"
+    "name": "golden-ink",
+    "selfCheck": {
+      "notes": "5. accent: accent surprise 0 (predictable — accent family overlaps the base pair)",
+      "verdict": "pass"
+    },
+    "taste": {
+      "accentPlacement": [
+        "primary-cta",
+        "focal-word"
+      ],
+      "artDirection": {
+        "id": "swiss-poster",
+        "reason": "Swiss Poster: formality in [0.7, 1]; density in [0.3, 0.7]; material flat"
+      },
+      "palette": [
+        {
+          "name": "Paper White",
+          "role": "background",
+          "token": "--background",
+          "value": "oklch(0.985 0.002 206)"
+        },
+        {
+          "name": "Paper White",
+          "role": "surface",
+          "token": "--card",
+          "value": "oklch(0.96 0.003 206)"
+        },
+        {
+          "name": "Denim Reserve",
+          "role": "primary",
+          "token": "--primary",
+          "value": "oklch(0.785 0.08 220)"
+        },
+        {
+          "name": "Porcelain Blue",
+          "role": "accent",
+          "token": "--accent",
+          "value": "oklch(0.925 0.08 220)"
+        },
+        {
+          "name": "Gallery Gray",
+          "role": "neutral",
+          "token": "--muted",
+          "value": "oklch(0.925 0.007 206)"
+        },
+        {
+          "name": "Slate Gray",
+          "role": "text",
+          "token": "--foreground",
+          "value": "oklch(0.27 0.007 206)"
+        }
+      ],
+      "surprise": {
+        "band": "predictable",
+        "hueDistance": 0,
+        "score": 0
+      }
+    }
   },
   "tokens": {
     "dark": {

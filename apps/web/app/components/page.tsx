@@ -6,7 +6,7 @@ export default function ComponentsPage() {
   return (
     <>
       <SiteNav />
-      <main className="mx-auto max-w-4xl px-6 py-12">
+      <main className="mx-auto max-w-4xl px-3 py-12">
         <h1 className="font-display text-4xl">Components</h1>
         <p className="mt-2 text-muted-foreground">
           Generated from the foundation manifests — a manifest change updates these pages with no page edits.

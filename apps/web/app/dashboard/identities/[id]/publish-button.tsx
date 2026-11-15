@@ -3,8 +3,18 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { publishAction } from "../actions";
+import { Button } from "@/components/ui/button";
 
-export function PublishButton({ libraryId }: { libraryId: string }) {
+export function PublishButton({
+  libraryId,
+  onDone,
+  variant,
+}: {
+  libraryId: string;
+  /** When provided, the caller displays the result (toolbar use); otherwise shown inline. */
+  onDone?: (result: { ok: boolean; version?: number; issues?: Array<{ path: string; message: string }> }) => void;
+  variant?: "default" | "ghost" | "outline";
+}) {
   const router = useRouter();
   const [pending, setPending] = React.useState(false);
   const [issues, setIssues] = React.useState<Array<{ path: string; message: string }> | null>(null);
@@ -15,6 +25,10 @@ export function PublishButton({ libraryId }: { libraryId: string }) {
     setIssues(null);
     const result = await publishAction(libraryId);
     setPending(false);
+    if (onDone) {
+      onDone(result.ok ? { ok: true, version: result.version ?? undefined } : { ok: false, issues: result.issues });
+      return;
+    }
     if (!result.ok) {
       setIssues(result.issues ?? [{ path: "publish", message: "publish failed" }]);
       return;
@@ -25,14 +39,9 @@ export function PublishButton({ libraryId }: { libraryId: string }) {
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={publish}
-        disabled={pending}
-        className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
-      >
+      <Button type="button" size="sm" variant={variant ?? "default"} onClick={publish} disabled={pending}>
         {pending ? "Publishing…" : "Publish"}
-      </button>
+      </Button>
       {version !== null ? (
         <p className="mt-2 text-sm text-muted-foreground">Published v{version}.</p>
       ) : null}

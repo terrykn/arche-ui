@@ -1,13 +1,15 @@
 "use client";
 
 import * as React from "react";
+import { Button } from "@/components/ui/button";
 
 export function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = React.useState(false);
   return (
-    <button
+    <Button
       type="button"
-      className="proto-btn proto-btn-ghost proto-btn-sm"
+      variant="ghost"
+      size="sm"
       onClick={() => {
         void navigator.clipboard.writeText(text).then(() => {
           setCopied(true);
@@ -16,6 +18,6 @@ export function CopyButton({ text }: { text: string }) {
       }}
     >
       {copied ? "Copied" : "Copy"}
-    </button>
+    </Button>
   );
 }

@@ -3,18 +3,29 @@
 "use client";
 
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export interface NewsletterSignupProps {
+const newsletterSignupVariants = cva("", {
+  variants: {
+    layout: {
+      centered: "mx-auto w-full max-w-2xl py-16",
+      split: "mx-auto grid w-full max-w-5xl items-start gap-8 px-6 py-16 md:grid-cols-2",
+    },
+  },
+  defaultVariants: { layout: "centered" },
+});
+
+export interface NewsletterSignupProps extends VariantProps<typeof newsletterSignupVariants> {
   headline?: string;
   subhead?: string;
   className?: string;
 }
 
-function NewsletterSignup({ headline = "The Friday pack report", subhead = "Throughput, cutoffs, and one packing tip. Monthly, no noise.", className }: NewsletterSignupProps) {
+function NewsletterSignup({ headline = "The Friday pack report", subhead = "Throughput, cutoffs, and one packing tip. Monthly, no noise.", layout, className }: NewsletterSignupProps) {
   const [email, setEmail] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [done, setDone] = React.useState(false);
@@ -28,15 +39,17 @@ function NewsletterSignup({ headline = "The Friday pack report", subhead = "Thro
     setDone(true);
   };
   return (
-    <section data-block="newsletter-signup" className={cn("mx-auto w-full max-w-2xl py-16", className)}>
-      <h2 className="text-3xl font-extrabold tracking-tight text-foreground">{headline}</h2>
-      <p className="mt-2 text-muted-foreground">{subhead}</p>
+    <section data-block="newsletter-signup" className={cn(newsletterSignupVariants({ layout }), className)}>
+      <div>
+        <h2 className="text-3xl font-extrabold tracking-tight text-foreground">{headline}</h2>
+        <p className="mt-2 text-muted-foreground">{subhead}</p>
+      </div>
       {done ? (
-        <p role="status" className="mt-4 rounded-md border border-(length:--border-width) border-border bg-card p-4 text-sm text-foreground">
+        <p role="status" className={cn("mt-4 rounded-md border border-(length:--border-width) border-border bg-card p-4 text-sm text-foreground", layout === "split" && "md:mt-0")}>
           You are on the list — see you Friday.
         </p>
       ) : (
-        <form onSubmit={submit} className="mt-4 flex flex-col gap-3" noValidate>
+        <form onSubmit={submit} className={cn("mt-4 flex flex-col gap-3", layout === "split" && "md:mt-0")} noValidate>
           <Label htmlFor="newsletter-email">Crew email</Label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input
@@ -63,4 +76,4 @@ function NewsletterSignup({ headline = "The Friday pack report", subhead = "Thro
   );
 }
 
-export { NewsletterSignup };
+export { NewsletterSignup, newsletterSignupVariants };

@@ -1,96 +1,123 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { CHANGELOG } from "@/lib/changelog";
+import { CreationDock } from "./creation-dock";
 
-export default async function DashboardHome() {
+type LibraryRow = {
+  id: string;
+  name: string;
+  slug: string;
+  visibility: string;
+  updated_at: string;
+  payload: unknown;
+};
+
+/** Small gradient swatch derived from the identity's own light color tokens. */
+function paletteGradient(payload: unknown): string {
+  const tokens =
+    (payload as { tokens?: { light?: Record<string, { $value?: unknown }> } } | null)?.tokens
+      ?.light ?? {};
+  const preferred = [
+    "--primary",
+    "--accent",
+    "--secondary",
+    "--muted",
+    "--card",
+    "--background",
+    "--foreground",
+  ];
+  const stops: string[] = [];
+  for (const key of preferred) {
+    const v = tokens[key]?.$value;
+    if (typeof v === "string" && v.length > 0 && !v.includes(";") && !stops.includes(v)) {
+      stops.push(v);
+      if (stops.length === 3) break;
+    }
+  }
+  if (stops.length === 0) return "linear-gradient(135deg, var(--muted), var(--accent))";
+  if (stops.length === 1) return `linear-gradient(135deg, ${stops[0]}, var(--muted))`;
+  return `linear-gradient(135deg, ${stops.join(", ")})`;
+}
+
+export default async function DashboardHome({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; prompt?: string }>;
+}) {
+  const { error, prompt } = await searchParams;
+  const prefill = (prompt ?? "").slice(0, 120);
+
   const supabase = await createClient();
   const { data: libraries } = await supabase
     .from("libraries")
-    .select("id,name,slug,visibility,updated_at")
+    .select("id,name,slug,visibility,updated_at,payload")
     .order("updated_at", { ascending: false });
 
-  const latest = CHANGELOG[0]!;
-  const whatsNew = (
-    <Card className="mt-8">
-      <CardHeader>
-        <CardTitle className="text-lg">What&apos;s new</CardTitle>
-        <CardDescription>
-          {latest.date} — {latest.title}
-        </CardDescription>
-      </CardHeader>
-      <CardFooter>
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/changelog">Read the changelog</Link>
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-  if (!libraries || libraries.length === 0) {
-    return (
-      <main className="mx-auto max-w-2xl px-6 py-16 text-center">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-display text-3xl">Your identities</CardTitle>
-            <CardDescription>
-              You don&apos;t have any identities yet. Create one to get an installable component library.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="justify-center">
-            <Button variant="default" asChild>
-              <Link href="/dashboard/identities/new">Create identity</Link>
-            </Button>
-          </CardFooter>
-        </Card>
-        {whatsNew}
-      </main>
-    );
-  }
+  const rows = (libraries ?? []) as unknown as LibraryRow[];
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="font-display text-3xl text-foreground">Your identities</h1>
-        <Button variant="default" asChild>
-          <Link href="/dashboard/identities/new">New Identity</Link>
-        </Button>
-      </div>
-      <Separator className="my-6" />
-      {whatsNew}
-      <ul className="mt-8 grid gap-4">
-        {libraries.map((library) => (
-          <li key={library.id}>
-            <Card>
+    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-6 py-10">
+      <div className="flex-1">
+        {rows.length === 0 ? (
+          <div className="flex min-h-[40dvh] items-center justify-center">
+            <Card className="mx-auto w-full max-w-2xl text-center">
               <CardHeader>
-                <CardTitle>
-                  <Link
-                    href={`/dashboard/identities/${library.id}`}
-                    className="underline-offset-4 hover:underline"
-                  >
-                    {library.name}
-                  </Link>
-                </CardTitle>
+                <CardTitle className="font-display text-3xl">Your identities</CardTitle>
                 <CardDescription>
-                  updated {new Date(library.updated_at).toLocaleDateString()}
+                  You don&apos;t have any identities yet. Create one to get installable components and blocks.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Badge variant="secondary">{library.visibility}</Badge>
-              </CardContent>
             </Card>
-          </li>
-        ))}
-      </ul>
+          </div>
+        ) : (
+          <>
+            <h1 className="font-display text-3xl text-foreground">Your identities</h1>
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {rows.map((library) => (
+                <li key={library.id}>
+                  <Card className="overflow-hidden pt-0">
+                    <div
+                      className="relative h-28 border-b border-border"
+                      style={{ background: paletteGradient(library.payload) }}
+                    >
+                      <Badge variant="secondary" className="absolute right-3 top-3">
+                        {library.visibility}
+                      </Badge>
+                    </div>
+                    <CardHeader>
+                      <CardTitle>
+                        <Link
+                          href={`/dashboard/identities/${library.id}/edit`}
+                          className="underline-offset-4 hover:underline"
+                        >
+                          {library.name}
+                        </Link>
+                      </CardTitle>
+                      <CardDescription>
+                        updated {new Date(library.updated_at).toLocaleDateString()}
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+
+      {error ? (
+        <p role="alert" className="mx-auto mt-8 w-full max-w-xl rounded-md border-(length:--border-width) border-destructive/40 bg-card p-3 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
+
+      <CreationDock prefill={prefill} />
     </main>
   );
 }

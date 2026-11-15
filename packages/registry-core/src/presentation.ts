@@ -12,6 +12,15 @@ export interface PresentationMotion {
   guidance: string[];
 }
 
+export interface TasteSummary {
+  directionId: string;
+  directionName: string;
+  directionReason: string;
+  surpriseScore: number;
+  surpriseBand: string;
+  palette: Array<{ name: string; role: string }>;
+}
+
 export interface PresentationBlock {
   imagery: string;
   motion: PresentationMotion;
@@ -19,6 +28,8 @@ export interface PresentationBlock {
   specimens: { sinkLight: string; sinkDark: string; og: string } | null;
   /** Anti-slop calibration: rule ids + one line each, scoped to the profile. */
   antiSlop: Array<{ rule: string; guidance: string }>;
+  /** Taste record read off the payload (null for hand-authored payloads). */
+  taste: TasteSummary | null;
   note: string;
 }
 
@@ -44,15 +55,18 @@ const ANTI_SLOP_BY_PROFILE: Record<string, Array<{ rule: string; guidance: strin
   enterprise: [
     { rule: "slop-color-tells", guidance: "No purple-blue glow accents, no gradient headline text." },
     { rule: "color-one-accent", guidance: "Saturated color spent in exactly one place per view." },
+    { rule: "taste-accent-placement", guidance: "Accent on the primary CTA and the focal word only." },
     { rule: "type-weight-discipline", guidance: "Hierarchy from size and weight, never from color." },
   ],
   standard: [
     { rule: "slop-color-tells", guidance: "No purple-blue glow accents, no gradient headline text." },
     { rule: "color-one-accent", guidance: "Saturated color spent in exactly one place per view." },
+    { rule: "taste-accent-placement", guidance: "Accent on the primary CTA and the focal word only." },
     { rule: "type-measure", guidance: "Prose measure 65–75ch; headlines under ~80 chars." },
   ],
   expressive: [
     { rule: "slop-color-tells", guidance: "Exuberance allowed in layout and motion, not in glow effects or gradient text." },
+    { rule: "taste-accent-placement", guidance: "Accent on the primary CTA and the focal word only." },
     { rule: "color-chroma-taper", guidance: "Chroma tapers toward surfaces; text pairings stay AA." },
     { rule: "type-display-cap", guidance: "Display sizes capped per profile — check the type scale, not taste." },
   ],
@@ -86,12 +100,24 @@ export interface PresentationContext {
 export function buildPresentation(payload: ArcheIdentity, ctx: PresentationContext = {}): PresentationBlock {
   const dna = (payload.dna ?? {}) as {
     profile?: string;
-    material?: string;
-    motionFeel?: string;
+    axes?: { material?: string; motionFeel?: string };
   };
   const profile = dna.profile === "enterprise" || dna.profile === "expressive" ? dna.profile : "standard";
-  const material = typeof dna.material === "string" ? dna.material : "flat";
-  const feel = typeof dna.motionFeel === "string" ? dna.motionFeel : "smooth";
+  // Material/feel live under dna.axes (the compiler stamps them there); the
+  // top-level read is kept as a fallback for older payload shapes.
+  const axes = dna.axes ?? {};
+  const material =
+    typeof axes.material === "string"
+      ? axes.material
+      : typeof (dna as { material?: unknown }).material === "string"
+        ? (dna as { material?: string }).material!
+        : "flat";
+  const feel =
+    typeof axes.motionFeel === "string"
+      ? axes.motionFeel
+      : typeof (dna as { motionFeel?: unknown }).motionFeel === "string"
+        ? (dna as { motionFeel?: string }).motionFeel!
+        : "smooth";
 
   const fast = tokenPair(payload.tokens, "--motion-fast");
   const normal = tokenPair(payload.tokens, "--motion-normal");
@@ -102,6 +128,35 @@ export function buildPresentation(payload: ArcheIdentity, ctx: PresentationConte
           sinkLight: `${ctx.assetBaseUrl}/${ctx.libraryId}/v${ctx.version}/sink-light.png`,
           sinkDark: `${ctx.assetBaseUrl}/${ctx.libraryId}/v${ctx.version}/sink-dark.png`,
           og: `${ctx.assetBaseUrl}/${ctx.libraryId}/v${ctx.version}/og.png`,
+        }
+      : null;
+
+  const tasteRaw = (payload.meta ?? {}) as Record<string, unknown>;
+  const tasteRecord = tasteRaw.taste as
+    | {
+        artDirection?: { id?: unknown; name?: unknown; reason?: unknown };
+        surprise?: { score?: unknown; band?: unknown };
+        palette?: Array<{ name?: unknown; role?: unknown }>;
+      }
+    | undefined;
+  const taste: TasteSummary | null =
+    tasteRecord?.artDirection && typeof tasteRecord.artDirection.id === "string"
+      ? {
+          directionId: tasteRecord.artDirection.id,
+          directionName:
+            typeof tasteRecord.artDirection.name === "string" ? tasteRecord.artDirection.name : tasteRecord.artDirection.id,
+          directionReason:
+            typeof tasteRecord.artDirection.reason === "string" ? tasteRecord.artDirection.reason : "",
+          surpriseScore:
+            typeof tasteRecord.surprise?.score === "number" ? tasteRecord.surprise.score : NaN,
+          surpriseBand: typeof tasteRecord.surprise?.band === "string" ? tasteRecord.surprise.band : "unknown",
+          palette: Array.isArray(tasteRecord.palette)
+            ? tasteRecord.palette.flatMap((entry) =>
+                typeof entry?.name === "string" && typeof entry?.role === "string"
+                  ? [{ name: entry.name, role: entry.role }]
+                  : [],
+              )
+            : [],
         }
       : null;
 
@@ -119,6 +174,7 @@ export function buildPresentation(payload: ArcheIdentity, ctx: PresentationConte
     },
     specimens,
     antiSlop: ANTI_SLOP_BY_PROFILE[profile]!,
+    taste,
     note: payload.dna
       ? `Generated for the '${profile}' profile from payload values and design rules — no model call.`
       : "Hand-authored payload (no DNA) — profile guidance defaults to 'standard'.",

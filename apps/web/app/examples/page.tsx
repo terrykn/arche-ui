@@ -1,44 +1,79 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { ExamplesDemo } from "@/components/examples-demo";
+import Link from "next/link";
+import { ProtoAurora, ProtoNav, ProtoFooter } from "@/components/proto-shell";
+import { DEMO_IDENTITIES } from "@/components/demo-identities";
+import { StoryScreen } from "@/components/story-screens";
+import { ArrowRight } from "lucide-react";
 
-const FIXTURE_FILES: Record<string, { file: string; label: string; prompt: string }> = {
-  arche: { file: "identity.arche.json", label: "Arche", prompt: "ancient Greece" },
-  arcade: { file: "identity.arcade.json", label: "90s Arcade", prompt: "90s arcade" },
-  hospital: { file: "identity.hospital.json", label: "Hospital", prompt: "calm hospital" },
-  default: { file: "identity.default.json", label: "Arche Default", prompt: "Arche Default" },
-  "border-2px": { file: "identity.border-2px.json", label: "Border 2px", prompt: "2px border-width test" },
-};
-
-function loadFixture(file: string) {
-  const found = [process.cwd(), join(process.cwd(), "..", "..")];
-  for (const base of found) {
-    try {
-      return JSON.parse(readFileSync(join(base, "fixtures", file), "utf8")) as {
-        tokens: Record<string, Record<string, { $value: unknown }>>;
-      };
-    } catch {
-      continue;
-    }
-  }
-  throw new Error(`fixture not found: ${file}`);
+export function siteSlug(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 }
 
 /**
- * Examples: the reusable enterprise demo rotating through the fixture
- * identities — the same site, re-skinned live. Server loads the fixture
- * token sets; the client rotator swaps them without refetching.
+ * Examples: cards with live mini previews of each prompt-built site.
+ * Click a card to view the full site preview.
  */
 export default function Examples() {
-  const identities = Object.entries(FIXTURE_FILES).map(([id, f]) => {
-    const payload = loadFixture(f.file);
-    const vars: Record<string, string> = {};
-    for (const [name, token] of Object.entries(payload.tokens.light ?? {})) {
-      if (typeof token.$value === "string") {
-        vars[name] = token.$value;
-      }
-    }
-    return { id, name: f.label, prompt: f.prompt, components: 37, vars };
-  });
-  return <ExamplesDemo identities={identities} />;
+  return (
+    <div className="proto-root">
+      <ProtoAurora />
+      <ProtoNav />
+      <div className="proto-view">
+        <div className="proto-wrap">
+          <section className="proto-section">
+            <h2>Example sites</h2>
+            <p className="proto-lede">
+              Each prompt below generated its own site — its own layout, content, and identity.
+              Pick one to open the full site preview. All people, titles, and figures are fictional.
+            </p>
+            <div className="grid items-start gap-8 pt-6 md:grid-cols-3">
+              {DEMO_IDENTITIES.map((identity) => {
+                const slug = siteSlug(identity.name);
+                return (
+                  <article
+                    key={identity.name}
+                    className="overflow-hidden rounded-3xl border-2 border-[#FF074E] bg-card transition-shadow hover:shadow-lg"
+                  >
+                    <Link
+                      href={`/examples/${slug}`}
+                      aria-label={`View full ${identity.name} site preview`}
+                      className="block"
+                    >
+                      <div
+                        aria-hidden="true"
+                        className="pointer-events-none h-[460px] select-none overflow-hidden"
+                        style={{
+                          WebkitMaskImage: "linear-gradient(to bottom, black 82%, transparent 100%)",
+                          maskImage: "linear-gradient(to bottom, black 82%, transparent 100%)",
+                        }}
+                      >
+                        <StoryScreen identity={identity} />
+                      </div>
+                    </Link>
+                    <div className="flex flex-col gap-2 p-5 pt-3">
+                      <span className="proto-lib-chip" style={{ alignSelf: "flex-start" }}>
+                        {identity.name}
+                      </span>
+                      <span className="proto-mono" style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+                        “{identity.prompt}”
+                      </span>
+                      <span style={{ fontSize: 12, color: "var(--muted-foreground)" }}>
+                        {identity.components} components
+                      </span>
+                      <Link
+                        href={`/examples/${slug}`}
+                        className="inline-flex items-center gap-1 text-sm font-semibold text-[#FF074E] underline-offset-4 hover:underline"
+                      >
+                        View full site <ArrowRight size={15} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        </div>
+      </div>
+      <ProtoFooter />
+    </div>
+  );
 }

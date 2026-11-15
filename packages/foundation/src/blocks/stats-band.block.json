@@ -5,17 +5,74 @@
   "category": "marketing",
   "manifestVersion": 1,
   "block": true,
-  "slots": [{ "name": "stats", "part": "records", "required": true }],
-  "axes": {},
+  "slots": [
+    {
+      "name": "stats",
+      "part": "records",
+      "required": true
+    }
+  ],
+  "axes": {
+    "columns": {
+      "values": [
+        "two",
+        "four"
+      ],
+      "default": "four"
+    }
+  },
   "styleSurface": {},
-  "tokensUsed": ["--border", "--border-width", "--foreground", "--muted-foreground"],
-  "dependencies": [],
-  "registryDependencies": ["utils", "separator"],
-  "files": [{ "name": "stats-band", "source": "src/blocks/stats-band.tsx", "target": "components/blocks/stats-band.tsx", "type": "registry:block" }],
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "stats-band",
+      "source": "src/blocks/stats-band.tsx",
+      "target": "components/blocks/stats-band.tsx",
+      "type": "registry:block"
+    }
+  ],
   "composition": {
-    "contentSlots": [{ "name": "stats", "kind": "records", "required": true }],
-    "childComponents": [{ "name": "separator", "min": 1 }],
+    "contentSlots": [
+      {
+        "name": "stats",
+        "kind": "records",
+        "required": true
+      }
+    ],
+    "childComponents": [
+      {
+        "name": "separator",
+        "min": 1
+      }
+    ],
     "headingRole": "none"
   },
-  "standards": { "purpose": "Make one row of real numbers unforgettable.", "useWhen": ["Three to five real metrics deserve a band of their own."], "doNotUseWhen": ["The numbers are estimates or goals — never present projections as results."], "rules": [{ "id": "stats-band-real-numbers", "severity": "error", "check": "Every stat states a measured value with its unit; no invented metrics." }] }
+  "standards": {
+    "purpose": "Make one row of real numbers unforgettable.",
+    "useWhen": [
+      "Three to five real metrics deserve a band of their own."
+    ],
+    "doNotUseWhen": [
+      "The numbers are estimates or goals \u00e2\u20ac\u201d never present projections as results."
+    ],
+    "rules": [
+      {
+        "id": "stats-band-real-numbers",
+        "severity": "error",
+        "check": "Every stat states a measured value with its unit; no invented metrics."
+      }
+    ]
+  }
 }

@@ -11,7 +11,7 @@ export default async function IdentitiesPage() {
   return (
     <>
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-6 py-12">
+      <main className="mx-auto max-w-6xl px-3 py-12">
         <h1 className="font-display text-4xl">Identities gallery</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
           Live mini-renders — real components in each identity&apos;s tokens, never screenshots.

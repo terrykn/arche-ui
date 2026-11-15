@@ -73,7 +73,7 @@ export default async function PreviewPage({
     <>
       <IdentityFontLinks fonts={payload.fonts} />
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-6 py-12 pb-28">
+      <main className="mx-auto max-w-6xl px-3 py-12 pb-28">
         <Link href="/components" className="text-sm text-muted-foreground underline">
           <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Catalog
         </Link>

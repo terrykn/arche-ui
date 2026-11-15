@@ -117,6 +117,7 @@
   },
   "dna": {
     "axes": {
+      "chroma": 1,
       "density": 0.5,
       "energy": 0.4,
       "formality": 0.6,
@@ -131,7 +132,7 @@
       "texture": "none",
       "warmth": 0.5
     },
-    "compilerVersion": 4,
+    "compilerVersion": 6,
     "palette": {
       "accentHue": 0,
       "neutralHue": 0,
@@ -218,7 +219,64 @@
       }
     ],
     "contractVersion": 1,
-    "name": "golden-default"
+    "name": "golden-default",
+    "selfCheck": {
+      "notes": "5. accent: accent surprise 0 (predictable — accent family overlaps the base pair)",
+      "verdict": "pass"
+    },
+    "taste": {
+      "accentPlacement": [
+        "primary-cta",
+        "focal-word"
+      ],
+      "artDirection": {
+        "id": "swiss-poster",
+        "reason": "Swiss Poster: density in [0.3, 0.7]; material flat"
+      },
+      "palette": [
+        {
+          "name": "Paper White",
+          "role": "background",
+          "token": "--background",
+          "value": "oklch(0.985 0.002 17.5)"
+        },
+        {
+          "name": "Paper White",
+          "role": "surface",
+          "token": "--card",
+          "value": "oklch(0.96 0.004 17.5)"
+        },
+        {
+          "name": "Rose Ledger",
+          "role": "primary",
+          "token": "--primary",
+          "value": "oklch(0.785 0.08 0)"
+        },
+        {
+          "name": "Sakura Milk",
+          "role": "accent",
+          "token": "--accent",
+          "value": "oklch(0.925 0.08 0)"
+        },
+        {
+          "name": "Gallery Gray",
+          "role": "neutral",
+          "token": "--muted",
+          "value": "oklch(0.925 0.009 17.5)"
+        },
+        {
+          "name": "Slate Gray",
+          "role": "text",
+          "token": "--foreground",
+          "value": "oklch(0.27 0.009 17.5)"
+        }
+      ],
+      "surprise": {
+        "band": "predictable",
+        "hueDistance": 0,
+        "score": 0
+      }
+    }
   },
   "tokens": {
     "dark": {

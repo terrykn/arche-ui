@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
 import { authorizeCallback, denyCallback } from "./actions";
 import { isLoopbackCallback } from "./loopback";
 
@@ -11,7 +12,7 @@ export default async function CliAuth({
   const { callback = "", state = "" } = await searchParams;
   if (!isLoopbackCallback(callback) || !state) {
     return (
-      <main className="mx-auto max-w-md px-6 py-16">
+      <main className="mx-auto max-w-md px-3 py-16">
         <h1 className="font-display text-2xl">Invalid authorization request</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           The callback URL must be a loopback address (http://127.0.0.1:port/…). This page never
@@ -29,7 +30,7 @@ export default async function CliAuth({
     redirect(`/sign-in?next=${encodeURIComponent(next)}`);
   }
   return (
-    <main className="mx-auto max-w-md px-6 py-16">
+    <main className="mx-auto max-w-md px-3 py-16">
       <h1 className="font-display text-2xl">Authorize this machine?</h1>
       <p className="mt-3 text-sm leading-relaxed">
         The Arche CLI on this computer is asking to sign in as{" "}
@@ -44,19 +45,14 @@ export default async function CliAuth({
         <form action={authorizeCallback}>
           <input type="hidden" name="callback" value={callback} />
           <input type="hidden" name="state" value={state} />
-          <button
-            type="submit"
-            className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
-          >
-            Authorize
-          </button>
+          <Button type="submit">Authorize</Button>
         </form>
         <form action={denyCallback}>
           <input type="hidden" name="callback" value={callback} />
           <input type="hidden" name="state" value={state} />
-          <button type="submit" className="rounded-md border-(length:--border-width) border-input px-4 py-2 text-sm">
+          <Button type="submit" variant="outline">
             Deny
-          </button>
+          </Button>
         </form>
       </div>
     </main>

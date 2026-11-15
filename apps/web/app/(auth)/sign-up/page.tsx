@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { signInWithGoogle, signUp } from "../actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default async function SignUp({
   searchParams,
@@ -8,49 +10,28 @@ export default async function SignUp({
 }) {
   const { error } = await searchParams;
   return (
-    <main className="mx-auto max-w-sm px-6 py-16">
+    <main className="mx-auto max-w-sm px-3 py-16">
       <h1 className="font-display text-3xl">Sign up</h1>
       <form action={signUp} className="mt-6 flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
           Email
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
-          />
+          <Input name="email" type="email" required autoComplete="email" />
         </label>
         <label className="flex flex-col gap-1 text-sm">
           Password
-          <input
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
-          />
+          <Input name="password" type="password" required minLength={8} autoComplete="new-password" />
         </label>
         {error ? (
           <p role="alert" className="text-sm text-destructive">
             {error}
           </p>
         ) : null}
-        <button
-          type="submit"
-          className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
-        >
-          Create account
-        </button>
+        <Button type="submit">Create account</Button>
       </form>
       <form action={signInWithGoogle} className="mt-3">
-        <button
-          type="submit"
-          className="w-full rounded-md border-(length:--border-width) border-input bg-background px-4 py-2 text-sm"
-        >
+        <Button type="submit" variant="outline" className="w-full">
           Continue with Google
-        </button>
+        </Button>
       </form>
       <p className="mt-4 text-sm text-muted-foreground">
         Have an account? <Link href="/sign-in" className="underline">Sign in</Link>

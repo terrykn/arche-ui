@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { saveSettings } from "./actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { TokenManager } from "./token-manager";
 import { McpTokenManager } from "./mcp-token-manager";
 import { ensureProfileExists } from "@/lib/profiles";
@@ -53,7 +55,8 @@ export default async function SettingsPage({
   };
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
+    <main className="mx-auto max-w-6xl px-6 py-10">
+      <div className="max-w-2xl">
       <h1 className="font-display text-3xl">Settings</h1>
       {error ? (
         <p role="alert" className="mt-3 text-sm text-destructive">
@@ -64,15 +67,11 @@ export default async function SettingsPage({
       <form action={saveSettings} className="mt-6 flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
           Username (used in /r/&lt;username&gt; and /p/&lt;username&gt; routes)
-          <input
-            name="username"
-            defaultValue={row.username}
-            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
-          />
+          <Input name="username" defaultValue={row.username} />
         </label>
-        <button type="submit" className="w-fit rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">
+        <Button type="submit" className="w-fit">
           Save
-        </button>
+        </Button>
       </form>
       <section className="mt-8">
         <h2 className="text-lg font-medium">Registry token</h2>
@@ -85,6 +84,7 @@ export default async function SettingsPage({
         <h2 className="text-lg font-medium">MCP tokens</h2>
         <McpTokenManager tokens={mcpTokens} />
       </section>
+      </div>
     </main>
   );
 }

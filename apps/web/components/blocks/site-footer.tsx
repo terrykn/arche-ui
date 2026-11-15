@@ -3,6 +3,7 @@
 "use client";
 
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
@@ -11,7 +12,17 @@ export interface FooterColumn {
   links: Array<{ label: string; href: string }>;
 }
 
-export interface SiteFooterProps {
+const siteFooterVariants = cva("", {
+  variants: {
+    layout: {
+      extended: "mx-auto grid w-full max-w-6xl gap-8 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4",
+      compact: "mx-auto flex w-full max-w-6xl flex-wrap gap-x-12 gap-y-6 px-6 py-12",
+    },
+  },
+  defaultVariants: { layout: "extended" },
+});
+
+export interface SiteFooterProps extends VariantProps<typeof siteFooterVariants> {
   columns?: FooterColumn[];
   note?: string;
   className?: string;
@@ -24,10 +35,10 @@ const DEFAULT_COLUMNS: FooterColumn[] = [
   { heading: "Legal", links: [{ label: "Privacy", href: "#privacy" }, { label: "Terms", href: "#terms" }, { label: "Accessibility", href: "#accessibility" }] },
 ];
 
-function SiteFooter({ columns = DEFAULT_COLUMNS, note = "© Acme Inc. — packed with care in Oakland and Reno.", className }: SiteFooterProps) {
+function SiteFooter({ columns = DEFAULT_COLUMNS, note = "© Acme Inc. — packed with care in Oakland and Reno.", layout, className }: SiteFooterProps) {
   return (
     <footer data-block="site-footer" className={cn("border-t border-(length:--border-width) border-border", className)}>
-      <div className="mx-auto grid w-full max-w-6xl gap-8 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className={cn(siteFooterVariants({ layout }))}>
         {columns.map((column) => (
           <nav key={column.heading} aria-label={column.heading}>
             <h2 className="text-sm font-semibold text-foreground">{column.heading}</h2>
@@ -49,4 +60,4 @@ function SiteFooter({ columns = DEFAULT_COLUMNS, note = "© Acme Inc. — packed
   );
 }
 
-export { SiteFooter };
+export { SiteFooter, siteFooterVariants };

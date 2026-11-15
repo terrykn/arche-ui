@@ -51,3 +51,68 @@ Budgets are Arche's own (no authority publishes per-step chroma numbers); WCAG 2
 - (no change) color-bg-chroma-cap: Radix steps 1-2 p90 0.0255 touches the light cap, but the majority complies — a ceiling binding only runaway saturation, kept as written.
 - (no change) color-solid-chroma-band: Radix steps 9-10 sit inside [0.08, 0.24]; the enterprise ceiling 0.19 binds only the most vivid solid steps, which is its stated job.
 Re-run: `node design-rules/calibrate.mjs` from packages/foundation (needs network for the Radix leg).
+
+## Brief #7 reference legs — Primer + Carbon (measured 2026-11-14)
+
+Sources: `@primer/primitives@11.10.0` functional themes (`light.json`, `dark.json`)
+and `@carbon/themes@11.85.0` generated themes (`white.js`, `g100.js`), fetched
+from the npm registry and measured with the same OKLCH math as above.
+Role mapping is approximate and documented per leg: Primer functional roles
+(`bgColor-*`, `fgColor-*`, `borderColor-*`, `bgColor-accent-emphasis`,
+`button-primary-bgColor-rest`, `data-*-color-emphasis`) and Carbon v11 roles
+(`background`/`layer01`/`field01`, `textPrimary`/`textSecondary`,
+`borderSubtle01`/`borderStrong01`, `backgroundBrand`/`supportError`) stand in
+for Arche's bg/text/border/solid/chart buckets. Budgets stay Arche's.
+
+### Primer functional light
+
+- bg-family (default/muted/inset): C = 0.0000 / 0.0034 / 0.0034 — under the light cap 0.025.
+- text (default/muted): C = 0.0111 / 0.0215 — far under the 0.18 cap.
+- borders (default/muted): C = 0.0130 — under the 0.15 cap.
+- solids (accent-emphasis/button-primary-rest): C = 0.1906 / 0.1450 — inside the [0.08, 0.24] standard band.
+- contrast: fg-default/bg-default 15.8, fg-muted/bg-muted 5.74, white on accent-emphasis 5.19, accent on white 5.19 — all AA PASS.
+
+### Primer functional dark
+
+- bg-family: C = 0.0140 / 0.0182 / 0.0194 — under the dark cap 0.035.
+- text: C = 0.0103 / 0.0155; borders: C = 0.0179.
+- solids: C = 0.2023 / 0.1474 — inside the band.
+- contrast: 17.39 / 5.94 / 4.63 (white on dark accent-emphasis) / 6.11 — all AA PASS (tightest pair 4.63).
+- chart hues (blue/green/orange/purple/red emphasis): min pairwise ΔE 0.128 — above the 0.08 floor.
+
+### Carbon white + g100
+
+- Surfaces are strictly monochrome (bg/text/border all C = 0.0000) — stricter
+  than Arche's tinted-neutral rule, which *requires* C ≥ 0.015 toward the
+  primary hue unless the identity is an explicitly monochrome selection.
+- solids: backgroundBrand C = 0.2430 (both themes), supportError C = 0.2174 / 0.2088.
+  backgroundBrand sits 0.003 above the *standard* ceiling (0.24) and inside the
+  expressive ceiling (0.26) — the ceiling binds vivid blues by design; verdict KEEP.
+- contrast: textPrimary/bg 18.1 (white) / 16.45 (g100), textSecondary/bg 7.81 / 10.59,
+  white on backgroundBrand 5.0 — all AA PASS.
+
+### Not measured
+
+- **shadcn themes**: no stable published token source exists since the
+  `shadcn-ui/ui` repo restructure (the old `apps/www/app/globals.css` raw path
+  404s and themes are no longer shipped as a standalone file) — recording the
+  gap instead of inventing numbers.
+- **Carbon/Carbon-charts**: `@carbon/themes` ships no categorical chart
+  palette; chart separation is covered by the Radix + Primer legs above.
+
+Overall verdict: the new legs confirm the existing budgets — every measured
+reference value sits inside its Arche budget except Carbon's brand blue, which
+touches the standard solid ceiling exactly where that ceiling is meant to bind.
+No budget changes.
+
+
+## Taste metrics (Brief #7 D1, Arche-defined, not external standards)
+
+- **Accent surprise**: circular accent-vs-primary hue distance mapped to
+  0-100. Bands: <25deg "predictable", 25-90deg "related", >90deg
+  "surprising"; enterprise is "monochrome-by-design" (score 0, exempt).
+  Teach-tier: reported on every payload, never a failure. This is Arche's
+  own house metric -- it is not calibrated against any external reference
+  and makes no claim beyond its definition.
+- **Evocative names**: 12 hue families x 4 voices, deterministic
+  (same oklch -> same name). Curated display labels, not a color standard.

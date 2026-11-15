@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../templates/lib/utils.js";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../templates/card.js";
 import { Label } from "../templates/label.js";
@@ -8,13 +9,23 @@ import { Input } from "../templates/input.js";
 import { PasswordToggleField, PasswordToggleFieldInput } from "../templates/password-toggle-field.js";
 import { Button } from "../templates/button.js";
 
-export interface AuthLoginProps {
+const authLoginVariants = cva("", {
+  variants: {
+    layout: {
+      centered: "mx-auto w-full max-w-md py-16",
+      split: "mx-auto grid w-full max-w-4xl items-stretch gap-6 px-6 py-16 md:grid-cols-2",
+    },
+  },
+  defaultVariants: { layout: "centered" },
+});
+
+export interface AuthLoginProps extends VariantProps<typeof authLoginVariants> {
   headline?: string;
   subhead?: string;
   className?: string;
 }
 
-function AuthLogin({ headline = "Welcome back", subhead = "Sign in to today's board.", className }: AuthLoginProps) {
+function AuthLogin({ headline = "Welcome back", subhead = "Sign in to today's board.", layout, className }: AuthLoginProps) {
   const [email, setEmail] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const submit = (event: React.FormEvent) => {
@@ -26,7 +37,10 @@ function AuthLogin({ headline = "Welcome back", subhead = "Sign in to today's bo
     setError(null);
   };
   return (
-    <section data-block="auth-login" className={cn("mx-auto w-full max-w-md py-16", className)}>
+    <section data-block="auth-login" className={cn(authLoginVariants({ layout }), className)}>
+      {layout === "split" ? (
+        <div aria-hidden className="hidden rounded-xl border border-(length:--border-width) border-border bg-gradient-to-br from-primary/25 via-card to-card md:block" />
+      ) : null}
       <Card>
         <CardHeader>
           <CardTitle>{headline}</CardTitle>
@@ -62,4 +76,4 @@ function AuthLogin({ headline = "Welcome back", subhead = "Sign in to today's bo
   );
 }
 
-export { AuthLogin };
+export { AuthLogin, authLoginVariants };

@@ -106,7 +106,7 @@
 .proto-wrap {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 12px;
 }
 
 /* Buttons — pills */
@@ -793,7 +793,6 @@
   flex-direction: column;
   gap: 16px;
   background: var(--card);
-  border: 1px solid var(--line);
   border-radius: 16px;
   padding: 12px 10px;
 }
@@ -974,7 +973,7 @@
   align-items: center;
   gap: 7px;
   padding: 6px 12px;
-  border: 1px solid var(--line);
+  border: none;
   border-radius: var(--radius-md);
   background: var(--accent-soft);
   color: var(--ink2);
@@ -985,7 +984,6 @@
 
 .proto-search-trigger:hover {
   color: var(--ink);
-  border-color: color-mix(in srgb, var(--foreground) 22%, transparent);
 }
 
 .proto-search-trigger kbd {

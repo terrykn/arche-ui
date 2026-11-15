@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ArcheLogo } from "./arche-logo";
+import { Button } from "@/components/ui/button";
 
 const LINKS = [
   { href: "/identities", label: "Identities" },
@@ -17,7 +18,7 @@ export async function SiteNav() {
 
   return (
     <header className="border-b-(length:--border-width) border-border">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-3">
         <Link href="/" aria-label="Arche UI home" className="inline-flex items-center">
           <ArcheLogo size={36} />
         </Link>
@@ -30,13 +31,13 @@ export async function SiteNav() {
         </nav>
         <div className="flex items-center gap-2">
           {user ? (
-            <Link href="/dashboard" className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground">
-              Dashboard
-            </Link>
+            <Button variant="default" size="sm" asChild>
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
           ) : (
-            <Link href="/sign-in" className="rounded-md border-(length:--border-width) border-border px-3 py-1.5 text-sm">
-              Sign in
-            </Link>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/sign-in">Sign in</Link>
+            </Button>
           )}
         </div>
       </div>

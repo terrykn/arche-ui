@@ -5,17 +5,81 @@
   "category": "marketing",
   "manifestVersion": 1,
   "block": true,
-  "slots": [{ "name": "caption", "part": "text", "required": false }, { "name": "logos", "part": "text-list", "required": true }],
-  "axes": {},
+  "slots": [
+    {
+      "name": "caption",
+      "part": "text",
+      "required": false
+    },
+    {
+      "name": "logos",
+      "part": "text-list",
+      "required": true
+    }
+  ],
+  "axes": {
+    "layout": {
+      "values": [
+        "row",
+        "grid"
+      ],
+      "default": "row"
+    }
+  },
   "styleSurface": {},
-  "tokensUsed": ["--muted-foreground"],
-  "dependencies": [],
-  "registryDependencies": ["utils", "separator"],
-  "files": [{ "name": "logo-cloud", "source": "src/blocks/logo-cloud.tsx", "target": "components/blocks/logo-cloud.tsx", "type": "registry:block" }],
+  "tokensUsed": [
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "logo-cloud",
+      "source": "src/blocks/logo-cloud.tsx",
+      "target": "components/blocks/logo-cloud.tsx",
+      "type": "registry:block"
+    }
+  ],
   "composition": {
-    "contentSlots": [{ "name": "caption", "kind": "text", "required": false }, { "name": "logos", "kind": "text-list", "required": true }],
-    "childComponents": [{ "name": "separator", "min": 1 }],
+    "contentSlots": [
+      {
+        "name": "caption",
+        "kind": "text",
+        "required": false
+      },
+      {
+        "name": "logos",
+        "kind": "text-list",
+        "required": true
+      }
+    ],
+    "childComponents": [
+      {
+        "name": "separator",
+        "min": 1
+      }
+    ],
     "headingRole": "none"
   },
-  "standards": { "purpose": "Borrow trust from real integrators or customers at a glance.", "useWhen": ["Named customers or integrators agreed to be listed."], "doNotUseWhen": ["There are no real names to show — never invent logos."], "rules": [{ "id": "logo-cloud-no-fabricated-logos", "severity": "error", "check": "Every wordmark names a real customer or integrator; no invented companies." }] }
+  "standards": {
+    "purpose": "Borrow trust from real integrators or customers at a glance.",
+    "useWhen": [
+      "Named customers or integrators agreed to be listed."
+    ],
+    "doNotUseWhen": [
+      "There are no real names to show \u00e2\u20ac\u201d never invent logos."
+    ],
+    "rules": [
+      {
+        "id": "logo-cloud-no-fabricated-logos",
+        "severity": "error",
+        "check": "Every wordmark names a real customer or integrator; no invented companies."
+      }
+    ]
+  }
 }

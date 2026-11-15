@@ -5,17 +5,82 @@
   "category": "marketing",
   "manifestVersion": 1,
   "block": true,
-  "slots": [{ "name": "headline", "part": "text", "required": false }, { "name": "items", "part": "records", "required": true }],
-  "axes": {},
+  "slots": [
+    {
+      "name": "headline",
+      "part": "text",
+      "required": false
+    },
+    {
+      "name": "items",
+      "part": "records",
+      "required": true
+    }
+  ],
+  "axes": {
+    "layout": {
+      "values": [
+        "single",
+        "split"
+      ],
+      "default": "single"
+    }
+  },
   "styleSurface": {},
-  "tokensUsed": ["--foreground"],
-  "dependencies": [],
-  "registryDependencies": ["utils", "accordion"],
-  "files": [{ "name": "faq", "source": "src/blocks/faq.tsx", "target": "components/blocks/faq.tsx", "type": "registry:block" }],
+  "tokensUsed": [
+    "--foreground"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils",
+    "accordion"
+  ],
+  "files": [
+    {
+      "name": "faq",
+      "source": "src/blocks/faq.tsx",
+      "target": "components/blocks/faq.tsx",
+      "type": "registry:block"
+    }
+  ],
   "composition": {
-    "contentSlots": [{ "name": "headline", "kind": "text", "required": false }, { "name": "items", "kind": "records", "required": true }],
-    "childComponents": [{ "name": "accordion", "min": 1, "max": 1 }],
+    "contentSlots": [
+      {
+        "name": "headline",
+        "kind": "text",
+        "required": false
+      },
+      {
+        "name": "items",
+        "kind": "records",
+        "required": true
+      }
+    ],
+    "childComponents": [
+      {
+        "name": "accordion",
+        "min": 1,
+        "max": 1
+      }
+    ],
     "headingRole": "h2"
   },
-  "standards": { "purpose": "Answer the questions every buyer asks before they ask sales.", "useWhen": ["Five to ten real questions recur in support or sales."], "doNotUseWhen": ["Answers need legal review — get it before publishing."], "rules": [{ "id": "faq-one-job", "severity": "info", "check": "One job per section: questions and answers only, no pricing tables smuggled in." }] }
+  "standards": {
+    "purpose": "Answer the questions every buyer asks before they ask sales.",
+    "useWhen": [
+      "Five to ten real questions recur in support or sales."
+    ],
+    "doNotUseWhen": [
+      "Answers need legal review \u00e2\u20ac\u201d get it before publishing."
+    ],
+    "rules": [
+      {
+        "id": "faq-one-job",
+        "severity": "info",
+        "check": "One job per section: questions and answers only, no pricing tables smuggled in."
+      }
+    ]
+  }
 }

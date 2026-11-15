@@ -5,7 +5,7 @@
   },
   "fonts": {
     "sans": "satoshi",
-    "display": "satoshi",
+    "display": "cabinet-grotesk",
     "mono": "jetbrains-mono"
   },
   "icons": "lucide",
@@ -21,6 +21,7 @@
       "ornament": 0.35,
       "retroFuturism": 0.2,
       "formality": 0.5,
+      "chroma": 1,
       "material": "flat",
       "motionFeel": "smooth",
       "texture": "none",
@@ -143,7 +144,7 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+        "$value": "Cabinet Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
@@ -291,7 +292,7 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+        "$value": "Cabinet Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",

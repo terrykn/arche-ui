@@ -13,10 +13,11 @@ import {
   HERO_PROMPT_MAX_LENGTH,
 } from "@/lib/hero-prompt";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { AutosizeTextarea } from "@/components/autosize-textarea";
 
 const FEATURES = [
   {
-    title: "You describe. Arche builds.",
+    title: "You describe. Arche creates.",
     code: '$ npx @arche/cli generate "playful, warm, and bubbly educational app"',
   },
   {
@@ -33,6 +34,7 @@ const FEATURES = [
 function HeroPrompt() {
   const router = useRouter();
   const [value, setValue] = React.useState("");
+  const [expanded, setExpanded] = React.useState(false);
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = value.trim().slice(0, HERO_PROMPT_MAX_LENGTH);
@@ -46,15 +48,22 @@ function HeroPrompt() {
       onSubmit={submit}
       role="search"
       aria-label="Describe your product or brand identity"
-      className="mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-full border-2 border-white/30 bg-white/95 py-1.5 pl-5 pr-1.5 shadow-xl backdrop-blur"
+      className={`mx-auto mt-8 flex max-w-xl items-end gap-2 border-2 border-white/30 bg-white/95 py-1.5 pl-5 pr-1.5 shadow-xl backdrop-blur ${expanded ? "rounded-3xl" : "rounded-full"}`}
     >
-      <input
+      <AutosizeTextarea
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            e.currentTarget.form?.requestSubmit();
+          }
+        }}
+        onExpandChange={setExpanded}
         maxLength={HERO_PROMPT_MAX_LENGTH}
         placeholder="Describe your product or brand identity..."
         aria-label="Describe your product or brand identity"
-        className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        className="min-w-0 flex-1 resize-none bg-transparent py-2 text-sm leading-snug outline-none placeholder:text-muted-foreground"
       />
       <button
         type="submit"
@@ -85,8 +94,8 @@ export default function Home() {
                     inset: 0,
                     width: "100%",
                     height: "100%",
-                    // Same palette, darker: dims the gradient without shifting hues.
-                    filter: "brightness(0.8) saturate(1.05)",
+                    // Dark + vibrant: dims the gradient while pushing saturation.
+                    filter: "brightness(0.82) saturate(1.35)",
                   }}
                 />
               </div>
@@ -104,13 +113,13 @@ export default function Home() {
           </div>
           <section className="grid gap-4 py-10 md:grid-cols-3">
             {FEATURES.map((feature) => (
-              // Flat panel like the hero: hairline edge, hero radius, no elevation.
-              <Card key={feature.title} shadow="none" className="rounded-3xl border border-border/70 bg-card py-8">
+              // Flat panel like the hero: hero radius, no elevation, raspberry edge.
+              <Card key={feature.title} shadow="none" className="rounded-3xl border-2 border-[#FF074E] bg-card py-8">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-extrabold tracking-tight">{feature.title}</CardTitle>
+                  <CardTitle className="text-[28px] font-black leading-tight tracking-tight text-[#FF074E]">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-wrap rounded-2xl bg-muted/70 px-4 py-3 font-mono text-[13px] text-muted-foreground">
+                  <p className="whitespace-pre-wrap rounded-2xl bg-muted/70 px-4 py-3 font-mono text-[13px] font-semibold text-[#FF074E]">
                     {feature.code}
                   </p>
                 </CardContent>

@@ -24,6 +24,7 @@
       "ornament": 0.2,
       "retroFuturism": 0.1,
       "formality": 0.6,
+      "chroma": 1,
       "material": "flat",
       "motionFeel": "smooth",
       "texture": "none",

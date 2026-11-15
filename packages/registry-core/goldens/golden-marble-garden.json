@@ -117,6 +117,7 @@
   },
   "dna": {
     "axes": {
+      "chroma": 1,
       "density": 0.3,
       "energy": 0.4,
       "formality": 0.4,
@@ -131,7 +132,7 @@
       "texture": "marble-vein",
       "warmth": 0.7
     },
-    "compilerVersion": 4,
+    "compilerVersion": 6,
     "palette": {
       "accentHue": 90,
       "neutralHue": 80,
@@ -220,7 +221,64 @@
       }
     ],
     "contractVersion": 1,
-    "name": "golden-garden"
+    "name": "golden-garden",
+    "selfCheck": {
+      "notes": "clean: no findings in fix order",
+      "verdict": "pass"
+    },
+    "taste": {
+      "accentPlacement": [
+        "primary-cta",
+        "focal-word"
+      ],
+      "artDirection": {
+        "id": "soft-spa",
+        "reason": "Soft Spa: warmth in [0.65, 1]; sharpness in [0, 0.4]; motion smooth"
+      },
+      "palette": [
+        {
+          "name": "Paper White",
+          "role": "background",
+          "token": "--background",
+          "value": "oklch(0.985 0.003 76.5)"
+        },
+        {
+          "name": "Paper White",
+          "role": "surface",
+          "token": "--card",
+          "value": "oklch(0.96 0.005 76.5)"
+        },
+        {
+          "name": "Sage Counsel",
+          "role": "primary",
+          "token": "--primary",
+          "value": "oklch(0.785 0.086 150)"
+        },
+        {
+          "name": "Pear Blossom",
+          "role": "accent",
+          "token": "--accent",
+          "value": "oklch(0.925 0.08 90)"
+        },
+        {
+          "name": "Gallery Gray",
+          "role": "neutral",
+          "token": "--muted",
+          "value": "oklch(0.925 0.012 76.5)"
+        },
+        {
+          "name": "Slate Gray",
+          "role": "text",
+          "token": "--foreground",
+          "value": "oklch(0.27 0.011 76.5)"
+        }
+      ],
+      "surprise": {
+        "band": "related",
+        "hueDistance": 60,
+        "score": 33
+      }
+    }
   },
   "tokens": {
     "dark": {

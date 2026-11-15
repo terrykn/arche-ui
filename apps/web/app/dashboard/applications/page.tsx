@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { createApplication, renameApplication } from "./actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default async function ApplicationsPage({
   searchParams,
@@ -27,7 +29,7 @@ export default async function ApplicationsPage({
   const libs = (libraries ?? []) as unknown as Array<{ id: string; name: string; application_id: string | null }>;
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
+    <main className="mx-auto max-w-6xl px-6 py-10">
       <h1 className="font-display text-3xl">Applications</h1>
       {error ? (
         <p role="alert" className="mt-3 text-sm text-destructive">
@@ -35,32 +37,30 @@ export default async function ApplicationsPage({
         </p>
       ) : null}
       <form action={createApplication} className="mt-6 flex gap-2">
-        <input
+        <Input
           name="name"
           required
           maxLength={80}
           placeholder="New application"
           aria-label="Application name"
-          className="flex-1 rounded-md border-(length:--border-width) border-input bg-background px-3 py-2 text-sm"
+          className="flex-1"
         />
-        <button type="submit" className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">
-          Create
-        </button>
+        <Button type="submit">Create</Button>
       </form>
       <ul className="mt-6 flex flex-col gap-4">
         {apps.map((app) => (
           <li key={app.id} className="rounded-lg border-(length:--border-width) border-border bg-card p-4 text-card-foreground">
             <form action={renameApplication} className="flex items-center gap-2">
               <input type="hidden" name="id" value={app.id} />
-              <input
+              <Input
                 name="name"
                 defaultValue={app.name}
                 aria-label={`Rename ${app.name}`}
-                className="flex-1 rounded-md border-(length:--border-width) border-input bg-background px-2 py-1 text-sm"
+                className="flex-1"
               />
-              <button type="submit" className="rounded-md border-(length:--border-width) border-border px-3 py-1 text-sm">
+              <Button type="submit" variant="outline" size="sm">
                 Rename
-              </button>
+              </Button>
             </form>
             <ul className="mt-2 text-sm text-muted-foreground">
               {libs.filter((l) => l.application_id === app.id).map((l) => (

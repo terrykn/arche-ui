@@ -26,6 +26,10 @@ export const dnaAxesSchema = z.object({
   retroFuturism: axis,
   /** casual → formal/institutional */
   formality: axis,
+  /** muted → vivid: how much color, not which color. Scales the chroma
+   * ladder — 0 collapses it to near-zero (gallery-wall neutrals), 1 keeps
+   * the full voice. Vibrancy lives in the solids/accent, never backgrounds. */
+  chroma: axis,
 });
 
 export type DnaAxes = z.infer<typeof dnaAxesSchema>;
@@ -162,6 +166,7 @@ export const modelDeltaOutputSchema = z.object({
         ornament: optionalAxis,
         retroFuturism: optionalAxis,
         formality: optionalAxis,
+        chroma: optionalAxis,
         material: dnaEnumsSchema.shape.material.optional(),
         motionFeel: dnaEnumsSchema.shape.motionFeel.optional(),
         texture: dnaEnumsSchema.shape.texture.optional(),
@@ -187,18 +192,22 @@ export const dnaDeltaSchema = z.object({
       playfulness: optionalAxis,
       sharpness: optionalAxis,
       density: optionalAxis,
-      ornament: optionalAxis,
-      retroFuturism: optionalAxis,
-      formality: optionalAxis,
-      material: dnaEnumsSchema.shape.material.optional(),
-      motionFeel: dnaEnumsSchema.shape.motionFeel.optional(),
-      texture: dnaEnumsSchema.shape.texture.optional(),
-    })
+      ornament: optionalAxis,        retroFuturism: optionalAxis,
+        formality: optionalAxis,
+        chroma: optionalAxis,
+        material: dnaEnumsSchema.shape.material.optional(),
+        motionFeel: dnaEnumsSchema.shape.motionFeel.optional(),
+        texture: dnaEnumsSchema.shape.texture.optional(),
+      })
     .optional(),
   palette: dnaPaletteSchema.partial().optional(),
 });
 
 export type DnaDelta = z.infer<typeof dnaDeltaSchema>;
 
-/** Current compiler version stamped on newly compiled DNA sections. */
-export const DNA_COMPILER_VERSION = 4;
+/**
+ * Current compiler version stamped on newly compiled DNA sections.
+ * Bumped 5 → 6 for the chroma axis (chroma-scaled ladder + solid floor;
+ * goldens regenerated deliberately, fixtures backfilled descriptively).
+ */
+export const DNA_COMPILER_VERSION = 6;

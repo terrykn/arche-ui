@@ -12,6 +12,18 @@
     "./compiler": {
       "types": "./src/compiler.ts",
       "default": "./dist/compiler.js"
+    },
+    "./selector": {
+      "types": "./src/selector.ts",
+      "default": "./dist/selector.js"
+    },
+    "./genres": {
+      "types": "./src/genres.ts",
+      "default": "./dist/genres.js"
+    },
+    "./picker": {
+      "types": "./src/picker.ts",
+      "default": "./dist/picker.js"
     }
   },
   "scripts": {
@@ -24,7 +36,11 @@
     "test:rules": "pnpm build && node --test scripts/test-design-rules.mjs",
     "test:fonts": "pnpm build && node --test scripts/test-fonts.mjs",
     "test:presentation": "pnpm build && node --test scripts/test-presentation.mjs",
-    "test:blocks": "pnpm build && node --test scripts/test-blocks.mjs"
+    "test:blocks": "pnpm build && node --test scripts/test-blocks.mjs",
+    "test:selector": "pnpm build && node --test scripts/test-selector.mjs",
+    "test:picker": "pnpm build && node --test scripts/test-picker.mjs",
+    "test:picker-recompile": "pnpm build && node --test scripts/test-picker-recompile.mjs",
+    "test:verification": "pnpm build && node --test scripts/test-verification.mjs"
   },
   "dependencies": {
     "@arche/foundation": "workspace:*",

@@ -33,7 +33,7 @@ export function ProtoNav() {
   return (
     <>
       <header className="proto-focus-scope sticky top-0 z-40 bg-card/82 backdrop-blur-md">
-        <div className="proto-wrap flex h-[62px] items-center justify-between">
+        <div className="proto-wrap flex h-16 items-center justify-between">
           <Link href="/" aria-label="Arche home" className="inline-flex items-center">
             <ArcheLogo size={36} />
           </Link>
@@ -99,7 +99,8 @@ export function ProtoFooter() {
   const pathname = usePathname();
   return (
     <footer className="proto-focus-scope border-t-(length:--border-width) border-border py-10 text-sm text-muted-foreground">
-      <div className="proto-wrap grid gap-8 md:grid-cols-[1fr_repeat(4,minmax(0,auto))]">
+      <div className="proto-wrap">
+      <div className="grid gap-8 md:grid-cols-[1fr_repeat(4,minmax(0,auto))]">
         <div>
           <p>
             <ArcheLogo size={36} />
@@ -127,6 +128,7 @@ export function ProtoFooter() {
         ))}
       </div>
       <Separator className="mt-8" />
+      </div>
     </footer>
   );
 }

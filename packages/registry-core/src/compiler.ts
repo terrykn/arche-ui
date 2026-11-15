@@ -29,6 +29,15 @@ import {
   DISPLAY_CAP_ABSOLUTE_PX,
   DISPLAY_CAP_BY_PROFILE,
 } from "@arche/foundation/typography";
+import {
+  ACCENT_PLACEMENT,
+  nameColor,
+  NAMED_ROLES,
+  runTasteSelfCheck,
+  scoreSurprise,
+  selectArtDirection,
+  type NamedColor,
+} from "@arche/foundation/taste";
 import { assertGeneratedCompliant, CLOSED_EASINGS } from "./design-rules.js";
 import type { ArcheIdentity } from "./index.js";
 import { getManifests, type Manifest } from "./manifests.js";
@@ -122,16 +131,27 @@ interface Voice {
   neutralChroma: number;
   /** neutral hue blended toward warm (70°) by warmth. */
   neutralHue: number;
+  /** chroma-axis target factor (0.02 at chroma 0 … 1 at chroma 1). The
+   * solid-band floor scales with this — intent, not accident, sets it. */
+  target: number;
 }
 
 function voiceOf(axes: DnaObject, palette: DnaPalette): Voice {
-  const chroma = Math.min(
-    0.28,
-    Math.max(0.02, 0.03 + axes.energy * 0.09 + axes.playfulness * 0.07 - axes.formality * 0.05),
-  );
+  // Pre-chroma payloads (stored drafts, old fixtures) carry no axis: they
+  // compiled under the full ladder, so they keep it.
+  const chromaAxis = typeof axes.chroma === "number" ? axes.chroma : 1;
+  // Chroma axis: how much color, not which color. 0 collapses the ladder to
+  // near-zero (quiet ground, loud signal); 1 keeps the full voice.
+  // Backgrounds are untouched — they already compile from neutralChroma.
+  const target = 0.02 + 0.98 * Math.min(1, Math.max(0, chromaAxis));
+  const chroma =
+    Math.min(
+      0.28,
+      Math.max(0.02, 0.03 + axes.energy * 0.09 + axes.playfulness * 0.07 - axes.formality * 0.05),
+    ) * target;
   const neutralChroma = 0.004 + axes.warmth * 0.012;
   const neutralHue = palette.neutralHue * (1 - axes.warmth * 0.5) + 70 * (axes.warmth * 0.5);
-  return { chroma, neutralChroma, neutralHue };
+  return { chroma, neutralChroma, neutralHue, target };
 }
 
 // ---------------------------------------------------------------------------
@@ -649,7 +669,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   // clamped into the envelope with hue/lightness preserved where the rule
   // allows it; every repair is recorded with its design-rule id.
   const adjustments: Adjustment[] = [];
-  repairDesign(tokens, profile, adjustments);
+  repairDesign(tokens, profile, adjustments, voice.target);
 
   // AA pass per mode, pairs in contract order (deterministic).
   for (const mode of ["light", "dark"] as const) {
@@ -665,6 +685,35 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
     palette: { ...palette },
     profile,
     compilerVersion: COMPILER_VERSION,
+  };
+
+  // Taste system (Brief #7 D1): descriptive only — direction, surprise,
+  // evocative names, and the fix-ordered self-check. Nothing here moves a
+  // token, so the AA gate below still rules on the repaired values.
+  const direction = selectArtDirection(axes, profile);
+  const surprise = scoreSurprise(palette, profile);
+  const tastePalette: NamedColor[] = NAMED_ROLES.map(({ role, token }) => {
+    const value = light[token]?.$value;
+    const str = typeof value === "string" ? value : "unknown";
+    return { name: nameColor(str), role, token, value: str };
+  });
+  (compiled.meta as Record<string, unknown>).taste = {
+    artDirection: direction,
+    surprise,
+    accentPlacement: [...ACCENT_PLACEMENT],
+    palette: tastePalette,
+  };
+  const tasteCheck = runTasteSelfCheck({
+    tokens,
+    axes,
+    profile,
+    primaryHue: palette.primaryHue,
+    accentHue: palette.accentHue,
+    typeScale: compiled.typeScale,
+  });
+  (compiled.meta as Record<string, unknown>).selfCheck = {
+    verdict: tasteCheck.verdict,
+    notes: tasteCheck.notes,
   };
 
   // Final gate: AA re-verified (repair must not break it) and no enforce-tier
@@ -750,6 +799,7 @@ function repairDesign(
   tokens: Record<string, TokenRecord>,
   profile: GenerationProfile,
   adjustments: Adjustment[],
+  chromaTarget: number,
 ): void {
   const bgCap = (mode: "light" | "dark"): number =>
     Math.round(
@@ -793,11 +843,15 @@ function repairDesign(
         repairTokenChroma(tokens, mode, token, 0.15, "color-border-chroma-cap", adjustments);
       }
     }
-    // color-solid-chroma-band (floor and ceiling both clamp)
+    // color-solid-chroma-band (chroma-scaled floor + profile-scaled ceiling:
+    // ceilings bind runaway saturation; the floor yields to low-chroma intent)
+    // Rounded to 3 decimals: the token quantization below means a floor
+    // must be exactly representable or repair can never satisfy it.
+    const solidFloor = Math.round(SOLID_FLOOR * chromaTarget * 1000) / 1000;
     for (const token of ["--primary", "--accent", "--destructive"]) {
       const c = chromaOf(token);
-      if (c !== null && c < SOLID_FLOOR) {
-        repairTokenChroma(tokens, mode, token, SOLID_FLOOR, "color-solid-chroma-band", adjustments);
+      if (c !== null && c < solidFloor) {
+        repairTokenChroma(tokens, mode, token, solidFloor, "color-solid-chroma-band", adjustments);
       } else if (c !== null && c > solidCeiling) {
         repairTokenChroma(tokens, mode, token, solidCeiling, "color-solid-chroma-band", adjustments);
       }

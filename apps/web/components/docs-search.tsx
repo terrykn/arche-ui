@@ -150,10 +150,10 @@ export function DocsSearch() {
         className="proto-search-trigger"
         onClick={openSearch}
         aria-haspopup="dialog"
-        aria-label="Search docs"
+        aria-label="Search"
       >
         <Search size={15} aria-hidden="true" />
-        <span>Search docs</span>
+        <span>Search</span>
         <kbd aria-hidden="true">⌘K</kbd>
       </button>
       {open && mounted
@@ -168,7 +168,7 @@ export function DocsSearch() {
                 className="proto-search-panel"
                 role="dialog"
                 aria-modal="true"
-                aria-label="Search docs"
+                aria-label="Search"
               >
                 <div className="proto-search-field">
                   <Search size={18} aria-hidden="true" />

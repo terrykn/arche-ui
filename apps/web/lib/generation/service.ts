@@ -1,15 +1,29 @@
 import { compileValidIdentity } from "@arche/registry-core/compiler";
 import {
+  applyPickerDelta,
+  derivePaletteOptions,
   designRulesVersion,
+  EXAMPLE_RECORDS,
   validateIdentity,
+  WORD_CHIPS,
   type ArcheIdentity,
   type DnaDelta,
+  type DnaObject,
+  type DnaPalette,
+  type GenerationProfile,
+  type PickerSelections,
 } from "@arche/registry-core";
+import {
+  dnaObjectSchema,
+  dnaPaletteSchema,
+  generationProfileSchema,
+} from "@arche/foundation/dna";
 import { createServiceClient } from "@/lib/supabase/service";
 import { fixturesDir, slugify } from "@/lib/starter";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { generateDna, generateDnaDelta } from "./provider";
+import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
 /**
  * Generation service (Brief #6 §6). ONE implementation behind the dashboard
@@ -81,24 +95,29 @@ interface LogRow {
  * same shape for prompt edits ({plan, selfCheck, delta, profile}).
  * No table migration: the existing jsonb columns carry the sections.
  */
-async function logAttempt(row: LogRow): Promise<void> {
+async function logAttempt(row: LogRow): Promise<string | null> {
   const service = createServiceClient();
-  await service.from("generation_logs").insert({
-    user_id: row.user_id,
-    library_id: row.library_id ?? null,
-    kind: row.kind,
-    prompt: row.prompt ?? null,
-    source_ref: row.source_ref ?? null,
-    dna: (row.dna ?? null) as never,
-    dna_delta: (row.dna_delta ?? null) as never,
-    payload_diff: (row.payload_diff ?? null) as never,
-    adjustments: (row.adjustments ?? null) as never,
-    model: row.model,
-    tokens_in: row.tokens_in ?? null,
-    tokens_out: row.tokens_out ?? null,
-    status: row.status,
-    error: row.error ?? null,
-  });
+  const { data } = await service
+    .from("generation_logs")
+    .insert({
+      user_id: row.user_id,
+      library_id: row.library_id ?? null,
+      kind: row.kind,
+      prompt: row.prompt ?? null,
+      source_ref: row.source_ref ?? null,
+      dna: (row.dna ?? null) as never,
+      dna_delta: (row.dna_delta ?? null) as never,
+      payload_diff: (row.payload_diff ?? null) as never,
+      adjustments: (row.adjustments ?? null) as never,
+      model: row.model,
+      tokens_in: row.tokens_in ?? null,
+      tokens_out: row.tokens_out ?? null,
+      status: row.status,
+      error: row.error ?? null,
+    })
+    .select("id")
+    .single();
+  return (data as unknown as { id: string } | null)?.id ?? null;
 }
 
 /** Recursive payload diff, capped (inspectable in generation_logs, Rule 6 proof). */
@@ -176,7 +195,7 @@ export async function generateFromPhrase(
       compiled = await compileValidIdentity(
         {
           name: identityName,
-          source: { type: "phrase", promptText: prompt.trim().slice(0, 120) },
+          source: { type: "phrase", promptText: prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH) },
           axes: call.output.axes,
           palette: call.output.palette,
           profile: call.profile,
@@ -199,7 +218,7 @@ export async function generateFromPhrase(
       compiled = await compileValidIdentity(
         {
           name: identityName,
-          source: { type: "phrase", promptText: prompt.trim().slice(0, 120) },
+          source: { type: "phrase", promptText: prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH) },
           axes: final.output.axes,
           palette: final.output.palette,
           profile: final.profile,
@@ -227,7 +246,7 @@ export async function generateFromPhrase(
       user_id: userId,
       library_id: libraryId,
       kind: "generate",
-      prompt: prompt.trim().slice(0, 120),
+      prompt: prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH),
       dna: {
         plan: call.plan,
         selfCheck: call.selfCheck,
@@ -256,11 +275,214 @@ export async function generateFromPhrase(
     await logAttempt({
       user_id: userId,
       kind: "generate",
-      prompt: prompt.trim().slice(0, 120),
+      prompt: prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH),
       model: process.env.LLM_MODEL ?? "unconfigured",
       status: "failed",
       error: message,
     });
+    throw err instanceof Error ? err : new Error(message);
+  }
+}
+
+/**
+ * Modal creation, phase 1: run the ONE model call for a prompt and return
+ * its DNA without storing any library. The modal holds this in memory
+ * across its 3 steps; closing the modal drops it — nothing was created.
+ * The attempt is logged (failures included, Rule 7) with no library link;
+ * phase 2 links the row to the created library.
+ */
+export interface GenerationPreview {
+  logId: string | null;
+  axes: DnaObject;
+  palette: DnaPalette;
+  profile: GenerationProfile;
+}
+
+export async function previewGeneration(userId: string, prompt: string): Promise<GenerationPreview> {
+  await checkCap(userId);
+  const trimmed = prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH);
+  if (!trimmed) {
+    throw new Error("prompt must not be empty");
+  }
+  const rulesVersion = designRulesVersion();
+  try {
+    const call = await generateDna(trimmed);
+    const logId = await logAttempt({
+      user_id: userId,
+      library_id: null,
+      kind: "generate",
+      prompt: trimmed,
+      dna: {
+        plan: call.plan,
+        selfCheck: call.selfCheck,
+        axes: call.output.axes,
+        palette: call.output.palette,
+        profile: call.profile,
+        rulesVersion,
+      },
+      model: call.model,
+      tokens_in: call.tokensIn,
+      tokens_out: call.tokensOut,
+      status: "ok",
+    });
+    return { logId, axes: call.output.axes, palette: call.output.palette, profile: call.profile };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    await logAttempt({
+      user_id: userId,
+      kind: "generate",
+      prompt: trimmed,
+      model: process.env.LLM_MODEL ?? "unconfigured",
+      status: "failed",
+      error: message,
+    });
+    throw err instanceof Error ? err : new Error(message);
+  }
+}
+
+export interface FinishSelections {
+  paletteId: string;
+  exampleId?: string;
+  chipIds: string[];
+}
+
+/**
+ * Modal creation, phase 2: fold the modal's 3 step selections into the
+ * preview DNA and compile deterministically (zero model calls — the picker
+ * only replays sections of the single preview response), then insert the
+ * library ONCE. Any failure before the insert stores nothing (FR-GEN-6);
+ * closing the modal never reaches this function at all. The preview DNA
+ * round-trips through the client, so it is re-validated here — and the
+ * compile gate stays absolute regardless.
+ */
+export async function completeGeneration(
+  userId: string,
+  preview: { logId: string | null; axes: DnaObject; palette: DnaPalette; profile: GenerationProfile },
+  prompt: string,
+  name: string | undefined,
+  selections: FinishSelections,
+): Promise<GenerationOutcome & { profile: string }> {
+  const axesParsed = dnaObjectSchema.safeParse(preview.axes);
+  const paletteParsed = dnaPaletteSchema.safeParse(preview.palette);
+  const profileParsed = generationProfileSchema.safeParse(preview.profile);
+  if (!axesParsed.success || !paletteParsed.success || !profileParsed.success) {
+    throw new Error("generation preview expired or was modified — start over");
+  }
+  const trimmedPrompt = prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH);
+  if (!trimmedPrompt) {
+    throw new Error("prompt must not be empty");
+  }
+  const axes = axesParsed.data;
+  const palette = paletteParsed.data;
+  const profile = profileParsed.data;
+  const knownChips = new Set(WORD_CHIPS.map((chip) => chip.id));
+  const chipIds = [...new Set(selections.chipIds)].filter((id) => knownChips.has(id));
+  const paletteId = selections.paletteId || "as-dreamed";
+  const base = auroraBase();
+  const rulesVersion = designRulesVersion();
+  const identityName = (name?.trim() || titleFromPrompt(trimmedPrompt, "Untouched Idea")).slice(0, 80);
+  const fold = (dnaAxes: DnaObject, dnaPalette: DnaPalette): { axes: DnaObject; palette: DnaPalette } => {
+    const options = derivePaletteOptions(dnaPalette, profile);
+    let paletteOverride: DnaPalette | undefined;
+    if (selections.exampleId) {
+      const record = EXAMPLE_RECORDS.find((entry) => entry.id === selections.exampleId);
+      if (!record) {
+        throw new Error(`unknown example '${selections.exampleId}'`);
+      }
+      paletteOverride = { ...record.palette };
+    }
+    const applied = applyPickerDelta(dnaAxes, dnaPalette, { chipIds, paletteId }, options);
+    return { axes: { ...dnaAxes, ...applied.axes }, palette: paletteOverride ?? applied.anchors };
+  };
+  try {
+    let folded = fold(axes, palette);
+    let compiled: ArcheIdentity;
+    try {
+      compiled = await compileValidIdentity(
+        {
+          name: identityName,
+          source: { type: "phrase", promptText: trimmedPrompt },
+          axes: folded.axes,
+          palette: folded.palette,
+          profile,
+          base,
+        },
+        validateIdentity,
+      );
+    } catch (err) {
+      // Same repair contract as the direct text door: one follow-up model
+      // call carrying the named rule findings, selections re-applied, then
+      // recompile once. Anything else throws to the failed path below.
+      if (!(err instanceof Error) || !err.message.startsWith("generated payload violates design rules")) {
+        throw err;
+      }
+      const retry = await generateDna(trimmedPrompt, err.message);
+      folded = fold(retry.output.axes, retry.output.palette);
+      compiled = await compileValidIdentity(
+        {
+          name: identityName,
+          source: { type: "phrase", promptText: trimmedPrompt },
+          axes: folded.axes,
+          palette: folded.palette,
+          profile: retry.profile,
+          base,
+        },
+        validateIdentity,
+      );
+    }
+    (compiled.meta as Record<string, unknown>).picker = {
+      step: "done",
+      paletteId,
+      exampleId: selections.exampleId ?? null,
+      chipIds,
+    };
+    const service = createServiceClient();
+    const slug = await uniqueSlug(service, userId, identityName);
+    const { data, error } = await service
+      .from("libraries")
+      .insert({ owner: userId, name: identityName, slug, visibility: "private", payload: compiled as never })
+      .select("id")
+      .single();
+    if (error || !data) {
+      throw new Error(`draft store failed: ${error?.message ?? "unknown"}`);
+    }
+    const libraryId = (data as unknown as { id: string }).id;
+    if (preview.logId) {
+      // Link the preview's log row to the created library (best-effort —
+      // the library insert above is the source of truth).
+      await service
+        .from("generation_logs")
+        .update({
+          library_id: libraryId,
+          dna: {
+            plan: null,
+            selfCheck: null,
+            axes: folded.axes,
+            palette: folded.palette,
+            profile,
+            rulesVersion,
+          },
+          payload_diff: diffPayloads(base, compiled),
+          adjustments: (compiled.meta as Record<string, unknown>).adjustments ?? [],
+        })
+        .eq("id", preview.logId);
+    }
+    return {
+      libraryId,
+      slug,
+      name: identityName,
+      profile,
+      adjustments: ((compiled.meta as Record<string, unknown>).adjustments as unknown[]).length,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (preview.logId) {
+      const service = createServiceClient();
+      await service
+        .from("generation_logs")
+        .update({ status: "failed", error: message })
+        .eq("id", preview.logId);
+    }
     throw err instanceof Error ? err : new Error(message);
   }
 }
@@ -352,4 +574,117 @@ export async function applyPromptEdit(
     });
     throw err instanceof Error ? err : new Error(message);
   }
+}
+
+/** Picker progress, stored on the draft (`payload.meta.picker`) so the
+ * staged flow survives navigation — resume lands on the stored step. */
+export interface PickerProgress {
+  step: "palettes" | "examples" | "words" | "done";
+  paletteId?: string;
+  exampleId?: string;
+  chipIds?: string[];
+}
+
+export type PickerStep = "palettes" | "examples" | "words";
+
+const PICKER_NEXT: Record<PickerStep, PickerProgress["step"]> = {
+  palettes: "examples",
+  examples: "words",
+  words: "done",
+};
+
+/**
+ * Staged picker recompile (Brief #7 D4): fold one step's selection into the
+ * draft's DNA and recompile deterministically. Zero model calls — the picker
+ * only replays sections of the single generation response (palettes derived
+ * from its anchors, words mapped to its axes, examples as anchor records).
+ * compileValidIdentity re-runs the AA gate, so a step can never ship a
+ * violating draft. Nothing is logged to generation_logs: there is no model
+ * call to meter (the kind check only admits generate/edit).
+ */
+export async function recompileWithPicker(
+  current: ArcheIdentity,
+  selections: PickerSelections,
+  paletteOverride?: DnaPalette,
+): Promise<{ compiled: ArcheIdentity; unknownChips: string[] }> {
+  const dna = current.dna;
+  if (!dna) {
+    throw new Error("picker needs stored DNA — this identity was made by hand; generate a new one from a phrase instead");
+  }
+  const profile = dna.profile ?? "standard";
+  const applied = applyPickerDelta(
+    dna.axes,
+    dna.palette,
+    selections,
+    derivePaletteOptions(dna.palette, profile),
+  );
+  const compiled = await compileValidIdentity(
+    {
+      name: current.meta.name,
+      source: dna.source,
+      axes: { ...dna.axes, ...applied.axes },
+      palette: paletteOverride ?? applied.anchors,
+      profile,
+      base: current,
+    },
+    validateIdentity,
+  );
+  return { compiled, unknownChips: applied.unknownChips };
+}
+
+/**
+ * Apply one picker step to a draft and persist it (step transitions are the
+ * autosave). Returns the step the UI should show next.
+ */
+export async function applyPickerStep(
+  userId: string,
+  libraryId: string,
+  step: PickerStep,
+  value: string | string[],
+): Promise<{ nextStep: PickerProgress["step"]; unknownChips: string[] }> {
+  const service = createServiceClient();
+  const { data: library } = await service
+    .from("libraries")
+    .select("id,payload")
+    .eq("id", libraryId)
+    .eq("owner", userId)
+    .maybeSingle();
+  if (!library) {
+    throw new Error("library not found");
+  }
+  const current = (library as unknown as { payload: ArcheIdentity }).payload;
+  const stored = ((current.meta as Record<string, unknown>).picker ?? {}) as Partial<PickerProgress>;
+  const chipIds = Array.isArray(stored.chipIds) ? stored.chipIds.filter((id): id is string => typeof id === "string") : [];
+  let selections: PickerSelections;
+  let paletteOverride: DnaPalette | undefined;
+  let progress: PickerProgress;
+  if (step === "palettes") {
+    const paletteId = String(value);
+    selections = { chipIds, paletteId };
+    progress = { step: PICKER_NEXT[step], paletteId, exampleId: stored.exampleId, chipIds };
+  } else if (step === "examples") {
+    const exampleId = String(value);
+    const record = EXAMPLE_RECORDS.find((entry) => entry.id === exampleId);
+    if (!record) {
+      throw new Error(`unknown example '${exampleId}'`);
+    }
+    paletteOverride = { ...record.palette };
+    selections = { chipIds, paletteId: stored.paletteId ?? "as-dreamed" };
+    progress = { step: PICKER_NEXT[step], paletteId: stored.paletteId, exampleId, chipIds };
+  } else {
+    const known = new Set(WORD_CHIPS.map((chip) => chip.id));
+    const picked = (Array.isArray(value) ? value : [value]).map(String).filter((id) => known.has(id));
+    selections = { chipIds: picked, paletteId: stored.paletteId ?? "as-dreamed" };
+    progress = { step: PICKER_NEXT[step], paletteId: stored.paletteId, exampleId: stored.exampleId, chipIds: picked };
+  }
+  const { compiled, unknownChips } = await recompileWithPicker(current, selections, paletteOverride);
+  (compiled.meta as Record<string, unknown>).picker = progress;
+  const { error: saveError } = await service
+    .from("libraries")
+    .update({ payload: compiled as never, updated_at: new Date().toISOString() })
+    .eq("id", libraryId);
+  if (saveError) {
+    throw new Error(`draft save failed: ${saveError.message}`);
+  }
+  return { nextStep: progress.step, unknownChips };
 }

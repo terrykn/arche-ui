@@ -117,6 +117,7 @@
   },
   "dna": {
     "axes": {
+      "chroma": 1,
       "density": 0.6,
       "energy": 0.95,
       "formality": 0.1,
@@ -131,7 +132,7 @@
       "texture": "scanlines",
       "warmth": 0.55
     },
-    "compilerVersion": 4,
+    "compilerVersion": 6,
     "palette": {
       "accentHue": 100,
       "neutralHue": 305,
@@ -190,7 +191,64 @@
       }
     ],
     "contractVersion": 1,
-    "name": "golden-arcade"
+    "name": "golden-arcade",
+    "selfCheck": {
+      "notes": "clean: no findings in fix order",
+      "verdict": "pass"
+    },
+    "taste": {
+      "accentPlacement": [
+        "primary-cta",
+        "focal-word"
+      ],
+      "artDirection": {
+        "id": "typographic-maximalism",
+        "reason": "Maximal Type: energy in [0.7, 1]; sharpness in [0.6, 1]"
+      },
+      "palette": [
+        {
+          "name": "Paper White",
+          "role": "background",
+          "token": "--background",
+          "value": "oklch(0.985 0.002 240.375)"
+        },
+        {
+          "name": "Paper White",
+          "role": "surface",
+          "token": "--card",
+          "value": "oklch(0.96 0.005 240.375)"
+        },
+        {
+          "name": "Orchid Flash",
+          "role": "primary",
+          "token": "--primary",
+          "value": "oklch(0.785 0.169 300)"
+        },
+        {
+          "name": "Pear Blossom",
+          "role": "accent",
+          "token": "--accent",
+          "value": "oklch(0.925 0.087 100)"
+        },
+        {
+          "name": "Gallery Gray",
+          "role": "neutral",
+          "token": "--muted",
+          "value": "oklch(0.925 0.01 240.375)"
+        },
+        {
+          "name": "Slate Gray",
+          "role": "text",
+          "token": "--foreground",
+          "value": "oklch(0.27 0.009 240.375)"
+        }
+      ],
+      "surprise": {
+        "band": "surprising",
+        "hueDistance": 160,
+        "score": 89
+      }
+    }
   },
   "tokens": {
     "dark": {

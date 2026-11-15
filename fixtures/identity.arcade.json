@@ -21,6 +21,7 @@
       "ornament": 0.6,
       "retroFuturism": 1.0,
       "formality": 0.1,
+      "chroma": 1,
       "material": "pixel",
       "motionFeel": "bouncy",
       "texture": "scanlines",

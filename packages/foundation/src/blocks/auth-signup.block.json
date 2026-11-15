@@ -5,17 +5,104 @@
   "category": "application",
   "manifestVersion": 1,
   "block": true,
-  "slots": [{ "name": "headline", "part": "text", "required": false }],
-  "axes": {},
+  "slots": [
+    {
+      "name": "headline",
+      "part": "text",
+      "required": false
+    }
+  ],
+  "axes": {
+    "layout": {
+      "values": [
+        "centered",
+        "split"
+      ],
+      "default": "centered"
+    }
+  },
   "styleSurface": {},
-  "tokensUsed": ["--destructive", "--muted-foreground"],
-  "dependencies": [],
-  "registryDependencies": ["utils", "card", "label", "input", "password-toggle-field", "checkbox", "button"],
-  "files": [{ "name": "auth-signup", "source": "src/blocks/auth-signup.tsx", "target": "components/blocks/auth-signup.tsx", "type": "registry:block" }],
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--destructive",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils",
+    "card",
+    "label",
+    "input",
+    "password-toggle-field",
+    "checkbox",
+    "button"
+  ],
+  "files": [
+    {
+      "name": "auth-signup",
+      "source": "src/blocks/auth-signup.tsx",
+      "target": "components/blocks/auth-signup.tsx",
+      "type": "registry:block"
+    }
+  ],
   "composition": {
-    "contentSlots": [{ "name": "headline", "kind": "text", "required": false }],
-    "childComponents": [{ "name": "card", "min": 1, "max": 1 }, { "name": "label", "min": 2 }, { "name": "input", "min": 2 }, { "name": "password-toggle-field", "min": 1, "max": 1 }, { "name": "checkbox", "min": 1, "max": 1 }, { "name": "button", "min": 1, "max": 1 }],
+    "contentSlots": [
+      {
+        "name": "headline",
+        "kind": "text",
+        "required": false
+      }
+    ],
+    "childComponents": [
+      {
+        "name": "card",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "name": "label",
+        "min": 2
+      },
+      {
+        "name": "input",
+        "min": 2
+      },
+      {
+        "name": "password-toggle-field",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "name": "checkbox",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "name": "button",
+        "min": 1,
+        "max": 1
+      }
+    ],
     "headingRole": "h1"
   },
-  "standards": { "purpose": "Create accounts without surprises: terms before the button, errors inline.", "useWhen": ["An app offers email signup."], "doNotUseWhen": ["Terms acceptance is optional — it isn't; keep the checkbox."], "rules": [{ "id": "auth-signup-terms", "severity": "error", "check": "Terms acceptance is a required checkbox with a real label; the create action stays disabled until it is checked." }] }
+  "standards": {
+    "purpose": "Create accounts without surprises: terms before the button, errors inline.",
+    "useWhen": [
+      "An app offers email signup."
+    ],
+    "doNotUseWhen": [
+      "Terms acceptance is optional \u00e2\u20ac\u201d it isn't; keep the checkbox."
+    ],
+    "rules": [
+      {
+        "id": "auth-signup-terms",
+        "severity": "error",
+        "check": "Terms acceptance is a required checkbox with a real label; the create action stays disabled until it is checked."
+      }
+    ]
+  }
 }

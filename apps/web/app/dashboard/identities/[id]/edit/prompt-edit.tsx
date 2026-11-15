@@ -3,6 +3,8 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { applyPromptEditAction } from "../../actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 /**
  * Prompt edit (§7): natural-language nudge applied as a DNA delta, then
@@ -36,30 +38,21 @@ export function PromptEdit({ libraryId }: { libraryId: string }) {
   };
 
   return (
-    <section className="rounded-lg border-(length:--border-width) border-border p-4">
-      <h2 className="font-medium">Prompt edit</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Describe the change (“warmer, less playful”) — only the implicated DNA
-        fields recompile. Unrelated fields stay byte-identical.
-      </p>
-      <form onSubmit={submit} className="mt-3 flex flex-col gap-2">
-        <label className="flex flex-col gap-1 text-sm">
+    <div>
+      <h2 className="text-sm font-medium">Prompt edit</h2>
+      <form onSubmit={submit} className="mt-2 flex gap-2">
+        <label className="min-w-0 flex-1 text-sm">
           <span className="sr-only">Edit prompt</span>
-          <input
+          <Input
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             maxLength={280}
-            placeholder="make it calmer and more formal"
-            className="rounded-md border-(length:--border-width) border-input bg-background px-3 py-2"
+            placeholder="Describe your changes"
           />
         </label>
-        <button
-          type="submit"
-          disabled={busy || !prompt.trim()}
-          className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
-        >
+        <Button type="submit" disabled={busy || !prompt.trim()} className="shrink-0">
           {busy ? "Recompiling…" : "Apply edit"}
-        </button>
+        </Button>
       </form>
       {result?.ok ? (
         <p role="status" className="mt-2 text-sm text-muted-foreground">
@@ -72,6 +65,6 @@ export function PromptEdit({ libraryId }: { libraryId: string }) {
           {result.message}
         </p>
       ) : null}
-    </section>
+    </div>
   );
 }

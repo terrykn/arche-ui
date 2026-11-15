@@ -15,9 +15,11 @@ export const metadata: Metadata = {
 };
 
 // Always light mode: no theme cookie, no bootstrap, no toggles.
-// Satoshi (display + body) loads only through Fontshare's official CSS API.
+// Cabinet Grotesk (display) + Satoshi (body) load only through Fontshare's
+// official CSS API.
 const FONTSHARE_STYLESHEETS = [
   "https://api.fontshare.com/v2/css?f[]=satoshi@1,2&display=swap",
+  "https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@1&display=swap",
 ];
 
 export default function RootLayout({

@@ -21,13 +21,27 @@ import { ActivityFeed } from "@/components/blocks/activity-feed";
 import { EmptyState } from "@/components/blocks/empty-state";
 import { AuthLogin } from "@/components/blocks/auth-login";
 import { AuthSignup } from "@/components/blocks/auth-signup";
+import type { HeroProps } from "@/components/blocks/hero";
+import type { FeaturesProps } from "@/components/blocks/features";
+import type { TestimonialsProps } from "@/components/blocks/testimonials";
+import type { PricingProps } from "@/components/blocks/pricing";
+import type { CtaProps } from "@/components/blocks/cta";
+import type { AppShellProps } from "@/components/blocks/app-shell";
+import type { StatsRowProps } from "@/components/blocks/stats-row";
+import type { LogoCloudProps } from "@/components/blocks/logo-cloud";
+import type { StatsBandProps } from "@/components/blocks/stats-band";
+import type { FaqProps } from "@/components/blocks/faq";
+import type { NewsletterSignupProps } from "@/components/blocks/newsletter-signup";
+import type { SiteFooterProps } from "@/components/blocks/site-footer";
+import type { AuthLoginProps } from "@/components/blocks/auth-login";
+import type { AuthSignupProps } from "@/components/blocks/auth-signup";
 
 /**
  * Live block preview (Parts 6-7): every v1 block rendered with its default
  * Acme slot fill under the site's active identity. Blocks that require slot
  * props receive representative content here — never inside the templates.
  */
-export function BlockPreview({ name }: { name: string }) {
+export function BlockPreview({ name, axes }: { name: string; axes?: Record<string, string> }) {
   switch (name) {
     case "site-header":
       return <SiteHeader />;
@@ -40,26 +54,27 @@ export function BlockPreview({ name }: { name: string }) {
             { label: "Start packing", href: "#get-started" },
             { label: "See pricing", href: "#pricing", variant: "secondary" },
           ]}
+          {...(axes as Pick<HeroProps, "alignment" | "mediaLayout"> | undefined)}
         />
       );
     case "logo-cloud":
-      return <LogoCloud />;
+      return <LogoCloud {...(axes as Pick<LogoCloudProps, "layout"> | undefined)} />;
     case "features":
-      return <Features />;
+      return <Features {...(axes as Pick<FeaturesProps, "layout"> | undefined)} />;
     case "stats-band":
-      return <StatsBand />;
+      return <StatsBand {...(axes as Pick<StatsBandProps, "columns"> | undefined)} />;
     case "testimonials":
-      return <Testimonials />;
+      return <Testimonials {...(axes as Pick<TestimonialsProps, "layout"> | undefined)} />;
     case "pricing":
-      return <Pricing />;
+      return <Pricing {...(axes as Pick<PricingProps, "tierCount"> | undefined)} />;
     case "faq":
-      return <Faq />;
+      return <Faq {...(axes as Pick<FaqProps, "layout"> | undefined)} />;
     case "cta":
-      return <Cta headline="Ready when line 2 is" />;
+      return <Cta headline="Ready when line 2 is" {...(axes as Pick<CtaProps, "alignment"> | undefined)} />;
     case "newsletter-signup":
-      return <NewsletterSignup />;
+      return <NewsletterSignup {...(axes as Pick<NewsletterSignupProps, "layout"> | undefined)} />;
     case "site-footer":
-      return <SiteFooter />;
+      return <SiteFooter {...(axes as Pick<SiteFooterProps, "layout"> | undefined)} />;
     case "app-shell":
       return (
         <AppShell
@@ -70,12 +85,13 @@ export function BlockPreview({ name }: { name: string }) {
               <StatsRow />
             </div>
           }
+          {...(axes as Pick<AppShellProps, "sidebar"> | undefined)}
         />
       );
     case "dashboard-home":
       return <DashboardHome />;
     case "stats-row":
-      return <StatsRow />;
+      return <StatsRow {...(axes as Pick<StatsRowProps, "columns"> | undefined)} />;
     case "data-table-page":
       return <DataTablePage />;
     case "settings-page":
@@ -85,9 +101,9 @@ export function BlockPreview({ name }: { name: string }) {
     case "empty-state":
       return <EmptyState title="No orders yet" body="Create the first order to get line 2 moving." actionLabel="New order" />;
     case "auth-login":
-      return <AuthLogin />;
+      return <AuthLogin {...(axes as Pick<AuthLoginProps, "layout"> | undefined)} />;
     case "auth-signup":
-      return <AuthSignup />;
+      return <AuthSignup {...(axes as Pick<AuthSignupProps, "layout"> | undefined)} />;
     default:
       return (
         <p className="text-sm text-muted-foreground">

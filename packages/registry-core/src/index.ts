@@ -31,7 +31,50 @@ export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
 export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, Plan, SelfCheck } from "@arche/foundation/dna";
 export { dnaSectionSchema, dnaDeltaSchema, modelOutputSchema, modelDeltaOutputSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
 export { checkDesignRules, assertGeneratedCompliant, CLOSED_EASINGS, type DesignRuleFinding } from "./design-rules.js";
-export { buildPresentation, type PresentationBlock, type PresentationMotion, type PresentationContext } from "./presentation.js";
+export { buildPresentation, type PresentationBlock, type PresentationMotion, type PresentationContext, type TasteSummary } from "./presentation.js";
+export { GENRE_BLUEPRINTS, getGenreBlueprints, type GenreBlueprint, type GenreId } from "./genres.js";
+export {
+  applyPickerDelta,
+  derivePaletteOptions,
+  EXAMPLE_RECORDS,
+  WORD_CHIPS,
+  type DnaAxisKey,
+  type ExampleRecord,
+  type PaletteOption,
+  type PickerApplied,
+  type PickerSelections,
+  type WordChip,
+} from "./picker.js";
+export {
+  NEUTRAL_CONTEXT,
+  nextVariantAxes,
+  rankedVariants,
+  selectVariants,
+  type AxisSource,
+  type BlockVariantSelection,
+  type ContentSignals,
+  type MediaSignal,
+  type RankedVariant,
+  type ResolvedContent,
+  type SelectorContext,
+  type SelectorDna,
+} from "./selector.js";
+export {
+  ART_DIRECTIONS,
+  ACCENT_PLACEMENT,
+  circularHueDistance,
+  nameColor,
+  NAMED_ROLES,
+  runTasteSelfCheck,
+  scoreSurprise,
+  selectArtDirection,
+  validateArtDirectionFonts,
+  type ArtDirection,
+  type DirectionSelection,
+  type NamedColor,
+  type SurpriseScore,
+  type TasteSelfCheck,
+} from "@arche/foundation/taste";
 export {
   buildTeachBlock,
   designRulesVersion,
@@ -449,11 +492,13 @@ function emitTheme(identity: ArcheIdentity): ThemeEmission {
       const varName = tokenName.startsWith("--") ? tokenName.slice(2) : tokenName;
       if (tokenName.startsWith("--motion")) {
         // motion tokens are duration + easing pairs; derived vars are emitted
-        // once (root scope) and referenced by template classes
+        // once (root scope) and referenced by template classes as
+        // var(--motion-<pace>-<field> — strip the token dashes so the sync
+        // script's `--` prefix lands on the exact consumed name.
         if (modeName === "light") {
           const value = token.$value as Record<string, string>;
           for (const [key, item] of Object.entries(value ?? {})) {
-            derivedRoot[`${tokenName}-${key}`] = String(item);
+            derivedRoot[`${tokenName.replace(/^--/, "")}-${key}`] = String(item);
           }
         }
         continue;

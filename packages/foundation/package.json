@@ -43,6 +43,10 @@
       "types": "./src/dna/dna.ts",
       "default": "./dist/dna/dna.js"
     },
+    "./taste": {
+      "types": "./src/taste/taste.ts",
+      "default": "./dist/taste/taste.js"
+    },
     "./design-rules": {
       "types": "./src/design-rules/design-rules.ts",
       "default": "./dist/design-rules/design-rules.js"

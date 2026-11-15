@@ -174,15 +174,24 @@ export function checkDesignRules(identity: ArcheIdentity): DesignRuleFinding[] {
       }
     }
 
-    // color-solid-chroma-band (floor + profile-scaled ceiling)
+    // color-solid-chroma-band (chroma-scaled floor + profile-scaled
+    // ceiling). The floor yields to low-chroma intent (gallery-wall DNA
+    // asks for near-zero solids); ceilings still bind runaway saturation.
+    // Pre-chroma payloads carry no axis: they compiled under the full
+    // ladder, so the full floor still applies to them.
+    const chromaAxis = (identity.dna as { axes?: { chroma?: unknown } } | undefined)?.axes?.chroma;
+    // Rounded to 3 decimals to match the compiler's token quantization —
+    // a floor must be exactly representable or repair can never satisfy it.
+    const solidFloor =
+      Math.round(0.08 * (typeof chromaAxis === "number" ? 0.02 + 0.98 * Math.min(1, Math.max(0, chromaAxis)) : 1) * 1000) / 1000;
     const ceiling = profile === "enterprise" ? 0.19 : profile === "expressive" ? 0.26 : 0.24;
     for (const name of SOLID_TOKENS) {
       const c = tokenColor(set, name);
-      if (c && (c.c < 0.08 || c.c > ceiling)) {
+      if (c && (c.c < solidFloor || c.c > ceiling)) {
         findings.push({
           rule: "color-solid-chroma-band",
           path: at(name),
-          message: `${name} chroma ${c.c} is outside the ${profile} solid band [0.08, ${ceiling}]`,
+          message: `${name} chroma ${c.c} is outside the ${profile} solid band [${solidFloor}, ${ceiling}]`,
         });
       }
     }

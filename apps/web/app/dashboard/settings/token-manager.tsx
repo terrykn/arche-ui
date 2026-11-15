@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { issueTokenAction, revokeTokenAction } from "../identities/actions";
+import { Button } from "@/components/ui/button";
 
 export function TokenManager({ hasToken, prefix }: { hasToken: boolean; prefix: string | null }) {
   const [raw, setRaw] = React.useState<string | null>(null);
@@ -45,19 +46,14 @@ export function TokenManager({ hasToken, prefix }: { hasToken: boolean; prefix: 
         </p>
       ) : null}
       <div className="mt-2 flex gap-2">
-        <button
-          type="button"
-          onClick={issue}
-          disabled={pending}
-          className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground disabled:opacity-50"
-        >
+        <Button type="button" size="sm" onClick={issue} disabled={pending}>
           {hasToken ? "Issue new token" : "Issue registry token"}
-        </button>
+        </Button>
         {hasToken ? (
           <form action={revokeTokenAction}>
-            <button type="submit" className="rounded-md border-(length:--border-width) border-border px-3 py-1.5 text-sm">
+            <Button type="submit" variant="outline" size="sm">
               Revoke
-            </button>
+            </Button>
           </form>
         ) : null}
       </div>
