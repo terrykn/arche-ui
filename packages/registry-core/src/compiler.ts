@@ -17,7 +17,10 @@ import {
   contract as tokenContract,
 } from "@arche/foundation/contract/validate-tokens";
 import {
+  deriveProfile,
   DNA_COMPILER_VERSION,
+  migrateDnaAxes,
+  resolveBrandHue,
   type DnaObject,
   type DnaPalette,
   type DnaSource,
@@ -38,7 +41,9 @@ import {
   selectArtDirection,
   type NamedColor,
 } from "@arche/foundation/taste";
+import { assertTypefaceOverride } from "./variants.js";
 import { assertGeneratedCompliant, CLOSED_EASINGS } from "./design-rules.js";
+import { enforceConstraints, type PromptConstraints } from "./prompt-adherence.js";
 import type { ArcheIdentity } from "./index.js";
 import { getManifests, type Manifest } from "./manifests.js";
 
@@ -56,6 +61,14 @@ export interface CompileInput {
   profile?: GenerationProfile;
   /** Complete payload the mappings build on (Arche aurora in practice). */
   base: ArcheIdentity;
+  /** Prompt-adherence constraints (Brief: words → numbers). Code wins over DNA. */
+  constraints?: PromptConstraints;
+  /**
+   * Picker typography selection: closed-registry header/body ids chosen in
+   * the typography step. Validated (registry + slots + pairing); the mono
+   * slot stays derived by the compiler. Absent → the DNA-derived pick.
+   */
+  typeface?: { display: string; sans: string };
 }
 
 export interface Adjustment {
@@ -137,21 +150,41 @@ interface Voice {
 }
 
 function voiceOf(axes: DnaObject, palette: DnaPalette): Voice {
-  // Pre-chroma payloads (stored drafts, old fixtures) carry no axis: they
-  // compiled under the full ladder, so they keep it.
+  // Brief #8 §5 — true zero: chroma 0 compiles to exactly C = 0 on every
+  // scale step (pure grays, no tint). No floor anywhere in this function.
   const chromaAxis = typeof axes.chroma === "number" ? axes.chroma : 1;
-  // Chroma axis: how much color, not which color. 0 collapses the ladder to
-  // near-zero (quiet ground, loud signal); 1 keeps the full voice.
-  // Backgrounds are untouched — they already compile from neutralChroma.
-  const target = 0.02 + 0.98 * Math.min(1, Math.max(0, chromaAxis));
+  const target = Math.min(1, Math.max(0, chromaAxis));
   const chroma =
-    Math.min(
-      0.28,
-      Math.max(0.02, 0.03 + axes.energy * 0.09 + axes.playfulness * 0.07 - axes.formality * 0.05),
-    ) * target;
-  const neutralChroma = 0.004 + axes.warmth * 0.012;
-  const neutralHue = palette.neutralHue * (1 - axes.warmth * 0.5) + 70 * (axes.warmth * 0.5);
-  return { chroma, neutralChroma, neutralHue, target };
+    Math.min(0.28, 0.03 + axes.energy * 0.09 + axes.playfulness * 0.07 - axes.formality * 0.05) * target;
+  const warmHue = 40 + axes.warmth * 20;
+  const coolHue = 220 + (1 - axes.warmth) * 40;
+  const neutralHue = axes.warmth >= 0.5 ? warmHue : coolHue;
+  // At chroma 0 the neutrals are pure gray; otherwise they lean warm/cool
+  // gray by warmth at very low chroma.
+  const neutralChroma = target === 0 ? 0 : 0.004 + axes.warmth * 0.012;
+  return { chroma: Math.max(0, chroma), neutralChroma, neutralHue, target };
+}
+
+/**
+ * Max circular hue spread across the four anchors (degrees 0-180). Brand
+ * counts: a loud brand on a quiet trio is not monochrome.
+ */
+function maxHueSpread(palette: DnaPalette): number {
+  const hues = [palette.primaryHue, palette.accentHue, palette.neutralHue, resolveBrandHue(palette)];
+  let spread = 0;
+  for (let i = 0; i < hues.length; i++) {
+    for (let j = i + 1; j < hues.length; j++) {
+      const d = Math.abs(((hues[i]! - hues[j]!) % 360 + 360) % 360);
+      spread = Math.max(spread, Math.min(d, 360 - d));
+    }
+  }
+  return spread;
+}
+
+/** Monochrome by construction (Brief #8 §5): hues within 10° and chroma ≤
+ * 0.1 force achromatic scales on every role, including the accent. */
+export function isMonochromeDna(axes: { chroma: number }, palette: DnaPalette): boolean {
+  return maxHueSpread(palette) <= 10 && axes.chroma <= 0.1;
 }
 
 // ---------------------------------------------------------------------------
@@ -167,7 +200,7 @@ function borderWidthFor(axes: DnaObject, profile: GenerationProfile): string {
   if (axes.formality >= 0.8 || profile === "enterprise") return "1px";
   const strong =
     axes.sharpness >= 0.8 ||
-    (axes.retroFuturism >= 0.7 && axes.playfulness >= 0.5) ||
+    (axes.playfulness >= 0.5 && axes.ornament >= 0.6) ||
     axes.material === "pixel";
   if (!strong) return "1px";
   return profile === "expressive" ? "3px" : "2px";
@@ -317,7 +350,7 @@ function typeFor(axes: DnaObject, profile: GenerationProfile): TypePick {
   if (axes.material === "pixel") {
     return { sans: "general-sans", display: "clash-display", mono: "geist-mono" };
   }
-  if (axes.retroFuturism >= 0.6 && axes.playfulness >= 0.5) {
+  if (axes.playfulness >= 0.5 && axes.ornament >= 0.5) {
     return { sans: "general-sans", display: "melodrama", mono: "geist-mono" };
   }
   if (axes.formality >= 0.65) {
@@ -333,6 +366,17 @@ function typeFor(axes: DnaObject, profile: GenerationProfile): TypePick {
     return { sans: "clash-grotesk", display: "clash-grotesk", mono: "geist-mono" };
   }
   return { sans: "satoshi", display: "satoshi", mono: "geist-mono" };
+}
+
+/**
+ * The compiler's own header/body/mono pick for DNA (used as the "As Dreamed"
+ * typography fallback and to resolve specimens). Deterministic.
+ */
+export function deriveTypePick(
+  axes: DnaObject,
+  profile: GenerationProfile,
+): { sans: string; display: string; mono: string } {
+  return { ...typeFor(axes, profile) };
 }
 
 /** Icon library: lucide unless the table says otherwise (ornate ↔ phosphor weights). */
@@ -364,37 +408,78 @@ function buildModeTokens(
   palette: DnaPalette,
   voice: Voice,
   profile: GenerationProfile,
+  monochrome: boolean,
 ): TokenRecord {
   const dark = mode === "dark";
   const P = palette.primaryHue;
   const A = palette.accentHue;
   const N = voice.neutralHue;
-  const C = voice.chroma;
-  const NC = voice.neutralChroma;
+  const NC = monochrome ? 0 : voice.neutralChroma;
+  // Solids render at full chroma within the design-rules band so a hue
+  // change is visible in the first screen (Brief #8 §5). The chroma axis —
+  // not energy — drives saturation (Brief #8 §4: chroma scales accent
+  // saturation); energy drives accent usage and motion instead. Grayscale
+  // (target 0) and monochrome force zero.
+  const solidCeiling = profile === "enterprise" ? 0.19 : profile === "expressive" ? 0.26 : 0.24;
+  const solidFloor = Math.round(0.08 * voice.target * 1000) / 1000;
+  const fullVoice = Math.round(Math.min(solidCeiling, 0.28 * voice.target) * 1000) / 1000;
+  const C = monochrome || voice.target === 0 ? 0 : Math.min(solidCeiling, Math.max(fullVoice, solidFloor));
   // Surface/text anchors: near-white↔near-black ends of the neutral scale.
   const bg = scaleColor(N, NC, dark ? 11 : 0);
   const surface = scaleColor(N, NC, dark ? 10 : 1);
   const ink = scaleColor(N, NC * 2, dark ? 0 : 11);
   const primary = scaleColor(P, C, dark ? 8 : 5);
-  const primaryInk = autoText(primary);
+  // Grayscale (Brief #8 §5): every role is exactly C = 0 — including the
+  // auto-text inks, whose near-black fallback otherwise carries C = 0.01.
+  const grayscale = monochrome || voice.target === 0;
+  const dechroma = (value: string): string => {
+    if (!grayscale) return value;
+    const parsed = parseOklch(value);
+    parsed.c = 0;
+    return formatOklch(parsed);
+  };
+  const primaryInk = dechroma(autoText(primary));
   const secondary = scaleColor(P, C * 0.45, dark ? 9 : 2);
-  const secondaryInk = scaleColor(P, C, dark ? 1 : 10);
+  const secondaryInk = dechroma(scaleColor(P, C, dark ? 1 : 10));
   // Enterprise disallows the accent family: accent derives from the primary
   // hue (primary + semantics only). Other profiles use the accent anchor.
+  // Brand is exempt from the enterprise rule: the brand button is the
+  // enterprise brand-highlight moment, and the brand hue is used exactly
+  // as generated.
   const AH = profile === "enterprise" ? P : A;
-  const accent = scaleColor(AH, C * 0.8, dark ? 9 : 2);
-  const accentInk = scaleColor(AH, C, dark ? 1 : 10);
-  const muted = scaleColor(N, NC * 1.5, dark ? 9 : 2);
-  const mutedInk = scaleColor(N, NC * 2, dark ? 2 : 9);
-  const destructive = formatOklch({ l: dark ? 0.6 : 0.55, c: 0.22, h: 25 });
-  const destructiveInk = autoText(destructive);
+  const accent = scaleColor(AH, C, dark ? 9 : 2);
+  const accentInk = dechroma(scaleColor(AH, C, dark ? 1 : 10));
+  // Brand scale (Brand Token brief): the recognizable hue at full voice.
+  // Solid = step 9 (index 8) in both modes — the loud brand moment, never
+  // tamed into a button. Soft = tinted brand surface: light step 3 in
+  // light mode; in dark mode the deepest of steps 10-12 still readable
+  // with --foreground, else the deepest step (the AA pass finishes by
+  // lightness if needed). Text on the solid is derived per mode from the
+  // actual emitted value (autoText: white when it passes, else dark).
+  const B = resolveBrandHue(palette);
+  const brand = scaleColor(B, C, 8);
+  const brandInk = dechroma(autoText(brand));
+  const brandSoft = dark
+    ? (() => {
+        const fg = dechroma(scaleColor(N, NC * 2, 0));
+        for (const step of [9, 10, 11]) {
+          const candidate = scaleColor(B, Math.round(C * 0.45 * 1000) / 1000, step);
+          if (contrastRatio(fg, candidate) >= 4.5) return candidate;
+        }
+        return scaleColor(B, Math.round(C * 0.45 * 1000) / 1000, 11);
+      })()
+    : scaleColor(B, Math.round(C * 0.45 * 1000) / 1000, 2);
+  const muted = scaleColor(N, monochrome ? 0 : NC * 1.5, dark ? 9 : 2);
+  const mutedInk = dechroma(scaleColor(N, monochrome ? 0 : NC * 2, dark ? 2 : 9));
+  const destructive = formatOklch({ l: dark ? 0.6 : 0.55, c: grayscale ? 0 : 0.22, h: 25 });
+  const destructiveInk = dechroma(autoText(destructive));
   // Charts reference the brand hues; enterprise uses a primary-anchored
   // pentagon (no accent family). Chroma floor keeps chart separation alive
   // at low voice (the repair pass spreads lightness where hues collide).
   const chartHues = profile === "enterprise"
     ? [P, P + 72, P + 144, P + 216, P + 288]
     : [P, A, P + 50, A + 130, P + 200];
-  const chartChroma = Math.min(0.18, Math.max(C, 0.09));
+  const chartChroma = grayscale ? 0 : Math.min(0.18, Math.max(C, voice.chroma));
   const tokens: TokenRecord = {
     "--background": color(bg),
     "--card": color(surface),
@@ -410,6 +495,9 @@ function buildModeTokens(
     "--accent-foreground": color(accentInk),
     "--destructive": color(destructive),
     "--destructive-foreground": color(destructiveInk),
+    "--brand": color(brand),
+    "--brand-foreground": color(brandInk),
+    "--brand-soft": color(brandSoft),
     "--muted": color(muted),
     "--muted-foreground": color(mutedInk),
     "--border": color(scaleColor(N, NC, dark ? 8 : 3)),
@@ -596,6 +684,47 @@ function adjustPair(
   }
 }
 
+/**
+ * Brand-soft contrast (Brand Token brief): --foreground on --brand-soft
+ * must pass AA in both modes. Background-only repair — the shared
+ * --foreground text never moves; the surface's lightness moves away from
+ * the text until the pair passes (hue untouched). Deterministic.
+ */
+function adjustBrandSoft(
+  tokens: TokenRecord,
+  mode: string,
+  adjustments: Adjustment[],
+): void {
+  const fg = tokens["--foreground"];
+  const bg = tokens["--brand-soft"];
+  if (!fg || !bg || typeof fg.$value !== "string" || typeof bg.$value !== "string") return;
+  let ratio = contrastRatio(fg.$value as string, bg.$value as string);
+  if (Number.isNaN(ratio) || ratio >= 4.5) return;
+  const ratioBefore = ratio;
+  const compiledBg = bg.$value as string;
+  const fgL = parseOklch(fg.$value as string).l;
+  const bgUp = parseOklch(compiledBg).l >= fgL;
+  for (let i = 0; i < AA_MAX_STEPS; i++) {
+    const cur = parseOklch(bg.$value as string).l;
+    const next = bgUp ? cur + AA_STEP : cur - AA_STEP;
+    if (next > 0.995 || next < 0.02) break;
+    bg.$value = withLightness(bg.$value as string, next);
+    ratio = contrastRatio(fg.$value as string, bg.$value as string);
+    if (ratio >= 4.5) break;
+  }
+  if (bg.$value !== compiledBg) {
+    adjustments.push({
+      mode,
+      token: "--brand-soft",
+      compiledValue: compiledBg,
+      adjustedValue: bg.$value as string,
+      pair: "--foreground on --brand-soft",
+      ratioBefore,
+      ratioAfter: ratio,
+    });
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Main entry
 // ---------------------------------------------------------------------------
@@ -607,8 +736,13 @@ function adjustPair(
  */
 export function compileIdentity(input: CompileInput): ArcheIdentity {
   const { name, source, axes, palette, base } = input;
-  const profile = input.profile ?? "standard";
-  const voice = voiceOf(axes, palette);
+  // Brief #8 §5: profile is derived from DNA, never model-chosen. An
+  // explicit input.profile (old callers, back-compat) still wins.
+  const migrated = migrateDnaAxes(axes as unknown as Record<string, unknown>);
+  const effectiveAxes = (migrated.migrated ? { ...(axes as object), ...migrated.axes } : axes) as DnaObject;
+  const profile = input.profile ?? deriveProfile(effectiveAxes);
+  const monochrome = isMonochromeDna(effectiveAxes, palette);
+  const voice = voiceOf(effectiveAxes, palette);
   const compiled: ArcheIdentity = JSON.parse(JSON.stringify(base)) as ArcheIdentity;
 
   compiled.meta = {
@@ -617,16 +751,21 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
     contractVersion: tokenContract.contractVersion,
   };
   // Type scale is selected, never derived free-form (Deliverable 5).
-  compiled.typeScale = typeScaleFor(axes, profile);
+  compiled.typeScale = typeScaleFor(effectiveAxes, profile);
 
   const tokens: Record<string, TokenRecord> = {
-    light: buildModeTokens("light", axes, palette, voice, profile),
-    dark: buildModeTokens("dark", axes, palette, voice, profile),
+    light: buildModeTokens("light", effectiveAxes, palette, voice, profile, monochrome),
+    dark: buildModeTokens("dark", effectiveAxes, palette, voice, profile, monochrome),
   };
 
   // Font stacks must mirror the selected registry families exactly.
   const byId = fontEntriesById();
-  const pick = typeFor(axes, profile);
+  const pick = typeFor(effectiveAxes, profile);
+  if (input.typeface) {
+    assertTypefaceOverride(input.typeface);
+    pick.display = input.typeface.display;
+    pick.sans = input.typeface.sans;
+  }
   const sans = byId.get(pick.sans)!;
   const display = byId.get(pick.display)!;
   const mono = byId.get(pick.mono)!;
@@ -643,7 +782,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   darkTokens["--font-display"] = { $type: "fontFamily", $value: expectedFontStack(display, "display") };
   darkTokens["--font-mono"] = { $type: "fontFamily", $value: expectedFontStack(mono, "mono") };
 
-  compiled.icons = iconsFor(axes);
+  compiled.icons = iconsFor(effectiveAxes);
   // Rule 6: hand-recorded overrides survive recompilation — the override
   // wins over the newly compiled value. (The AA pass below still rules:
   // overrides are validated on save, so they can never break the gate.)
@@ -662,35 +801,92 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   }
   compiled.tokens = tokens as ArcheIdentity["tokens"];
 
-  const treatment = materialTreatment(axes.material, axes.ornament, voice.neutralHue);
-  applyKnobs(compiled.components, axes, treatment.shadowTarget);
+  const treatment = materialTreatment(effectiveAxes.material, effectiveAxes.ornament, voice.neutralHue);
+  applyKnobs(compiled.components, effectiveAxes, treatment.shadowTarget);
 
   // Design-repair pass (after emission, before AA): envelope violations are
   // clamped into the envelope with hue/lightness preserved where the rule
   // allows it; every repair is recorded with its design-rule id.
   const adjustments: Adjustment[] = [];
-  repairDesign(tokens, profile, adjustments, voice.target);
+  repairDesign(tokens, profile, adjustments, voice.target, monochrome);
+
+  // Prompt-adherence enforcement (Brief: words → numbers → code). Runs
+  // AFTER design repair (so the true-zero monochrome rule runs after any
+  // neutral-tint repair and can never be re-tinted) and BEFORE the AA pass
+  // (AA moves lightness only, so caps survive it). Every action is logged
+  // with a prompt-* rule id; conflicts resolve in favor of the constraint.
+  if (input.constraints && Object.keys(input.constraints).length > 0) {
+    enforceConstraints(
+      tokens as unknown as Record<string, Record<string, { $type: string; $value: unknown }>>,
+      input.constraints,
+      profile,
+      adjustments as unknown as Array<{ mode: string; token: string; compiledValue: string; adjustedValue: string; ruleId: string }>,
+    );
+    // Hue snaps can collide charts — re-spread by lightness only (never
+    // re-tints a forced-zero palette).
+    for (const mode of ["light", "dark"] as const) {
+      repairCharts(tokens[mode]!, mode, adjustments);
+    }
+  }
 
   // AA pass per mode, pairs in contract order (deterministic).
   for (const mode of ["light", "dark"] as const) {
+    // Brand-soft first, background-only: its text is the shared
+    // --foreground, which must never move for one surface (it would break
+    // every other pair). Only the surface's lightness moves — hue never.
+    adjustBrandSoft(tokens[mode]!, mode, adjustments);
     for (const pair of tokenContract.contrastPairs) {
+      // Handled above with background-only moves (the generic pass would
+      // move the shared --foreground text).
+      if (pair.fg === "--foreground" && pair.bg === "--brand-soft") continue;
       adjustPair(tokens[mode]!, mode, pair.fg, pair.bg, pair.minRatio, adjustments);
     }
   }
   compiled.meta.adjustments = adjustments;
+  // Stamp the prompt constraints on the payload BEFORE the final gate so
+  // the design-rule validator can apply the prompt-monochrome floor (code
+  // decides: a monochrome brief means floor 0 even when the model's own
+  // chroma axis is high).
+  if (input.constraints && Object.keys(input.constraints).length > 0) {
+    (compiled.meta as Record<string, unknown>).promptConstraints = { ...input.constraints };
+  }
 
+  // The compiled DNA always carries the brand anchor (defaulted to the
+  // primary hue when the input omitted it — existing identities keep
+  // --brand == --primary until regenerated).
+  const brandHue = resolveBrandHue(palette);
+  const compiledPalette: DnaPalette = { ...palette, brandHue };
   compiled.dna = {
     source: { ...source },
-    axes: { ...axes },
-    palette: { ...palette },
+    axes: { ...effectiveAxes },
+    palette: compiledPalette,
     profile,
     compilerVersion: COMPILER_VERSION,
   };
+  // Brand record (Brand Token brief): the resolved hue, the per-mode
+  // foreground choice off the actual emitted solid, and the hero CTA
+  // affinity — brand when brand and primary differ by more than 30°,
+  // otherwise primary. Recorded like any other variant selection.
+  const hueSep = ((a: number, b: number): number => {
+    const d = Math.abs(((a - b) % 360 + 360) % 360);
+    return Math.min(d, 360 - d);
+  })(brandHue, palette.primaryHue);
+  (compiled.meta as Record<string, unknown>).brand = {
+    hue: Math.round(brandHue * 1000) / 1000,
+    foreground: {
+      light: String(tokens.light!["--brand-foreground"]!.$value),
+      dark: String(tokens.dark!["--brand-foreground"]!.$value),
+    },
+    heroCta: hueSep > 30 ? "brand" : "primary",
+  };
+  if (migrated.migrated) {
+    (compiled.meta as Record<string, unknown>).dnaMigration = "v1→v2: retroFuturism dropped, chroma defaulted";
+  }
 
   // Taste system (Brief #7 D1): descriptive only — direction, surprise,
   // evocative names, and the fix-ordered self-check. Nothing here moves a
   // token, so the AA gate below still rules on the repaired values.
-  const direction = selectArtDirection(axes, profile);
+  const direction = selectArtDirection(effectiveAxes, profile);
   const surprise = scoreSurprise(palette, profile);
   const tastePalette: NamedColor[] = NAMED_ROLES.map(({ role, token }) => {
     const value = light[token]?.$value;
@@ -705,7 +901,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   };
   const tasteCheck = runTasteSelfCheck({
     tokens,
-    axes,
+    axes: effectiveAxes,
     profile,
     primaryHue: palette.primaryHue,
     accentHue: palette.accentHue,
@@ -800,6 +996,7 @@ function repairDesign(
   profile: GenerationProfile,
   adjustments: Adjustment[],
   chromaTarget: number,
+  monochrome = false,
 ): void {
   const bgCap = (mode: "light" | "dark"): number =>
     Math.round(
@@ -831,6 +1028,7 @@ function repairDesign(
     for (const token of [
       "--foreground", "--card-foreground", "--popover-foreground", "--primary-foreground",
       "--secondary-foreground", "--accent-foreground", "--destructive-foreground", "--muted-foreground",
+      "--brand-foreground",
     ]) {
       const c = chromaOf(token);
       if (c !== null && c > 0.18) {
@@ -847,8 +1045,11 @@ function repairDesign(
     // ceilings bind runaway saturation; the floor yields to low-chroma intent)
     // Rounded to 3 decimals: the token quantization below means a floor
     // must be exactly representable or repair can never satisfy it.
-    const solidFloor = Math.round(SOLID_FLOOR * chromaTarget * 1000) / 1000;
-    for (const token of ["--primary", "--accent", "--destructive"]) {
+    const solidFloor = monochrome ? 0 : Math.round(SOLID_FLOOR * chromaTarget * 1000) / 1000;
+    // Brand Token brief: the brand solid lives in the same chroma band —
+    // ceilings bind runaway saturation; the floor yields to low-chroma
+    // intent exactly like the other solids.
+    for (const token of ["--primary", "--accent", "--destructive", "--brand"]) {
       const c = chromaOf(token);
       if (c !== null && c < solidFloor) {
         repairTokenChroma(tokens, mode, token, solidFloor, "color-solid-chroma-band", adjustments);

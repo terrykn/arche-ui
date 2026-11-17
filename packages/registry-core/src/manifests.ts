@@ -26,6 +26,14 @@ export interface Manifest {
     doNotUseWhen: string[];
     rules: Array<{ id: string; severity: string; check: string }>;
   };
+  /** Present on block manifests with DNA-scored variants (Brief #8 D3):
+   * affinity ranges per "axis-axis" combo key (missing range = no opinion). */
+  variantAffinity?: Record<
+    string,
+    Partial<Record<"formality" | "energy" | "chroma" | "playfulness" | "warmth" | "density", readonly [number, number]>> & {
+      notes: string;
+    }
+  >;
   /** Present on block manifests only (Part 6): typed composition contract. */
   composition?: {
     contentSlots: Array<{

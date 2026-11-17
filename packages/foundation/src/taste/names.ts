@@ -74,12 +74,13 @@ export function nameColor(value: string): string {
 
 export interface NamedColor {
   name: string;
-  role: "background" | "surface" | "primary" | "accent" | "neutral" | "text";
+  role: "background" | "surface" | "primary" | "accent" | "neutral" | "text" | "brand";
   token: string;
   value: string;
 }
 
-/** The six surfaced roles and the light-mode tokens read for each. */
+/** The surfaced roles and the light-mode tokens read for each. Brand reads
+ * the brand solid so the plan/picker shows it as "Brand", not "Primary". */
 export const NAMED_ROLES = [
   { role: "background", token: "--background" },
   { role: "surface", token: "--card" },
@@ -87,4 +88,5 @@ export const NAMED_ROLES = [
   { role: "accent", token: "--accent" },
   { role: "neutral", token: "--muted" },
   { role: "text", token: "--foreground" },
+  { role: "brand", token: "--brand" },
 ] as const;

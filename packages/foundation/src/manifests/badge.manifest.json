@@ -1,9 +1,9 @@
 {
   "name": "badge", "title": "Badge", "description": "A compact label for a category or status.", "category": "feedback", "manifestVersion": 1,
   "native": { "element": "span", "propsInherited": true }, "slots": [{ "name": "badge", "part": "span", "partType": "native", "required": true }],
-  "axes": { "variant": { "values": ["default", "secondary", "destructive", "outline", "ghost", "link"], "default": "default" } },
-  "styleSurface": { "badge": { "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost", "link"], "default": "default" } } },
-  "tokensUsed": ["--radius", "--border", "--border-width", "--primary", "--primary-foreground", "--secondary", "--secondary-foreground", "--destructive", "--destructive-foreground", "--foreground", "--muted"], "dependencies": ["@radix-ui/react-slot", "class-variance-authority"], "registryDependencies": ["utils"],
+  "axes": { "variant": { "values": ["default", "secondary", "destructive", "outline", "ghost", "link", "brand"], "default": "default" } },
+  "styleSurface": { "badge": { "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost", "link", "brand"], "default": "default" } } },
+  "tokensUsed": ["--radius", "--border", "--border-width", "--primary", "--primary-foreground", "--secondary", "--secondary-foreground", "--destructive", "--destructive-foreground", "--foreground", "--muted", "--brand", "--brand-foreground"], "dependencies": ["@radix-ui/react-slot", "class-variance-authority"], "registryDependencies": ["utils"],
   "files": [{ "name": "badge", "source": "src/templates/badge.tsx", "target": "components/ui/badge.tsx", "type": "registry:ui" }],
   "standards": { "purpose": "Communicate a compact status or category.", "useWhen": ["A short label clarifies a status or type."], "doNotUseWhen": ["A longer explanation is needed."], "rules": [{ "id": "badge-text-describes-status", "severity": "error", "check": "Use meaningful text rather than color alone to identify the status." }] }
 }

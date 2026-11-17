@@ -20,6 +20,11 @@ const buttonVariants = cva(
           "border-(length:--border-width) border-input bg-background hover:bg-accent hover:text-accent-foreground active:bg-accent",
         ghost: "hover:bg-accent hover:text-accent-foreground active:bg-accent",
         link: "text-primary underline-offset-4 hover:underline",
+        // Brand Token brief: the brand-highlight CTA. Background --brand
+        // with --brand-foreground text is an AA-gated contract pair, so
+        // this variant can never ship unreadable text in either mode.
+        brand:
+          "bg-brand text-brand-foreground hover:bg-brand/90 active:bg-brand/95",
       },
       size: {
         default: "px-4 py-2 has-[>svg]:px-4",

@@ -2,8 +2,9 @@
  * Staged-picker options (Brief #7, Deliverable 4) — deterministic derivation
  * over ONE structured generation response.
  *
- * The model reasons once and returns plan → options → final DNA. Steps 1–3
- * of the picker present sections of that response; every selection is a DNA
+ * The model returns DNA only (Brief #8); plan names and profile are derived
+ * by the compiler. Steps 1–3 of the picker present deterministic derivations
+ * of that DNA (palette options, example records, word chips); every selection is a DNA
  * delta and recompilation is deterministic and free of model calls. Nothing
  * here calls a model, touches the network, or reads the disk, so the module
  * is safe to bundle client-side.
@@ -35,7 +36,7 @@ export const WORD_CHIPS: WordChip[] = [
   { id: "bold", label: "Bold", deltas: { energy: 0.25, sharpness: 0.15 } },
   { id: "playful", label: "Playful", deltas: { playfulness: 0.3, ornament: 0.1 } },
   { id: "premium", label: "Premium", deltas: { formality: 0.25, ornament: 0.15, energy: -0.1 } },
-  { id: "retro", label: "Retro", deltas: { retroFuturism: 0.4 } },
+  { id: "retro", label: "Retro", deltas: { playfulness: 0.2, ornament: 0.2 } },
   { id: "warm", label: "Warm", deltas: { warmth: 0.3 } },
   { id: "minimal", label: "Minimal", deltas: { ornament: -0.3, density: -0.2, sharpness: 0.1 } },
   { id: "dense", label: "Dense", deltas: { density: 0.3 } },
@@ -68,10 +69,13 @@ export function derivePaletteOptions(
   palette: DnaPalette,
   profile: "enterprise" | "standard" | "expressive" = "standard",
 ): [PaletteOption, PaletteOption, PaletteOption] {
+  // Brand Token brief: every option carries the brand anchor (defaulted
+  // to the primary hue) so the picker can never lose it between steps.
   const base: DnaPalette = {
     primaryHue: normHue(palette.primaryHue),
     accentHue: normHue(palette.accentHue),
     neutralHue: normHue(palette.neutralHue),
+    brandHue: normHue(palette.brandHue ?? palette.primaryHue),
   };
   const asDreamed: PaletteOption = {
     id: "as-dreamed",
@@ -132,7 +136,7 @@ export const EXAMPLE_RECORDS: ExampleRecord[] = [
     id: "harbor-dental",
     title: "Harbor Dental — booking",
     genre: "landing",
-    palette: { primaryHue: 170, accentHue: 20, neutralHue: 170 },
+    palette: { primaryHue: 170, accentHue: 20, neutralHue: 170, brandHue: 170 },
     typefaces: ["Sentient", "Satoshi"],
     stack: ["Next.js", "shadcn", "Tailwind"],
     blurb: "Soft-spa booking page: warm neutrals, mist sections, pill CTA.",
@@ -141,7 +145,7 @@ export const EXAMPLE_RECORDS: ExampleRecord[] = [
     id: "line2-packing",
     title: "Line 2 Packing — product",
     genre: "product",
-    palette: { primaryHue: 35, accentHue: 210, neutralHue: 35 },
+    palette: { primaryHue: 35, accentHue: 210, neutralHue: 35, brandHue: 35 },
     typefaces: ["Archivo", "Public Sans"],
     stack: ["Next.js", "shadcn", "Tailwind"],
     blurb: "Boardroom product page: signal red CTA, tabular numbers, dense table.",
@@ -150,7 +154,7 @@ export const EXAMPLE_RECORDS: ExampleRecord[] = [
     id: "cabinet-arcade",
     title: "Cabinet Arcade — auth",
     genre: "auth",
-    palette: { primaryHue: 300, accentHue: 140, neutralHue: 300 },
+    palette: { primaryHue: 300, accentHue: 140, neutralHue: 300, brandHue: 300 },
     typefaces: ["Space Grotesk", "Work Sans"],
     stack: ["Next.js", "shadcn", "Tailwind"],
     blurb: "CRT sign-in: scanlines, chunky borders, single centered form.",

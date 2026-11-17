@@ -1,7 +1,21 @@
 {
   "$comment": "Arche UI design-rules registry (post-Brief #6). Single source of truth for the Shapeshift rulebook. tier 'teach' statements are injected into the generation model's instructions (generated at runtime — never hand-maintain a second copy in a prompt string). tier 'enforce' rules are deterministic validator checks with the numbers in params. Rule ids are permanent once shipped. Color budgets are Arche's own (see CALIBRATION.md); WCAG 2.2 AA stays absolute and unchanged.",
-  "registryVersion": 2,
+  "registryVersion": 4,
   "rules": [
+    {
+      "id": "color-brand-hue",
+      "area": "color",
+      "tier": "teach",
+      "statement": "brandHue is the recognizable brand color — the company/logo hue from the prompt ('bold red', 'Verizon red', 'T-Mobile magenta'). It is NOT the button color. If the prompt names no brand color, set brandHue = primaryHue. If the prompt names a brand color that is too loud or light to be a button (bright red, vivid yellow), keep brandHue loud and let the compiler derive a usable primary — do not tame the brand to make it a button.",
+      "params": {}
+    },
+    {
+      "id": "color-brand-scope",
+      "area": "color",
+      "tier": "teach",
+      "statement": "Spend the brand in brand moments only: logo/wordmark, hero focal word, hero primary CTA, the brand Button/Badge/Card/Hero/CTA/Pricing-featured variants, badges and sale highlights. Never on body text, repeated actions, nav, form submits, table actions, borders (except the Card brand top-edge and the Pricing featured-tier border), or muted surfaces.",
+      "params": { "homes": ["logo", "focal-word", "brand-cta", "brand-variants", "badges"] }
+    },
     {
       "id": "color-step-jobs",
       "area": "color",
@@ -334,6 +348,34 @@
       "area": "blocks",
       "tier": "teach",
       "statement": "A page has exactly one h1 (the hero or the app view title carries it); every block declares its heading role and landmark in its manifest composition, and landmark semantics come from the template, never the consumer.",
+      "params": {}
+    },
+    {
+      "id": "dna-word-monochrome",
+      "area": "color",
+      "tier": "teach",
+      "statement": "Word-number mapping: monochromatic, paper-white, near-neutral, gallery, minimal, or quiet briefs mean all four anchors (primary, accent, neutral, brand) equal (within 10 degrees) and chroma at most 0.1.",
+      "params": {}
+    },
+    {
+      "id": "dna-word-vivid",
+      "area": "color",
+      "tier": "teach",
+      "statement": "Word-number mapping: electric, neon, vivid, loud, saturated, or bold briefs mean chroma at least 0.8; muted, soft, calm, or understated briefs mean chroma at most 0.3.",
+      "params": {}
+    },
+    {
+      "id": "dna-word-warmth",
+      "area": "color",
+      "tier": "teach",
+      "statement": "Word-number mapping: warm, cozy, or earthy briefs mean warmth at least 0.7; cool, clinical, or icy briefs mean warmth at most 0.3.",
+      "params": {}
+    },
+    {
+      "id": "dna-word-register",
+      "area": "color",
+      "tier": "teach",
+      "statement": "Word-number mapping: hospital, clinic, bank, or legal briefs mean formality at least 0.7 and chroma at most 0.4; arcade, game, or party briefs mean chroma at least 0.8 and playfulness at least 0.7; portfolio, gallery, or studio briefs mean chroma at most 0.3 and ornament at most 0.4.",
       "params": {}
     },
     {

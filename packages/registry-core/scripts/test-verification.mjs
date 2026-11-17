@@ -98,7 +98,6 @@ function randomDna(seed) {
       sharpness: axis(),
       density: axis(),
       ornament: axis(),
-      retroFuturism: axis(),
       formality: axis(),
       chroma: axis(),
       material: pick(MATERIALS),
@@ -258,7 +257,7 @@ test("taste system: 8 art directions, valid font pairs, deterministic selection"
   assert.deepEqual(validateArtDirectionFonts(), [], "every direction pair resolves to slotted registry fonts");
   const formal = {
     warmth: 0.2, energy: 0.3, playfulness: 0.1, sharpness: 0.5, density: 0.9,
-    ornament: 0.2, retroFuturism: 0.1, formality: 0.9,
+    ornament: 0.2, formality: 0.9,
     material: "flat", motionFeel: "stately", texture: "none",
     minContrast: "AA", respectReducedMotion: true,
   };
@@ -303,7 +302,11 @@ test("taste system: every compilation stamps direction, names, placement, self-c
       ART_DIRECTIONS.some((d) => d.id === taste.artDirection.id),
       `seed ${seed}: direction is a registry entry`,
     );
-    assert.equal(taste.palette.length, 6, `seed ${seed}: six named colors`);
+    assert.equal(taste.palette.length, 7, `seed ${seed}: seven named colors (Brand Token brief adds Brand)`);
+    assert.ok(
+      taste.palette.some((entry) => entry.role === "brand" && entry.token === "--brand"),
+      `seed ${seed}: the plan names the brand role, not a second primary`,
+    );
     for (const entry of taste.palette) {
       assert.ok(entry.name && entry.name !== "Unnamed", `seed ${seed}: every role named`);
     }

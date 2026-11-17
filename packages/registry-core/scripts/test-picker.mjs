@@ -22,7 +22,7 @@ const {
   WORD_CHIPS,
 } = require("./dist/index.js");
 
-const AXES = ["warmth", "energy", "playfulness", "sharpness", "density", "ornament", "retroFuturism", "formality"];
+const AXES = ["warmth", "chroma", "energy", "playfulness", "sharpness", "density", "ornament", "formality"];
 
 function midAxes() {
   return Object.fromEntries(AXES.map((axis) => [axis, 0.5]));
@@ -79,7 +79,7 @@ test("applyPickerDelta composes, clamps, and reports", () => {
   const palette = { primaryHue: 170, accentHue: 20, neutralHue: 170 };
   const first = applyPickerDelta(midAxes(), palette, { chipIds: ["calm", "retro", "nope"], paletteId: "quiet-ground" });
   assert.deepEqual(first.unknownChips, ["nope"]);
-  assert.equal(first.axes.retroFuturism, 0.9);
+  assert.equal(first.axes.playfulness, 0.7);
   assert.equal(first.axes.energy, 0.25);
   assert.equal(first.anchors.neutralHue, first.anchors.primaryHue);
   // Order-independence: chips commute.

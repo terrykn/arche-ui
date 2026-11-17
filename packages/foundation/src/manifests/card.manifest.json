@@ -52,7 +52,7 @@
       "required": false
     }
   ],
-  "axes": {},
+  "axes": { "variant": { "values": ["default", "brand"], "default": "default" } },
   "styleSurface": {
     "card": {
       "radiusFrom": {
@@ -81,6 +81,8 @@
   },
   "tokensUsed": [
     "--border-width",
+    "--brand",
+    "--brand-soft",
     "--card",
     "--card-foreground",
     "--muted-foreground",

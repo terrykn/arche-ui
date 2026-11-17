@@ -27,6 +27,8 @@ export interface SelectorDna {
   energy?: number;
   playfulness?: number;
   density?: number;
+  chroma?: number;
+  warmth?: number;
 }
 
 export interface SelectorContext {
@@ -35,6 +37,13 @@ export interface SelectorContext {
   dna?: SelectorDna;
   /** Art-direction registry id (e.g. "swiss-poster"), when known. */
   artDirection?: string;
+  /**
+   * Brand Token brief: prefer the hero's brand CTA when the brand and
+   * primary hues differ by more than 30° (the caller derives this from
+   * the DNA palette; the compiler records the same choice on the draft
+   * as meta.brand.heroCta).
+   */
+  brandCta?: boolean;
 }
 
 export interface ResolvedContent extends ContentSignals {
@@ -113,11 +122,83 @@ interface Scored {
   reason: string;
 }
 
-function scoreHero(axes: Record<string, string>, genre: GenreId, content: ResolvedContent, dna: SelectorDna | undefined, direction: string | undefined): { score: number; reason: string } {
+/**
+ * Hero variant affinity (Brief #8, Deliverable 3) — the DNA ranges each
+ * hero variant is built for, declared in hero.block.json `variantAffinity`
+ * and mirrored here as the scoring table. Missing range = no opinion.
+ */
+interface VariantAffinity {
+  formality?: readonly [number, number];
+  energy?: readonly [number, number];
+  chroma?: readonly [number, number];
+  playfulness?: readonly [number, number];
+  warmth?: readonly [number, number];
+  notes: string;
+}
+
+const HERO_AFFINITY: Record<string, VariantAffinity> = {
+  "left/below": {
+    formality: [0.6, 1], energy: [0, 0.25], chroma: [0, 0.4], playfulness: [0.2, 0.6],
+    notes: "quiet editorial hero",
+  },
+  "left/right": {
+    formality: [0.7, 1], chroma: [0, 0.4], playfulness: [0, 0.3],
+    notes: "trust hero",
+  },
+  "center/below": {
+    warmth: [0.6, 1], chroma: [0.3, 0.7], energy: [0.3, 0.7],
+    notes: "warm photographic hero",
+  },
+  "center/none": {
+    energy: [0, 0.5], formality: [0, 0.6],
+    notes: "centered statement hero",
+  },
+  "left/none": {
+    formality: [0.7, 1], energy: [0, 0.4],
+    notes: "swiss-poster discipline hero",
+  },
+  "center/right": {
+    energy: [0.4, 1],
+    notes: "product split hero",
+  },
+};
+
+/** Distance between DNA and one variant's affinity ranges (0 = built for it). */
+function affinityDistance(
+  key: string,
+  dna: SelectorDna | undefined,
+): { distance: number; decidingAxis: string } {
+  const affinity = HERO_AFFINITY[key];
+  if (!affinity) return { distance: 0, decidingAxis: "media" };
+  let distance = 0;
+  let decidingAxis = "media";
+  let worst = 0;
+  for (const axis of ["formality", "energy", "chroma", "playfulness", "warmth"] as const) {
+    const range = affinity[axis];
+    if (!range) continue;
+    const value = dna?.[axis] ?? 0.5;
+    const miss = value < range[0] ? range[0] - value : value > range[1] ? value - range[1] : 0;
+    distance += miss;
+    if (miss > worst) {
+      worst = miss;
+      decidingAxis = axis;
+    }
+  }
+  return { distance: Math.round(distance * 1000) / 1000, decidingAxis };
+}
+
+function scoreHero(axes: Record<string, string>, genre: GenreId, content: ResolvedContent, dna: SelectorDna | undefined, direction: string | undefined, brandCta = false): { score: number; reason: string } {
   let score = 0;
   const why: string[] = [];
   const formal = isFormal(dna, direction);
   const enterprise = content.audience === "executive" || content.category === "enterprise" || content.category === "construction" || hasTone(content, "enterprise", "formal");
+  const key = `${axes.alignment ?? "center"}/${axes.mediaLayout ?? "none"}`;
+  const { distance, decidingAxis } = affinityDistance(key, dna);
+  // Affinity is the DNA tiebreak under the genre/media placement logic:
+  // weight 2 keeps media + formal/enterprise signals decisive when no DNA
+  // is present, while DNA distance decides between placement-equal variants.
+  score -= distance * 2;
+  const affinityNotes = HERO_AFFINITY[key]?.notes ?? "fallback combination";
   if (content.media === "none") {
     if (axes.mediaLayout === "none") { score += 2; why.push("no media — centered statement"); }
   } else if (content.media === "product") {
@@ -135,8 +216,16 @@ function scoreHero(axes: Record<string, string>, genre: GenreId, content: Resolv
   if (direction === "swiss-poster" && axes.alignment === "left" && axes.mediaLayout === "none") {
     score += 1; why.push("swiss-poster grid discipline");
   }
-  if (why.length === 0) why.push("fallback combination");
-  return { score, reason: `hero → ${axes.alignment} / ${axes.mediaLayout}: ${why.join("; ")} (genre ${genre}, media ${content.media})` };
+  // Brand Token brief (Brief #8 §6 hero brandCta affinity): a distinct
+  // brand hue (>30° from primary) spends the hero's primary CTA on the
+  // brand variant; otherwise the primary variant holds. Manifest order
+  // keeps "primary" first, so ties resolve to primary without a boost.
+  if (brandCta && (axes.ctaVariant ?? "primary") === "brand") {
+    score += 2; why.push("brand CTA for a distinct brand hue (>30° from primary)");
+  }
+  if (why.length === 0) why.push(affinityNotes);
+  else why.unshift(affinityNotes);
+  return { score, reason: `hero → ${axes.alignment} / ${axes.mediaLayout}: ${why.join("; ")} (genre ${genre}, variant ${key}, dnaDistance ${distance}, decidingAxis ${decidingAxis})` };
 }
 
 function scoreFeatures(axes: Record<string, string>, genre: GenreId, content: ResolvedContent, dna: SelectorDna | undefined, direction: string | undefined): { score: number; reason: string } {
@@ -287,7 +376,7 @@ export function rankedVariants(
   const scored: Scored[] = combos.map((axes) => {
     let scoredBy: { score: number; reason: string };
     switch (blockName) {
-      case "hero": scoredBy = scoreHero(axes, context.genre, content, dna, direction); break;
+      case "hero": scoredBy = scoreHero(axes, context.genre, content, dna, direction, context.brandCta); break;
       case "features": scoredBy = scoreFeatures(axes, context.genre, content, dna, direction); break;
       case "pricing": scoredBy = scorePricing(axes, context.genre, content); break;
       case "testimonials": scoredBy = scoreTestimonials(axes, context.genre, content, dna, direction); break;

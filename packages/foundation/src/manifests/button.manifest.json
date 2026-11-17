@@ -14,7 +14,7 @@
   ],
   "axes": {
     "variant": {
-      "values": ["default", "secondary", "destructive", "outline", "ghost", "link"],
+      "values": ["default", "secondary", "destructive", "outline", "ghost", "link", "brand"],
       "default": "default"
     },
     "size": {
@@ -24,7 +24,7 @@
   },
   "styleSurface": {
     "button": {
-      "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost"], "default": "default" },
+      "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost", "brand"], "default": "default" },
       "defaultSize": { "type": "enum", "values": ["default", "sm", "lg", "icon"], "default": "default" },
       "shadow": { "type": "enum", "values": ["none", "sm"], "default": "none" },
       "fontWeight": { "type": "enum", "values": ["normal", "medium", "semibold"], "default": "medium" }
@@ -34,6 +34,8 @@
     "--background",
     "--primary",
     "--primary-foreground",
+    "--brand",
+    "--brand-foreground",
     "--secondary",
     "--secondary-foreground",
     "--accent",

@@ -2,8 +2,8 @@
  * Shapeshift battery (acceptance 4 + examples regeneration): ≥12 prompts
  * incl. enterprise set + adversarial pair, plus one MCP generate_identity.
  * Every compiled payload must pass all enforce-tier checks post-repair;
- * repairs appear in meta.adjustments with rule ids; profiles recorded;
- * logs carry plan + self-check + DNA from the single response. Cleans up
+ * repairs appear in meta.adjustments with rule ids; derived profiles recorded;
+ * logs carry DNA + derived profile from the single response. Cleans up
  * every draft + log row it creates.
  * Usage: ../../packages/foundation/node_modules/.bin/tsx --env-file=.env.local scripts/battery-shapeshift.ts
  */

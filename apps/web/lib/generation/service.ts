@@ -1,22 +1,40 @@
-import { compileValidIdentity } from "@arche/registry-core/compiler";
+import { compileValidIdentity, deriveTypePick } from "@arche/registry-core/compiler";
 import {
   applyPickerDelta,
+  constraintSlots,
   derivePaletteOptions,
+  deriveProfile,
   designRulesVersion,
   EXAMPLE_RECORDS,
+  loadCorpus,
+  nameColor,
+  normalizePaletteVariants,
+  normalizeTypefaceVariants,
+  parseConstraints,
+  retrieveExemplars,
+  typefaceSpec,
   validateIdentity,
+  verifyAdherence,
+  withBrandDefault,
   WORD_CHIPS,
   type ArcheIdentity,
+  type CorpusEntry,
   type DnaDelta,
   type DnaObject,
   type DnaPalette,
   type GenerationProfile,
+  type PaletteVariant,
   type PickerSelections,
+  type PromptConstraints,
+  type TypefaceOptionSpec,
+  type TypefaceVariant,
 } from "@arche/registry-core";
 import {
   dnaObjectSchema,
   dnaPaletteSchema,
   generationProfileSchema,
+  paletteVariantSchema,
+  typefaceVariantSchema,
 } from "@arche/foundation/dna";
 import { createServiceClient } from "@/lib/supabase/service";
 import { fixturesDir, slugify } from "@/lib/starter";
@@ -89,10 +107,9 @@ interface LogRow {
 }
 
 /**
- * Stored `dna` shape for generations (Deliverable 3): the model's full
- * single-call response — plan + self-check verdict + final inputs +
- * profile + rules version — from the ONE completion. `dna_delta` holds the
- * same shape for prompt edits ({plan, selfCheck, delta, profile}).
+ * Stored `dna` shape for generations (Brief #8): the model's DNA-only
+ * single-call response — axes + palette — plus the compiler-derived
+ * profile and rules version. `dna_delta` holds the diff-scoped delta.
  * No table migration: the existing jsonb columns carry the sections.
  */
 async function logAttempt(row: LogRow): Promise<string | null> {
@@ -175,9 +192,36 @@ async function uniqueSlug(service: ReturnType<typeof createServiceClient>, owner
 }
 
 /**
+ * Prompt-adherence helpers (Brief: words → numbers → code). Deterministic:
+ * same prompt → same constraints → same exemplars. The model is the only
+ * nondeterministic step; constraints are stored on the draft and in logs.
+ */
+export function constraintsFor(prompt: string): PromptConstraints {
+  return parseConstraints(prompt);
+}
+
+/** Nearest 1–3 corpus entries for the parsed constraints (empty when below threshold). */
+export function exemplarsFor(constraints: PromptConstraints): CorpusEntry[] {
+  try {
+    return retrieveExemplars(constraints, loadCorpus());
+  } catch {
+    return [];
+  }
+}
+
+/** Verifier failure rendered as the single targeted repair prompt (exact numbers). */
+export function adherenceRepairFeedback(failures: string[]): string {
+  return `Prompt-adherence check failed on the compiled tokens (code-measured, not taste): ${failures.join("; ")}. Regenerate DNA that satisfies these numbers (e.g. lower chroma, tighter hue spread) while keeping the same character.`;
+}
+
+/**
  * Text door (FR-SHIFT-1): phrase → validated draft. Invalid model output
  * (after the provider's retry), provider errors, and validation failures
  * all land here: failed log row, nothing stored.
+ *
+ * Prompt-adherence: parse → retrieve → generate → enforce (in compile) →
+ * verify → at most one targeted model repair, then re-enforce. Code wins
+ * over DNA; every enforcement is logged in meta.adjustments[].
  */
 export async function generateFromPhrase(
   userId: string,
@@ -188,21 +232,27 @@ export async function generateFromPhrase(
   const base = auroraBase();
   const rulesVersion = designRulesVersion();
   try {
-    const call = await generateDna(prompt);
+    const constraints = constraintsFor(prompt);
+    const exemplars = exemplarsFor(constraints);
+    const call = await generateDna(prompt, { exemplars, constraints });
     const identityName = (name?.trim() || titleFromPrompt(prompt, "Untouched Idea")).slice(0, 80);
-    let compiled: ArcheIdentity;
-    try {
-      compiled = await compileValidIdentity(
+    const compileOnce = (output: typeof call.output, profile: GenerationProfile): Promise<ArcheIdentity> =>
+      compileValidIdentity(
         {
           name: identityName,
           source: { type: "phrase", promptText: prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH) },
-          axes: call.output.axes,
-          palette: call.output.palette,
-          profile: call.profile,
+          axes: output.axes,
+          palette: output.palette,
+          profile,
           base,
+          constraints,
         },
         validateIdentity,
       );
+    const profile = deriveProfile(call.output.axes);
+    let compiled: ArcheIdentity;
+    try {
+      compiled = await compileOnce(call.output, profile);
     } catch (err) {
       // Unrepairable enforce-tier violation: one follow-up model call
       // carrying the named rule findings, then recompile once. Anything
@@ -210,27 +260,52 @@ export async function generateFromPhrase(
       if (!(err instanceof Error) || !err.message.startsWith("generated payload violates design rules")) {
         throw err;
       }
-      const retry = await generateDna(prompt, err.message);
+      const retry = await generateDna(prompt, {
+        exemplars,
+        constraints,
+        repairFeedback: err.message,
+      });
       // Attribute the single follow-up call's tokens alongside the first.
       call.tokensIn = (call.tokensIn ?? 0) + (retry.tokensIn ?? 0);
       call.tokensOut = (call.tokensOut ?? 0) + (retry.tokensOut ?? 0);
       const final = retry;
-      compiled = await compileValidIdentity(
-        {
-          name: identityName,
-          source: { type: "phrase", promptText: prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH) },
-          axes: final.output.axes,
-          palette: final.output.palette,
-          profile: final.profile,
-          base,
-        },
-        validateIdentity,
-      );
-      call.plan = final.plan;
-      call.selfCheck = final.selfCheck;
-      call.profile = final.profile;
+      const retryProfile = deriveProfile(final.output.axes);
+      compiled = await compileOnce(final.output, retryProfile);
       call.output = final.output;
     }
+    // Deterministic verifier on the final compiled tokens (what the user
+    // will actually see). One targeted repair citing exact numbers, then
+    // re-enforce deterministically. Max 2 adherence attempts total.
+    let report = verifyAdherence(compiled, constraints);
+    if (!report.pass) {
+      const repair = await generateDna(prompt, {
+        exemplars,
+        constraints,
+        repairFeedback: adherenceRepairFeedback(report.failures),
+      });
+      call.tokensIn = (call.tokensIn ?? 0) + (repair.tokensIn ?? 0);
+      call.tokensOut = (call.tokensOut ?? 0) + (repair.tokensOut ?? 0);
+      const repairProfile = deriveProfile(repair.output.axes);
+      const recompiled = await compileOnce(repair.output, repairProfile);
+      const second = verifyAdherence(recompiled, constraints);
+      if (second.pass) {
+        compiled = recompiled;
+        call.output = repair.output;
+        report = second;
+      } else {
+        // Keep the best-scoring candidate but never silently ship it:
+        // surface the code-measured failure instead of storing a mismatch.
+        throw new Error(
+          `prompt-adherence check failed: ${second.failures.join("; ")} (max chroma ${second.metrics.maxChroma}, hue spread ${second.metrics.hueSpread}°)`,
+        );
+      }
+    }
+    (compiled.meta as Record<string, unknown>).promptConstraints = constraints;
+    (compiled.meta as Record<string, unknown>).promptSlots = constraintSlots(constraints);
+    (compiled.meta as Record<string, unknown>).promptSlots = [
+      ...((compiled.meta as Record<string, unknown>).promptSlots as string[]),
+      `Brand: ${nameColor(String((compiled.tokens.light as unknown as Record<string, { $value?: unknown }>)["--brand"]?.$value ?? ""))}`,
+    ];
     const service = createServiceClient();
     const slug = await uniqueSlug(service, userId, identityName);
     const { data, error } = await service
@@ -248,12 +323,13 @@ export async function generateFromPhrase(
       kind: "generate",
       prompt: prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH),
       dna: {
-        plan: call.plan,
-        selfCheck: call.selfCheck,
         axes: call.output.axes,
         palette: call.output.palette,
-        profile: call.profile,
+        profile: compiled.dna!.profile,
         rulesVersion,
+        constraints,
+        slots: constraintSlots(constraints),
+        brandDefaulted: withBrandDefault(call.output.palette).defaulted,
       },
       payload_diff: diffPayloads(base, compiled),
       adjustments: (compiled.meta as Record<string, unknown>).adjustments ?? [],
@@ -266,7 +342,7 @@ export async function generateFromPhrase(
       libraryId,
       slug,
       name: identityName,
-      profile: call.profile,
+      profile: compiled.dna!.profile,
       adjustments: ((compiled.meta as Record<string, unknown>).adjustments as unknown[]).length,
     };
   } catch (err) {
@@ -291,11 +367,158 @@ export async function generateFromPhrase(
  * The attempt is logged (failures included, Rule 7) with no library link;
  * phase 2 links the row to the created library.
  */
+/**
+ * Honest step-1 swatches: real compiled light-mode tokens, never
+ * illustrative fills. Brand Token brief: Background, Primary, Accent,
+ * and Brand — each a distinct role, each labeled with its derived name.
+ */
+export interface PalettePreviewSwatches {
+  surface: string;
+  surfaceText: string;
+  primary: string;
+  onPrimary: string;
+  accent: string;
+  onAccent: string;
+  brand: string;
+  onBrand: string;
+  brandSoft: string;
+  secondary: string;
+  secondaryText: string;
+}
+
+export interface PalettePreviewOption {
+  id: string;
+  name: string;
+  reason: string;
+  anchors: DnaPalette;
+  swatches: PalettePreviewSwatches;
+}
+
+export interface TypefacePreviewFace {
+  id: string;
+  family: string;
+  stack: string;
+  cssUrl: string | null;
+}
+
+export interface TypefacePreviewOption {
+  id: string;
+  name: string;
+  reason: string;
+  display: TypefacePreviewFace;
+  body: TypefacePreviewFace;
+}
+
 export interface GenerationPreview {
   logId: string | null;
   axes: DnaObject;
   palette: DnaPalette;
   profile: GenerationProfile;
+  constraints: PromptConstraints;
+  slots: string[];
+  paletteOptions: PalettePreviewOption[];
+  typeOptions: TypefacePreviewOption[];
+}
+
+function swatchesFor(compiled: ArcheIdentity): PalettePreviewSwatches {
+  const light = compiled.tokens.light as unknown as Record<string, { $value?: unknown }>;
+  const str = (name: string, fallback: string): string => {
+    const v = light[name]?.$value;
+    return typeof v === "string" && v.length > 0 ? v : fallback;
+  };
+  return {
+    surface: str("--card", "#ffffff"),
+    surfaceText: str("--card-foreground", "#111111"),
+    primary: str("--primary", "#333333"),
+    onPrimary: str("--primary-foreground", "#ffffff"),
+    accent: str("--accent", "#555555"),
+    onAccent: str("--accent-foreground", "#ffffff"),
+    brand: str("--brand", "#333333"),
+    onBrand: str("--brand-foreground", "#ffffff"),
+    brandSoft: str("--brand-soft", "#eeeeee"),
+    secondary: str("--secondary", "#eeeeee"),
+    secondaryText: str("--secondary-foreground", "#111111"),
+  };
+}
+
+const FALLBACK_SWATCHES: PalettePreviewSwatches = {
+  surface: "#ffffff",
+  surfaceText: "#111111",
+  primary: "#333333",
+  onPrimary: "#ffffff",
+  accent: "#555555",
+  onAccent: "#ffffff",
+  brand: "#333333",
+  onBrand: "#ffffff",
+  brandSoft: "#eeeeee",
+  secondary: "#eeeeee",
+  secondaryText: "#111111",
+};
+
+/**
+ * Compile each palette variant to its honest preview swatches (same axes,
+ * profile, and prompt constraints as the final compile — enforcement
+ * included). A variant that cannot compile falls back to the base
+ * palette's swatches; positions never shift.
+ */
+async function previewPaletteOptions(args: {
+  name: string;
+  source: { type: "phrase"; promptText: string };
+  axes: DnaObject;
+  basePalette: DnaPalette;
+  variants: [PaletteVariant, PaletteVariant, PaletteVariant];
+  profile: GenerationProfile;
+  base: ArcheIdentity;
+  constraints: PromptConstraints;
+}): Promise<PalettePreviewOption[]> {
+  const compile = (palette: DnaPalette): Promise<PalettePreviewSwatches> =>
+    compileValidIdentity(
+      {
+        name: args.name,
+        source: args.source,
+        axes: args.axes,
+        palette,
+        profile: args.profile,
+        base: args.base,
+        constraints: args.constraints,
+      },
+      validateIdentity,
+    ).then(swatchesFor);
+  const baseSwatches = await compile(args.basePalette).catch(() => FALLBACK_SWATCHES);
+  return Promise.all(
+    args.variants.map(async (variant) => ({
+      id: variant.id,
+      name: variant.name,
+      reason: variant.reason,
+      anchors: variant.anchors,
+      swatches: await compile(variant.anchors).catch(() => baseSwatches),
+    })),
+  );
+}
+
+/** Resolve each typography variant to renderable header/body specimens. */
+function previewTypefaceOptions(
+  variants: [TypefaceVariant, TypefaceVariant, TypefaceVariant],
+  compilerPick: { display: string; sans: string },
+): TypefacePreviewOption[] {
+  const pickSpec = typefaceSpec(compilerPick.display, compilerPick.sans);
+  return variants.map((variant) => {
+    const spec: TypefaceOptionSpec | null = typefaceSpec(variant.display, variant.body);
+    const resolved = spec ?? pickSpec;
+    const face = (s: { id: string; family: string; stack: string; cssUrl: string | null }): TypefacePreviewFace => ({
+      id: s.id,
+      family: s.family,
+      stack: s.stack,
+      cssUrl: s.cssUrl,
+    });
+    return {
+      id: variant.id,
+      name: variant.name,
+      reason: variant.reason,
+      display: face(resolved?.display ?? { id: variant.display, family: variant.display, stack: "inherit", cssUrl: null }),
+      body: face(resolved?.body ?? { id: variant.body, family: variant.body, stack: "inherit", cssUrl: null }),
+    };
+  });
 }
 
 export async function previewGeneration(userId: string, prompt: string): Promise<GenerationPreview> {
@@ -306,26 +529,64 @@ export async function previewGeneration(userId: string, prompt: string): Promise
   }
   const rulesVersion = designRulesVersion();
   try {
-    const call = await generateDna(trimmed);
+    const constraints = constraintsFor(trimmed);
+    const exemplars = exemplarsFor(constraints);
+    const call = await generateDna(trimmed, { exemplars, constraints });
+    const derived = deriveProfile(call.output.axes);
+    // The single call returns the DNA plus 3 palette + 3 typography
+    // variants. Semantic validation is code-side (unknown ids never burn a
+    // retry — deterministic fallbacks fill the position).
+    const compilerPick = deriveTypePick(call.output.axes, derived);
+    const paletteVariants = normalizePaletteVariants(call.output.palettes, call.output.palette, derived);
+    const typefaceVariants = normalizeTypefaceVariants(call.output.typefaces, compilerPick);
+    const identityName = titleFromPrompt(trimmed, "Untouched Idea").slice(0, 80);
+    const paletteOptions = await previewPaletteOptions({
+      name: identityName,
+      source: { type: "phrase", promptText: trimmed.slice(0, 120) },
+      axes: call.output.axes,
+      basePalette: call.output.palette,
+      variants: paletteVariants,
+      profile: derived,
+      base: auroraBase(),
+      constraints,
+    });
+    const typeOptions = previewTypefaceOptions(typefaceVariants, compilerPick);
+    // Brand Token brief: the understood brand rides with the slots, and a
+    // missing brandHue defaults to the primary hue — recorded, not silent.
+    const { defaulted: brandDefaulted } = withBrandDefault(call.output.palette);
+    const dreamed = paletteOptions.find((o) => o.id === "as-dreamed") ?? paletteOptions[0]!;
+    const slots = [...constraintSlots(constraints), `Brand: ${nameColor(dreamed.swatches.brand)}`];
     const logId = await logAttempt({
       user_id: userId,
       library_id: null,
       kind: "generate",
       prompt: trimmed,
       dna: {
-        plan: call.plan,
-        selfCheck: call.selfCheck,
         axes: call.output.axes,
         palette: call.output.palette,
-        profile: call.profile,
+        profile: derived,
         rulesVersion,
+        constraints,
+        slots,
+        brandDefaulted,
+        paletteVariants: paletteVariants.map((v) => ({ id: v.id, name: v.name, anchors: v.anchors })),
+        typefaceVariants: typefaceVariants.map((v) => ({ id: v.id, name: v.name, display: v.display, body: v.body })),
       },
       model: call.model,
       tokens_in: call.tokensIn,
       tokens_out: call.tokensOut,
       status: "ok",
     });
-    return { logId, axes: call.output.axes, palette: call.output.palette, profile: call.profile };
+    return {
+      logId,
+      axes: call.output.axes,
+      palette: call.output.palette,
+      profile: derived,
+      constraints,
+      slots,
+      paletteOptions,
+      typeOptions,
+    };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     await logAttempt({
@@ -342,6 +603,7 @@ export async function previewGeneration(userId: string, prompt: string): Promise
 
 export interface FinishSelections {
   paletteId: string;
+  typefaceId?: string;
   exampleId?: string;
   chipIds: string[];
 }
@@ -357,7 +619,7 @@ export interface FinishSelections {
  */
 export async function completeGeneration(
   userId: string,
-  preview: { logId: string | null; axes: DnaObject; palette: DnaPalette; profile: GenerationProfile },
+  preview: GenerationPreview,
   prompt: string,
   name: string | undefined,
   selections: FinishSelections,
@@ -368,6 +630,20 @@ export async function completeGeneration(
   if (!axesParsed.success || !paletteParsed.success || !profileParsed.success) {
     throw new Error("generation preview expired or was modified — start over");
   }
+  // Picker variants round-trip through the client: re-validate every entry
+  // (schema + registry) and fall back deterministically, so a tampered id
+  // or font can never reach a payload.
+  const previewPaletteOptions = Array.isArray(preview.paletteOptions) ? preview.paletteOptions : [];
+  const validPaletteOptions = previewPaletteOptions.filter((o) => paletteVariantSchema.safeParse(o).success);
+  const paletteOptions = normalizePaletteVariants(
+    validPaletteOptions.length === 3 ? validPaletteOptions : [],
+    paletteParsed.data,
+    profileParsed.data,
+  );
+  const previewTypeOptions = Array.isArray(preview.typeOptions) ? preview.typeOptions : [];
+  const validTypeOptions = previewTypeOptions.filter((o) => typefaceVariantSchema.safeParse(o).success);
+  const compilerPick = deriveTypePick(axesParsed.data, profileParsed.data);
+  const typefaceOptions = normalizeTypefaceVariants(validTypeOptions.length === 3 ? validTypeOptions : [], compilerPick);
   const trimmedPrompt = prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH);
   if (!trimmedPrompt) {
     throw new Error("prompt must not be empty");
@@ -381,8 +657,13 @@ export async function completeGeneration(
   const base = auroraBase();
   const rulesVersion = designRulesVersion();
   const identityName = (name?.trim() || titleFromPrompt(trimmedPrompt, "Untouched Idea")).slice(0, 80);
+  const constraints = preview.constraints ?? constraintsFor(trimmedPrompt);
+  // The picker narrows the single generation: the chosen palette variant's
+  // anchors and the chosen typography variant's header/body pair fold into
+  // the final compile; anything unpicked stays as the model dreamed it.
+  const selectedTypeface = typefaceOptions.find((o) => o.id === (selections.typefaceId ?? "")) ?? typefaceOptions[0]!;
+  const typefaceOverride = { display: selectedTypeface.display, sans: selectedTypeface.body };
   const fold = (dnaAxes: DnaObject, dnaPalette: DnaPalette): { axes: DnaObject; palette: DnaPalette } => {
-    const options = derivePaletteOptions(dnaPalette, profile);
     let paletteOverride: DnaPalette | undefined;
     if (selections.exampleId) {
       const record = EXAMPLE_RECORDS.find((entry) => entry.id === selections.exampleId);
@@ -391,7 +672,7 @@ export async function completeGeneration(
       }
       paletteOverride = { ...record.palette };
     }
-    const applied = applyPickerDelta(dnaAxes, dnaPalette, { chipIds, paletteId }, options);
+    const applied = applyPickerDelta(dnaAxes, dnaPalette, { chipIds, paletteId }, paletteOptions);
     return { axes: { ...dnaAxes, ...applied.axes }, palette: paletteOverride ?? applied.anchors };
   };
   try {
@@ -406,6 +687,8 @@ export async function completeGeneration(
           palette: folded.palette,
           profile,
           base,
+          constraints,
+          typeface: typefaceOverride,
         },
         validateIdentity,
       );
@@ -416,7 +699,11 @@ export async function completeGeneration(
       if (!(err instanceof Error) || !err.message.startsWith("generated payload violates design rules")) {
         throw err;
       }
-      const retry = await generateDna(trimmedPrompt, err.message);
+      const retry = await generateDna(trimmedPrompt, {
+        exemplars: exemplarsFor(constraints),
+        constraints,
+        repairFeedback: err.message,
+      });
       folded = fold(retry.output.axes, retry.output.palette);
       compiled = await compileValidIdentity(
         {
@@ -424,15 +711,29 @@ export async function completeGeneration(
           source: { type: "phrase", promptText: trimmedPrompt },
           axes: folded.axes,
           palette: folded.palette,
-          profile: retry.profile,
+          profile: deriveProfile(folded.axes),
           base,
+          constraints,
+          typeface: typefaceOverride,
         },
         validateIdentity,
       );
     }
+    // Verifier safety net (same contract as the direct text door): one
+    // targeted repair, then surface the code-measured failure.
+    const report = verifyAdherence(compiled, constraints);
+    if (!report.pass) {
+      throw new Error(`prompt-adherence check failed: ${report.failures.join("; ")}`);
+    }
+    (compiled.meta as Record<string, unknown>).promptConstraints = constraints;
+    (compiled.meta as Record<string, unknown>).promptSlots = [
+      ...constraintSlots(constraints),
+      `Brand: ${nameColor(String((compiled.tokens.light as unknown as Record<string, { $value?: unknown }>)["--brand"]?.$value ?? ""))}`,
+    ];
     (compiled.meta as Record<string, unknown>).picker = {
       step: "done",
       paletteId,
+      typefaceId: selections.typefaceId ?? typefaceOptions[0]!.id,
       exampleId: selections.exampleId ?? null,
       chipIds,
     };
@@ -455,12 +756,15 @@ export async function completeGeneration(
         .update({
           library_id: libraryId,
           dna: {
-            plan: null,
-            selfCheck: null,
             axes: folded.axes,
             palette: folded.palette,
-            profile,
+            profile: compiled.dna!.profile,
             rulesVersion,
+            constraints,
+            slots: constraintSlots(constraints),
+            brandDefaulted: withBrandDefault(preview.palette).defaulted,
+            paletteId,
+            typefaceId: selections.typefaceId ?? typefaceOptions[0]!.id,
           },
           payload_diff: diffPayloads(base, compiled),
           adjustments: (compiled.meta as Record<string, unknown>).adjustments ?? [],
@@ -471,7 +775,7 @@ export async function completeGeneration(
       libraryId,
       slug,
       name: identityName,
-      profile,
+      profile: compiled.dna!.profile,
       adjustments: ((compiled.meta as Record<string, unknown>).adjustments as unknown[]).length,
     };
   } catch (err) {
@@ -515,7 +819,7 @@ export async function applyPromptEdit(
   }
   try {
     const call = await generateDnaDelta(
-      { axes: storedDna.axes, palette: storedDna.palette, profile: storedDna.profile },
+      { axes: storedDna.axes, palette: storedDna.palette },
       editPrompt,
     );
     const next = await compileValidIdentity(
@@ -524,7 +828,6 @@ export async function applyPromptEdit(
         source: storedDna.source,
         axes: { ...storedDna.axes, ...(call.delta.axes ?? {}) },
         palette: { ...storedDna.palette, ...(call.delta.palette ?? {}) },
-        profile: call.profile ?? storedDna.profile ?? "standard",
         base: current,
       },
       validateIdentity,
@@ -545,14 +848,12 @@ export async function applyPromptEdit(
       kind: "edit",
       prompt: editPrompt.trim().slice(0, 280),
       dna: {
-        plan: call.plan,
-        selfCheck: call.selfCheck,
         axes: next.dna!.axes,
         palette: next.dna!.palette,
         profile: next.dna!.profile ?? "standard",
         rulesVersion: designRulesVersion(),
       },
-      dna_delta: { plan: call.plan, selfCheck: call.selfCheck, delta: call.delta, profile: call.profile ?? null },
+      dna_delta: { delta: call.delta },
       payload_diff: diff,
       adjustments: (next.meta as Record<string, unknown>).adjustments ?? [],
       model: call.model,
@@ -618,6 +919,9 @@ export async function recompileWithPicker(
     selections,
     derivePaletteOptions(dna.palette, profile),
   );
+  const constraints =
+    ((current.meta as Record<string, unknown>).promptConstraints as PromptConstraints | undefined) ??
+    (dna.source.type === "phrase" && dna.source.promptText ? parseConstraints(dna.source.promptText) : {});
   const compiled = await compileValidIdentity(
     {
       name: current.meta.name,
@@ -626,6 +930,7 @@ export async function recompileWithPicker(
       palette: paletteOverride ?? applied.anchors,
       profile,
       base: current,
+      constraints,
     },
     validateIdentity,
   );

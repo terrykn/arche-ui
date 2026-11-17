@@ -285,28 +285,28 @@ test("generator selects only registry pairs and keeps type scale separate", () =
   const cases = [
     {
       name: "pixel",
-      axes: { warmth: 0.5, energy: 0.9, playfulness: 0.9, sharpness: 0.7, density: 0.5, ornament: 0.5, retroFuturism: 0.8, formality: 0.1, material: "pixel", motionFeel: "smooth", texture: "none", ...guardrails },
+      axes: { warmth: 0.5, energy: 0.9, playfulness: 0.9, sharpness: 0.7, density: 0.5, ornament: 0.5, formality: 0.1, material: "pixel", motionFeel: "smooth", texture: "none", ...guardrails },
       palette: { primaryHue: 300, accentHue: 100, neutralHue: 305 },
       profile: "expressive",
       expected: { sans: "general-sans", display: "clash-display", mono: "geist-mono" },
     },
     {
       name: "formal",
-      axes: { warmth: 0.3, energy: 0.2, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, retroFuturism: 0, formality: 0.8, material: "flat", motionFeel: "stately", texture: "none", ...guardrails },
+      axes: { warmth: 0.3, energy: 0.2, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, formality: 0.8, material: "flat", motionFeel: "stately", texture: "none", ...guardrails },
       palette: { primaryHue: 220, accentHue: 30, neutralHue: 230 },
       profile: "standard",
       expected: { sans: "switzer", display: "zodiak", mono: "jetbrains-mono" },
     },
     {
       name: "warm",
-      axes: { warmth: 0.85, energy: 0.4, playfulness: 0.3, sharpness: 0.3, density: 0.5, ornament: 0.3, retroFuturism: 0.1, formality: 0.3, material: "clay", motionFeel: "smooth", texture: "grain", ...guardrails },
+      axes: { warmth: 0.85, energy: 0.4, playfulness: 0.3, sharpness: 0.3, density: 0.5, ornament: 0.3, formality: 0.3, material: "clay", motionFeel: "smooth", texture: "grain", ...guardrails },
       palette: { primaryHue: 25, accentHue: 45, neutralHue: 60 },
       profile: "standard",
       expected: { sans: "cabinet-grotesk", display: "sentient", mono: "jetbrains-mono" },
     },
     {
       name: "neutral",
-      axes: { warmth: 0.5, energy: 0.5, playfulness: 0.3, sharpness: 0.5, density: 0.5, ornament: 0.2, retroFuturism: 0.1, formality: 0.4, material: "flat", motionFeel: "smooth", texture: "none", ...guardrails },
+      axes: { warmth: 0.5, energy: 0.5, playfulness: 0.3, sharpness: 0.5, density: 0.5, ornament: 0.2, formality: 0.4, material: "flat", motionFeel: "smooth", texture: "none", ...guardrails },
       palette: { primaryHue: 0, accentHue: 0, neutralHue: 0 },
       profile: "standard",
       expected: { sans: "satoshi", display: "satoshi", mono: "geist-mono" },
@@ -324,7 +324,7 @@ test("registry items use the correct provider and stylesheet or next/font import
   const hospital = compileIdentity({
     name: "zodiak-check",
     source: { type: "manual" },
-    axes: { warmth: 0.3, energy: 0.2, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, retroFuturism: 0, formality: 0.8, material: "flat", motionFeel: "stately", texture: "none", ...guardrails },
+    axes: { warmth: 0.3, energy: 0.2, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, formality: 0.8, material: "flat", motionFeel: "stately", texture: "none", ...guardrails },
     palette: { primaryHue: 220, accentHue: 30, neutralHue: 230 },
     profile: "standard",
     base,
@@ -341,7 +341,7 @@ test("registry items use the correct provider and stylesheet or next/font import
   const neutral = compileIdentity({
     name: "satoshi-check",
     source: { type: "manual" },
-    axes: { warmth: 0.5, energy: 0.5, playfulness: 0.3, sharpness: 0.5, density: 0.5, ornament: 0.2, retroFuturism: 0.1, formality: 0.4, material: "flat", motionFeel: "smooth", texture: "none", ...guardrails },
+    axes: { warmth: 0.5, energy: 0.5, playfulness: 0.3, sharpness: 0.5, density: 0.5, ornament: 0.2, formality: 0.4, material: "flat", motionFeel: "smooth", texture: "none", ...guardrails },
     palette: { primaryHue: 0, accentHue: 0, neutralHue: 0 },
     profile: "standard",
     base,

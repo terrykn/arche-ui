@@ -27,7 +27,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --project .",
+    "build": "tsc --project . && node scripts/copy-adherence-assets.mjs",
     "check-types": "tsc --project . --noEmit",
     "lint": "eslint .",
     "emit": "pnpm build && node dist/cli.js",
@@ -40,7 +40,11 @@
     "test:selector": "pnpm build && node --test scripts/test-selector.mjs",
     "test:picker": "pnpm build && node --test scripts/test-picker.mjs",
     "test:picker-recompile": "pnpm build && node --test scripts/test-picker-recompile.mjs",
-    "test:verification": "pnpm build && node --test scripts/test-verification.mjs"
+    "test:verification": "pnpm build && node --test scripts/test-verification.mjs",
+    "test:dna-v2": "pnpm build && node --test scripts/test-dna-v2.mjs",
+    "test:prompt-adherence": "pnpm build && node --test scripts/test-prompt-adherence.mjs",
+    "test:variants": "pnpm build && node --test scripts/test-variants.mjs",
+    "test:brand": "pnpm build && node --test scripts/test-brand.mjs"
   },
   "dependencies": {
     "@arche/foundation": "workspace:*",

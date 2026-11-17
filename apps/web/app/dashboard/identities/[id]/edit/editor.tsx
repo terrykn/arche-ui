@@ -159,6 +159,7 @@ const COLOR_SECTIONS: ColorSection[] = [
   { id: "primary", title: "Primary", tokens: ["--primary", "--primary-foreground"] },
   { id: "secondary", title: "Secondary", tokens: ["--secondary", "--secondary-foreground"] },
   { id: "accent", title: "Accent", tokens: ["--accent", "--accent-foreground"] },
+  { id: "brand", title: "Brand", tokens: ["--brand", "--brand-foreground", "--brand-soft"] },
   { id: "base", title: "Base", tokens: ["--background", "--foreground"] },
   { id: "card", title: "Card", tokens: ["--card", "--card-foreground"] },
   { id: "popover", title: "Popover", tokens: ["--popover", "--popover-foreground"] },

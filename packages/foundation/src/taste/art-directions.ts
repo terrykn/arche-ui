@@ -102,7 +102,7 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     id: "y2k-futurism",
     name: "Chrome Memory",
     statement:
-      "2000s futurism: retroFuturism high, chrome and glitch motion. Nostalgic hardware, optimistic chrome.",
+      "2000s futurism: playfulness high, chrome and glitch motion. Nostalgic hardware, optimistic chrome.",
     palettePhilosophy:
       "Cool metallics with one hot accent; the accent surprises against the chrome base.",
     fonts: { display: "melodrama", body: "general-sans" },
@@ -110,7 +110,7 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "glitchy",
     layoutGrammar: "Glossy pills and bevels, beveled panels, playful asymmetry inside a tight grid.",
     materials: ["metal", "glass"],
-    dnaRanges: { retroFuturism: r(0.7, 1) },
+    dnaRanges: { playfulness: r(0.5, 1), ornament: r(0.3, 1) },
   },
   {
     id: "soft-spa",

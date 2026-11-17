@@ -139,16 +139,13 @@ export async function finishGenerationAction(
   preview: GenerationPreview,
   prompt: string,
   selections: FinishSelections,
-): Promise<{ ok: false; message: string }> {
+): Promise<{ ok: true; libraryId: string } | { ok: false; message: string }> {
   const owner = await requireUserId();
   try {
     const outcome = await completeGeneration(owner, preview, prompt, undefined, selections);
     revalidatePath("/dashboard");
-    redirect(`/dashboard/identities/${outcome.libraryId}/edit`);
+    return { ok: true as const, libraryId: outcome.libraryId };
   } catch (err) {
-    if (err instanceof Error && (err as { digest?: string }).digest?.startsWith("NEXT_REDIRECT")) {
-      throw err;
-    }
     const message = err instanceof Error ? err.message : String(err);
     return { ok: false as const, message };
   }

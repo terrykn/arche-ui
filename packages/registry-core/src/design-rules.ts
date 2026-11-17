@@ -84,9 +84,12 @@ const TEXT_TOKENS = [
   "--accent-foreground",
   "--destructive-foreground",
   "--muted-foreground",
+  "--brand-foreground",
 ];
 const BORDER_TOKENS = ["--border", "--input"];
-const SOLID_TOKENS = ["--primary", "--accent", "--destructive"];
+// Brand Token brief: the brand solid lives in the same chroma band as the
+// other solids (ceilings bind; the monochrome path floors it to 0).
+const SOLID_TOKENS = ["--primary", "--accent", "--destructive", "--brand"];
 const NEUTRAL_TOKENS = [
   "--background",
   "--card",
@@ -175,15 +178,47 @@ export function checkDesignRules(identity: ArcheIdentity): DesignRuleFinding[] {
     }
 
     // color-solid-chroma-band (chroma-scaled floor + profile-scaled
-    // ceiling). The floor yields to low-chroma intent (gallery-wall DNA
-    // asks for near-zero solids); ceilings still bind runaway saturation.
+    // ceiling). Brief #8 §5 — true zero: at chroma 0 the floor is exactly 0
+    // (grayscale is compliant); ceilings still bind runaway saturation.
     // Pre-chroma payloads carry no axis: they compiled under the full
     // ladder, so the full floor still applies to them.
-    const chromaAxis = (identity.dna as { axes?: { chroma?: unknown } } | undefined)?.axes?.chroma;
+    const dna = identity.dna as
+      | { axes?: { chroma?: unknown }; palette?: { primaryHue?: unknown; accentHue?: unknown; neutralHue?: unknown; brandHue?: unknown } }
+      | undefined;
+    const chromaAxis = dna?.axes?.chroma;
+    // Monochrome-by-construction (Brief #8 §5): hues within 10° and chroma
+    // ≤ 0.1 force achromatic scales, so the floor is exactly 0 — the
+    // validator must accept what the compiler deterministically emits.
+    // Brand Token brief: the spread covers all four anchors — a loud
+    // brand on a quiet trio is not monochrome. Missing brandHue defaults
+    // to the primary hue (pre-brand payloads), exactly like the compiler.
+    const brandHue = typeof dna?.palette?.brandHue === "number" ? dna.palette.brandHue : dna?.palette?.primaryHue;
+    const hues = [dna?.palette?.primaryHue, dna?.palette?.accentHue, dna?.palette?.neutralHue, brandHue];
+    // Prompt-adherence override: when the parsed brief caps chroma at the
+    // monochrome level, the compiler zeroes every role in code (the model
+    // cannot override it) — the validator must accept floor 0 regardless
+    // of the model's own chroma axis. Code decides, the model suggests.
+    const promptCap = (identity.meta as { promptConstraints?: { chromaCap?: unknown } } | undefined)
+      ?.promptConstraints?.chromaCap;
+    const promptMono = typeof promptCap === "number" && promptCap <= 0.02;
+    const monochrome =
+      promptMono ||
+      (typeof chromaAxis === "number" &&
+        chromaAxis <= 0.1 &&
+        hues.every((h) => typeof h === "number") &&
+        (() => {
+          const [p, a, n] = hues as number[];
+          const dist = (x: number, y: number): number => {
+            const d = Math.abs(((x - y) % 360 + 360) % 360);
+            return Math.min(d, 360 - d);
+          };
+          return Math.max(dist(p!, a!), dist(p!, n!), dist(a!, n!)) <= 10;
+        })());
     // Rounded to 3 decimals to match the compiler's token quantization —
     // a floor must be exactly representable or repair can never satisfy it.
-    const solidFloor =
-      Math.round(0.08 * (typeof chromaAxis === "number" ? 0.02 + 0.98 * Math.min(1, Math.max(0, chromaAxis)) : 1) * 1000) / 1000;
+    const solidFloor = monochrome
+      ? 0
+      : Math.round(0.08 * (typeof chromaAxis === "number" ? Math.min(1, Math.max(0, chromaAxis)) : 1) * 1000) / 1000;
     const ceiling = profile === "enterprise" ? 0.19 : profile === "expressive" ? 0.26 : 0.24;
     for (const name of SOLID_TOKENS) {
       const c = tokenColor(set, name);

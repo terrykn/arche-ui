@@ -1,13 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { ArrowUp, X } from "lucide-react";
-import {
-  derivePaletteOptions,
-  EXAMPLE_RECORDS,
-  WORD_CHIPS,
-  type PaletteOption,
-} from "@arche/registry-core/picker";
+import { WORD_CHIPS } from "@arche/registry-core/picker";
 import type {
   FinishSelections,
   GenerationPreview,
@@ -20,35 +16,37 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AutosizeTextarea } from "@/components/autosize-textarea";
+import { PaletteVariantPreview } from "@/components/palette-variant-preview";
+import { TypefaceOptionPreview } from "@/components/typeface-option-preview";
 import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
-type Phase = "idle" | "dreaming" | "failed" | "palettes" | "examples" | "words" | "creating";
+type Phase = "idle" | "dreaming" | "failed" | "palettes" | "typefaces" | "words" | "creating";
 
 const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
   palettes: {
     n: "Step 1 of 3",
     title: "Pick a palette",
-    lede: "Three ways to play the generation's own hues. Only As Dreamed is what the model actually asked for — the other two are deterministic remixes of the same anchors.",
+    lede: "",
   },
-  examples: {
+  typefaces: {
     n: "Step 2 of 3",
-    title: "Which feels closest?",
-    lede: "Reference identities, each a palette plus its typefaces and stack. Choosing one retunes the draft's anchors — or keep your palette untouched.",
+    title: "Pick a typeface",
+    lede: "Three header/body pairings from your prompt — a separate choice, never bundled with a palette. The winner sets the draft's fonts.",
   },
   words: {
     n: "Step 3 of 3",
     title: "Describe it in words",
-    lede: "Chips map straight onto the design DNA — calm quiets the energy axis, retro bends the era axis. Combine freely, or skip.",
+    lede: "",
   },
 };
 
-function hueSwatch(hue: number): React.CSSProperties {
-  return { backgroundColor: `oklch(0.62 0.16 ${hue})` };
-}
+
 
 /**
  * Creation dock + modal (dashboard hub). The prompt lives in the bottom
- * dock; generating opens a modal with the 3 picker steps. Everything before
+ * dock; generating opens a modal with the palette and typeface picker steps.
+ * What the user picks is what the draft uses — there is no reference-
+ * identity retune step. Everything before
  * the final Create is in-memory — closing the modal (X, backdrop, Escape)
  * discards the preview and no library is ever created. The single insert
  * happens in finishGenerationAction, which lands straight in the Studio.
@@ -57,24 +55,31 @@ export function CreationDock({ prefill }: { prefill: string }) {
   const [phase, setPhase] = React.useState<Phase>("idle");
   const [prompt, setPrompt] = React.useState("");
   const [preview, setPreview] = React.useState<GenerationPreview | null>(null);
-  const [paletteId, setPaletteId] = React.useState("as-dreamed");
-  const [exampleId, setExampleId] = React.useState("");
+  const [paletteId, setPaletteId] = React.useState("");
+  const [typefaceId, setTypefaceId] = React.useState("");
   const [chipIds, setChipIds] = React.useState<string[]>([]);
   const [error, setError] = React.useState<string | null>(null);
   const [expanded, setExpanded] = React.useState(false);
   const autoStarted = React.useRef(false);
+  const router = useRouter();
   const panelRef = React.useRef<HTMLDivElement>(null);
   const open = phase !== "idle";
 
   const close = React.useCallback(() => {
     setPhase("idle");
     setPreview(null);
-    setPaletteId("as-dreamed");
-    setExampleId("");
+    setPaletteId("");
+    setTypefaceId("");
     setChipIds([]);
     setError(null);
     window.history.replaceState(null, "", "/dashboard");
   }, []);
+
+  const confirmClose = React.useCallback(() => {
+    if (window.confirm("Are you sure you want to cancel? This will delete your progress.")) {
+      close();
+    }
+  }, [close]);
 
   const start = React.useCallback(async (text: string) => {
     const trimmed = text.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH);
@@ -82,8 +87,8 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setPrompt(trimmed);
     setError(null);
     setPreview(null);
-    setPaletteId("as-dreamed");
-    setExampleId("");
+    setPaletteId("");
+    setTypefaceId("");
     setChipIds([]);
     setPhase("dreaming");
     const result = await startGenerationAction(trimmed);
@@ -93,6 +98,10 @@ export function CreationDock({ prefill }: { prefill: string }) {
       return;
     }
     setPreview(result.preview);
+    // Default to the model's first proposal in each step; the user narrows
+    // from there. Anything unpicked stays as the model dreamed it.
+    setPaletteId(result.preview.paletteOptions[0]?.id ?? "");
+    setTypefaceId(result.preview.typeOptions[0]?.id ?? "");
     setPhase("palettes");
   }, []);
 
@@ -121,21 +130,25 @@ export function CreationDock({ prefill }: { prefill: string }) {
     };
   }, [open, phase, close]);
 
-  const options: [PaletteOption, PaletteOption, PaletteOption] | null =
-    preview != null ? derivePaletteOptions(preview.palette, preview.profile) : null;
+  const paletteOptions = preview?.paletteOptions ?? [];
+  const typeOptions = preview?.typeOptions ?? [];
 
   const finish = async () => {
     if (preview == null) return;
     setError(null);
     setPhase("creating");
     const selections: FinishSelections = {
-      paletteId,
-      exampleId: exampleId || undefined,
+      paletteId: paletteId || paletteOptions[0]?.id || "as-dreamed",
+      typefaceId: typefaceId || undefined,
       chipIds,
     };
     const result = await finishGenerationAction(preview, prompt, selections);
-    // Success redirects to the Studio (never resolves). Failure lands back
-    // on the last step with the message; nothing was stored.
+    // Success navigates to the Studio; failure lands back on the last step
+    // with the message and nothing was stored.
+    if (result.ok) {
+      router.push(`/dashboard/identities/${result.libraryId}/edit`);
+      return;
+    }
     setError(result.message);
     setPhase("words");
   };
@@ -207,7 +220,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                {phase === "palettes" || phase === "examples" || phase === "words" || phase === "creating" ? (
+                {phase === "palettes" || phase === "typefaces" || phase === "words" || phase === "creating" ? (
                   <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     {STEP_LABEL[phase === "creating" ? "words" : phase]?.n ?? "Creating"}
                   </p>
@@ -219,7 +232,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
                       ? "Generation failed"
                       : phase === "creating"
                         ? "Creating your identity…"
-                        : (phase === "palettes" || phase === "examples" || phase === "words"
+                        : (phase === "palettes" || phase === "typefaces" || phase === "words"
                           ? STEP_LABEL[phase]?.title
                           : "Create identity")}
                 </h2>
@@ -231,7 +244,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
               </div>
               <button
                 type="button"
-                onClick={close}
+                onClick={confirmClose}
                 aria-label="Close and discard"
                 title="Close and discard"
                 className="shrink-0 rounded-full border-(length:--border-width) border-border p-1.5 text-muted-foreground hover:text-foreground"
@@ -262,21 +275,21 @@ export function CreationDock({ prefill }: { prefill: string }) {
               </div>
             ) : null}
 
-            {(phase === "palettes" || phase === "examples" || phase === "words") && options != null ? (
+            {phase === "typefaces" && preview != null && STEP_LABEL[phase]?.lede ? (
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                 {STEP_LABEL[phase]?.lede}
               </p>
             ) : null}
 
-            {error != null && (phase === "palettes" || phase === "examples" || phase === "words") ? (
+            {error != null && (phase === "palettes" || phase === "typefaces" || phase === "words") ? (
               <p role="alert" className="mt-4 rounded-md border-(length:--border-width) border-destructive/40 bg-card p-3 text-sm text-destructive">
                 {error}
               </p>
             ) : null}
 
-            {phase === "palettes" && options != null ? (
+            {phase === "palettes" && preview != null ? (
               <div className="mt-4 flex flex-col gap-3">
-                {options.map((option) => (
+                {paletteOptions.map((option) => (
                   <label
                     key={option.id}
                     className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-4 has-checked:border-primary"
@@ -286,23 +299,19 @@ export function CreationDock({ prefill }: { prefill: string }) {
                         type="radio"
                         name="palette"
                         value={option.id}
-                        checked={paletteId === option.id}
+                        checked={(paletteId || paletteOptions[0]?.id) === option.id}
                         onChange={() => setPaletteId(option.id)}
                         className="h-4 w-4"
                       />
                       <span className="font-medium">{option.name}</span>
                     </span>
-                    <span className="flex gap-1.5" aria-hidden>
-                      {[option.anchors.primaryHue, option.anchors.accentHue, option.anchors.neutralHue].map((hue) => (
-                        <span key={hue} style={hueSwatch(hue)} className="h-6 w-10 rounded" />
-                      ))}
-                    </span>
+                    <PaletteVariantPreview swatches={option.swatches} />
                     <span className="text-sm text-muted-foreground">{option.reason}</span>
                   </label>
                 ))}
                 <div className="mt-2 flex gap-2">
-                  <Button onClick={() => setPhase("examples")} className="w-fit">
-                    Continue to examples
+                  <Button onClick={() => setPhase("typefaces")} className="w-fit">
+                    Continue to typefaces
                   </Button>
                   <Button variant="outline" onClick={close}>
                     Discard
@@ -311,44 +320,26 @@ export function CreationDock({ prefill }: { prefill: string }) {
               </div>
             ) : null}
 
-            {phase === "examples" ? (
+            {phase === "typefaces" && preview != null ? (
               <div className="mt-4 flex flex-col gap-3">
-                <label className="flex cursor-pointer flex-col gap-1 rounded-lg border-(length:--border-width) border-border bg-card p-4 has-checked:border-primary">
-                  <span className="flex items-center gap-2">
-                    <Input
-                      type="radio"
-                      name="example"
-                      value=""
-                      checked={exampleId === ""}
-                      onChange={() => setExampleId("")}
-                      className="h-4 w-4"
-                    />
-                    <span className="font-medium">Keep my palette</span>
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    Skip the retune — carry the palette choice from step 1 into the words.
-                  </span>
-                </label>
-                {EXAMPLE_RECORDS.map((record) => (
+                {typeOptions.map((option) => (
                   <label
-                    key={record.id}
-                    className="flex cursor-pointer flex-col gap-1 rounded-lg border-(length:--border-width) border-border bg-card p-4 has-checked:border-primary"
+                    key={option.id}
+                    className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-4 has-checked:border-primary"
                   >
                     <span className="flex items-center gap-2">
                       <Input
                         type="radio"
-                        name="example"
-                        value={record.id}
-                        checked={exampleId === record.id}
-                        onChange={() => setExampleId(record.id)}
+                        name="typeface"
+                        value={option.id}
+                        checked={(typefaceId || typeOptions[0]?.id) === option.id}
+                        onChange={() => setTypefaceId(option.id)}
                         className="h-4 w-4"
                       />
-                      <span className="font-medium">{record.title}</span>
+                      <span className="font-medium">{option.name}</span>
                     </span>
-                    <span className="text-sm text-muted-foreground">{record.blurb}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {record.typefaces.join(" + ")} · {record.stack.join(" / ")}
-                    </span>
+                    <TypefaceOptionPreview option={option} />
+                    <span className="text-sm text-muted-foreground">{option.reason}</span>
                   </label>
                 ))}
                 <div className="mt-2 flex gap-2">
@@ -387,13 +378,10 @@ export function CreationDock({ prefill }: { prefill: string }) {
                   <Button onClick={() => void finish()} className="w-fit">
                     Create identity
                   </Button>
-                  <Button variant="outline" onClick={() => setPhase("examples")}>
+                  <Button variant="outline" onClick={() => setPhase("typefaces")}>
                     Back
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Creates one private draft and opens it in the Studio. Closing now discards everything.
-                </p>
               </div>
             ) : null}
           </div>

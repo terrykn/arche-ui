@@ -1,13 +1,16 @@
 import {
   buildTeachBlock,
+  describeConstraints,
   designRulesVersion,
+  fontChoiceBlock,
   modelDeltaOutputSchema,
   modelOutputSchema,
+  type CorpusEntry,
   type DnaDelta,
-  type GenerationProfile,
+  type DnaObject,
+  type DnaPalette,
   type ModelOutput,
-  type Plan,
-  type SelfCheck,
+  type PromptConstraints,
 } from "@arche/registry-core";
 import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
@@ -19,11 +22,7 @@ import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
  */
 
 export interface DnaCallResult {
-  output: Pick<ModelOutput, "axes" | "palette">;
-  /** Model-classified envelope preset, recorded on the payload. */
-  profile: GenerationProfile;
-  plan: Plan;
-  selfCheck: SelfCheck;
+  output: Pick<ModelOutput, "axes" | "palette" | "palettes" | "typefaces">;
   model: string;
   tokensIn: number | null;
   tokensOut: number | null;
@@ -31,14 +30,12 @@ export interface DnaCallResult {
 
 export interface DeltaCallResult {
   delta: DnaDelta;
-  /** Optional profile change from the same single-call response. */
-  profile?: GenerationProfile;
-  plan: Plan;
-  selfCheck: SelfCheck;
   model: string;
   tokensIn: number | null;
   tokensOut: number | null;
 }
+
+export type { DnaObject, DnaPalette };
 
 
 
@@ -97,122 +94,123 @@ export function assertModelCapable(): string {
 // names under allOf and returned its own axis names).
 // ---------------------------------------------------------------------------
 
-const PLAN_RESPONSE_SCHEMA = {
+const DNA_AXES_JSON_SCHEMA = {
   type: "object",
   properties: {
-    colors: {
-      type: "array",
-      minItems: 4,
-      maxItems: 6,
-      items: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          role: {
-            type: "string",
-            enum: ["background", "surface", "primary", "accent", "neutral", "text", "semantic-fixed"],
-          },
-          note: { type: "string" },
-        },
-        required: ["name", "role"],
-      },
-    },
+    warmth: { type: "number", minimum: 0, maximum: 1 },
+    chroma: { type: "number", minimum: 0, maximum: 1 },
+    energy: { type: "number", minimum: 0, maximum: 1 },
+    playfulness: { type: "number", minimum: 0, maximum: 1 },
+    sharpness: { type: "number", minimum: 0, maximum: 1 },
+    density: { type: "number", minimum: 0, maximum: 1 },
+    ornament: { type: "number", minimum: 0, maximum: 1 },
+    formality: { type: "number", minimum: 0, maximum: 1 },
+    material: { type: "string", enum: ["flat", "paper", "glass", "metal", "marble", "pixel", "clay"] },
+    motionFeel: { type: "string", enum: ["snappy", "smooth", "bouncy", "stately", "glitchy"] },
+    texture: { type: "string", enum: ["none", "grain", "scanlines", "grid", "marble-vein", "halftone"] },
+    minContrast: { type: "string", enum: ["AA"] },
+    respectReducedMotion: { type: "boolean" },
   },
-  required: ["colors"],
+  required: [
+    "warmth", "chroma", "energy", "playfulness", "sharpness", "density",
+    "ornament", "formality",
+    "material", "motionFeel", "texture", "minContrast", "respectReducedMotion",
+  ],
+  additionalProperties: false,
 } as const;
 
-const SELF_CHECK_RESPONSE_SCHEMA = {
+const DNA_PALETTE_JSON_SCHEMA = {
   type: "object",
   properties: {
-    verdict: { type: "string", enum: ["pass", "revised"] },
-    notes: { type: "string" },
+    primaryHue: { type: "number", minimum: 0, maximum: 360 },
+    accentHue: { type: "number", minimum: 0, maximum: 360 },
+    neutralHue: { type: "number", minimum: 0, maximum: 360 },
+    brandHue: { type: "number", minimum: 0, maximum: 360 },
   },
-  required: ["verdict", "notes"],
+  required: ["primaryHue", "accentHue", "neutralHue", "brandHue"],
+  additionalProperties: false,
+} as const;
+
+const DNA_PALETTE_VARIANT_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    id: { type: "string", minLength: 1, maxLength: 40 },
+    name: { type: "string", minLength: 1, maxLength: 60 },
+    anchors: DNA_PALETTE_JSON_SCHEMA,
+    reason: { type: "string", minLength: 1, maxLength: 200 },
+  },
+  required: ["id", "name", "anchors", "reason"],
+  additionalProperties: false,
+} as const;
+
+const DNA_TYPEFACE_VARIANT_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    id: { type: "string", minLength: 1, maxLength: 40 },
+    name: { type: "string", minLength: 1, maxLength: 60 },
+    display: { type: "string", minLength: 1, maxLength: 60 },
+    body: { type: "string", minLength: 1, maxLength: 60 },
+    reason: { type: "string", minLength: 1, maxLength: 200 },
+  },
+  required: ["id", "name", "display", "body", "reason"],
+  additionalProperties: false,
 } as const;
 
 const DNA_RESPONSE_SCHEMA = {
   type: "object",
   properties: {
-    plan: PLAN_RESPONSE_SCHEMA,
-    selfCheck: SELF_CHECK_RESPONSE_SCHEMA,
-    axes: {
-      type: "object",
-      properties: {
-        warmth: { type: "number", minimum: 0, maximum: 1 },
-        energy: { type: "number", minimum: 0, maximum: 1 },
-        playfulness: { type: "number", minimum: 0, maximum: 1 },
-        sharpness: { type: "number", minimum: 0, maximum: 1 },
-        density: { type: "number", minimum: 0, maximum: 1 },
-        ornament: { type: "number", minimum: 0, maximum: 1 },
-        retroFuturism: { type: "number", minimum: 0, maximum: 1 },
-        formality: { type: "number", minimum: 0, maximum: 1 },
-        chroma: { type: "number", minimum: 0, maximum: 1 },
-        material: { type: "string", enum: ["flat", "paper", "glass", "metal", "marble", "pixel", "clay"] },
-        motionFeel: { type: "string", enum: ["snappy", "smooth", "bouncy", "stately", "glitchy"] },
-        texture: { type: "string", enum: ["none", "grain", "scanlines", "grid", "marble-vein", "halftone"] },
-        minContrast: { type: "string", enum: ["AA"] },
-        respectReducedMotion: { type: "boolean" },
-      },
-      required: [
-        "warmth", "energy", "playfulness", "sharpness", "density",
-        "ornament", "retroFuturism", "formality", "chroma",
-        "material", "motionFeel", "texture", "minContrast", "respectReducedMotion",
-      ],
-    },
-    palette: {
-      type: "object",
-      properties: {
-        primaryHue: { type: "number", minimum: 0, maximum: 360 },
-        accentHue: { type: "number", minimum: 0, maximum: 360 },
-        neutralHue: { type: "number", minimum: 0, maximum: 360 },
-      },
-      required: ["primaryHue", "accentHue", "neutralHue"],
-    },
-    profile: { type: "string", enum: ["enterprise", "standard", "expressive"] },
+    axes: DNA_AXES_JSON_SCHEMA,
+    palette: DNA_PALETTE_JSON_SCHEMA,
+    palettes: { type: "array", items: DNA_PALETTE_VARIANT_JSON_SCHEMA, minItems: 3, maxItems: 3 },
+    typefaces: { type: "array", items: DNA_TYPEFACE_VARIANT_JSON_SCHEMA, minItems: 3, maxItems: 3 },
   },
-  required: ["plan", "selfCheck", "axes", "palette", "profile"],
+  required: ["axes", "palette", "palettes", "typefaces"],
+  additionalProperties: false,
 } as const;
 
-// Delta schema: same single-call shape (plan + self-check) with the revised
-// inputs as a delta; every delta field optional — ONLY implicated fields.
+// Delta schema: DNA-only diff — every delta field optional, ONLY implicated
+// fields present. Strict: no plan, no self-check, no profile.
+const DELTA_AXES_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    warmth: { type: "number", minimum: 0, maximum: 1 },
+    chroma: { type: "number", minimum: 0, maximum: 1 },
+    energy: { type: "number", minimum: 0, maximum: 1 },
+    playfulness: { type: "number", minimum: 0, maximum: 1 },
+    sharpness: { type: "number", minimum: 0, maximum: 1 },
+    density: { type: "number", minimum: 0, maximum: 1 },
+    ornament: { type: "number", minimum: 0, maximum: 1 },
+    formality: { type: "number", minimum: 0, maximum: 1 },
+    material: { type: "string", enum: ["flat", "paper", "glass", "metal", "marble", "pixel", "clay"] },
+    motionFeel: { type: "string", enum: ["snappy", "smooth", "bouncy", "stately", "glitchy"] },
+    texture: { type: "string", enum: ["none", "grain", "scanlines", "grid", "marble-vein", "halftone"] },
+  },
+  additionalProperties: false,
+} as const;
+
 const DELTA_RESPONSE_SCHEMA = {
   type: "object",
   properties: {
-    plan: PLAN_RESPONSE_SCHEMA,
-    selfCheck: SELF_CHECK_RESPONSE_SCHEMA,
     delta: {
       type: "object",
       properties: {
-        axes: {
-      type: "object",
-      properties: {
-        warmth: { type: "number", minimum: 0, maximum: 1 },
-        energy: { type: "number", minimum: 0, maximum: 1 },
-        playfulness: { type: "number", minimum: 0, maximum: 1 },
-        sharpness: { type: "number", minimum: 0, maximum: 1 },
-        density: { type: "number", minimum: 0, maximum: 1 },
-        ornament: { type: "number", minimum: 0, maximum: 1 },
-        retroFuturism: { type: "number", minimum: 0, maximum: 1 },
-        formality: { type: "number", minimum: 0, maximum: 1 },
-        chroma: { type: "number", minimum: 0, maximum: 1 },
-        material: { type: "string", enum: ["flat", "paper", "glass", "metal", "marble", "pixel", "clay"] },
-        motionFeel: { type: "string", enum: ["snappy", "smooth", "bouncy", "stately", "glitchy"] },
-        texture: { type: "string", enum: ["none", "grain", "scanlines", "grid", "marble-vein", "halftone"] },
-      },
-    },
+        axes: DELTA_AXES_JSON_SCHEMA,
         palette: {
           type: "object",
           properties: {
             primaryHue: { type: "number", minimum: 0, maximum: 360 },
             accentHue: { type: "number", minimum: 0, maximum: 360 },
             neutralHue: { type: "number", minimum: 0, maximum: 360 },
+            brandHue: { type: "number", minimum: 0, maximum: 360 },
           },
+          additionalProperties: false,
         },
       },
+      additionalProperties: false,
     },
-    profile: { type: "string", enum: ["enterprise", "standard", "expressive"] },
   },
-  required: ["plan", "selfCheck", "delta"],
+  required: ["delta"],
+  additionalProperties: false,
 } as const;
 
 interface GeminiPart {
@@ -272,18 +270,17 @@ async function callGeminiJson(args: {
  * time — one static block per rules version, placed so providers can cache it.
  */
 const AXES_SHAPE = [
-  '{"warmth":<0-1>,"energy":<0-1>,"playfulness":<0-1>,"sharpness":<0-1>,"density":<0-1>,"ornament":<0-1>,',
-  '"retroFuturism":<0-1>,"formality":<0-1>,"chroma":<0-1>,"material":<flat|paper|glass|metal|marble|pixel|clay>,',
+  '{"warmth":0.5,"chroma":0.5,"energy":0.5,"playfulness":0.5,"sharpness":0.5,"density":0.5,"ornament":0.5,',
+  '"formality":0.5,"material":<flat|paper|glass|metal|marble|pixel|clay>,',
   '"motionFeel":<snappy|smooth|bouncy|stately|glitchy>,"texture":<none|grain|scanlines|grid|marble-vein|halftone>,',
   '"minContrast":"AA","respectReducedMotion":true}',
 ].join("");
 
 const SHAPE_PREAMBLE = [
-  "You respond with ONE JSON object — no prose, no markdown — with these sections in order:",
-  '1. "plan": {"colors": [4-6 entries {"name", "role", "note"?}]} — your palette plan: 4-6 named colors with intended roles',
-  '(background, surface, primary, accent, neutral, text, semantic-fixed). Name each color; note is optional.',
-  '2. "selfCheck": {"verdict": "pass"|"revised", "notes": "..."} — check the plan against the taught rules: name any item that reads as a',
-  'generic default or violates a taught rule, or state the no-change verdict. Revise the final inputs accordingly inside this same response.',
+  "You respond with ONE JSON object, no prose, no markdown — DNA plus picker variants — with exactly these keys:",
+  '{"axes": {...8 scores + 3 enums + 2 fixed guardrails...}, "palette": {"primaryHue", "accentHue", "neutralHue"},',
+  '"palettes": [exactly 3 palette variants], "typefaces": [exactly 3 typography variants]}.',
+  "No other keys. A response containing plan, selfCheck, or profile fails validation.",
 ].join(" ");
 
 const VALUE_RULES = [
@@ -295,36 +292,68 @@ const VALUE_RULES = [
   "Each palette hue is a NUMBER in degrees 0-360 (never a string, never hex).",
   "The <...> placeholders above show field names and value types ONLY — never emit them.",
   "Derive every axis, hue, and enum from the phrase itself; repeating placeholder values is a generic default and fails your self-check.",
-  "Choose hues from the phrase's own color language (crimson ~5, amber ~40, emerald ~150, ocean ~210, violet ~280;",
-  "warm neutrals ~40-60, cool neutrals ~220-250). Monochrome, single-hue, or grayscale briefs: set primaryHue,",
-  "accentHue, AND neutralHue to the SAME degree and chroma near 0. Spread the three hues apart only when the phrase",
-  "asks for contrast, energy, or multiple color families.",
-  'profile classifies the request: "enterprise" for fintech, healthcare-admin, legal, or institutional work;',
-  '"expressive" for playful, loud, or artistic work; "standard" otherwise.',
+  "Spread the three hues apart only when the phrase explicitly asks for contrast, energy, or multiple color families.",
+  "Never emit the <...> placeholders.",
 ].join(" ");
 
-function phraseSystem(): string {
+function exemplarBlock(exemplars: CorpusEntry[]): string {
+  if (exemplars.length === 0) return "";
+  const lines = exemplars.map(
+    (e) =>
+      `Brief: ${e.prompt}\nDNA: ${JSON.stringify({ axes: e.axes, palette: e.palette })}`,
+  );
+  return [
+    "Grounding examples (prompt → DNA v2 pairs from the registry corpus — same schema you must emit):",
+    ...lines,
+    "Learn the mapping from words to numbers from these pairs; do not copy any single pair verbatim.",
+  ].join("\n");
+}
+
+function constraintHint(constraints?: PromptConstraints): string {
+  if (!constraints || Object.keys(constraints).length === 0) return "";
+  return [
+    `Parsed brief (deterministic, enforced in code after you reply — conflicts resolve in favor of these numbers): ${describeConstraints(constraints)}.`,
+    "Honor these numbers in your DNA; the compiler will clamp anything that disagrees and log the adjustment.",
+  ].join(" ");
+}
+
+function variantRules(): string {
+  return [
+    "Palette variants (\"palettes\"): EXACTLY 3 distinct hue directions from the same phrase — the first is the generation's own anchors, the other two are alternates (a bolder and a quieter reading).",
+    "Each variant is {\"id\": <short unique slug>, \"name\": <evocative name, never a bare hex>, \"anchors\": {\"primaryHue\", \"accentHue\", \"neutralHue\", \"brandHue\"}, \"reason\": <one sentence>}.",
+    "Each variant's anchors ALSO carry \"brandHue\" (the same brand hue when the phrase names one brand; otherwise the variant's primaryHue). A monochrome brief means all four anchors near-equal.",
+    "Brand rule: brandHue is the recognizable brand color from the phrase ('bold red', 'T-Mobile magenta') — NEVER the button color. No brand color named: brandHue = primaryHue. A loud/light brand color named (bright red, vivid yellow): keep brandHue loud — the compiler derives a usable primary, never tame the brand into a button.",
+    "Honor the parsed-brief numbers in every variant: a monochrome brief means all three anchors near-equal in hue; a vivid brief keeps the brand family. Hues only — chroma budgets are the compiler's job.",
+    "Typography variants (\"typefaces\"): EXACTLY 3 distinct header/body directions for the same phrase, each {\"id\": <short unique slug>, \"name\": <evocative name>, \"display\": <header font id>, \"body\": <body font id>, \"reason\": <one sentence>}.",
+    "display/body are closed-registry ids (never family names, never stacks). Match the brief: formal → serif or neutral grotesque; playful → expressive display; dense data → highly legible body.",
+    fontChoiceBlock(),
+  ].join(" ");
+}
+
+function phraseSystem(exemplars: CorpusEntry[] = [], constraints?: PromptConstraints): string {
   return [
     buildTeachBlock(),
     "You judge a word or phrase as design DNA for a UI identity. Rate each axis 0-1:",
-    "warmth (cold/clinical→warm/organic), energy (calm→loud), playfulness (serious→playful),",
-    "sharpness (soft/round→sharp/angular), density (airy→compact), ornament (minimal→ornate),",
-    "retroFuturism (contemporary→era-styled), formality (casual→formal/institutional),",
-    "chroma (muted→vivid: how much color, not which color — vivid signal on quiet ground; default low for enterprise/institutional briefs).",
+    "warmth (cold/clinical→warm/organic), chroma (muted→vivid: how much color, not which color),",
+    "energy (calm→loud), playfulness (serious→playful), sharpness (soft/round→sharp/angular),",
+    "density (airy→compact), ornament (minimal→ornate), formality (casual→formal/institutional).",
     SHAPE_PREAMBLE,
-    `3. final inputs: "axes": ${AXES_SHAPE},`,
-    '"palette": {"primaryHue":<degrees 0-360>,"accentHue":<degrees 0-360>,"neutralHue":<degrees 0-360>}, "profile": "standard".',
+    `"axes": ${AXES_SHAPE},`,
+    '"palette": {"primaryHue":"<degrees>","accentHue":"<degrees>","neutralHue":"<degrees>","brandHue":"<degrees>"}.',
     VALUE_RULES,
-  ].join(" ");
+    variantRules(),
+    exemplarBlock(exemplars),
+    constraintHint(constraints),
+  ].filter(Boolean).join(" ");
 }
 
 function deltaSystem(): string {
   return [
     buildTeachBlock(),
     "You edit stored design DNA. Given the current DNA and an edit prompt,",
-    SHAPE_PREAMBLE,
-    '3. revised inputs as "delta": an object with optional "axes" and "palette" objects containing ONLY the fields the prompt',
-    'implicates, with new values (unrelated fields absent, not repeated), plus an optional "profile" when the edit changes the register.',
+    "You edit stored design DNA. Reply with a DNA-only delta: {\"delta\": {\"axes\"?, \"palette\"?}} — optional",
+    '"axes" and "palette" objects containing ONLY the fields the prompt implicates, with new values (unrelated',
+    "fields absent, not repeated). No other keys.",
     VALUE_RULES,
   ].join(" ");
 }
@@ -431,21 +460,28 @@ async function callGroqJson(args: {
 }
 
 /**
- * Text door: phrase → plan + self-check + DNA + palette + profile in ONE
- * model call. A second call happens only on the failure path (invalid
- * output → one retry with validation errors, then fail + log, store
- * nothing) or when compilation reports an unrepairable design-rule
- * violation (retry carries the named rule findings). Compliant generations
- * cost exactly one call, as today.
+ * Text door: phrase → DNA v2 only in ONE model call. A second call happens
+ * only on the failure path (invalid output → one retry with validation
+ * errors, then fail + log, store nothing) or when compilation reports an
+ * unrepairable design-rule violation (retry carries the named rule
+ * findings). Compliant generations cost exactly one call, as today.
  */
-export async function generateDna(prompt: string, repairFeedback?: string): Promise<DnaCallResult> {
+export interface GenerateDnaOptions {
+  exemplars?: CorpusEntry[];
+  constraints?: PromptConstraints;
+  repairFeedback?: string;
+}
+
+export async function generateDna(prompt: string, repairOrOpts?: string | GenerateDnaOptions): Promise<DnaCallResult> {
   const trimmed = prompt.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH);
   if (!trimmed) {
     throw new Error("prompt must not be empty");
   }
-  const system = phraseSystem();
-  const user = repairFeedback
-    ? `Phrase: ${trimmed}\n\nYour previous output compiled to a payload that violates these design rules — revise the DNA, palette, and profile to comply, keeping the same character:\n${repairFeedback}`
+  const opts: GenerateDnaOptions =
+    typeof repairOrOpts === "string" ? { repairFeedback: repairOrOpts } : (repairOrOpts ?? {});
+  const system = phraseSystem(opts.exemplars ?? [], opts.constraints);
+  const user = opts.repairFeedback
+    ? `Phrase: ${trimmed}\n\nYour previous output compiled to a payload that violates these design rules — revise the DNA and palette to comply, keeping the same character:\n${opts.repairFeedback}`
     : `Phrase: ${trimmed}`;
   const call = await callChatJson({
     system,
@@ -457,10 +493,12 @@ export async function generateDna(prompt: string, repairFeedback?: string): Prom
   const first = firstRaw.ok ? modelOutputSchema.safeParse(firstRaw.value) : null;
   if (first?.success) {
     return {
-      output: { axes: first.data.axes, palette: first.data.palette },
-      profile: first.data.profile,
-      plan: first.data.plan,
-      selfCheck: first.data.selfCheck,
+      output: {
+        axes: first.data.axes,
+        palette: first.data.palette,
+        palettes: first.data.palettes,
+        typefaces: first.data.typefaces,
+      },
       model: call.model,
       tokensIn: call.tokensIn,
       tokensOut: call.tokensOut,
@@ -488,10 +526,12 @@ export async function generateDna(prompt: string, repairFeedback?: string): Prom
     );
   }
   return {
-    output: { axes: second.data.axes, palette: second.data.palette },
-    profile: second.data.profile,
-    plan: second.data.plan,
-    selfCheck: second.data.selfCheck,
+    output: {
+      axes: second.data.axes,
+      palette: second.data.palette,
+      palettes: second.data.palettes,
+      typefaces: second.data.typefaces,
+    },
     model: retry.model,
     tokensIn: (call.tokensIn ?? 0) + (retry.tokensIn ?? 0),
     tokensOut: (call.tokensOut ?? 0) + (retry.tokensOut ?? 0),
@@ -499,14 +539,13 @@ export async function generateDna(prompt: string, repairFeedback?: string): Prom
 }
 
 /**
- * Prompt edit: same single-call shape (plan + self-check + delta + optional
- * profile) with the same single validation retry as the text door — a bad
- * first output (unparseable or schema-invalid) gets one retry with the
- * failure fed back, then fails + logs and stores nothing. Only implicated
- * fields change; unrelated payload fields stay byte-identical.
+ * Prompt edit: DNA-only delta with the same single validation retry as the
+ * text door — a bad first output (unparseable or schema-invalid) gets one
+ * retry with the failure fed back, then fails + logs and stores nothing.
+ * Only implicated fields change; unrelated payload fields stay byte-identical.
  */
 export async function generateDnaDelta(
-  current: Pick<ModelOutput, "axes" | "palette"> & { profile?: GenerationProfile },
+  current: Pick<ModelOutput, "axes" | "palette">,
   prompt: string,
 ): Promise<DeltaCallResult> {
   const trimmed = prompt.trim().slice(0, 280);
@@ -514,7 +553,7 @@ export async function generateDnaDelta(
     throw new Error("edit prompt must not be empty");
   }
   const system = deltaSystem();
-  const user = `Current DNA: ${JSON.stringify(current.axes)}\nCurrent palette: ${JSON.stringify(current.palette)}\nCurrent profile: ${current.profile ?? "standard"}\nEdit: ${trimmed}`;
+  const user = `Current DNA: ${JSON.stringify(current.axes)}\nCurrent palette: ${JSON.stringify(current.palette)}\nEdit: ${trimmed}`;
   const call = await callChatJson({
     system,
     user,
@@ -525,10 +564,7 @@ export async function generateDnaDelta(
   const first = firstRaw.ok ? modelDeltaOutputSchema.safeParse(firstRaw.value) : null;
   if (first?.success) {
     return {
-      delta: first.data.delta,
-      profile: first.data.profile,
-      plan: first.data.plan,
-      selfCheck: first.data.selfCheck,
+      delta: first.data.delta ?? {},
       model: call.model,
       tokensIn: call.tokensIn,
       tokensOut: call.tokensOut,
@@ -555,10 +591,7 @@ export async function generateDnaDelta(
     );
   }
   return {
-    delta: second.data.delta,
-    profile: second.data.profile,
-    plan: second.data.plan,
-    selfCheck: second.data.selfCheck,
+    delta: second.data.delta ?? {},
     model: retry.model,
     tokensIn: (call.tokensIn ?? 0) + (retry.tokensIn ?? 0),
     tokensOut: (call.tokensOut ?? 0) + (retry.tokensOut ?? 0),

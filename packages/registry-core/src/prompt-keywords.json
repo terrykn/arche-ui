@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "groups": {
+    "monochrome": ["monochromatic", "paper-white", "paper white", "near-neutral", "near neutral", "gallery", "quiet", "muted"],
+    "vivid": ["vivid", "electric", "neon", "arcade", "loud", "saturated", "bold"],
+    "warm": ["warm", "cozy", "earthy"],
+    "cool": ["cool", "clinical", "icy"],
+    "dark": ["dark", "midnight", "noir"],
+    "light": ["paper-white", "paper white", "bright", "light", "air-light"],
+    "sharp": ["sharp", "hairline", "angular", "crisp edge"],
+    "soft": ["soft", "rounded", "pill", "curvy"],
+    "balanced": ["balanced"]
+  },
+  "namedHues": {
+    "red": 5,
+    "crimson": 8,
+    "terracotta": 25,
+    "orange": 35,
+    "amber": 50,
+    "yellow": 70,
+    "lime": 110,
+    "green": 140,
+    "emerald": 155,
+    "teal": 180,
+    "cyan": 195,
+    "sky": 220,
+    "blue": 240,
+    "indigo": 265,
+    "violet": 280,
+    "purple": 300,
+    "magenta": 320,
+    "pink": 340,
+    "rose": 350,
+    "brown": 40,
+    "beige": 55
+  }
+}

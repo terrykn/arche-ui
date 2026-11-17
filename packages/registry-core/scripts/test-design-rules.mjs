@@ -55,9 +55,9 @@ test("compiled payloads pass every enforce-tier check post-repair", async () => 
   const base = readFixture("identity.arche.json");
   const guardrails = { chroma: 1, minContrast: "AA", respectReducedMotion: true };
   const cases = [
-    { name: "balanced", profile: "standard", axes: { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, retroFuturism: 0.2, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", ...guardrails }, palette: { primaryHue: 210, accentHue: 280, neutralHue: 220 } },
-    { name: "ent", profile: "enterprise", axes: { warmth: 0.3, energy: 0.2, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, retroFuturism: 0, formality: 1, material: "flat", motionFeel: "stately", texture: "none", ...guardrails }, palette: { primaryHue: 220, accentHue: 30, neutralHue: 230 } },
-    { name: "exp", profile: "expressive", axes: { warmth: 0.9, energy: 1, playfulness: 0.9, sharpness: 0.1, density: 0.2, ornament: 0.8, retroFuturism: 0.9, formality: 0, material: "clay", motionFeel: "bouncy", texture: "grain", ...guardrails }, palette: { primaryHue: 320, accentHue: 180, neutralHue: 40 } },
+    { name: "balanced", profile: "standard", axes: { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", ...guardrails }, palette: { primaryHue: 210, accentHue: 280, neutralHue: 220 } },
+    { name: "ent", profile: "enterprise", axes: { warmth: 0.3, energy: 0.2, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, formality: 1, material: "flat", motionFeel: "stately", texture: "none", ...guardrails }, palette: { primaryHue: 220, accentHue: 30, neutralHue: 230 } },
+    { name: "exp", profile: "expressive", axes: { warmth: 0.9, energy: 1, playfulness: 0.9, sharpness: 0.1, density: 0.2, ornament: 0.8, formality: 0, material: "clay", motionFeel: "bouncy", texture: "grain", ...guardrails }, palette: { primaryHue: 320, accentHue: 180, neutralHue: 40 } },
   ];
   for (const c of cases) {
     const compiled = await compileValidIdentity(
@@ -72,19 +72,20 @@ test("compiled payloads pass every enforce-tier check post-repair", async () => 
 
 test("repair records rule ids in meta.adjustments", () => {
   const base = readFixture("identity.arche.json");
-  // Low-voice formal DNA: solids start under the 0.08 floor → repair raises them.
+  // Grayscale DNA (chroma 0, spread hues): all charts compile to the same
+  // gray step → the separation repair spreads them by lightness, recorded.
   const compiled = compileIdentity({
     name: "t-repair", source: { type: "manual" },
-    axes: { warmth: 0.3, energy: 0.1, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, retroFuturism: 0, formality: 1, chroma: 1, material: "flat", motionFeel: "stately", texture: "none", minContrast: "AA", respectReducedMotion: true },
-    palette: { primaryHue: 220, accentHue: 220, neutralHue: 230 },
+    axes: { warmth: 0.3, energy: 0.1, playfulness: 0.05, sharpness: 0.6, density: 0.45, ornament: 0.15, formality: 1, chroma: 0, material: "flat", motionFeel: "stately", texture: "none", minContrast: "AA", respectReducedMotion: true },
+    palette: { primaryHue: 220, accentHue: 140, neutralHue: 230 },
     profile: "standard", base,
   });
   const ids = new Set(compiled.meta.adjustments.map((a) => a.ruleId).filter(Boolean));
-  assert.ok(ids.has("color-solid-chroma-band"), `expected a solid-band repair, got [${[...ids]}]`);
+  assert.ok(ids.has("color-chart-separation"), `expected a chart-separation repair, got [${[...ids]}]`);
   // Sharp pixel DNA under expressive compiles to 3px border width (recorded, compliant).
   const sharp = compileIdentity({
     name: "t-borderwidth", source: { type: "manual" },
-    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, chroma: 1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
+    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, formality: 0.1, chroma: 1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
     palette: { primaryHue: 300, accentHue: 100, neutralHue: 305 },
     profile: "expressive", base,
   });
@@ -93,7 +94,7 @@ test("repair records rule ids in meta.adjustments", () => {
   // Same DNA under enterprise caps at 1px.
   const sharpEnt = compileIdentity({
     name: "t-borderwidth-ent", source: { type: "manual" },
-    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, retroFuturism: 0.8, formality: 0.1, chroma: 1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
+    axes: { warmth: 0.2, energy: 0.9, playfulness: 0.9, sharpness: 0.95, density: 0.6, ornament: 0.7, formality: 0.1, chroma: 1, material: "pixel", motionFeel: "glitchy", texture: "scanlines", minContrast: "AA", respectReducedMotion: true },
     palette: { primaryHue: 300, accentHue: 100, neutralHue: 305 },
     profile: "enterprise", base,
   });
@@ -102,7 +103,7 @@ test("repair records rule ids in meta.adjustments", () => {
 
 test("chroma axis: 0 collapses the ladder, 1 keeps the voice, findings stay empty", async () => {
   const base = readFixture("identity.arche.json");
-  const axes = { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, retroFuturism: 0.2, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", minContrast: "AA", respectReducedMotion: true };
+  const axes = { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", minContrast: "AA", respectReducedMotion: true };
   const palette = { primaryHue: 20, accentHue: 200, neutralHue: 40 };
   const chromaOf = (compiled, token) => {
     const value = compiled.tokens.light[token].$value;

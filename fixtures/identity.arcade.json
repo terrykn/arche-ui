@@ -11,7 +11,10 @@
   "icons": "lucide",
   "typeScale": "standard-1.25",
   "dna": {
-    "source": { "type": "fixture", "promptText": "90s arcade" },
+    "source": {
+      "type": "fixture",
+      "promptText": "90s arcade"
+    },
     "axes": {
       "warmth": 0.55,
       "energy": 0.95,
@@ -19,7 +22,6 @@
       "sharpness": 0.7,
       "density": 0.6,
       "ornament": 0.6,
-      "retroFuturism": 1.0,
       "formality": 0.1,
       "chroma": 1,
       "material": "pixel",
@@ -28,7 +30,12 @@
       "minContrast": "AA",
       "respectReducedMotion": true
     },
-    "palette": { "primaryHue": 300, "accentHue": 100, "neutralHue": 305 },
+    "palette": {
+      "primaryHue": 300,
+      "accentHue": 100,
+      "neutralHue": 305,
+      "brandHue": 300
+    },
     "compilerVersion": 1,
     "profile": "expressive"
   },
@@ -179,6 +186,18 @@
           "duration": "250ms",
           "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
         }
+      },
+      "--brand": {
+        "$type": "color",
+        "$value": "oklch(0.56 0.234 300)"
+      },
+      "--brand-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.99 0 0)"
+      },
+      "--brand-soft": {
+        "$type": "color",
+        "$value": "oklch(0.925 0.073 300)"
       }
     },
     "dark": {
@@ -327,6 +346,18 @@
           "duration": "250ms",
           "easing": "cubic-bezier(0.4, 0, 0.2, 1)"
         }
+      },
+      "--brand": {
+        "$type": "color",
+        "$value": "oklch(0.56 0.234 300)"
+      },
+      "--brand-foreground": {
+        "$type": "color",
+        "$value": "oklch(0.99 0 0)"
+      },
+      "--brand-soft": {
+        "$type": "color",
+        "$value": "oklch(0.475 0.091 300)"
       }
     }
   },

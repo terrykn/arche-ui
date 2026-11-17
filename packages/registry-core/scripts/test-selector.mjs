@@ -93,7 +93,7 @@ test("selector is deterministic", () => {
 
 test("context changes the hero pick (media + formality)", () => {
   const plain = selectVariants(manifests, NEUTRAL_CONTEXT).find((s) => s.block === "hero");
-  assert.deepEqual(plain.axes, { alignment: "center", mediaLayout: "none" });
+  assert.deepEqual(plain.axes, { alignment: "center", mediaLayout: "none", ctaVariant: "primary" });
   const construction = selectVariants(manifests, {
     genre: "landing",
     content: { category: "construction", audience: "general", media: "image", tone: [] },

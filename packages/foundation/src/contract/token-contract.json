@@ -1,5 +1,5 @@
 {
-  "$comment": "Arche UI token contract v1. Encodes the whole token surface from the Library Creation Spec §4.2. Token names are CSS-variable form. Colors are OKLCH. Every token requires a value in BOTH the light and the dark set of an identity.",
+  "$comment": "Arche UI token contract v1. Encodes the whole token surface from the Library Creation Spec §4.2. Token names are CSS-variable form. Colors are OKLCH. Every token requires a value in BOTH the light and the dark set of an identity. Amendment 2026-11 (Brand Token brief, same append-only pattern as --border-width): --brand, --brand-foreground, --brand-soft join the contract; existing payloads predate them and gain them on regeneration (brandHue defaults to primaryHue).",
   "contractVersion": 1,
   "colorSpace": "oklch",
   "modes": ["light", "dark"],
@@ -18,6 +18,9 @@
     { "name": "--accent-foreground", "$type": "color", "group": "actions" },
     { "name": "--destructive", "$type": "color", "group": "actions", "contrastPair": { "fg": "--destructive-foreground", "bg": "--destructive" } },
     { "name": "--destructive-foreground", "$type": "color", "group": "actions" },
+    { "name": "--brand", "$type": "color", "group": "brand", "contrastPair": { "fg": "--brand-foreground", "bg": "--brand" } },
+    { "name": "--brand-foreground", "$type": "color", "group": "brand" },
+    { "name": "--brand-soft", "$type": "color", "group": "brand", "contrastPair": { "fg": "--foreground", "bg": "--brand-soft" } },
     { "name": "--muted", "$type": "color", "group": "quiet-ui", "contrastPair": { "fg": "--muted-foreground", "bg": "--muted" } },
     { "name": "--muted-foreground", "$type": "color", "group": "quiet-ui" },
     { "name": "--border", "$type": "color", "group": "structure" },
@@ -48,6 +51,8 @@
     { "fg": "--secondary-foreground", "bg": "--secondary", "minRatio": 4.5 },
     { "fg": "--accent-foreground", "bg": "--accent", "minRatio": 4.5 },
     { "fg": "--destructive-foreground", "bg": "--destructive", "minRatio": 4.5 },
+    { "fg": "--brand-foreground", "bg": "--brand", "minRatio": 4.5 },
+    { "fg": "--foreground", "bg": "--brand-soft", "minRatio": 4.5 },
     { "fg": "--muted-foreground", "bg": "--muted", "minRatio": 4.5 }
   ]
 }

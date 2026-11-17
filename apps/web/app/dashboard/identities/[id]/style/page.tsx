@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -12,6 +11,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { applyPickerAction } from "../../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PaletteOptionPreview } from "@/components/palette-option-preview";
 
 const STEPS = ["palettes", "examples", "words", "done"] as const;
 type Step = (typeof STEPS)[number];
@@ -35,9 +35,7 @@ const STEP_LABEL: Record<Step, { n: string; title: string; lede: string }> = {
   done: { n: "Styled", title: "Ready for the Studio", lede: "" },
 };
 
-function hueSwatch(hue: number): CSSProperties {
-  return { backgroundColor: `oklch(0.62 0.16 ${hue})` };
-}
+
 
 export default async function StyleIdentity({
   params,
@@ -118,6 +116,15 @@ export default async function StyleIdentity({
         </div>
       </div>
       {step !== "done" ? <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{label.lede}</p> : null}
+      {step === "palettes" && Array.isArray((payload as { meta?: { promptSlots?: unknown } }).meta?.promptSlots) &&
+      ((payload as { meta?: { promptSlots?: unknown } }).meta!.promptSlots as string[]).length > 0 ? (
+        <p className="mt-2 max-w-2xl text-sm">
+          <span className="font-medium text-foreground">Understood: </span>
+          <span className="text-muted-foreground">
+            {((payload as { meta?: { promptSlots?: string[] } }).meta!.promptSlots as string[]).join(" · ")}
+          </span>
+        </p>
+      ) : null}
       {query.error ? (
         <p role="alert" className="mt-4 max-w-2xl rounded-md border-(length:--border-width) border-destructive/40 bg-card p-3 text-sm text-destructive">
           {query.error}
@@ -137,11 +144,7 @@ export default async function StyleIdentity({
                     <Input type="radio" name="palette" value={option.id} required defaultChecked={selections.paletteId === option.id} className="h-4 w-4" />
                     <span className="font-medium">{option.name}</span>
                   </span>
-                  <span className="flex gap-1.5" aria-hidden>
-                    {[option.anchors.primaryHue, option.anchors.accentHue, option.anchors.neutralHue].map((hue, i) => (
-                      <span key={`${hue}-${i}`} style={hueSwatch(hue)} className="h-6 w-10 rounded" />
-                    ))}
-                  </span>
+                  <PaletteOptionPreview anchors={option.anchors} />
                   <span className="text-sm text-muted-foreground">{option.reason}</span>
                 </label>
               ))}

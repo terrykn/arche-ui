@@ -28,9 +28,34 @@ export type { Manifest } from "./manifests.js";
 export { getManifests, getBlockManifests, getCatalogManifests, getTokenContract } from "./manifests.js";
 
 export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
-export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, Plan, SelfCheck } from "@arche/foundation/dna";
-export { dnaSectionSchema, dnaDeltaSchema, modelOutputSchema, modelDeltaOutputSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
+export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, PaletteVariant, TypefaceVariant } from "@arche/foundation/dna";
+export { dnaSectionSchema, dnaDeltaSchema, dnaObjectSchema, dnaPaletteSchema, generationProfileSchema, deriveProfile, migrateDnaAxes, resolveBrandHue, withBrandDefault, modelOutputSchema, modelDeltaOutputSchema, paletteVariantSchema, typefaceVariantSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
+export {
+  normalizePaletteVariants,
+  normalizeTypefaceVariants,
+  typefaceSpec,
+  assertTypefaceOverride,
+  fontChoiceBlock,
+  type TypefaceSpec,
+  type TypefaceOptionSpec,
+} from "./variants.js";
 export { checkDesignRules, assertGeneratedCompliant, CLOSED_EASINGS, type DesignRuleFinding } from "./design-rules.js";
+export {
+  parseConstraints,
+  describeConstraints,
+  constraintSlots,
+  enforceConstraints,
+  verifyAdherence,
+  retrieveExemplars,
+  keywordTableVersion,
+  loadKeywordTable,
+  loadCorpus,
+  corpusVersion,
+  type PromptConstraints,
+  type AdherenceReport,
+  type CorpusEntry,
+  type EnforcementAdjustment,
+} from "./prompt-adherence.js";
 export { buildPresentation, type PresentationBlock, type PresentationMotion, type PresentationContext, type TasteSummary } from "./presentation.js";
 export { GENRE_BLUEPRINTS, getGenreBlueprints, type GenreBlueprint, type GenreId } from "./genres.js";
 export {
@@ -469,6 +494,11 @@ const HEX_COLOR_VARS = [
   "chart-3",
   "chart-4",
   "chart-5",
+  // Brand Token brief: the brand family resolves to bg-brand,
+  // text-brand-foreground, and bg-brand-soft utilities in consumers.
+  "brand",
+  "brand-foreground",
+  "brand-soft",
 ];
 
 interface ThemeEmission {

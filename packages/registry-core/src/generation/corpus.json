@@ -1,0 +1,320 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "gallery",
+      "prompt": "A quiet gallery for a design-engineering tool: paper-white ground, hairline borders, near-neutral grays, high contrast. Muted and monochromatic overall.",
+      "axes": {
+        "warmth": 0.4,
+        "chroma": 0.08,
+        "energy": 0.2,
+        "playfulness": 0.4,
+        "sharpness": 0.3,
+        "density": 0.2,
+        "ornament": 0.2,
+        "formality": 0.8,
+        "material": "paper",
+        "motionFeel": "snappy",
+        "texture": "none",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 40, "accentHue": 45, "neutralHue": 42 },
+      "tags": { "chromaBand": "muted", "hueFamily": "neutral", "lightness": "light", "archetype": "gallery" }
+    },
+    {
+      "id": "arcade",
+      "prompt": "A loud neon arcade sign-in: electric saturate color, party energy, pixel hardware.",
+      "axes": {
+        "warmth": 0.5,
+        "chroma": 0.9,
+        "energy": 1.0,
+        "playfulness": 0.9,
+        "sharpness": 0.8,
+        "density": 0.8,
+        "ornament": 0.5,
+        "formality": 0.0,
+        "material": "pixel",
+        "motionFeel": "glitchy",
+        "texture": "scanlines",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 320, "accentHue": 180, "neutralHue": 260 },
+      "tags": { "chromaBand": "vivid", "hueFamily": "magenta", "lightness": "dark", "archetype": "arcade" }
+    },
+    {
+      "id": "hospital",
+      "prompt": "A clinical hospital booking flow: trustworthy blues, formal institutional type, calm surfaces.",
+      "axes": {
+        "warmth": 0.3,
+        "chroma": 0.15,
+        "energy": 0.3,
+        "playfulness": 0.05,
+        "sharpness": 0.6,
+        "density": 0.45,
+        "ornament": 0.15,
+        "formality": 0.9,
+        "material": "flat",
+        "motionFeel": "stately",
+        "texture": "none",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 210, "accentHue": 210, "neutralHue": 220 },
+      "tags": { "chromaBand": "muted", "hueFamily": "blue", "lightness": "light", "archetype": "healthcare" }
+    },
+    {
+      "id": "fintech",
+      "prompt": "A fintech dashboard: deep navy brand, sharp borders, dense data tables, high-energy numbers.",
+      "axes": {
+        "warmth": 0.3,
+        "chroma": 0.85,
+        "energy": 0.9,
+        "playfulness": 0.3,
+        "sharpness": 0.7,
+        "density": 0.5,
+        "ornament": 0.3,
+        "formality": 0.7,
+        "material": "metal",
+        "motionFeel": "snappy",
+        "texture": "grid",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 225, "accentHue": 200, "neutralHue": 230 },
+      "tags": { "chromaBand": "vivid", "hueFamily": "blue", "lightness": "light", "archetype": "fintech" }
+    },
+    {
+      "id": "bakery",
+      "prompt": "A warm cozy bakery storefront: earthy neutrals, friendly serif, soft pill radius.",
+      "axes": {
+        "warmth": 0.8,
+        "chroma": 0.55,
+        "energy": 0.5,
+        "playfulness": 0.6,
+        "sharpness": 0.2,
+        "density": 0.4,
+        "ornament": 0.4,
+        "formality": 0.4,
+        "material": "clay",
+        "motionFeel": "smooth",
+        "texture": "grain",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 35, "accentHue": 150, "neutralHue": 50 },
+      "tags": { "chromaBand": "balanced", "hueFamily": "orange", "lightness": "light", "archetype": "bakery" }
+    },
+    {
+      "id": "editorial-warm",
+      "prompt": "A warm editorial magazine: cozy long-form reading, organic tones, soft surfaces.",
+      "axes": {
+        "warmth": 0.85,
+        "chroma": 0.35,
+        "energy": 0.35,
+        "playfulness": 0.4,
+        "sharpness": 0.3,
+        "density": 0.35,
+        "ornament": 0.45,
+        "formality": 0.45,
+        "material": "paper",
+        "motionFeel": "smooth",
+        "texture": "grain",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 35, "accentHue": 15, "neutralHue": 45 },
+      "tags": { "chromaBand": "balanced", "hueFamily": "orange", "lightness": "light", "archetype": "editorial" }
+    },
+    {
+      "id": "clinical-saas",
+      "prompt": "A cool clinical SaaS console: icy grays, compact tables, formal controls.",
+      "axes": {
+        "warmth": 0.15,
+        "chroma": 0.25,
+        "energy": 0.4,
+        "playfulness": 0.1,
+        "sharpness": 0.65,
+        "density": 0.7,
+        "ornament": 0.15,
+        "formality": 0.75,
+        "material": "flat",
+        "motionFeel": "snappy",
+        "texture": "none",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 220, "accentHue": 200, "neutralHue": 225 },
+      "tags": { "chromaBand": "muted", "hueFamily": "blue", "lightness": "light", "archetype": "saas" }
+    },
+    {
+      "id": "pastel-shop",
+      "prompt": "A pastel storefront: soft pink brand, light airy cards, gentle rounded controls.",
+      "axes": {
+        "warmth": 0.65,
+        "chroma": 0.4,
+        "energy": 0.45,
+        "playfulness": 0.55,
+        "sharpness": 0.25,
+        "density": 0.35,
+        "ornament": 0.4,
+        "formality": 0.3,
+        "material": "clay",
+        "motionFeel": "smooth",
+        "texture": "none",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 340, "accentHue": 180, "neutralHue": 350 },
+      "tags": { "chromaBand": "balanced", "hueFamily": "pink", "lightness": "light", "archetype": "retail" }
+    },
+    {
+      "id": "dark-dashboard",
+      "prompt": "A dark midnight ops dashboard: near-black ground, electric cyan signals, dense grids.",
+      "axes": {
+        "warmth": 0.3,
+        "chroma": 0.7,
+        "energy": 0.8,
+        "playfulness": 0.25,
+        "sharpness": 0.6,
+        "density": 0.8,
+        "ornament": 0.3,
+        "formality": 0.5,
+        "material": "metal",
+        "motionFeel": "snappy",
+        "texture": "grid",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 195, "accentHue": 320, "neutralHue": 230 },
+      "tags": { "chromaBand": "vivid", "hueFamily": "cyan", "lightness": "dark", "archetype": "dashboard" }
+    },
+    {
+      "id": "kids-play",
+      "prompt": "A playful kids learning app: bold saturated color, bouncy motion, chunky friendly shapes.",
+      "axes": {
+        "warmth": 0.6,
+        "chroma": 0.85,
+        "energy": 0.9,
+        "playfulness": 0.95,
+        "sharpness": 0.15,
+        "density": 0.4,
+        "ornament": 0.6,
+        "formality": 0.1,
+        "material": "clay",
+        "motionFeel": "bouncy",
+        "texture": "none",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 45, "accentHue": 200, "neutralHue": 60 },
+      "tags": { "chromaBand": "vivid", "hueFamily": "yellow", "lightness": "light", "archetype": "kids" }
+    },
+    {
+      "id": "luxury-noir",
+      "prompt": "A luxury noir portfolio: restrained charcoal, sharp hairlines, formal serif headlines.",
+      "axes": {
+        "warmth": 0.35,
+        "chroma": 0.12,
+        "energy": 0.25,
+        "playfulness": 0.15,
+        "sharpness": 0.85,
+        "density": 0.35,
+        "ornament": 0.35,
+        "formality": 0.85,
+        "material": "marble",
+        "motionFeel": "stately",
+        "texture": "marble-vein",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 45, "accentHue": 45, "neutralHue": 48 },
+      "tags": { "chromaBand": "muted", "hueFamily": "neutral", "lightness": "dark", "archetype": "luxury" }
+    },
+    {
+      "id": "brutalist",
+      "prompt": "A brutalist zine: stark black on white, hard pixel edges, loud type, raw grid.",
+      "axes": {
+        "warmth": 0.5,
+        "chroma": 0.5,
+        "energy": 0.85,
+        "playfulness": 0.5,
+        "sharpness": 1.0,
+        "density": 0.6,
+        "ornament": 0.2,
+        "formality": 0.3,
+        "material": "pixel",
+        "motionFeel": "snappy",
+        "texture": "grid",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 0, "accentHue": 220, "neutralHue": 90 },
+      "tags": { "chromaBand": "balanced", "hueFamily": "red", "lightness": "light", "archetype": "brutalist" }
+    },
+    {
+      "id": "outdoors",
+      "prompt": "A nature trail guide: deep teal brand, earthy greens, calm airy trail cards.",
+      "axes": {
+        "warmth": 0.55,
+        "chroma": 0.5,
+        "energy": 0.4,
+        "playfulness": 0.35,
+        "sharpness": 0.4,
+        "density": 0.35,
+        "ornament": 0.35,
+        "formality": 0.35,
+        "material": "paper",
+        "motionFeel": "smooth",
+        "texture": "grain",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 180, "accentHue": 35, "neutralHue": 120 },
+      "tags": { "chromaBand": "balanced", "hueFamily": "teal", "lightness": "light", "archetype": "outdoors" }
+    },
+    {
+      "id": "red-brand",
+      "prompt": "A red brand landing page: bold signal red primary, light ground, sharp CTA.",
+      "axes": {
+        "warmth": 0.55,
+        "chroma": 0.8,
+        "energy": 0.65,
+        "playfulness": 0.35,
+        "sharpness": 0.6,
+        "density": 0.5,
+        "ornament": 0.3,
+        "formality": 0.45,
+        "material": "flat",
+        "motionFeel": "snappy",
+        "texture": "none",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 5, "accentHue": 220, "neutralHue": 30 },
+      "tags": { "chromaBand": "vivid", "hueFamily": "red", "lightness": "light", "archetype": "brand" }
+    },
+    {
+      "id": "blue-brand",
+      "prompt": "A blue brand landing page: deep blue primary, light ground, sharp CTA.",
+      "axes": {
+        "warmth": 0.35,
+        "chroma": 0.8,
+        "energy": 0.65,
+        "playfulness": 0.3,
+        "sharpness": 0.6,
+        "density": 0.5,
+        "ornament": 0.3,
+        "formality": 0.45,
+        "material": "flat",
+        "motionFeel": "snappy",
+        "texture": "none",
+        "minContrast": "AA",
+        "respectReducedMotion": true
+      },
+      "palette": { "primaryHue": 240, "accentHue": 20, "neutralHue": 230 },
+      "tags": { "chromaBand": "vivid", "hueFamily": "blue", "lightness": "light", "archetype": "brand" }
+    }
+  ]
+}

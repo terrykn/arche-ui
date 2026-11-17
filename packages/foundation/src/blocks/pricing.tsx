@@ -46,12 +46,15 @@ function Pricing({ headline = "Pricing that fits the floor", tiers = DEFAULT_TIE
     <section data-block="pricing" className={cn("mx-auto w-full max-w-6xl py-16", className)}>
       <h2 className="text-center text-3xl font-extrabold tracking-tight text-foreground">{headline}</h2>
       <div className={cn(pricingVariants({ tierCount }))}>
+        {/* Brand Token brief: the featured tier is the pricing brand moment —
+            brand border + brand badge + brand CTA. Only one tier per block
+            may be featured (pricing-one-highlight). */}
         {shown.map((tier) => (
-          <Card key={tier.name} className={tier.highlighted ? "border-primary" : undefined}>
+          <Card key={tier.name} className={tier.highlighted ? "border-brand" : undefined}>
             <CardHeader>
               <span className="flex items-center gap-2">
                 <CardTitle>{tier.name}</CardTitle>
-                {tier.highlighted ? <Badge>Recommended</Badge> : null}
+                {tier.highlighted ? <Badge variant="brand">Recommended</Badge> : null}
               </span>
               <p className="mt-2 text-4xl font-extrabold tracking-tight text-foreground">{tier.price}</p>
               <CardDescription>{tier.blurb}</CardDescription>
@@ -65,7 +68,7 @@ function Pricing({ headline = "Pricing that fits the floor", tiers = DEFAULT_TIE
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant={tier.highlighted ? "default" : "secondary"} className="w-full" asChild>
+              <Button variant={tier.highlighted ? "brand" : "secondary"} className="w-full" asChild>
                 <a href="#get-started">{tier.cta}</a>
               </Button>
             </CardFooter>

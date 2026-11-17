@@ -193,6 +193,11 @@ function recommendedPairKeys(): Set<string> {
   return new Set(loadFontRegistry().pairing.recommended.map(([display, body]) => `${display}+${body}`));
 }
 
+/** Registered compatible display+body pairs ([display id, body id]). */
+export function recommendedFontPairs(): Array<[string, string]> {
+  return loadFontRegistry().pairing.recommended.map(([display, body]) => [display, body] as [string, string]);
+}
+
 /**
  * Display/body compatibility rule for generated identities. Recommended pairs
  * always pass. Distinct neutral grotesques, distinct expressive display faces,

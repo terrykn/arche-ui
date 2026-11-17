@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/service";
-import { deriveTypeScale, TYPE_ROLES } from "@arche/registry-core";
+import { deriveTypeScale, nameColor, TYPE_ROLES } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
 import { IdentityFontLinks } from "@/components/identity-fonts";
 import { EnterpriseDemo } from "@/components/enterprise-demo";
@@ -102,6 +102,14 @@ export default async function PublicIdentityPage({
   const host = (await headers()).get("host") ?? "localhost:3000";
   const proto = host.startsWith("localhost") ? "http" : "https";
   const base = `${proto}://${host}/r/${username}/${slug}`;
+  // Brand Token brief: the identity's recognizable color (page accent).
+  // Old payloads predate the brand family and simply show no pill.
+  const brandValue = (modeTokens as Record<string, { $value?: unknown }>)?.["--brand"]?.$value;
+  const brandFg = (modeTokens as Record<string, { $value?: unknown }>)?.["--brand-foreground"]?.$value;
+  const brandPill =
+    typeof brandValue === "string" && typeof brandFg === "string"
+      ? { backgroundColor: brandValue, color: brandFg, name: nameColor(brandValue) }
+      : null;
 
   return (
     <>
@@ -115,6 +123,16 @@ export default async function PublicIdentityPage({
           {versionList.length} version{versionList.length === 1 ? "" : "s"} (latest v
           {versionList[0]!.version})
         </p>
+        {brandPill ? (
+          <p className="mt-3">
+            <span
+              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium"
+              style={{ backgroundColor: brandPill.backgroundColor, color: brandPill.color }}
+            >
+              Brand · {brandPill.name}
+            </span>
+          </p>
+        ) : null}
 
         {latestAssets ? (
           <figure className="mt-8">

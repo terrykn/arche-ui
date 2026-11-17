@@ -62,7 +62,7 @@ test("palette + words + example steps recompile with zero network calls", async 
   // Step 3: word chips.
   const afterWords = await recompile(afterExample, { chipIds: ["calm", "retro"], paletteId: "as-dreamed" });
   assert.ok(afterWords.dna.axes.energy < afterExample.dna.axes.energy, "calm quiets energy");
-  assert.ok(afterWords.dna.axes.retroFuturism > afterExample.dna.axes.retroFuturism, "retro bends the era axis");
+  assert.ok(afterWords.dna.axes.playfulness > afterExample.dna.axes.playfulness, "retro lifts playfulness");
   // Every step stays a valid, AA-gated identity.
   for (const compiled of [afterPalette, afterExample, afterWords]) {
     const validation = validateIdentity(compiled);

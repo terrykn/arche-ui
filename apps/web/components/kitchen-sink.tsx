@@ -225,6 +225,24 @@ export function KitchenSink() {
         </CardContent>
       </Card>
 
+      {/* 10 — Brand moments (Brand Token brief): the ONLY surfaces that
+          spend the brand — brand button, brand badge, brand card. Both
+          modes render from the same AA-gated contract pairs. */}
+      <Card variant="brand">
+        <CardHeader>
+          <CardTitle>Harbor sale week</CardTitle>
+          <CardDescription>Members save an extra 20% through Sunday.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap items-center gap-2">
+          <Badge variant="brand">Sale · −20%</Badge>
+          <Badge variant="secondary">Members</Badge>
+        </CardContent>
+        <CardFooter className="gap-2">
+          <Button variant="brand">Shop the sale</Button>
+          <Button variant="secondary">Details</Button>
+        </CardFooter>
+      </Card>
+
       {/* 9 — Checkboxes + wide button */}
       <Card>
         <CardHeader>

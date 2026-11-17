@@ -4,7 +4,10 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils.js";
 
 const badgeVariants = cva("inline-flex w-fit items-center gap-1 rounded-md border-(length:--border-width) px-2 py-0.5 text-xs font-medium", {
-  variants: { variant: { default: "bg-primary text-primary-foreground", secondary: "bg-secondary text-secondary-foreground", destructive: "bg-destructive text-destructive-foreground", outline: "border-border text-foreground", ghost: "text-foreground hover:bg-muted", link: "text-primary underline-offset-4 hover:underline" } },
+  // Brand Token brief: the loud brand badge — solid --brand with
+  // --brand-foreground text (an AA-gated contract pair) for sale, "new",
+  // and highlight moments.
+  variants: { variant: { default: "bg-primary text-primary-foreground", secondary: "bg-secondary text-secondary-foreground", destructive: "bg-destructive text-destructive-foreground", outline: "border-border text-foreground", ghost: "text-foreground hover:bg-muted", link: "text-primary underline-offset-4 hover:underline", brand: "border-transparent bg-brand text-brand-foreground" } },
   defaultVariants: { variant: "default" },
 });
 function Badge({ className, variant, asChild = false, ...props }: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
