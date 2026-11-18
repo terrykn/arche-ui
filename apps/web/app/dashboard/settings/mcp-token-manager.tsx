@@ -31,10 +31,6 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
 
   return (
     <div className="mt-2">
-      <p className="text-sm text-muted-foreground">
-        MCP tokens let agents read your libraries and publish through the hosted MCP server. Stored
-        hashed; each raw value is shown once.
-      </p>
       {tokens.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">No MCP tokens yet.</p>
       ) : (
@@ -42,7 +38,7 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
           {tokens.map((t) => (
             <li key={t.id} className="flex items-center justify-between gap-3 rounded-md border-(length:--border-width) border-border p-3 text-sm">
               <span>
-                <code>{t.label}</code>
+                Active token <code>{t.label}</code>
                 <span className="ml-2 text-muted-foreground">
                   created {new Date(t.created_at).toLocaleString()}
                   {t.last_used_at ? ` · last used ${new Date(t.last_used_at).toLocaleString()}` : " · never used"}
@@ -75,10 +71,6 @@ export function McpTokenManager({ tokens }: { tokens: McpTokenListItem[] }) {
           Issue MCP token
         </Button>
       </form>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Setup guides: <a className="underline" href="/docs/mcp">MCP docs</a> · endpoint{" "}
-        <code>/api/mcp</code>
-      </p>
     </div>
   );
 }

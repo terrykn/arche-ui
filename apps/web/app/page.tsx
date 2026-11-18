@@ -15,6 +15,14 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { AutosizeTextarea } from "@/components/autosize-textarea";
 
+// Per-column shift of the full-grid gradient copy inside each card.
+// On mobile the cards stack, so each just shows its own full gradient.
+const GRID_OFFSETS = [
+  "md:left-0 md:w-[calc(300%+2rem)]",
+  "md:left-[calc(-100%-1rem)] md:w-[calc(300%+2rem)]",
+  "md:left-[calc(-200%-2rem)] md:w-[calc(300%+2rem)]",
+];
+
 const FEATURES = [
   {
     title: "You describe. Arche creates.",
@@ -48,7 +56,7 @@ function HeroPrompt() {
       onSubmit={submit}
       role="search"
       aria-label="Describe your product or brand identity"
-      className={`mx-auto mt-8 flex max-w-xl items-end gap-2 border-2 border-white/30 bg-white/95 py-1.5 pl-5 pr-1.5 shadow-xl backdrop-blur ${expanded ? "rounded-3xl" : "rounded-full"}`}
+      className={`mx-auto mt-8 flex max-w-xl items-end gap-2 border-2 border-white/30 bg-white/95 py-1.5 pl-5 pr-1.5 backdrop-blur ${expanded ? "rounded-3xl" : "rounded-full"}`}
     >
       <AutosizeTextarea
         value={value}
@@ -112,14 +120,33 @@ export default function Home() {
             </section>
           </div>
           <section className="grid gap-4 py-10 md:grid-cols-3">
-            {FEATURES.map((feature) => (
-              // Flat panel like the hero: hero radius, no elevation, raspberry edge.
-              <Card key={feature.title} shadow="none" className="rounded-3xl border-2 border-[#FF074E] bg-card py-8">
-                <CardHeader>
-                  <CardTitle className="text-[28px] font-black leading-tight tracking-tight text-[#FF074E]">{feature.title}</CardTitle>
+            {FEATURES.map((feature, index) => (
+              // Three separate cards, one flowing background: each card
+              // clips a full-grid-sized copy of the same gradient, shifted
+              // by its column, so the pattern runs continuously across all
+              // three (grid gap is gap-4 = 1rem).
+              <Card key={feature.title} shadow="none" className="relative overflow-hidden rounded-3xl border-0 bg-[#3A1F83] py-8 text-white">
+                <div
+                  aria-hidden="true"
+                  className={`absolute inset-0 opacity-60 ${GRID_OFFSETS[index]}`}
+                  style={{ filter: "brightness(0.5) saturate(1.25)" }}
+                >
+                  <GradientBg
+                    className="feature-bg"
+                    speed={14}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                </div>
+                <CardHeader className="relative">
+                  <CardTitle className="text-[28px] font-black leading-tight tracking-tight text-white">{feature.title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="whitespace-pre-wrap rounded-2xl bg-muted/70 px-4 py-3 font-mono text-[13px] font-semibold text-[#FF074E]">
+                <CardContent className="relative">
+                  <p className="whitespace-pre-wrap rounded-2xl bg-white/15 px-4 py-3 font-mono text-[13px] font-semibold text-white">
                     {feature.code}
                   </p>
                 </CardContent>

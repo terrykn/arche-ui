@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { ArcheLogo } from "./arche-logo";
 import { SignInModal } from "./sign-in-modal";
 import { ArrowRight } from "lucide-react";
@@ -13,7 +12,6 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
-import { Separator } from "@/components/ui/separator";
 import { DocsSearch } from "@/components/docs-search";
 
 // Backdrop wash derived only from identity tokens (primary/secondary/accent).
@@ -30,9 +28,18 @@ const NAV_LINKS = [
 
 export function ProtoNav() {
   const [signInOpen, setSignInOpen] = React.useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
+  React.useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 0);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   return (
     <>
-      <header className="proto-focus-scope sticky top-0 z-40 bg-card/82 backdrop-blur-md">
+      <header
+        className={`proto-focus-scope sticky top-0 z-40 transition-colors ${scrolled ? "bg-card/82 backdrop-blur-md" : "bg-transparent"}`}
+      >
         <div className="proto-wrap flex h-16 items-center justify-between">
           <Link href="/" aria-label="Arche home" className="inline-flex items-center">
             <ArcheLogo size={36} />
@@ -63,84 +70,30 @@ export function ProtoNav() {
   );
 }
 
-const FOOTER_GROUPS: Array<{ title: string; links: Array<{ href: string; label: string }> }> = [
-  {
-    title: "Product",
-    links: [
-      { href: "/examples", label: "Examples" },
-      { href: "/kitchen-sink", label: "Demo site" },
-      { href: "/pricing", label: "Pricing" },
-      { href: "/changelog", label: "Changelog" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { href: "/docs", label: "Docs" },
-      { href: "/components", label: "Components" },
-      { href: "/docs/mcp", label: "MCP" },
-      { href: "/accessibility", label: "Accessibility" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [{ href: "/about", label: "About" }],
-  },
-  {
-    title: "Legal",
-    links: [
-      { href: "/privacy", label: "Privacy" },
-      { href: "/terms", label: "Terms" },
-    ],
-  },
-];
-
 export function ProtoFooter() {
-  const pathname = usePathname();
   return (
-    <footer className="proto-focus-scope border-t-(length:--border-width) border-border py-10 text-sm text-muted-foreground">
-      <div className="proto-wrap">
-      <div className="grid gap-8 md:grid-cols-[1fr_repeat(4,minmax(0,auto))]">
-        <div>
-          <p>
-            <ArcheLogo size={36} />
-          </p>
-          <p className="mt-2 max-w-xs">© 2026 Arche UI</p>
-        </div>
-        {FOOTER_GROUPS.map((group) => (
-          <nav key={group.title} aria-label={`Footer — ${group.title}`}>
-            <p className="font-semibold text-foreground">{group.title}</p>
-            <ul className="mt-2 flex flex-col gap-1.5">
-              {group.links.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="hover:text-foreground hover:underline">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-              {group.title === "Company" ? (
-                <li>
-                  <FooterSignIn label="Sign in" current={pathname} />
-                </li>
-              ) : null}
-            </ul>
-          </nav>
-        ))}
-      </div>
-      <Separator className="mt-8" />
+    <footer className="proto-focus-scope border-t-(length:--border-width) border-border py-5 text-sm text-muted-foreground">
+      <div className="proto-wrap flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <Link href="/" aria-label="Arche home" className="inline-flex items-center">
+          <ArcheLogo size={28} />
+        </Link>
+        <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <a href="mailto:terrynguyen.dev@gmail.com" className="hover:text-foreground hover:underline">
+          Contact
+        </a>
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://www.linkedin.com/in/terrykn"
+          target="_blank"
+          rel="noreferrer"
+          className="hover:text-foreground hover:underline"
+        >
+          LinkedIn
+        </a>
+        <span aria-hidden="true">·</span>
+        <span>© 2026 Terry Nguyen</span>
+        </nav>
       </div>
     </footer>
-  );
-}
-
-function FooterSignIn({ label, current }: { label: string; current: string }) {
-  const [open, setOpen] = React.useState(false);
-  return (
-    <>
-      <button type="button" onClick={() => setOpen(true)} className="hover:text-foreground hover:underline">
-        {label}
-      </button>
-      <SignInModal open={open} onClose={() => setOpen(false)} redirectTo={current} />
-    </>
   );
 }

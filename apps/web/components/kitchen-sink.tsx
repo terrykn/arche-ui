@@ -1,6 +1,11 @@
 "use client";
 
-import { Send, TrendingDown, TrendingUp } from "lucide-react";
+import { Fragment, useState, type ReactNode } from "react";
+import { Moon, Send, Sun, TrendingDown, TrendingUp } from "lucide-react";
+import { Carousel } from "./carousel";
+import { DEMO_IDENTITIES, siteSlug } from "./demo-identities";
+import { DemoSkin } from "./story-screens";
+import { TypedPrompt } from "./typed-prompt";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +14,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { OneTimePasswordField, OneTimePasswordFieldInput, OneTimePasswordFieldHiddenInput } from "@/components/ui/one-time-password-field";
-import { PasswordToggleField, PasswordToggleFieldInput, PasswordToggleFieldToggle } from "@/components/ui/password-toggle-field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
@@ -36,10 +40,9 @@ const WEEK_SALES = [
  * Kitchen sink: everyday product UI in one place — marketing card, auth,
  * forms, lists, finance, chat, verification, and preferences.
  */
-export function KitchenSink() {
-  return (
-    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-      {/* 1 — Title, subtitle, primary button */}
+function sinkCards(ns: string): ReactNode[] {
+  return [
+      // 1 — Title, subtitle, primary button
       <Card>
         <CardHeader>
           <CardTitle>Acme Fulfillment ships for you</CardTitle>
@@ -48,33 +51,26 @@ export function KitchenSink() {
         <CardFooter>
           <Button>Start shipping</Button>
         </CardFooter>
-      </Card>
+      </Card>,
 
-      {/* 2 — Sign in */}
+      // 2 — Sign in
       <Card>
-        <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Welcome back to your Acme workspace.</CardDescription>
-        </CardHeader>
         <CardContent>
-          <form onSubmit={(event) => event.preventDefault()} className="grid gap-4">
+          <form onSubmit={(event) => event.preventDefault()} className="flex h-full flex-col gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="sink-signin-email">Email</Label>
-              <Input id="sink-signin-email" type="email" placeholder="maya@acme.inc" autoComplete="email" />
+              <Label htmlFor="${ns}-signin-email">Email</Label>
+              <Input id="${ns}-signin-email" type="email" placeholder="maya@acme.inc" autoComplete="email" />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="sink-signin-password">Password</Label>
-              <PasswordToggleField>
-                <PasswordToggleFieldInput id="sink-signin-password" autoComplete="current-password" />
-                <PasswordToggleFieldToggle>Show</PasswordToggleFieldToggle>
-              </PasswordToggleField>
+              <Label htmlFor="${ns}-signin-password">Password</Label>
+              <Input id="${ns}-signin-password" type="password" placeholder="••••••••" autoComplete="current-password" />
             </div>
-            <Button type="submit" className="w-full">Sign in</Button>
+            <Button type="submit" className="mt-auto w-full">Sign in</Button>
           </form>
         </CardContent>
-      </Card>
+      </Card>,
 
-      {/* 3 — Form: dropdown, multiple choice, textarea, submit */}
+      // 3 — Form: dropdown, multiple choice, textarea, submit
       <Card>
         <CardHeader>
           <CardTitle>Request a quote</CardTitle>
@@ -83,9 +79,9 @@ export function KitchenSink() {
         <CardContent>
           <form onSubmit={(event) => event.preventDefault()} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="sink-quote-plan">Plan</Label>
+              <Label htmlFor="${ns}-quote-plan">Plan</Label>
               <Select>
-                <SelectTrigger id="sink-quote-plan">
+                <SelectTrigger id="${ns}-quote-plan">
                   <SelectValue placeholder="Pick a plan" />
                 </SelectTrigger>
                 <SelectContent>
@@ -99,25 +95,25 @@ export function KitchenSink() {
               <Label>Billing</Label>
               <RadioGroup defaultValue="monthly" aria-label="Billing period">
                 <div className="flex items-center gap-2">
-                  <RadioGroupItem value="monthly" id="sink-billing-monthly" />
-                  <Label htmlFor="sink-billing-monthly">Monthly</Label>
+                  <RadioGroupItem value="monthly" id="${ns}-billing-monthly" />
+                  <Label htmlFor="${ns}-billing-monthly">Monthly</Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <RadioGroupItem value="annual" id="sink-billing-annual" />
-                  <Label htmlFor="sink-billing-annual">Annual · save 20%</Label>
+                  <RadioGroupItem value="annual" id="${ns}-billing-annual" />
+                  <Label htmlFor="${ns}-billing-annual">Annual · save 20%</Label>
                 </div>
               </RadioGroup>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="sink-quote-notes">Notes</Label>
-              <Textarea id="sink-quote-notes" placeholder="Fragile goods, cold storage, …" />
+              <Label htmlFor="${ns}-quote-notes">Notes</Label>
+              <Textarea id="${ns}-quote-notes" placeholder="Fragile goods, cold storage, …" />
             </div>
             <Button type="submit">Get quote</Button>
           </form>
         </CardContent>
-      </Card>
+      </Card>,
 
-      {/* 4 — Latest activity */}
+      // 4 — Latest activity
       <Card>
         <CardHeader>
           <CardTitle>Latest activity</CardTitle>
@@ -139,9 +135,9 @@ export function KitchenSink() {
             </div>
           ))}
         </CardContent>
-      </Card>
+      </Card>,
 
-      {/* 5 — Stock price + badge */}
+      // 5 — Stock price + badge
       <Card>
         <CardHeader>
           <CardTitle>ACME · Nasdaq</CardTitle>
@@ -161,9 +157,9 @@ export function KitchenSink() {
             </Badge>
           </div>
         </CardContent>
-      </Card>
+      </Card>,
 
-      {/* 6 — Sales bar chart */}
+      // 6 — Sales bar chart
       <Card>
         <CardHeader>
           <CardTitle>Sales this week</CardTitle>
@@ -179,9 +175,9 @@ export function KitchenSink() {
             ))}
           </div>
         </CardContent>
-      </Card>
+      </Card>,
 
-      {/* 7 — Chatbot input */}
+      // 7 — Chatbot input
       <Card>
         <CardHeader>
           <CardTitle>Acme assistant</CardTitle>
@@ -191,16 +187,16 @@ export function KitchenSink() {
             <p className="text-lg font-medium">How can I help today?</p>
             <p className="mt-1 text-sm text-muted-foreground">Ask about orders, stock, or invoices.</p>
           </div>
-          <form onSubmit={(event) => event.preventDefault()} className="flex gap-2">
+          <form onSubmit={(event) => event.preventDefault()} className="mt-auto flex gap-2">
             <Input aria-label="Chat message" placeholder="Ask anything…" className="flex-1" />
             <Button type="submit" size="icon" aria-label="Send message">
               <Send className="size-4" />
             </Button>
           </form>
         </CardContent>
-      </Card>
+      </Card>,
 
-      {/* 8 — Two-step verification */}
+      // 8 — Two-step verification
       <Card>
         <CardHeader>
           <CardTitle>Two-step verification</CardTitle>
@@ -208,7 +204,7 @@ export function KitchenSink() {
         </CardHeader>
         <CardContent>
           <form onSubmit={(event) => event.preventDefault()} className="grid justify-items-center gap-4">
-            <OneTimePasswordField name="sink-otp" aria-label="Verification code">
+            <OneTimePasswordField name="${ns}-otp" aria-label="Verification code">
               <OneTimePasswordFieldInput />
               <OneTimePasswordFieldInput />
               <OneTimePasswordFieldInput />
@@ -223,11 +219,11 @@ export function KitchenSink() {
             </div>
           </form>
         </CardContent>
-      </Card>
+      </Card>,
 
-      {/* 10 — Brand moments (Brand Token brief): the ONLY surfaces that
-          spend the brand — brand button, brand badge, brand card. Both
-          modes render from the same AA-gated contract pairs. */}
+      // 10 — Brand moments (Brand Token brief): the ONLY surfaces that
+      // spend the brand — brand button, brand badge, brand card. Both
+      // modes render from the same AA-gated contract pairs.
       <Card variant="brand">
         <CardHeader>
           <CardTitle>Harbor sale week</CardTitle>
@@ -241,9 +237,9 @@ export function KitchenSink() {
           <Button variant="brand">Shop the sale</Button>
           <Button variant="secondary">Details</Button>
         </CardFooter>
-      </Card>
+      </Card>,
 
-      {/* 9 — Checkboxes + wide button */}
+      // 9 — Checkboxes + wide button
       <Card>
         <CardHeader>
           <CardTitle>Notifications</CardTitle>
@@ -251,22 +247,112 @@ export function KitchenSink() {
         </CardHeader>
         <CardContent className="grid gap-3">
           <div className="flex items-center gap-2">
-            <Checkbox id="sink-notify-shipments" defaultChecked />
-            <Label htmlFor="sink-notify-shipments">Shipment updates</Label>
+            <Checkbox id="${ns}-notify-shipments" defaultChecked />
+            <Label htmlFor="${ns}-notify-shipments">Shipment updates</Label>
           </div>
           <div className="flex items-center gap-2">
-            <Checkbox id="sink-notify-invoices" defaultChecked />
-            <Label htmlFor="sink-notify-invoices">Invoices and receipts</Label>
+            <Checkbox id="${ns}-notify-invoices" defaultChecked />
+            <Label htmlFor="${ns}-notify-invoices">Invoices and receipts</Label>
           </div>
           <div className="flex items-center gap-2">
-            <Checkbox id="sink-notify-marketing" />
-            <Label htmlFor="sink-notify-marketing">Product news</Label>
+            <Checkbox id="${ns}-notify-marketing" />
+            <Label htmlFor="${ns}-notify-marketing">Product news</Label>
           </div>
         </CardContent>
         <CardFooter>
           <Button className="w-full">Save preferences</Button>
         </CardFooter>
-      </Card>
+      </Card>,
+  ];
+}
+
+// Sales preview card: one number, % change beneath it, chart underneath.
+function sinkSalesCard(): ReactNode {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Sales</CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-3">
+        <div>
+          <p className="text-2xl font-semibold">$12,480</p>
+          <Badge className="mt-2 border-transparent bg-emerald-600 text-white">
+            <TrendingUp className="size-3" /> +2.4%
+          </Badge>
+        </div>
+        <div className="mt-auto flex h-20 items-end gap-2" role="img" aria-label="Bar chart of sales, Monday through Sunday, peaking Saturday">
+          {WEEK_SALES.map((bar) => (
+            <div key={bar.day} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
+              <div className="w-full rounded-sm bg-primary" style={{ height: `${bar.value}%` }} />
+              <span className="text-[11px] text-muted-foreground">{bar.day}</span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function KitchenSink({ ns = "sink" }: { ns?: string } = {}) {
+  return (
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {sinkCards(ns).map((card, index) => (
+        <Fragment key={index}>{card}</Fragment>
+      ))}
     </div>
+  );
+}
+
+// Compact preview: one row of 3 — assistant, sign in, sales. Namespaced
+// ids keep the repeated slides valid when several identities sit on one page.
+export function SinkPreview({ ns, className }: { ns: string; className?: string }) {
+  const cards = sinkCards(ns);
+  return (
+    <div className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 [&_[data-slot=card]]:gap-3 [&_[data-slot=card]]:py-3 [&_[data-slot=card-content]]:min-h-0 [&_[data-slot=card-content]]:flex-1 [&_[data-slot=card-content]]:px-4 [&_[data-slot=card-footer]]:px-4 [&_[data-slot=card-header]]:px-4${className ? ` ${className}` : ""}`}>
+      <Fragment key="assistant">{cards[6]}</Fragment>
+      <Fragment key="signin">{cards[1]}</Fragment>
+      <Fragment key="sales">{sinkSalesCard()}</Fragment>
+    </div>
+  );
+}
+
+// One carousel slide: prompt row with a dark/light toggle pinned right,
+// preview below. Defaults to dark mode.
+function SinkSlide({ identity }: { identity: (typeof DEMO_IDENTITIES)[number] }) {
+  const [dark, setDark] = useState(true);
+  return (
+    <DemoSkin identity={identity} dark={dark}>
+      <div className="flex items-center gap-3 p-5 pb-4">
+        <div className="min-w-0 flex-1">
+          <TypedPrompt text={identity.prompt} />
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+          aria-pressed={dark}
+          onClick={() => setDark((value) => !value)}
+          className="shrink-0 rounded-full"
+        >
+          {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+        </Button>
+      </div>
+      <div className="p-5 pt-0">
+        <SinkPreview ns={siteSlug(identity.name)} className={identity.name === "Meridian" ? "font-sans" : undefined} />
+      </div>
+    </DemoSkin>
+  );
+}
+
+// The full sink grid per screen, each slide re-skinned in a different
+// generated identity — same components, different UI.
+export function SinkCarousel() {
+  return (
+    <Carousel slideClassName="w-full shrink-0 snap-start" label="Kitchen sink">
+      {DEMO_IDENTITIES.map((identity) => (
+        <SinkSlide key={identity.name} identity={identity} />
+      ))}
+    </Carousel>
   );
 }

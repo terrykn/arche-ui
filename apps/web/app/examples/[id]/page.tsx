@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ProtoAurora, ProtoNav, ProtoFooter } from "@/components/proto-shell";
 import { DEMO_IDENTITIES } from "@/components/demo-identities";
 import { StoryScreen } from "@/components/story-screens";
-import { siteSlug } from "../page";
+import { siteSlug } from "@/components/demo-identities";
 
 export function generateStaticParams() {
   return DEMO_IDENTITIES.map((identity) => ({ id: siteSlug(identity.name) }));

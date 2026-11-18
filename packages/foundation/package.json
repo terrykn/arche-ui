@@ -47,6 +47,10 @@
       "types": "./src/taste/taste.ts",
       "default": "./dist/taste/taste.js"
     },
+    "./taste/names": {
+      "types": "./src/taste/names.ts",
+      "default": "./dist/taste/names.js"
+    },
     "./design-rules": {
       "types": "./src/design-rules/design-rules.ts",
       "default": "./dist/design-rules/design-rules.js"

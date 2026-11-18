@@ -25,7 +25,7 @@ export function TokenManager({ hasToken, prefix }: { hasToken: boolean; prefix: 
     <div className="mt-2">
       {hasToken ? (
         <p className="text-sm text-muted-foreground">
-          Active token <code>{prefix}…</code> — the raw value was shown once at issuance.
+          Active token <code>{prefix}…</code>
         </p>
       ) : (
         <p className="text-sm text-muted-foreground">No registry token issued.</p>

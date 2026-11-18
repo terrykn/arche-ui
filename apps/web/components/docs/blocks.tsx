@@ -5,7 +5,7 @@ import { DocsMarkdown } from "@/components/docs/markdown";
 // Primitive section layouts shared by every docs page. Data files stay declarative:
 // these render the markup, the data file only supplies strings.
 
-export function Steps({ items }: { items: Array<{ title: string; body: string }> }) {
+export function Steps({ items }: { items: Array<{ title: string; body: string; code?: string }> }) {
   return (
     <div className="proto-steps">
       {items.map((item) => (
@@ -13,6 +13,7 @@ export function Steps({ items }: { items: Array<{ title: string; body: string }>
           <div>
             <strong>{item.title}</strong>
             <DocsMarkdown body={item.body} />
+            {item.code ? <div className="proto-code proto-mono">{item.code}</div> : null}
           </div>
         </div>
       ))}
@@ -62,10 +63,10 @@ export function Callout({
 }) {
   return (
     <div className="proto-help-banner">
-      {body}{" "}
+      <span>{body}</span>
       {link ? (
-        <DocsLink path={link.path}>
-          {link.label} <ArrowRight size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
+        <DocsLink path={link.path} className="proto-help-link">
+          {link.label} <ArrowRight size={14} aria-hidden="true" />
         </DocsLink>
       ) : null}
     </div>

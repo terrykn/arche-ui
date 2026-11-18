@@ -60,11 +60,17 @@ export { buildPresentation, type PresentationBlock, type PresentationMotion, typ
 export { GENRE_BLUEPRINTS, getGenreBlueprints, type GenreBlueprint, type GenreId } from "./genres.js";
 export {
   applyPickerDelta,
+  brandDistinctness,
+  deriveBrandOptions,
   derivePaletteOptions,
   EXAMPLE_RECORDS,
   WORD_CHIPS,
+  type BrandOption,
+  type BrandOptionContext,
   type DnaAxisKey,
+  type Distinctness,
   type ExampleRecord,
+  type GateColor,
   type PaletteOption,
   type PickerApplied,
   type PickerSelections,

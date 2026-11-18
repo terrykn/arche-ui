@@ -45,6 +45,35 @@ function demoSkin(identity: DemoIdentity) {
   } as CSSProperties;
 }
 
+/**
+ * Identity skin wrapper: maps an identity's tokens onto the component
+ * theme variables, so any primitives inside re-skin per identity.
+ */
+// Dark-mode remap: keeps the identity's brand hues, but swaps the
+// surfaces and ink for dark ones so the toggle reads as a true theme.
+function toDark(identity: DemoIdentity): DemoIdentity {
+  return {
+    ...identity,
+    background: "#0c0c11",
+    surface: "#16161d",
+    ink: "#f5f5f7",
+    accentBg: `color-mix(in srgb, ${identity.accentBg} 30%, #16161d)`,
+    accentText: `color-mix(in srgb, ${identity.accentText} 55%, #ffffff)`,
+  };
+}
+
+export function DemoSkin({
+  identity,
+  children,
+  dark,
+}: {
+  identity: DemoIdentity;
+  children: React.ReactNode;
+  dark?: boolean;
+}) {
+  return <div style={demoSkin(dark ? toDark(identity) : identity)} className="border border-border">{children}</div>;
+}
+
 function Shell({
   identity,
   brand,

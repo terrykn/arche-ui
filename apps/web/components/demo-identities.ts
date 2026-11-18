@@ -1,3 +1,7 @@
+export function siteSlug(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}
+
 /** The rotation identities for the homepage transformation story. */
 export interface DemoIdentity {
   name: string;
@@ -54,7 +58,7 @@ export const DEMO_IDENTITIES: DemoIdentity[] = [
     name: "Meridian",
     prompt: "enterprise company with a bold red, bright, and trusted energy",
     components: 30,
-    primary: "#d21f2c",
+    primary: "#ff1f2e",
     accentBg: "#fdecec",
     accentText: "#a3121d",
     background: "#ffffff",

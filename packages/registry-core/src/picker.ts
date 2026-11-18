@@ -12,11 +12,15 @@
  * - WORD_CHIPS: descriptive chips mapping directly onto the 8 DNA axes.
  * - derivePaletteOptions: three named palette-anchor options from the
  *   generation's final palette (as-dreamed, surprising, quiet-ground).
+ * - deriveBrandOptions: up to three brand-only options (as-dreamed,
+ *   brand = primary, bold alternative) gated by a distinctness test.
  * - EXAMPLE_RECORDS: reference identities for the "which feels closest"
  *   step (palette + typefaces + stack per record).
- * - applyPickerDelta: fold chip + palette selections into DNA + anchors.
+ * - applyPickerDelta: fold chip + palette + brand selections into DNA +
+ *   anchors.
  */
-import type { DnaAxes, DnaPalette } from "@arche/foundation/dna";
+import type { DnaAxes, DnaPalette, GenerationProfile } from "@arche/foundation/dna";
+import { nameColor } from "@arche/foundation/taste/names";
 
 export type DnaAxisKey = keyof DnaAxes;
 
@@ -116,6 +120,231 @@ export function derivePaletteOptions(
   return [asDreamed, surprising, quiet];
 }
 
+// ---------------------------------------------------------------------------
+// Brand options (palette + brand picker brief): brand-only remixes
+// ---------------------------------------------------------------------------
+
+/**
+ * One brand-only choice: the whole system stays put, only the mark color
+ * moves. The reason string is stored on the draft
+ * (`brandChoice.reason`) so a remix is explainable after the fact.
+ */
+export interface BrandOption {
+  id: "as-dreamed" | "brand-primary" | "bold-alternative";
+  /** Role label shown beside the evocative color name. */
+  roleLabel: string;
+  /** Evocative name from the compiler naming table (never a bare hex). */
+  name: string;
+  brandHue: number;
+  /** Recorded reason: as-dreamed | brand-equals-primary | bold-accentHue |
+   * bold-rotated-60 | bold-rotated-120. */
+  reason: string;
+}
+
+export interface BrandOptionContext {
+  profile?: GenerationProfile;
+  /**
+   * True when the brief (or the DNA) forces every chroma to zero: hue
+   * rotations then emit the identical color, so the distinctness gate
+   * collapses them and only "As Dreamed" ships. Brand never breaks
+   * monochrome.
+   */
+  achromatic?: boolean;
+}
+
+/** Distinctness gate thresholds (hue degrees, CIEDE2000, lightness). */
+const DISTINCT_HUE = 30;
+const DISTINCT_LIGHTNESS = 0.15;
+/** ΔE₀₀ floor for the OR-gate (15), with an epsilon so float noise cannot
+ * flip a value that lands exactly on it. */
+const DISTINCT_DELTA_E = 15 - 1e-9;
+
+/**
+ * Brand-solid stand-in used by the gate: the compiler emits the brand at
+ * step-9 lightness with the system's full-voice chroma. The gate only needs
+ * the option hues at one shared voice, so lightness/chroma are held fixed
+ * and hue is the variable (chroma 0 under monochrome).
+ */
+const GATE_LIGHTNESS = 0.56;
+const GATE_CHROMA = 0.16;
+
+export interface GateColor {
+  l: number;
+  c: number;
+  h: number;
+}
+
+function gateColor(hue: number, achromatic: boolean): GateColor {
+  return { l: GATE_LIGHTNESS, c: achromatic ? 0 : GATE_CHROMA, h: normHue(hue) };
+}
+
+/** OKLCH → CIE Lab (D65) for the CIEDE2000 gate. */
+function oklchToLab({ l, c, h }: GateColor): [number, number, number] {
+  const rad = (h * Math.PI) / 180;
+  const a = c * Math.cos(rad);
+  const b = c * Math.sin(rad);
+  const l_ = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m_ = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s_ = (l - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const r = 4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_;
+  const g = -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_;
+  const bl = -0.0041960863 * l_ - 0.7034186147 * m_ + 1.707614701 * s_;
+  const x = 0.4123907993 * r + 0.3575843394 * g + 0.1804807884 * bl;
+  const y = 0.2126390059 * r + 0.7151686788 * g + 0.0721923154 * bl;
+  const z = 0.0193308187 * r + 0.1191947798 * g + 0.9505321522 * bl;
+  const f = (t: number): number => (t > 216 / 24389 ? Math.cbrt(t) : ((24389 / 27) * t + 16) / 116);
+  const fx = f(x / 0.95047);
+  const fy = f(y);
+  const fz = f(z / 1.08883);
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+
+/** CIEDE2000 color difference (the brief's ΔE₀₀). */
+function deltaE00(first: GateColor, second: GateColor): number {
+  const [l1, a1, b1] = oklchToLab(first);
+  const [l2, a2, b2] = oklchToLab(second);
+  const rad = Math.PI / 180;
+  const c1 = Math.hypot(a1, b1);
+  const c2 = Math.hypot(a2, b2);
+  const cBar = (c1 + c2) / 2;
+  const g = 0.5 * (1 - Math.sqrt(cBar ** 7 / (cBar ** 7 + 25 ** 7)));
+  const a1p = (1 + g) * a1;
+  const a2p = (1 + g) * a2;
+  const c1p = Math.hypot(a1p, b1);
+  const c2p = Math.hypot(a2p, b2);
+  const hueOf = (a: number, b: number): number => {
+    if (a === 0 && b === 0) return 0;
+    const deg = (Math.atan2(b, a) * 180) / Math.PI;
+    return deg >= 0 ? deg : deg + 360;
+  };
+  const h1p = hueOf(a1p, b1);
+  const h2p = hueOf(a2p, b2);
+  const dLp = l2 - l1;
+  const dCp = c2p - c1p;
+  let dhp = 0;
+  if (c1p * c2p !== 0) {
+    dhp = h2p - h1p;
+    if (dhp > 180) dhp -= 360;
+    else if (dhp < -180) dhp += 360;
+  }
+  const dHp = 2 * Math.sqrt(c1p * c2p) * Math.sin((dhp * rad) / 2);
+  const lBarP = (l1 + l2) / 2;
+  const cBarP = (c1p + c2p) / 2;
+  let hBarP = h1p + h2p;
+  if (c1p * c2p !== 0) {
+    if (Math.abs(h1p - h2p) <= 180) hBarP = (h1p + h2p) / 2;
+    else if (h1p + h2p < 360) hBarP = (h1p + h2p + 360) / 2;
+    else hBarP = (h1p + h2p - 360) / 2;
+  }
+  const t =
+    1 -
+    0.17 * Math.cos((hBarP - 30) * rad) +
+    0.24 * Math.cos(2 * hBarP * rad) +
+    0.32 * Math.cos((3 * hBarP + 6) * rad) -
+    0.2 * Math.cos((4 * hBarP - 63) * rad);
+  const dTheta = 30 * Math.exp(-(((hBarP - 275) / 25) ** 2));
+  const rc = 2 * Math.sqrt(cBarP ** 7 / (cBarP ** 7 + 25 ** 7));
+  const sl = 1 + (0.015 * (lBarP - 50) ** 2) / Math.sqrt(20 + (lBarP - 50) ** 2);
+  const sc = 1 + 0.045 * cBarP;
+  const sh = 1 + 0.015 * cBarP * t;
+  const rt = -Math.sin(2 * dTheta * rad) * rc;
+  return Math.sqrt(
+    (dLp / sl) ** 2 + (dCp / sc) ** 2 + (dHp / sh) ** 2 + rt * (dCp / sc) * (dHp / sh),
+  );
+}
+
+export interface Distinctness {
+  hue: number;
+  deltaE: number;
+  lightness: number;
+  distinct: boolean;
+}
+
+/**
+ * ΔH ≥ 30° OR ΔE₀₀ ≥ 15 OR ΔL ≥ 0.15 makes two colors two choices; below
+ * all three they collapse into one (deduplicated out of the picker).
+ */
+export function brandDistinctness(a: GateColor, b: GateColor): Distinctness {
+  // Two achromatic colors are the same color whatever their hue numbers say
+  // (monochrome: hue carries no signal), so ΔH contributes nothing.
+  const hue = a.c === 0 || b.c === 0 ? 0 : hueDistance(a.h, b.h);
+  const deltaE = deltaE00(a, b);
+  const lightness = Math.abs(a.l - b.l);
+  return {
+    hue,
+    deltaE, // computed for the record; only the boolean is contractual
+    lightness,
+    distinct: hue >= DISTINCT_HUE || deltaE >= DISTINCT_DELTA_E || lightness >= DISTINCT_LIGHTNESS,
+  };
+}
+
+/**
+ * Brand-only options from the generation's own anchors, deterministic and
+ * model-free:
+ *
+ * 1. As Dreamed — the model's `brandHue`, untouched.
+ * 2. Brand = Primary — `brandHue := primaryHue` (the unified T-Mobile
+ *    pattern).
+ * 3. Bold Alternative — `accentHue` when it clears the distinctness gate vs
+ *    primary, else `brandHue + 60°`, else `brandHue + 120°`.
+ *
+ * Deduplication: an option that collapses onto one already kept (all three
+ * of ΔH < 30°, ΔE₀₀ < 15, ΔL < 0.15) is hidden — two identical choices are
+ * never shown. Under an achromatic brief every hue emits the same color, so
+ * only As Dreamed ships (brand never breaks monochrome).
+ */
+export function deriveBrandOptions(
+  palette: DnaPalette,
+  context: BrandOptionContext = {},
+): BrandOption[] {
+  const profile = context.profile ?? "standard";
+  const achromatic = context.achromatic === true;
+  const primaryHue = normHue(palette.primaryHue);
+  const accentHue = normHue(palette.accentHue);
+  const dreamedHue = normHue(palette.brandHue ?? palette.primaryHue);
+  const colorOf = (hue: number): GateColor => gateColor(hue, achromatic);
+  const option = (
+    id: BrandOption["id"],
+    roleLabel: string,
+    brandHue: number,
+    reason: string,
+  ): BrandOption => ({
+    id,
+    roleLabel,
+    name: nameColor(
+      achromatic
+        ? `oklch(0.56 0 0)`
+        : `oklch(0.56 ${GATE_CHROMA} ${normHue(brandHue)})`,
+    ),
+    brandHue: normHue(brandHue),
+    reason,
+  });
+  const kept: BrandOption[] = [
+    option("as-dreamed", "As Dreamed", dreamedHue, "as-dreamed"),
+  ];
+  const collapsesOntoKept = (candidate: GateColor): boolean =>
+    kept.some((entry) => !brandDistinctness(candidate, colorOf(entry.brandHue)).distinct);
+  // Brand = Primary: hidden when the dreamed brand already sits on primary.
+  if (!collapsesOntoKept(colorOf(primaryHue))) {
+    kept.push(option("brand-primary", "Brand = Primary", primaryHue, "brand-equals-primary"));
+  }
+  // Bold Alternative: first candidate that clears the gate vs primary and
+  // does not collapse onto an option already shown. Enterprise has no accent
+  // family, so its bold candidate is a brand-hue rotation (the brand stays
+  // exempt from the accent-collapse rule; it is simply never the accent).
+  const boldCandidates: Array<[number, string]> = [];
+  if (profile !== "enterprise") boldCandidates.push([accentHue, "bold-accentHue"]);
+  boldCandidates.push([dreamedHue + 60, "bold-rotated-60"], [dreamedHue + 120, "bold-rotated-120"]);
+  for (const [hue, reason] of boldCandidates) {
+    const candidate = colorOf(hue);
+    if (!brandDistinctness(candidate, colorOf(primaryHue)).distinct) continue;
+    if (collapsesOntoKept(candidate)) continue;
+    kept.push(option("bold-alternative", "Bold Alternative", hue, reason));
+    break;
+  }
+  return kept;
+}
+
 export interface ExampleRecord {
   id: string;
   title: string;
@@ -164,6 +393,8 @@ export const EXAMPLE_RECORDS: ExampleRecord[] = [
 export interface PickerSelections {
   chipIds: string[];
   paletteId: string;
+  /** Brand-only choice; absent keeps the palette option's brand anchor. */
+  brandId?: string;
   exampleId?: string;
 }
 
@@ -178,13 +409,16 @@ export interface PickerApplied {
  * Fold picker selections into DNA + anchors. Pure + deterministic: chip
  * order never matters (deltas commute; clamp is idempotent), unknown chips
  * are ignored and reported, and an unknown palette id falls back to the
- * generation's own anchors.
+ * generation's own anchors. The brand row is independent: a known brand id
+ * overrides only `brandHue` on the palette selection (palette picks the
+ * whole system, brand picks only the mark color).
  */
 export function applyPickerDelta(
   axes: DnaAxes,
   palette: DnaPalette,
   selections: PickerSelections,
   options: PaletteOption[] = derivePaletteOptions(palette),
+  brandOptions: BrandOption[] = deriveBrandOptions(palette),
 ): PickerApplied {
   const chipsById = new Map(WORD_CHIPS.map((chip) => [chip.id, chip]));
   const unknownChips: string[] = [];
@@ -203,5 +437,14 @@ export function applyPickerDelta(
     }
   }
   const option = options.find((candidate) => candidate.id === selections.paletteId);
-  return { axes: next, anchors: option ? { ...option.anchors } : { ...palette }, unknownChips };
+  const anchors: DnaPalette = option ? { ...option.anchors } : { ...palette };
+  // Brand choice last: the palette option carries the dreamed brand anchor, so
+  // the brand row must override it (never the other way round).
+  const brand = selections.brandId
+    ? brandOptions.find((candidate) => candidate.id === selections.brandId)
+    : undefined;
+  if (brand) {
+    anchors.brandHue = brand.brandHue;
+  }
+  return { axes: next, anchors, unknownChips };
 }

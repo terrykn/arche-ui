@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   title: "Arche UI",
   description: "Generate complete React component libraries with AI, tailored to your brand.",
   icons: {
-    icon: [{ url: "/arche_logo.png" }],
+    icon: [{ url: "/arche_white_logo.png" }],
   },
 };
 
-// Always light mode: no theme cookie, no bootstrap, no toggles.
+// Always dark mode: no theme cookie, no bootstrap, no toggles.
 // Cabinet Grotesk (display) + Satoshi (body) load only through Fontshare's
 // official CSS API.
 const FONTSHARE_STYLESHEETS = [
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="light">
+    <html lang="en" data-theme="dark" className="dark">
       <body className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} ${googleFontVariables.join(" ")}`}>
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />

@@ -43,7 +43,7 @@ function Block({ block }: { block: DocsBlock }) {
 
 export function DocsPage({ page }: { page: DocsPageData }) {
   return (
-    <div>
+    <div className="proto-docs-page">
       <DocsPageHeader title={page.title} />
       {page.lede ? <p className="proto-lede">{page.lede}</p> : null}
       {page.blocks.map((block, index) => (

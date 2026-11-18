@@ -1,9 +1,8 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
-import { saveSettings } from "./actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { UsernameForm } from "./username-form";
 import { TokenManager } from "./token-manager";
 import { McpTokenManager } from "./mcp-token-manager";
 import { ensureProfileExists } from "@/lib/profiles";
@@ -64,24 +63,21 @@ export default async function SettingsPage({
         </p>
       ) : null}
       {saved ? <p className="mt-3 text-sm text-muted-foreground">Saved.</p> : null}
-      <form action={saveSettings} className="mt-6 flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm">
-          Username (used in /r/&lt;username&gt; and /p/&lt;username&gt; routes)
-          <Input name="username" defaultValue={row.username} />
-        </label>
-        <Button type="submit" className="w-fit">
-          Save
-        </Button>
-      </form>
+      <UsernameForm defaultValue={row.username} />
       <section className="mt-8">
         <h2 className="text-lg font-medium">Registry token</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Bearer token for installing your private libraries. Stored hashed; revocable. `arche login` stores this token on your machine; revoking it signs the CLI out everywhere.
+          This bearer token is used for installing your private libraries through the CLI. For more
+          information: <Link href="/dashboard/docs/configuration" className="underline">Configuration</Link>.
         </p>
         <TokenManager hasToken={!!row.registry_token_hash} prefix={row.registry_token_prefix} />
       </section>
       <section className="mt-8">
         <h2 className="text-lg font-medium">MCP tokens</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          This token lets agents read your libraries and publish changes through the MCP server. For
+          more information: <Link href="/dashboard/docs/mcp" className="underline">Model Context Protocol</Link>.
+        </p>
         <McpTokenManager tokens={mcpTokens} />
       </section>
       </div>

@@ -79,7 +79,7 @@ export function ComponentDetail({ manifest }: { manifest: Manifest }) {
         <h2 className="text-lg font-medium">Behavior source</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {manifest.primitive
-            ? `${manifest.primitive.package} — parts: ${manifest.primitive.parts.join(", ")} (all props inherited)`
+            ? `${manifest.primitive.package}. Parts: ${manifest.primitive.parts.join(", ")}. All props inherited.`
             : `native <${manifest.native?.element}> element`}
         </p>
       </section>

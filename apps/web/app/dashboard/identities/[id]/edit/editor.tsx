@@ -916,7 +916,7 @@ export function IdentityEditor({
           aria-modal="true"
           aria-label={`${expandedBlock.title} preview`}
         >
-          <div className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-border bg-background shadow-lg">
+          <div className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-border bg-background">
             <div className="flex h-13 shrink-0 items-center gap-2 border-b border-border px-3">
               <Button
                 type="button"

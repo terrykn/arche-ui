@@ -149,9 +149,6 @@ export function ExamplesDemo({ identities }: { identities: ExampleIdentity[] }) 
               <Link href="/sign-up" className="proto-btn proto-btn-dark">
                 Build a library like these <ArrowRight size={15} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
               </Link>
-              <Link href="/docs/brief-3" className="proto-btn proto-btn-ghost">
-                Read Brief #3 — the web app build
-              </Link>
             </div>
           </section>
           <section className="proto-section" aria-label="Prompt-built app screens">

@@ -4,33 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDocsBase } from "@/components/docs-base";
 
-const GROUPS: Array<{ heading: string; links: Array<{ path: string; label: string }> }> = [
-  {
-    heading: "Getting Started",
-    links: [
-      { path: "", label: "Installation" },
-      { path: "/quick-start", label: "Quick Start" },
-      { path: "/configuration", label: "Configuration" },
-    ],
-  },
-  {
-    heading: "Components",
-    links: [
-      { path: "/components", label: "All components" },
-      { path: "/blocks", label: "All blocks" },
-    ],
-  },
-  {
-    heading: "Advanced",
-    links: [
-      { path: "/mcp", label: "Model Context Protocol" },
-      { path: "/customization", label: "Customization" },
-    ],
-  },
-];
-
-// Full docs index for the nav search modal. Larger than the sidebar on
-// purpose: pages that are only reachable from other pages stay searchable.
+// Full docs index for the nav search modal. The sidebar shows this same
+// list: only the pages in the tabs exist as far as readers are concerned.
 export const DOC_SEARCH_GROUPS: Array<{
   heading: string;
   links: Array<{ path: string; label: string }>;
@@ -39,19 +14,8 @@ export const DOC_SEARCH_GROUPS: Array<{
     heading: "Getting Started",
     links: [
       { path: "", label: "Installation" },
-      { path: "/quick-start", label: "Quick Start" },
-      { path: "/getting-started", label: "Getting started" },
-      { path: "/install-identity", label: "Install an identity" },
+      { path: "/customization", label: "Customization" },
       { path: "/configuration", label: "Configuration" },
-    ],
-  },
-  {
-    heading: "Guides",
-    links: [
-      { path: "/registry-auth", label: "Registry auth" },
-      { path: "/token-contract", label: "Token contract" },
-      { path: "/cli", label: "CLI" },
-      { path: "/create-edit", label: "Create / edit an identity" },
     ],
   },
   {
@@ -68,34 +32,15 @@ export const DOC_SEARCH_GROUPS: Array<{
       { path: "/customization", label: "Customization" },
     ],
   },
-  {
-    heading: "Specs & Briefs",
-    links: [
-      { path: "/web-app-spec", label: "Web App Spec" },
-      { path: "/brief-3", label: "Brief #3 — Web App" },
-    ],
-  },
 ];
 
 // Reading order for the docs pager. Every docs page appears once, including
 // pages that are linked from other pages instead of the sidebar.
-export const DOC_ORDER = [
-  "",
-  "/quick-start",
-  "/getting-started",
-  "/install-identity",
-  "/configuration",
-  "/registry-auth",
-  "/token-contract",
-  "/cli",
-  "/create-edit",
-  "/components",
-  "/blocks",
-  "/mcp",
-  "/customization",
-  "/web-app-spec",
-  "/brief-3",
-];
+export const DOC_ORDER = ["", "/customization", "/configuration", "/components", "/blocks", "/mcp"];
+
+// The sidebar renders every docs page — one shared list, so the tabs can
+// never drift out of sync with what actually exists.
+const GROUPS = DOC_SEARCH_GROUPS;
 
 export function DocsNav() {
   const base = useDocsBase();

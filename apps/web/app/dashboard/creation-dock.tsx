@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AutosizeTextarea } from "@/components/autosize-textarea";
-import { PaletteVariantPreview } from "@/components/palette-variant-preview";
+import { MiniSystemPreview } from "@/components/mini-system-preview";
 import { TypefaceOptionPreview } from "@/components/typeface-option-preview";
 import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
@@ -25,8 +25,8 @@ type Phase = "idle" | "dreaming" | "failed" | "palettes" | "typefaces" | "words"
 const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
   palettes: {
     n: "Step 1 of 3",
-    title: "Pick a palette",
-    lede: "",
+    title: "Pick a palette and a brand",
+    lede: "Row 1 picks the whole system; row 2 picks only the mark color. In each row, only As Dreamed is the model's answer — the other options are deterministic remixes of that same generation, so nothing is regenerated. Either row re-skins the preview instantly, and publishing stays your explicit call.",
   },
   typefaces: {
     n: "Step 2 of 3",
@@ -40,7 +40,14 @@ const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
   },
 };
 
-
+/** Brand-row reasons rendered as sentences (the draft stores the raw id). */
+const BRAND_REASON: Record<string, string> = {
+  "as-dreamed": "The generation's own brand hue, untouched.",
+  "brand-equals-primary": "The mark takes the primary hue — one family, unified.",
+  "bold-accentHue": "The accent hue as the mark; it clears the distinctness gate against primary.",
+  "bold-rotated-60": "Brand hue rotated 60° for a mark that is clearly its own color.",
+  "bold-rotated-120": "Brand hue rotated 120° — the accent candidate collapsed onto primary.",
+};
 
 /**
  * Creation dock + modal (dashboard hub). The prompt lives in the bottom
@@ -56,6 +63,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
   const [prompt, setPrompt] = React.useState("");
   const [preview, setPreview] = React.useState<GenerationPreview | null>(null);
   const [paletteId, setPaletteId] = React.useState("");
+  const [brandId, setBrandId] = React.useState("");
   const [typefaceId, setTypefaceId] = React.useState("");
   const [chipIds, setChipIds] = React.useState<string[]>([]);
   const [error, setError] = React.useState<string | null>(null);
@@ -69,6 +77,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setPhase("idle");
     setPreview(null);
     setPaletteId("");
+    setBrandId("");
     setTypefaceId("");
     setChipIds([]);
     setError(null);
@@ -88,6 +97,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setError(null);
     setPreview(null);
     setPaletteId("");
+    setBrandId("");
     setTypefaceId("");
     setChipIds([]);
     setPhase("dreaming");
@@ -98,9 +108,10 @@ export function CreationDock({ prefill }: { prefill: string }) {
       return;
     }
     setPreview(result.preview);
-    // Default to the model's first proposal in each step; the user narrows
-    // from there. Anything unpicked stays as the model dreamed it.
+    // Default to the model's own answers ("As Dreamed" in both rows); the
+    // user narrows from there. Anything unpicked stays as the model dreamed it.
     setPaletteId(result.preview.paletteOptions[0]?.id ?? "");
+    setBrandId(result.preview.brandOptions[0]?.id ?? "");
     setTypefaceId(result.preview.typeOptions[0]?.id ?? "");
     setPhase("palettes");
   }, []);
@@ -131,7 +142,17 @@ export function CreationDock({ prefill }: { prefill: string }) {
   }, [open, phase, close]);
 
   const paletteOptions = preview?.paletteOptions ?? [];
+  const brandOptions = preview?.brandOptions ?? [];
   const typeOptions = preview?.typeOptions ?? [];
+  // Live preview state: one shared preview above both rows. Selections only
+  // move local state — the compiled swatches already ship with the preview,
+  // so re-skinning is instant and free of model calls.
+  const activePalette =
+    paletteOptions.find((option) => option.id === (paletteId || paletteOptions[0]?.id)) ??
+    paletteOptions[0];
+  const activeBrand =
+    brandOptions.find((option) => option.id === (brandId || brandOptions[0]?.id)) ?? brandOptions[0];
+  const liveSwatches = activeBrand?.combinations[activePalette?.id ?? ""]?.light ?? activePalette?.swatches;
 
   const finish = async () => {
     if (preview == null) return;
@@ -139,6 +160,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setPhase("creating");
     const selections: FinishSelections = {
       paletteId: paletteId || paletteOptions[0]?.id || "as-dreamed",
+      brandId: brandId || brandOptions[0]?.id || "as-dreamed",
       typefaceId: typefaceId || undefined,
       chipIds,
     };
@@ -275,7 +297,9 @@ export function CreationDock({ prefill }: { prefill: string }) {
               </div>
             ) : null}
 
-            {phase === "typefaces" && preview != null && STEP_LABEL[phase]?.lede ? (
+            {(phase === "palettes" || phase === "typefaces") &&
+            preview != null &&
+            STEP_LABEL[phase]?.lede ? (
               <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                 {STEP_LABEL[phase]?.lede}
               </p>
@@ -288,27 +312,88 @@ export function CreationDock({ prefill }: { prefill: string }) {
             ) : null}
 
             {phase === "palettes" && preview != null ? (
-              <div className="mt-4 flex flex-col gap-3">
-                {paletteOptions.map((option) => (
-                  <label
-                    key={option.id}
-                    className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-4 has-checked:border-primary"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Input
-                        type="radio"
-                        name="palette"
-                        value={option.id}
-                        checked={(paletteId || paletteOptions[0]?.id) === option.id}
-                        onChange={() => setPaletteId(option.id)}
-                        className="h-4 w-4"
-                      />
-                      <span className="font-medium">{option.name}</span>
-                    </span>
-                    <PaletteVariantPreview swatches={option.swatches} />
-                    <span className="text-sm text-muted-foreground">{option.reason}</span>
-                  </label>
-                ))}
+              <div className="mt-4 flex flex-col gap-5">
+                {liveSwatches ? (
+                  <div className="flex flex-col gap-1.5" data-testid="live-preview">
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Live preview
+                    </p>
+                    <MiniSystemPreview
+                      swatches={liveSwatches}
+                      size="full"
+                      label="Live identity preview"
+                    />
+                  </div>
+                ) : null}
+
+                <fieldset className="flex flex-col">
+                  <legend className="mb-2 text-sm font-medium">
+                    Row 1 · Palette{" "}
+                    <span className="font-normal text-muted-foreground">— the whole system</span>
+                  </legend>
+                  <div className="grid gap-2 sm:grid-cols-3" data-testid="palette-row">
+                    {paletteOptions.map((option) => (
+                      <label
+                        key={option.id}
+                        className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Input
+                            type="radio"
+                            name="palette"
+                            value={option.id}
+                            checked={activePalette?.id === option.id}
+                            onChange={() => setPaletteId(option.id)}
+                            className="h-4 w-4"
+                          />
+                          <span className="text-sm font-medium">{option.name}</span>
+                        </span>
+                        <MiniSystemPreview swatches={option.swatches} />
+                        <span className="text-xs text-muted-foreground">{option.reason}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
+                {brandOptions.length > 0 ? (
+                  <fieldset className="flex flex-col">
+                    <legend className="mb-2 text-sm font-medium">
+                      Row 2 · Brand{" "}
+                      <span className="font-normal text-muted-foreground">— the mark color only</span>
+                    </legend>
+                    <div className="grid gap-2 sm:grid-cols-3" data-testid="brand-row">
+                      {brandOptions.map((option) => {
+                        const swatches =
+                          option.combinations[activePalette?.id ?? ""]?.light ??
+                          Object.values(option.combinations)[0]?.light;
+                        return (
+                          <label
+                            key={option.id}
+                            className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
+                          >
+                            <span className="flex items-center gap-2">
+                              <Input
+                                type="radio"
+                                name="brand"
+                                value={option.id}
+                                checked={activeBrand?.id === option.id}
+                                onChange={() => setBrandId(option.id)}
+                                className="h-4 w-4"
+                              />
+                              <span className="text-sm font-medium">{option.name}</span>
+                            </span>
+                            {swatches ? <MiniSystemPreview swatches={swatches} /> : null}
+                            <span className="text-xs font-medium">{option.roleLabel}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {BRAND_REASON[option.reason] ?? option.reason}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
+                ) : null}
+
                 <div className="mt-2 flex gap-2">
                   <Button onClick={() => setPhase("typefaces")} className="w-fit">
                     Continue to typefaces

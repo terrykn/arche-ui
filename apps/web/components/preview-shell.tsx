@@ -76,7 +76,7 @@ export function PreviewShell({
       </div>
 
       {/* Floating edit/swap bar */}
-      <div className="fixed bottom-4 left-1/2 z-40 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-wrap items-center gap-2 rounded-full border border-border bg-card/95 px-4 py-2 shadow-lg backdrop-blur">
+      <div className="fixed bottom-4 left-1/2 z-40 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-wrap items-center gap-2 rounded-full border border-border bg-card/95 px-4 py-2 backdrop-blur">
         <span className="flex items-center gap-1 text-xs" role="group" aria-label="Swap identity">
           {identities.map((item) => (
             <Link
@@ -117,7 +117,7 @@ export function PreviewShell({
 
       {/* In-preview remix drawer */}
       {drawerOpen ? (
-        <aside aria-label="Remix editor" className="fixed inset-x-0 bottom-0 z-30 mx-auto mb-16 max-h-[50vh] w-full max-w-2xl overflow-auto rounded-t-2xl border border-border bg-card p-5 shadow-xl">
+        <aside aria-label="Remix editor" className="fixed inset-x-0 bottom-0 z-30 mx-auto mb-16 max-h-[50vh] w-full max-w-2xl overflow-auto rounded-t-2xl border border-border bg-card p-5">
           <h2 className="font-medium">Remix — {name}</h2>
           <p className="mt-1 text-xs text-muted-foreground">
             Token overrides layer over the fixture identity as diff-scoped edits. Swapping identity or mode resets

@@ -22,10 +22,10 @@ export default async function ComponentDoc({ params }: { params: Promise<{ id: s
   if (!manifest || !DOC_IDS.includes(id)) notFound();
 
   const behavior = manifest.primitive
-    ? `${manifest.primitive.package} — parts: ${manifest.primitive.parts.join(", ")}`
+    ? `${manifest.primitive.package}. Parts: ${manifest.primitive.parts.join(", ")}`
     : manifest.native
       ? `native <${manifest.native.element}> (presentational)`
-      : "—";
+      : "None.";
   const surface = Object.entries(manifest.styleSurface)
     .map(([slot, knobs]) => `${slot}: ${Object.keys(knobs).join(", ")}`)
     .join(" · ");

@@ -101,7 +101,7 @@ export function TokenContractTables() {
     <>
       <p className="mt-2 text-sm text-muted-foreground">
         {contract.colorSpace} · modes: {contract.modes.join(", ")} · every token required in both modes.
-        Generated from the contract data — no hand-written list.
+        Generated from the contract data. There is no hand-written list.
       </p>
       <div className="mt-4 flex flex-col gap-4">
         {[...byGroup.entries()].map(([group, tokens]) => (
@@ -129,9 +129,7 @@ export function TokenContractTables() {
       </section>
     </>
   );
-}
-
-/** Markdown body inside a card — used by specs and briefs. */
+}  /** Markdown body inside a card. Used by generated index sections. */
 export function DocCardBody({ title, body }: { title: string; body: string }) {
   return (
     <>

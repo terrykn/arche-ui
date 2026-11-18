@@ -3,7 +3,7 @@
  * No hardcoded colors here — every var below is a token ref or a color-mix
  * of tokens. Single exception: --grad, the hero headline gradient. */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --bg: var(--background);
   --bg2: var(--muted);
   --surface: var(--card);
@@ -122,7 +122,7 @@
   border: var(--border-width) solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease;
 }
 
 .proto-btn-sm {
@@ -277,14 +277,12 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--ink2);
-  box-shadow: var(--shadow-sm);
 }
 
 .proto-card {
   background: var(--surface);
   border: var(--border-width) solid var(--line2);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
 }
 
 /* Live block preview frame: breathing room between the card border and the
@@ -302,6 +300,7 @@
   padding: 12px 16px;
   font-size: 13px;
   overflow-x: auto;
+  white-space: pre-wrap;
 }
 
 .proto-input {
@@ -410,7 +409,6 @@
   border-radius: 44px;
   background: var(--surface);
   border: var(--border-width) solid var(--line2);
-  box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -424,7 +422,6 @@
   background: var(--surface);
   border: var(--border-width) solid var(--line2);
   border-radius: 14px;
-  box-shadow: var(--shadow);
   padding: 10px 16px;
   font-size: 13px;
   font-weight: 600;
@@ -617,7 +614,6 @@
   border-radius: var(--radius);
   overflow: hidden;
   border: var(--border-width) solid var(--line);
-  box-shadow: var(--shadow-lg);
   background: var(--surface);
   transition: opacity 0.55s ease;
 }
@@ -1011,7 +1007,6 @@
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 18px;
-  box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
 
@@ -1121,6 +1116,11 @@
 .proto-docs-main h2 {
   font-size: 22px;
   margin-top: 34px;
+}
+
+/* Vertical rhythm: every block after the first gets the same gap. */
+.proto-docs-page > * + * {
+  margin-top: 14px;
 }
 
 .proto-docs-main p,
@@ -1262,6 +1262,21 @@
   padding: 18px 22px;
   background: var(--grad-soft);
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.proto-help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.proto-step > div > * + * {
+  margin-top: 8px;
 }
 
 .proto-anatomy {
@@ -1385,7 +1400,6 @@
 .proto-modal {
   background: var(--surface);
   border-radius: 22px;
-  box-shadow: var(--shadow-lg);
   max-width: 520px;
   width: 100%;
   padding: 30px;
@@ -1503,7 +1517,6 @@
   font-size: 14px;
   font-weight: 600;
   z-index: 80;
-  box-shadow: var(--shadow-lg);
   animation: proto-fade-up 0.35s ease both;
   white-space: nowrap;
   max-width: calc(100vw - 48px);

@@ -1,7 +1,12 @@
-import { compileValidIdentity, deriveTypePick } from "@arche/registry-core/compiler";
+import {
+  compileValidIdentity,
+  deriveTypePick,
+  isMonochromeDna,
+} from "@arche/registry-core/compiler";
 import {
   applyPickerDelta,
   constraintSlots,
+  deriveBrandOptions,
   derivePaletteOptions,
   deriveProfile,
   designRulesVersion,
@@ -18,6 +23,7 @@ import {
   withBrandDefault,
   WORD_CHIPS,
   type ArcheIdentity,
+  type BrandOption,
   type CorpusEntry,
   type DnaDelta,
   type DnaObject,
@@ -36,6 +42,7 @@ import {
   paletteVariantSchema,
   typefaceVariantSchema,
 } from "@arche/foundation/dna";
+import { contrastRatio } from "@arche/foundation/contract/validate-tokens";
 import { createServiceClient } from "@/lib/supabase/service";
 import { fixturesDir, slugify } from "@/lib/starter";
 import { readFileSync } from "node:fs";
@@ -382,6 +389,8 @@ export interface PalettePreviewSwatches {
   brand: string;
   onBrand: string;
   brandSoft: string;
+  /** --foreground: the text pair the compiler AA-gates on --brand-soft. */
+  brandSoftText: string;
   secondary: string;
   secondaryText: string;
 }
@@ -392,6 +401,29 @@ export interface PalettePreviewOption {
   reason: string;
   anchors: DnaPalette;
   swatches: PalettePreviewSwatches;
+}
+
+/** Brand-row option: emitted values per palette option, both modes. */
+export interface BrandSwatchSet {
+  light: PalettePreviewSwatches;
+  dark: PalettePreviewSwatches;
+}
+
+export interface BrandPreviewOption {
+  id: string;
+  /** Evocative color name of the emitted brand solid (naming table). */
+  name: string;
+  /** Role label: As Dreamed | Brand = Primary | Bold Alternative. */
+  roleLabel: string;
+  /** Recorded reason, e.g. bold-accentHue / bold-rotated-60. */
+  reason: string;
+  brandHue: number;
+  /**
+   * Keyed by palette option id. A pairing is listed only when its emitted
+   * brand pair passes AA in BOTH modes — a brand that cannot pass in a mode
+   * does not ship (the compiler never emits a failing foreground).
+   */
+  combinations: Record<string, BrandSwatchSet>;
 }
 
 export interface TypefacePreviewFace {
@@ -417,13 +449,18 @@ export interface GenerationPreview {
   constraints: PromptConstraints;
   slots: string[];
   paletteOptions: PalettePreviewOption[];
+  /** Independent brand-only row: up to three options, same single call. */
+  brandOptions: BrandPreviewOption[];
   typeOptions: TypefacePreviewOption[];
 }
 
-function swatchesFor(compiled: ArcheIdentity): PalettePreviewSwatches {
-  const light = compiled.tokens.light as unknown as Record<string, { $value?: unknown }>;
+function swatchesFor(
+  compiled: ArcheIdentity,
+  mode: "light" | "dark" = "light",
+): PalettePreviewSwatches {
+  const set = compiled.tokens[mode] as unknown as Record<string, { $value?: unknown }>;
   const str = (name: string, fallback: string): string => {
-    const v = light[name]?.$value;
+    const v = set[name]?.$value;
     return typeof v === "string" && v.length > 0 ? v : fallback;
   };
   return {
@@ -436,6 +473,7 @@ function swatchesFor(compiled: ArcheIdentity): PalettePreviewSwatches {
     brand: str("--brand", "#333333"),
     onBrand: str("--brand-foreground", "#ffffff"),
     brandSoft: str("--brand-soft", "#eeeeee"),
+    brandSoftText: str("--foreground", "#111111"),
     secondary: str("--secondary", "#eeeeee"),
     secondaryText: str("--secondary-foreground", "#111111"),
   };
@@ -451,6 +489,7 @@ const FALLBACK_SWATCHES: PalettePreviewSwatches = {
   brand: "#333333",
   onBrand: "#ffffff",
   brandSoft: "#eeeeee",
+  brandSoftText: "#111111",
   secondary: "#eeeeee",
   secondaryText: "#111111",
 };
@@ -494,6 +533,84 @@ async function previewPaletteOptions(args: {
       swatches: await compile(variant.anchors).catch(() => baseSwatches),
     })),
   );
+}
+
+/**
+ * True when the brief (or the DNA) forces every chroma to zero. The brand
+ * row then has no second color to offer: hue rotations emit the same gray,
+ * so the distinctness gate dedupes them down to "As Dreamed".
+ */
+function achromaticBrief(
+  axes: DnaObject,
+  palette: DnaPalette,
+  constraints: PromptConstraints,
+): boolean {
+  if (constraints.chromaCap !== undefined && constraints.chromaCap <= 0.02) return true;
+  if (typeof axes.chroma === "number" && axes.chroma === 0) return true;
+  return isMonochromeDna({ chroma: axes.chroma }, palette);
+}
+
+/**
+ * Compile each brand-only option against each palette option so the picker's
+ * live preview shows real emitted values (never illustrative fills), and a
+ * pairing that cannot pass AA in a mode never ships: the brand pair is
+ * measured on the actual emitted solid + foreground, both modes.
+ */
+async function previewBrandOptions(args: {
+  name: string;
+  source: { type: "phrase"; promptText: string };
+  axes: DnaObject;
+  palette: DnaPalette;
+  paletteOptions: PalettePreviewOption[];
+  profile: GenerationProfile;
+  constraints: PromptConstraints;
+  base: ArcheIdentity;
+  achromatic: boolean;
+}): Promise<BrandPreviewOption[]> {
+  const options = deriveBrandOptions(args.palette, {
+    profile: args.profile,
+    achromatic: args.achromatic,
+  });
+  const out: BrandPreviewOption[] = [];
+  for (const option of options) {
+    const combinations: Record<string, BrandSwatchSet> = {};
+    for (const paletteOption of args.paletteOptions) {
+      const palette: DnaPalette = { ...paletteOption.anchors, brandHue: option.brandHue };
+      try {
+        const compiled = await compileValidIdentity(
+          {
+            name: args.name,
+            source: args.source,
+            axes: args.axes,
+            palette,
+            profile: args.profile,
+            base: args.base,
+            constraints: args.constraints,
+          },
+          validateIdentity,
+        );
+        const light = swatchesFor(compiled, "light");
+        const dark = swatchesFor(compiled, "dark");
+        const lightOk = contrastRatio(light.onBrand, light.brand) >= 4.5;
+        const darkOk = contrastRatio(dark.onBrand, dark.brand) >= 4.5;
+        if (lightOk && darkOk) combinations[paletteOption.id] = { light, dark };
+      } catch {
+        // A pairing the gate rejects cannot ship; the option stays absent here.
+      }
+    }
+    if (Object.keys(combinations).length === 0) continue;
+    const first =
+      combinations[args.paletteOptions[0]?.id ?? ""] ?? Object.values(combinations)[0]!;
+    out.push({
+      id: option.id,
+      name: nameColor(first.light.brand),
+      roleLabel: option.roleLabel,
+      reason: option.reason,
+      brandHue: option.brandHue,
+      combinations,
+    });
+  }
+  return out;
 }
 
 /** Resolve each typography variant to renderable header/body specimens. */
@@ -550,6 +667,19 @@ export async function previewGeneration(userId: string, prompt: string): Promise
       base: auroraBase(),
       constraints,
     });
+    // Brand row (palette + brand picker): independent of the palette row,
+    // derived from the same single call — no extra model call, ever.
+    const brandOptions = await previewBrandOptions({
+      name: identityName,
+      source: { type: "phrase", promptText: trimmed.slice(0, 120) },
+      axes: call.output.axes,
+      palette: call.output.palette,
+      paletteOptions,
+      profile: derived,
+      constraints,
+      base: auroraBase(),
+      achromatic: achromaticBrief(call.output.axes, call.output.palette, constraints),
+    });
     const typeOptions = previewTypefaceOptions(typefaceVariants, compilerPick);
     // Brand Token brief: the understood brand rides with the slots, and a
     // missing brandHue defaults to the primary hue — recorded, not silent.
@@ -570,6 +700,13 @@ export async function previewGeneration(userId: string, prompt: string): Promise
         slots,
         brandDefaulted,
         paletteVariants: paletteVariants.map((v) => ({ id: v.id, name: v.name, anchors: v.anchors })),
+        brandVariants: brandOptions.map((v) => ({
+          id: v.id,
+          name: v.name,
+          roleLabel: v.roleLabel,
+          brandHue: v.brandHue,
+          reason: v.reason,
+        })),
         typefaceVariants: typefaceVariants.map((v) => ({ id: v.id, name: v.name, display: v.display, body: v.body })),
       },
       model: call.model,
@@ -585,6 +722,7 @@ export async function previewGeneration(userId: string, prompt: string): Promise
       constraints,
       slots,
       paletteOptions,
+      brandOptions,
       typeOptions,
     };
   } catch (err) {
@@ -603,6 +741,8 @@ export async function previewGeneration(userId: string, prompt: string): Promise
 
 export interface FinishSelections {
   paletteId: string;
+  /** Brand-row selection (brand-only delta); defaults to As Dreamed. */
+  brandId?: string;
   typefaceId?: string;
   exampleId?: string;
   chipIds: string[];
@@ -659,11 +799,21 @@ export async function completeGeneration(
   const identityName = (name?.trim() || titleFromPrompt(trimmedPrompt, "Untouched Idea")).slice(0, 80);
   const constraints = preview.constraints ?? constraintsFor(trimmedPrompt);
   // The picker narrows the single generation: the chosen palette variant's
-  // anchors and the chosen typography variant's header/body pair fold into
-  // the final compile; anything unpicked stays as the model dreamed it.
+  // anchors, the chosen brand-only option's hue, and the chosen typography
+  // variant's header/body pair fold into the final compile; anything unpicked
+  // stays as the model dreamed it. The brand row is re-derived here from the
+  // generation's own anchors — never trusted from the round-tripped client
+  // state, and never a model call.
+  const brandId = deriveBrandOptions(palette, {
+    profile,
+    achromatic: achromaticBrief(axes, palette, constraints),
+  }).find((option) => option.id === selections.brandId)?.id ?? "as-dreamed";
   const selectedTypeface = typefaceOptions.find((o) => o.id === (selections.typefaceId ?? "")) ?? typefaceOptions[0]!;
   const typefaceOverride = { display: selectedTypeface.display, sans: selectedTypeface.body };
-  const fold = (dnaAxes: DnaObject, dnaPalette: DnaPalette): { axes: DnaObject; palette: DnaPalette } => {
+  const fold = (
+    dnaAxes: DnaObject,
+    dnaPalette: DnaPalette,
+  ): { axes: DnaObject; palette: DnaPalette; brand: BrandOption } => {
     let paletteOverride: DnaPalette | undefined;
     if (selections.exampleId) {
       const record = EXAMPLE_RECORDS.find((entry) => entry.id === selections.exampleId);
@@ -672,8 +822,25 @@ export async function completeGeneration(
       }
       paletteOverride = { ...record.palette };
     }
-    const applied = applyPickerDelta(dnaAxes, dnaPalette, { chipIds, paletteId }, paletteOptions);
-    return { axes: { ...dnaAxes, ...applied.axes }, palette: paletteOverride ?? applied.anchors };
+    const localBrands = deriveBrandOptions(dnaPalette, {
+      profile,
+      achromatic: achromaticBrief(dnaAxes, dnaPalette, constraints),
+    });
+    const brand = localBrands.find((option) => option.id === brandId) ?? localBrands[0]!;
+    const applied = applyPickerDelta(
+      dnaAxes,
+      dnaPalette,
+      { chipIds, paletteId, brandId: brand.id },
+      paletteOptions,
+      localBrands,
+    );
+    const anchors = paletteOverride ?? applied.anchors;
+    // The brand row picks only the mark color: it survives an example override.
+    return {
+      axes: { ...dnaAxes, ...applied.axes },
+      palette: { ...anchors, brandHue: applied.anchors.brandHue },
+      brand,
+    };
   };
   try {
     let folded = fold(axes, palette);
@@ -733,6 +900,10 @@ export async function completeGeneration(
     (compiled.meta as Record<string, unknown>).picker = {
       step: "done",
       paletteId,
+      paletteReason: paletteOptions.find((o) => o.id === paletteId)?.reason ?? null,
+      brandId: folded.brand.id,
+      brandHue: compiled.dna!.palette.brandHue,
+      brandReason: folded.brand.reason,
       typefaceId: selections.typefaceId ?? typefaceOptions[0]!.id,
       exampleId: selections.exampleId ?? null,
       chipIds,
@@ -764,6 +935,10 @@ export async function completeGeneration(
             slots: constraintSlots(constraints),
             brandDefaulted: withBrandDefault(preview.palette).defaulted,
             paletteId,
+            paletteReason: paletteOptions.find((o) => o.id === paletteId)?.reason ?? null,
+            brandId: folded.brand.id,
+            brandHue: compiled.dna!.palette.brandHue,
+            brandReason: folded.brand.reason,
             typefaceId: selections.typefaceId ?? typefaceOptions[0]!.id,
           },
           payload_diff: diffPayloads(base, compiled),
@@ -882,6 +1057,10 @@ export async function applyPromptEdit(
 export interface PickerProgress {
   step: "palettes" | "examples" | "words" | "done";
   paletteId?: string;
+  paletteReason?: string | null;
+  brandId?: string;
+  brandHue?: number;
+  brandReason?: string;
   exampleId?: string;
   chipIds?: string[];
 }
@@ -907,34 +1086,42 @@ export async function recompileWithPicker(
   current: ArcheIdentity,
   selections: PickerSelections,
   paletteOverride?: DnaPalette,
-): Promise<{ compiled: ArcheIdentity; unknownChips: string[] }> {
+): Promise<{ compiled: ArcheIdentity; unknownChips: string[]; brand: BrandOption }> {
   const dna = current.dna;
   if (!dna) {
     throw new Error("picker needs stored DNA — this identity was made by hand; generate a new one from a phrase instead");
   }
   const profile = dna.profile ?? "standard";
-  const applied = applyPickerDelta(
-    dna.axes,
-    dna.palette,
-    selections,
-    derivePaletteOptions(dna.palette, profile),
-  );
   const constraints =
     ((current.meta as Record<string, unknown>).promptConstraints as PromptConstraints | undefined) ??
     (dna.source.type === "phrase" && dna.source.promptText ? parseConstraints(dna.source.promptText) : {});
+  const brandOptions = deriveBrandOptions(dna.palette, {
+    profile,
+    achromatic: achromaticBrief(dna.axes, dna.palette, constraints),
+  });
+  const brand = brandOptions.find((option) => option.id === selections.brandId) ?? brandOptions[0]!;
+  const applied = applyPickerDelta(
+    dna.axes,
+    dna.palette,
+    { ...selections, brandId: brand.id },
+    derivePaletteOptions(dna.palette, profile),
+    brandOptions,
+  );
+  const anchors = paletteOverride ?? applied.anchors;
   const compiled = await compileValidIdentity(
     {
       name: current.meta.name,
       source: dna.source,
       axes: { ...dna.axes, ...applied.axes },
-      palette: paletteOverride ?? applied.anchors,
+      // The brand row survives an example override: it owns only brandHue.
+      palette: { ...anchors, brandHue: applied.anchors.brandHue },
       profile,
       base: current,
       constraints,
     },
     validateIdentity,
   );
-  return { compiled, unknownChips: applied.unknownChips };
+  return { compiled, unknownChips: applied.unknownChips, brand };
 }
 
 /**
@@ -965,7 +1152,7 @@ export async function applyPickerStep(
   let progress: PickerProgress;
   if (step === "palettes") {
     const paletteId = String(value);
-    selections = { chipIds, paletteId };
+    selections = { chipIds, paletteId, brandId: stored.brandId };
     progress = { step: PICKER_NEXT[step], paletteId, exampleId: stored.exampleId, chipIds };
   } else if (step === "examples") {
     const exampleId = String(value);
@@ -974,15 +1161,26 @@ export async function applyPickerStep(
       throw new Error(`unknown example '${exampleId}'`);
     }
     paletteOverride = { ...record.palette };
-    selections = { chipIds, paletteId: stored.paletteId ?? "as-dreamed" };
+    selections = { chipIds, paletteId: stored.paletteId ?? "as-dreamed", brandId: stored.brandId };
     progress = { step: PICKER_NEXT[step], paletteId: stored.paletteId, exampleId, chipIds };
   } else {
     const known = new Set(WORD_CHIPS.map((chip) => chip.id));
     const picked = (Array.isArray(value) ? value : [value]).map(String).filter((id) => known.has(id));
-    selections = { chipIds: picked, paletteId: stored.paletteId ?? "as-dreamed" };
+    selections = { chipIds: picked, paletteId: stored.paletteId ?? "as-dreamed", brandId: stored.brandId };
     progress = { step: PICKER_NEXT[step], paletteId: stored.paletteId, exampleId: stored.exampleId, chipIds: picked };
   }
-  const { compiled, unknownChips } = await recompileWithPicker(current, selections, paletteOverride);
+  const { compiled, unknownChips, brand } = await recompileWithPicker(current, selections, paletteOverride);
+  // The brand row is preserved across every later step and recorded with its
+  // resulting hue and reason (the draft owns both choices).
+  progress.brandId = brand.id;
+  progress.brandHue = compiled.dna?.palette.brandHue;
+  progress.brandReason = brand.reason;
+  if (current.dna) {
+    progress.paletteReason =
+      derivePaletteOptions(current.dna.palette, current.dna.profile ?? "standard").find(
+        (option) => option.id === (progress.paletteId ?? "as-dreamed"),
+      )?.reason ?? null;
+  }
   (compiled.meta as Record<string, unknown>).picker = progress;
   const { error: saveError } = await service
     .from("libraries")
