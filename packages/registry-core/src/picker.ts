@@ -130,14 +130,15 @@ export function derivePaletteOptions(
  * (`brandChoice.reason`) so a remix is explainable after the fact.
  */
 export interface BrandOption {
-  id: "as-dreamed" | "brand-primary" | "bold-alternative";
+  id: "as-dreamed" | "brand-primary" | "bold-alternative" | "bold-alternative-2" | "bold-alternative-3";
   /** Role label shown beside the evocative color name. */
   roleLabel: string;
   /** Evocative name from the compiler naming table (never a bare hex). */
   name: string;
   brandHue: number;
   /** Recorded reason: as-dreamed | brand-equals-primary | bold-accentHue |
-   * bold-rotated-60 | bold-rotated-120. */
+   * bold-rotated-60 | bold-rotated-120 | bold-rotated-180 |
+   * bold-rotated-240 | bold-rotated-300. */
   reason: string;
 }
 
@@ -285,8 +286,10 @@ export function brandDistinctness(a: GateColor, b: GateColor): Distinctness {
  * 1. As Dreamed — the model's `brandHue`, untouched.
  * 2. Brand = Primary — `brandHue := primaryHue` (the unified T-Mobile
  *    pattern).
- * 3. Bold Alternative — `accentHue` when it clears the distinctness gate vs
- *    primary, else `brandHue + 60°`, else `brandHue + 120°`.
+ * 3–5. Bold Alternatives — the first three candidates that clear the
+ *    distinctness gate vs primary without collapsing onto an option already
+ *    kept, drawn in order from `accentHue` (no accent family on enterprise),
+ *    then `brandHue + 60°`, `+ 120°`, `+ 180°`, `+ 240°`, `+ 300°`.
  *
  * Deduplication: an option that collapses onto one already kept (all three
  * of ΔH < 30°, ΔE₀₀ < 15, ΔL < 0.15) is hidden — two identical choices are
@@ -328,19 +331,35 @@ export function deriveBrandOptions(
   if (!collapsesOntoKept(colorOf(primaryHue))) {
     kept.push(option("brand-primary", "Brand = Primary", primaryHue, "brand-equals-primary"));
   }
-  // Bold Alternative: first candidate that clears the gate vs primary and
-  // does not collapse onto an option already shown. Enterprise has no accent
-  // family, so its bold candidate is a brand-hue rotation (the brand stays
-  // exempt from the accent-collapse rule; it is simply never the accent).
+  // Bold Alternatives: the first three candidates that clear the gate vs
+  // primary and do not collapse onto an option already shown. Enterprise has
+  // no accent family, so its bold candidates are brand-hue rotations (the
+  // brand stays exempt from the accent-collapse rule; it is simply never
+  // the accent).
   const boldCandidates: Array<[number, string]> = [];
   if (profile !== "enterprise") boldCandidates.push([accentHue, "bold-accentHue"]);
-  boldCandidates.push([dreamedHue + 60, "bold-rotated-60"], [dreamedHue + 120, "bold-rotated-120"]);
+  boldCandidates.push(
+    [dreamedHue + 60, "bold-rotated-60"],
+    [dreamedHue + 120, "bold-rotated-120"],
+    [dreamedHue + 180, "bold-rotated-180"],
+    [dreamedHue + 240, "bold-rotated-240"],
+    [dreamedHue + 300, "bold-rotated-300"],
+  );
+  const boldSlots: Array<{ id: BrandOption["id"]; roleLabel: string }> = [
+    { id: "bold-alternative", roleLabel: "Bold Alternative" },
+    { id: "bold-alternative-2", roleLabel: "Bold Alternative 2" },
+    { id: "bold-alternative-3", roleLabel: "Bold Alternative 3" },
+  ];
+  let filled = 0;
   for (const [hue, reason] of boldCandidates) {
+    if (filled >= boldSlots.length) break;
     const candidate = colorOf(hue);
     if (!brandDistinctness(candidate, colorOf(primaryHue)).distinct) continue;
     if (collapsesOntoKept(candidate)) continue;
-    kept.push(option("bold-alternative", "Bold Alternative", hue, reason));
-    break;
+    const slot = boldSlots[filled];
+    if (!slot) break;
+    kept.push(option(slot.id, slot.roleLabel, hue, reason));
+    filled += 1;
   }
   return kept;
 }

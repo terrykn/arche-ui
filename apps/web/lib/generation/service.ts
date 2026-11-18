@@ -449,7 +449,7 @@ export interface GenerationPreview {
   constraints: PromptConstraints;
   slots: string[];
   paletteOptions: PalettePreviewOption[];
-  /** Independent brand-only row: up to three options, same single call. */
+  /** Independent brand-only row: up to five options, same single call. */
   brandOptions: BrandPreviewOption[];
   typeOptions: TypefacePreviewOption[];
 }

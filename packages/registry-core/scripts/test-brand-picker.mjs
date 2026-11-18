@@ -1,13 +1,13 @@
 /* global console */
 /**
- * Acceptance battery for the palette + brand picker (3 palette + up to 3
+ * Acceptance battery for the palette + brand picker (3 palette + up to 5
  * brand options on one step).
  *
  * Deterministic: no model calls. The model is replaced by hand-authored DNA +
  * palette anchors, and the code path under test is schema → derive options →
  * fold the selection → compile → validate, with the network stubbed out.
  *
- * Covers: the brand row's three option types and their reasons, the
+ * Covers: the brand row's option types and their reasons, the
  * distinctness/dedup gate (ΔH ≥ 30° OR ΔE₀₀ ≥ 15 OR ΔL ≥ 0.15), the
  * Verizon-style red-brand/ink-primary case, the monochrome collapse (C = 0,
  * no pink), enterprise brand exemption from the accent-collapse rule, AA on
@@ -68,15 +68,15 @@ const compile = (name, palette, axes = AXES, extra = {}) =>
   );
 
 // ---------------------------------------------------------------------------
-// 1. Row shape: three palettes, up to three brand options, all from one set
+// 1. Row shape: three palettes, up to five brand options, all from one set
 // ---------------------------------------------------------------------------
 
-test("palette row keeps its 3 options; brand row offers 1–3, all hue-only", () => {
+test("palette row keeps its 3 options; brand row offers 1–5, all hue-only", () => {
   const palette = { primaryHue: 250, accentHue: 250, neutralHue: 250, brandHue: 5 };
   const palettes = derivePaletteOptions(palette);
   assert.equal(palettes.length, 3, "palette row is unchanged: exactly 3 options");
   const brands = deriveBrandOptions(palette);
-  assert.ok(brands.length >= 1 && brands.length <= 3, `brand row is 1–3 options (got ${brands.length})`);
+  assert.ok(brands.length >= 1 && brands.length <= 5, `brand row is 1–5 options (got ${brands.length})`);
   assert.equal(brands[0].id, "as-dreamed");
   assert.equal(brands[0].brandHue, 5, "As Generated is the model's own brandHue, untouched");
   for (const option of brands) {
@@ -133,7 +133,8 @@ test("verizon-style: red brand, ink primary, bold alternative distinct from both
   const dreamed = brands.find((o) => o.id === "as-dreamed");
   const primary = brands.find((o) => o.id === "brand-primary");
   const bold = brands.find((o) => o.id === "bold-alternative");
-  assert.ok(dreamed && primary && bold, "all three choices ship");
+  assert.ok(dreamed && primary && bold, "the three named choices ship");
+  assert.equal(brands.length, 5, "the verizon case offers all five brand colors");
   assert.equal(dreamed.brandHue, 5, "As Generated is the red brand");
   assert.equal(primary.brandHue, 250, "Brand = Primary is the ink/primary hue");
   assert.ok(hueDist(bold.brandHue, 5) >= 30, "bold is distinct from the dreamed brand");
@@ -156,9 +157,9 @@ test("verizon-style: red brand, ink primary, bold alternative distinct from both
   }
 });
 
-test("dedup: a generation whose brand sits on primary shows 2 brand options", () => {
+test("dedup: a generation whose brand sits on primary shows 4 brand options", () => {
   const brands = deriveBrandOptions({ primaryHue: 210, accentHue: 20, neutralHue: 210, brandHue: 214 });
-  assert.equal(brands.length, 2, "Brand = Primary is hidden instead of shown identical");
+  assert.equal(brands.length, 4, "Brand = Primary is hidden instead of shown identical");
   assert.ok(!brands.some((o) => o.id === "brand-primary"), "no duplicate of As Generated");
   const hues = brands.map((o) => o.brandHue);
   assert.equal(new Set(hues).size, hues.length, "no two options share a hue");
@@ -336,8 +337,12 @@ test("option derivation is pure: same palette → same options, any order of use
 test("the picker step renders both rows on one screen under one live preview", () => {
   const dock = readFileSync(join(repoRoot, "apps", "web", "app", "dashboard", "creation-dock.tsx"), "utf8");
   assert.ok(dock.includes('data-testid="live-preview"'), "one shared live preview");
-  assert.ok(dock.includes('data-testid="palette-row"'), "row 1: palette");
-  assert.ok(dock.includes('data-testid="brand-row"'), "row 2: brand");
+  assert.ok(dock.includes('data-testid="brand-row"'), "row 1: brand");
+  assert.ok(dock.includes('data-testid="palette-row"'), "row 2: palette");
+  assert.ok(
+    dock.indexOf('data-testid="brand-row"') < dock.indexOf('data-testid="palette-row"'),
+    "the brand section renders before the palette section",
+  );
   assert.equal(
     (dock.match(/<MiniSystemPreview/g) ?? []).length >= 1,
     true,
@@ -351,8 +356,8 @@ test("the picker step renders both rows on one screen under one live preview", (
     dock.includes('data-testid="brand-swatch"'),
     "the brand row previews its single brand color",
   );
-  assert.ok(/>Palette</.test(dock), "row 1 is labeled Palette");
-  assert.ok(/>Brand</.test(dock), "row 2 is labeled Brand");
+  assert.ok(/>Brand</.test(dock), "row 1 is labeled Brand");
+  assert.ok(/>Palette</.test(dock), "row 2 is labeled Palette");
   const mini = readFileSync(join(repoRoot, "apps", "web", "components", "mini-system-preview.tsx"), "utf8");
   for (const marker of ["Acme", "seat", "Reserve", "About Us", "Limited Time Deal", "20% off", "Check availability"]) {
     assert.ok(mini.includes(marker), `mini component shows ${marker} (wordmark, focal word, buttons, brand deal card)`);
@@ -362,6 +367,14 @@ test("the picker step renders both rows on one screen under one live preview", (
   // Selecting in either row only moves local state: no action round-trip.
   assert.ok(dock.includes("onChange={() => setPaletteId(option.id)}"), "palette row re-skins client-side");
   assert.ok(dock.includes("onChange={() => setBrandId(option.id)}"), "brand row re-skins client-side");
+  // Generating shows the shared full-screen loader, never the picker modal.
+  assert.ok(dock.includes("GeneratingLoader"), "generating shows the shared loader");
+  assert.ok(dock.includes('phase !== "generating"'), "picker modal stays closed while generating");
+  const loader = readFileSync(join(repoRoot, "apps", "web", "components", "generating-loader.tsx"), "utf8");
+  for (const marker of ["backdrop-blur", "ArcheLogo", "animate-[spin", "Generating"]) {
+    assert.ok(loader.includes(marker), `shared loader shows ${marker}`);
+  }
+  assert.ok(loader.includes('role="status"'), "loader is announced as a status");
 });
 
 test("every brand option ships an AA-verified preview for every palette option", async () => {

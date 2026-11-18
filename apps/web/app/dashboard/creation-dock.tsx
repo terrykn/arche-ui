@@ -17,11 +17,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AutosizeTextarea } from "@/components/autosize-textarea";
+import { GeneratingLoader } from "@/components/generating-loader";
 import { MiniSystemPreview } from "@/components/mini-system-preview";
 import { TypefaceOptionPreview } from "@/components/typeface-option-preview";
 import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
 type Phase = "idle" | "generating" | "failed" | "palettes" | "typefaces" | "words" | "creating";
+
+/** Header prompt preview stays one short line; the full text is one toggle away. */
+const PROMPT_PREVIEW_LIMIT = 80;
 
 const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
   palettes: {
@@ -48,6 +52,9 @@ const BRAND_REASON: Record<string, string> = {
   "bold-accentHue": "The accent hue as the mark; it clears the distinctness gate against primary.",
   "bold-rotated-60": "Brand hue rotated 60° for a mark that is clearly its own color.",
   "bold-rotated-120": "Brand hue rotated 120° — the accent candidate collapsed onto primary.",
+  "bold-rotated-180": "Brand hue rotated 180° — another mark clearly its own color.",
+  "bold-rotated-240": "Brand hue rotated 240° — another mark clearly its own color.",
+  "bold-rotated-300": "Brand hue rotated 300° — another mark clearly its own color.",
 };
 
 /**
@@ -79,7 +86,8 @@ function SwatchStrip({ swatches }: { swatches: PalettePreviewSwatches }) {
 
 /**
  * Creation dock + modal (dashboard hub). The prompt lives in the bottom
- * dock; generating opens a modal with the palette and typeface picker steps.
+ * dock; generating shows a full-screen loader, then a modal holds the brand
+ * + palette and typeface picker steps.
  * What the user picks is what the draft uses — there is no reference-
  * identity retune step. Everything before
  * the final Create is in-memory — closing the modal (X, backdrop, Escape)
@@ -89,6 +97,7 @@ function SwatchStrip({ swatches }: { swatches: PalettePreviewSwatches }) {
 export function CreationDock({ prefill }: { prefill: string }) {
   const [phase, setPhase] = React.useState<Phase>("idle");
   const [prompt, setPrompt] = React.useState("");
+  const [promptExpanded, setPromptExpanded] = React.useState(false);
   const [preview, setPreview] = React.useState<GenerationPreview | null>(null);
   const [paletteId, setPaletteId] = React.useState("");
   const [brandId, setBrandId] = React.useState("");
@@ -100,6 +109,8 @@ export function CreationDock({ prefill }: { prefill: string }) {
   const router = useRouter();
   const panelRef = React.useRef<HTMLDivElement>(null);
   const open = phase !== "idle";
+  /** Picker modal (failed, steps, creating). Generating shows the loader instead. */
+  const modalOpen = open && phase !== "generating";
 
   const close = React.useCallback(() => {
     setPhase("idle");
@@ -122,6 +133,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
     const trimmed = text.trim().slice(0, GENERATION_PROMPT_MAX_LENGTH);
     if (!trimmed) return;
     setPrompt(trimmed);
+    setPromptExpanded(false);
     setError(null);
     setPreview(null);
     setPaletteId("");
@@ -153,16 +165,18 @@ export function CreationDock({ prefill }: { prefill: string }) {
     }
   }, [prefill, start]);
 
-  // Escape closes (= discards); lock body scroll while open.
+  // Escape closes (= discards); lock body scroll while open. Generating shows
+  // the full-screen loader instead of the modal, so Escape only closes once
+  // the picker modal is on screen.
   React.useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
+      if (event.key === "Escape" && phase !== "generating") close();
     };
     document.addEventListener("keydown", onKey);
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    panelRef.current?.focus();
+    if (phase !== "generating") panelRef.current?.focus();
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = previous;
@@ -253,7 +267,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
         </form>
       </div>
 
-      {open ? (
+      {modalOpen ? (
         <div
           role="dialog"
           aria-modal="true"
@@ -272,19 +286,30 @@ export function CreationDock({ prefill }: { prefill: string }) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-display text-2xl">
-                  {phase === "generating"
-                    ? "Generating…"
-                    : phase === "failed"
-                      ? "Generation failed"
-                      : phase === "creating"
-                        ? "Creating your identity…"
-                        : (phase === "palettes" || phase === "typefaces" || phase === "words"
-                          ? STEP_LABEL[phase]?.title
-                          : "Create identity")}
+                  {phase === "failed"
+                    ? "Generation failed"
+                    : phase === "creating"
+                      ? "Creating your identity…"
+                      : phase === "palettes" || phase === "typefaces" || phase === "words"
+                        ? STEP_LABEL[phase]?.title
+                        : "Create identity"}
                 </h2>
                 {prompt ? (
                   <p className="mt-1 text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">“{prompt}”</span>
+                    <span className="font-medium text-foreground">Prompt:</span> "
+                    {promptExpanded || prompt.length <= PROMPT_PREVIEW_LIMIT
+                      ? prompt
+                      : `${prompt.slice(0, PROMPT_PREVIEW_LIMIT).trimEnd()}…`}
+                    "{" "}
+                    {prompt.length > PROMPT_PREVIEW_LIMIT ? (
+                      <button
+                        type="button"
+                        onClick={() => setPromptExpanded((value) => !value)}
+                        className="font-medium text-foreground underline underline-offset-2"
+                      >
+                        {promptExpanded ? "View less" : "View more"}
+                      </button>
+                    ) : null}
                   </p>
                 ) : null}
               </div>
@@ -348,32 +373,6 @@ export function CreationDock({ prefill }: { prefill: string }) {
                   </div>
                 ) : null}
 
-                <fieldset className="flex flex-col">
-                  <legend className="mb-2 text-sm font-medium">Palette</legend>
-                  <div className="grid gap-2 sm:grid-cols-3" data-testid="palette-row">
-                    {paletteOptions.map((option) => (
-                      <label
-                        key={option.id}
-                        className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
-                      >
-                        <span className="flex items-center gap-2">
-                          <Input
-                            type="radio"
-                            name="palette"
-                            value={option.id}
-                            checked={activePalette?.id === option.id}
-                            onChange={() => setPaletteId(option.id)}
-                            className="h-4 w-4"
-                          />
-                          <span className="text-sm font-medium">{option.name}</span>
-                        </span>
-                        <SwatchStrip swatches={option.swatches} />
-                        <span className="text-xs text-muted-foreground">{option.reason}</span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-
                 {brandOptions.length > 0 ? (
                   <fieldset className="flex flex-col">
                     <legend className="mb-2 text-sm font-medium">Brand</legend>
@@ -418,7 +417,31 @@ export function CreationDock({ prefill }: { prefill: string }) {
                   </fieldset>
                 ) : null}
 
-
+                <fieldset className="flex flex-col">
+                  <legend className="mb-2 text-sm font-medium">Palette</legend>
+                  <div className="grid gap-2 sm:grid-cols-3" data-testid="palette-row">
+                    {paletteOptions.map((option) => (
+                      <label
+                        key={option.id}
+                        className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
+                      >
+                        <span className="flex items-center gap-2">
+                          <Input
+                            type="radio"
+                            name="palette"
+                            value={option.id}
+                            checked={activePalette?.id === option.id}
+                            onChange={() => setPaletteId(option.id)}
+                            className="h-4 w-4"
+                          />
+                          <span className="text-sm font-medium">{option.name}</span>
+                        </span>
+                        <SwatchStrip swatches={option.swatches} />
+                        <span className="text-xs text-muted-foreground">{option.reason}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
               </div>
             ) : null}
 
@@ -513,6 +536,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
           </div>
         </div>
       ) : null}
+      {phase === "generating" ? <GeneratingLoader /> : null}
     </>
   );
 }
