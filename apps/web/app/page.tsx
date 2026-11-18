@@ -55,7 +55,7 @@ function HeroPrompt() {
     <form
       onSubmit={submit}
       role="search"
-      aria-label="Describe your product or brand identity"
+      aria-label="Describe your design system"
       className={`mx-auto mt-8 flex max-w-xl items-end gap-2 border-2 border-white/30 bg-white/95 py-1.5 pl-5 pr-1.5 backdrop-blur ${expanded ? "rounded-3xl" : "rounded-full"}`}
     >
       <AutosizeTextarea
@@ -69,14 +69,14 @@ function HeroPrompt() {
         }}
         onExpandChange={setExpanded}
         maxLength={HERO_PROMPT_MAX_LENGTH}
-        placeholder="Describe your product or brand identity..."
-        aria-label="Describe your product or brand identity"
-        className="min-w-0 flex-1 resize-none bg-transparent py-2 text-sm leading-snug outline-none placeholder:text-muted-foreground"
+        placeholder="Describe your design system..."
+        aria-label="Describe your design system"
+        className="min-w-0 flex-1 resize-none bg-transparent py-2 text-sm leading-snug text-gray-900 outline-none placeholder:text-gray-500"
       />
       <button
         type="submit"
         aria-label="Get started"
-        className="shrink-0 rounded-full bg-primary p-2 text-primary-foreground transition-opacity hover:opacity-90"
+        className="shrink-0 rounded-full bg-black p-2 text-white transition-opacity hover:opacity-90"
       >
         <ArrowUp size={20} aria-hidden="true" />
       </button>
@@ -109,7 +109,7 @@ export default function Home() {
               </div>
               <div className="relative mx-auto max-w-2xl text-center">
                 <h1 className="font-display text-5xl font-extrabold tracking-tight text-white sm:text-6xl">
-                  Create a design system for your application
+                  Create a React design system in minutes
                 </h1>
                 <p className="mx-auto mt-4 max-w-xl text-base text-white/85">
                   Generate React components and tokens tailored to your brand. Install with

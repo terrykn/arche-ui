@@ -78,7 +78,7 @@ test("palette row keeps its 3 options; brand row offers 1–3, all hue-only", ()
   const brands = deriveBrandOptions(palette);
   assert.ok(brands.length >= 1 && brands.length <= 3, `brand row is 1–3 options (got ${brands.length})`);
   assert.equal(brands[0].id, "as-dreamed");
-  assert.equal(brands[0].brandHue, 5, "As Dreamed is the model's own brandHue, untouched");
+  assert.equal(brands[0].brandHue, 5, "As Generated is the model's own brandHue, untouched");
   for (const option of brands) {
     assert.ok(option.name && option.name !== String(option.brandHue), "evocative name, never a bare hue");
     assert.ok(option.roleLabel && option.roleLabel.length > 0, "each option carries its role label");
@@ -134,7 +134,7 @@ test("verizon-style: red brand, ink primary, bold alternative distinct from both
   const primary = brands.find((o) => o.id === "brand-primary");
   const bold = brands.find((o) => o.id === "bold-alternative");
   assert.ok(dreamed && primary && bold, "all three choices ship");
-  assert.equal(dreamed.brandHue, 5, "As Dreamed is the red brand");
+  assert.equal(dreamed.brandHue, 5, "As Generated is the red brand");
   assert.equal(primary.brandHue, 250, "Brand = Primary is the ink/primary hue");
   assert.ok(hueDist(bold.brandHue, 5) >= 30, "bold is distinct from the dreamed brand");
   assert.ok(hueDist(bold.brandHue, 250) >= 30, "bold clears the gate against primary");
@@ -159,7 +159,7 @@ test("verizon-style: red brand, ink primary, bold alternative distinct from both
 test("dedup: a generation whose brand sits on primary shows 2 brand options", () => {
   const brands = deriveBrandOptions({ primaryHue: 210, accentHue: 20, neutralHue: 210, brandHue: 214 });
   assert.equal(brands.length, 2, "Brand = Primary is hidden instead of shown identical");
-  assert.ok(!brands.some((o) => o.id === "brand-primary"), "no duplicate of As Dreamed");
+  assert.ok(!brands.some((o) => o.id === "brand-primary"), "no duplicate of As Generated");
   const hues = brands.map((o) => o.brandHue);
   assert.equal(new Set(hues).size, hues.length, "no two options share a hue");
 });
@@ -187,7 +187,7 @@ test("monochrome brief: every brand option emits C = 0 and the hues collapse", a
   const palette = { primaryHue: 220, accentHue: 222, neutralHue: 221, brandHue: 0 };
   const constraints = { chromaCap: 0.02, hueSpreadMax: 10 };
   const brands = deriveBrandOptions(palette, { achromatic: true });
-  assert.equal(brands.length, 1, "hue-only options collapse to one gray: only As Dreamed ships");
+  assert.equal(brands.length, 1, "hue-only options collapse to one gray: only As Generated ships");
   for (const option of brands) {
     const compiled = await compile(
       `t-bp-mono-${option.id}`,
@@ -339,18 +339,26 @@ test("the picker step renders both rows on one screen under one live preview", (
   assert.ok(dock.includes('data-testid="palette-row"'), "row 1: palette");
   assert.ok(dock.includes('data-testid="brand-row"'), "row 2: brand");
   assert.equal(
-    (dock.match(/<MiniSystemPreview/g) ?? []).length >= 3,
+    (dock.match(/<MiniSystemPreview/g) ?? []).length >= 1,
     true,
-    "the preview and both rows use the mini component (never a lone swatch)",
+    "the shared live preview uses the mini component",
   );
   assert.ok(
-    dock.includes("only As Dreamed is the model's answer"),
-    "the lede discloses that only As Dreamed is the model's answer",
+    dock.includes('data-testid="palette-swatches"'),
+    "the palette row previews plain color swatches, not the composed UI",
   );
+  assert.ok(
+    dock.includes('data-testid="brand-swatch"'),
+    "the brand row previews its single brand color",
+  );
+  assert.ok(/>Palette</.test(dock), "row 1 is labeled Palette");
+  assert.ok(/>Brand</.test(dock), "row 2 is labeled Brand");
   const mini = readFileSync(join(repoRoot, "apps", "web", "components", "mini-system-preview.tsx"), "utf8");
-  for (const marker of ["Arche", "evening", "Reserve", "New season"]) {
-    assert.ok(mini.includes(marker), `mini component shows ${marker} (wordmark, focal word, brand button, badge)`);
+  for (const marker of ["Acme", "seat", "Reserve", "About Us", "Limited Time Deal", "20% off", "Check availability"]) {
+    assert.ok(mini.includes(marker), `mini component shows ${marker} (wordmark, focal word, buttons, brand deal card)`);
   }
+  assert.ok(!mini.includes(">New<"), "mini component has no New badge");
+  assert.ok(!mini.includes("preview-role-key"), "mini component does not list a color key");
   // Selecting in either row only moves local state: no action round-trip.
   assert.ok(dock.includes("onChange={() => setPaletteId(option.id)}"), "palette row re-skins client-side");
   assert.ok(dock.includes("onChange={() => setBrandId(option.id)}"), "brand row re-skins client-side");

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { CreationDock } from "./creation-dock";
 import { IdentityCarousel, type IdentityRow } from "./identity-carousel";
+import GradientBg from "@/components/gradient-bg";
 
 export default async function DashboardHome({
   searchParams,
@@ -48,6 +49,22 @@ export default async function DashboardHome({
       ) : null}
 
       <CreationDock prefill={prefill} />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[-1] h-64 overflow-hidden opacity-60 [mask-image:linear-gradient(to_bottom,transparent,black_45%)] md:left-60"
+        style={{ filter: "brightness(0.9) saturate(1.3)" }}
+      >
+        <GradientBg
+          className="dashboard-aurora"
+          speed={10}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        />
+      </div>
     </main>
   );
 }

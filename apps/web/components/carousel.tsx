@@ -18,6 +18,7 @@ export function Carousel({
   const trackRef = React.useRef<HTMLDivElement>(null);
   const [page, setPage] = React.useState(0);
   const [pages, setPages] = React.useState(1);
+  const [atStart, setAtStart] = React.useState(true);
   const [atEnd, setAtEnd] = React.useState(false);
   const slides = React.Children.toArray(children);
 
@@ -31,6 +32,7 @@ export function Carousel({
     const count = maxScroll <= 1 ? 1 : Math.round(maxScroll / el.clientWidth) + 1;
     setPages(count);
     setPage(Math.min(count - 1, Math.round(el.scrollLeft / el.clientWidth)));
+    setAtStart(el.scrollLeft <= 1);
     setAtEnd(el.scrollLeft >= maxScroll - 1);
   }, []);
 
@@ -48,6 +50,16 @@ export function Carousel({
   };
 
   const showControls = pages > 1;
+  // Fade the edges where a slide is cut off; no fade on an edge with
+  // nothing beyond it (single page, or resting at either end).
+  const fadeClass =
+    atStart && atEnd
+      ? ""
+      : atStart
+        ? "[mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
+        : atEnd
+          ? "[mask-image:linear-gradient(to_right,transparent,black_3rem)]"
+          : "[mask-image:linear-gradient(to_right,transparent,black_3rem,black_calc(100%-3rem),transparent)]";
 
   return (
     <div>
@@ -58,7 +70,7 @@ export function Carousel({
           role="region"
           aria-roledescription="carousel"
           aria-label={label}
-          className="flex snap-x gap-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className={`flex snap-x gap-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${fadeClass}`}
         >
           {slides.map((slide, index) => (
             <div key={index} className={slideClassName}>

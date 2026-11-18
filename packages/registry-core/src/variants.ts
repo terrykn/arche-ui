@@ -147,7 +147,7 @@ export function normalizeTypefaceVariants(
   const fallback: TypefaceVariant[] = [
     {
       id: "as-dreamed",
-      name: "As Dreamed",
+      name: "As Generated",
       display: compilerPick.display,
       body: compilerPick.sans,
       reason: "The generation's own header/body pairing, untouched.",

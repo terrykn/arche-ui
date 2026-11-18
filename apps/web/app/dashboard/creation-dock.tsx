@@ -7,6 +7,7 @@ import { WORD_CHIPS } from "@arche/registry-core/picker";
 import type {
   FinishSelections,
   GenerationPreview,
+  PalettePreviewSwatches,
 } from "@/lib/generation/service";
 import {
   createIdentity,
@@ -20,13 +21,13 @@ import { MiniSystemPreview } from "@/components/mini-system-preview";
 import { TypefaceOptionPreview } from "@/components/typeface-option-preview";
 import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
-type Phase = "idle" | "dreaming" | "failed" | "palettes" | "typefaces" | "words" | "creating";
+type Phase = "idle" | "generating" | "failed" | "palettes" | "typefaces" | "words" | "creating";
 
 const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
   palettes: {
     n: "Step 1 of 3",
-    title: "Pick a palette and a brand",
-    lede: "Row 1 picks the whole system; row 2 picks only the mark color. In each row, only As Dreamed is the model's answer — the other options are deterministic remixes of that same generation, so nothing is regenerated. Either row re-skins the preview instantly, and publishing stays your explicit call.",
+    title: "Pick your colors",
+    lede: "",
   },
   typefaces: {
     n: "Step 2 of 3",
@@ -48,6 +49,33 @@ const BRAND_REASON: Record<string, string> = {
   "bold-rotated-60": "Brand hue rotated 60° for a mark that is clearly its own color.",
   "bold-rotated-120": "Brand hue rotated 120° — the accent candidate collapsed onto primary.",
 };
+
+/**
+ * Plain color strip per palette/brand option (compiled light-mode tokens).
+ * The shared live preview above already shows the composed UI — the rows
+ * only need to separate the options by their colors.
+ */
+function SwatchStrip({ swatches }: { swatches: PalettePreviewSwatches }) {
+  const chips = [
+    { label: "Surface", value: swatches.surface },
+    { label: "Primary", value: swatches.primary },
+    { label: "Accent", value: swatches.accent },
+    { label: "Brand", value: swatches.brand },
+    { label: "Secondary", value: swatches.secondary },
+  ];
+  return (
+    <span aria-hidden data-testid="palette-swatches" className="flex gap-1">
+      {chips.map((chip) => (
+        <span
+          key={chip.label}
+          title={chip.label}
+          className="h-8 flex-1 rounded-md border border-border"
+          style={{ backgroundColor: chip.value }}
+        />
+      ))}
+    </span>
+  );
+}
 
 /**
  * Creation dock + modal (dashboard hub). The prompt lives in the bottom
@@ -100,7 +128,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setBrandId("");
     setTypefaceId("");
     setChipIds([]);
-    setPhase("dreaming");
+    setPhase("generating");
     const result = await startGenerationAction(trimmed);
     if (!result.ok) {
       setError(result.message);
@@ -108,15 +136,15 @@ export function CreationDock({ prefill }: { prefill: string }) {
       return;
     }
     setPreview(result.preview);
-    // Default to the model's own answers ("As Dreamed" in both rows); the
-    // user narrows from there. Anything unpicked stays as the model dreamed it.
+    // Default to the model's own answers ("As Generated" in both rows); the
+    // user narrows from there. Anything unpicked stays as the model generated it.
     setPaletteId(result.preview.paletteOptions[0]?.id ?? "");
     setBrandId(result.preview.brandOptions[0]?.id ?? "");
     setTypefaceId(result.preview.typeOptions[0]?.id ?? "");
     setPhase("palettes");
   }, []);
 
-  // Hero handoff (?prompt=): open the modal and dream once.
+  // Hero handoff (?prompt=): open the modal and generate once.
   React.useEffect(() => {
     if (prefill && !autoStarted.current) {
       autoStarted.current = true;
@@ -238,18 +266,14 @@ export function CreationDock({ prefill }: { prefill: string }) {
           <div
             ref={panelRef}
             tabIndex={-1}
-            className="max-h-[90dvh] w-full max-w-2xl overflow-y-auto rounded-xl border-(length:--border-width) border-border bg-background p-6 outline-none"
+            className="flex max-h-[90dvh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border-(length:--border-width) border-border bg-background outline-none"
           >
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                {phase === "palettes" || phase === "typefaces" || phase === "words" || phase === "creating" ? (
-                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    {STEP_LABEL[phase === "creating" ? "words" : phase]?.n ?? "Creating"}
-                  </p>
-                ) : null}
                 <h2 className="font-display text-2xl">
-                  {phase === "dreaming"
-                    ? "Dreaming…"
+                  {phase === "generating"
+                    ? "Generating…"
                     : phase === "failed"
                       ? "Generation failed"
                       : phase === "creating"
@@ -275,11 +299,9 @@ export function CreationDock({ prefill }: { prefill: string }) {
               </button>
             </div>
 
-            {phase === "dreaming" || phase === "creating" ? (
+            {phase === "creating" ? (
               <p className="mt-4 text-sm text-muted-foreground">
-                {phase === "dreaming"
-                  ? "One model call turns your phrase into design DNA. Nothing is saved yet — closing discards it."
-                  : "Compiling your selections into a private draft…"}
+                Compiling your selections into a private draft…
               </p>
             ) : null}
 
@@ -327,10 +349,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
                 ) : null}
 
                 <fieldset className="flex flex-col">
-                  <legend className="mb-2 text-sm font-medium">
-                    Row 1 · Palette{" "}
-                    <span className="font-normal text-muted-foreground">— the whole system</span>
-                  </legend>
+                  <legend className="mb-2 text-sm font-medium">Palette</legend>
                   <div className="grid gap-2 sm:grid-cols-3" data-testid="palette-row">
                     {paletteOptions.map((option) => (
                       <label
@@ -348,7 +367,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
                           />
                           <span className="text-sm font-medium">{option.name}</span>
                         </span>
-                        <MiniSystemPreview swatches={option.swatches} />
+                        <SwatchStrip swatches={option.swatches} />
                         <span className="text-xs text-muted-foreground">{option.reason}</span>
                       </label>
                     ))}
@@ -357,10 +376,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
 
                 {brandOptions.length > 0 ? (
                   <fieldset className="flex flex-col">
-                    <legend className="mb-2 text-sm font-medium">
-                      Row 2 · Brand{" "}
-                      <span className="font-normal text-muted-foreground">— the mark color only</span>
-                    </legend>
+                    <legend className="mb-2 text-sm font-medium">Brand</legend>
                     <div className="grid gap-2 sm:grid-cols-3" data-testid="brand-row">
                       {brandOptions.map((option) => {
                         const swatches =
@@ -382,7 +398,15 @@ export function CreationDock({ prefill }: { prefill: string }) {
                               />
                               <span className="text-sm font-medium">{option.name}</span>
                             </span>
-                            {swatches ? <MiniSystemPreview swatches={swatches} /> : null}
+                            {swatches ? (
+                              <span
+                                aria-hidden
+                                data-testid="brand-swatch"
+                                title="Brand color"
+                                className="h-12 rounded-md border border-border"
+                                style={{ backgroundColor: swatches.brand }}
+                              />
+                            ) : null}
                             <span className="text-xs font-medium">{option.roleLabel}</span>
                             <span className="text-xs text-muted-foreground">
                               {BRAND_REASON[option.reason] ?? option.reason}
@@ -394,14 +418,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
                   </fieldset>
                 ) : null}
 
-                <div className="mt-2 flex gap-2">
-                  <Button onClick={() => setPhase("typefaces")} className="w-fit">
-                    Continue to typefaces
-                  </Button>
-                  <Button variant="outline" onClick={close}>
-                    Discard
-                  </Button>
-                </div>
+
               </div>
             ) : null}
 
@@ -427,14 +444,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
                     <span className="text-sm text-muted-foreground">{option.reason}</span>
                   </label>
                 ))}
-                <div className="mt-2 flex gap-2">
-                  <Button onClick={() => setPhase("words")} className="w-fit">
-                    Continue to words
-                  </Button>
-                  <Button variant="outline" onClick={() => setPhase("palettes")}>
-                    Back
-                  </Button>
-                </div>
+
               </div>
             ) : null}
 
@@ -459,16 +469,47 @@ export function CreationDock({ prefill }: { prefill: string }) {
                     </label>
                   ))}
                 </fieldset>
-                <div className="mt-2 flex gap-2">
-                  <Button onClick={() => void finish()} className="w-fit">
-                    Create identity
-                  </Button>
-                  <Button variant="outline" onClick={() => setPhase("typefaces")}>
-                    Back
-                  </Button>
-                </div>
               </div>
             ) : null}
+          </div>
+
+          {(phase === "palettes" || phase === "typefaces" || phase === "words") && (
+            <div className="flex items-center justify-between gap-3 border-t border-border bg-background px-6 py-4">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  {STEP_LABEL[phase]?.n}
+                </p>
+                <div className="flex gap-2">
+                  {phase === "palettes" ? (
+                    <>
+                      <Button onClick={() => setPhase("typefaces")} className="w-fit">
+                        Continue
+                      </Button>
+                      <Button variant="outline" onClick={close}>
+                        Discard
+                      </Button>
+                    </>
+                  ) : phase === "typefaces" ? (
+                    <>
+                      <Button onClick={() => setPhase("words")} className="w-fit">
+                        Continue to words
+                      </Button>
+                      <Button variant="outline" onClick={() => setPhase("palettes")}>
+                        Back
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button onClick={() => void finish()} className="w-fit">
+                        Create identity
+                      </Button>
+                      <Button variant="outline" onClick={() => setPhase("typefaces")}>
+                        Back
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : null}

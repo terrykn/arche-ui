@@ -20,7 +20,7 @@ const STEP_LABEL: Record<Step, { n: string; title: string; lede: string }> = {
   palettes: {
     n: "Step 1 of 3",
     title: "Pick a palette",
-    lede: "Three ways to play the generation's own hues. Only As Dreamed is the model's answer — the other two are deterministic remixes of it. Names, not hexes — the compiler still owns every token.",
+    lede: "Three ways to play the generation's own hues. Only As Generated is the model's answer — the other two are deterministic remixes of it. Names, not hexes — the compiler still owns every token.",
   },
   examples: {
     n: "Step 2 of 3",

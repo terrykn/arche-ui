@@ -83,7 +83,7 @@ export function derivePaletteOptions(
   };
   const asDreamed: PaletteOption = {
     id: "as-dreamed",
-    name: "As Dreamed",
+    name: "As Generated",
     anchors: base,
     reason: "The generation's own palette, untouched.",
   };
@@ -320,7 +320,7 @@ export function deriveBrandOptions(
     reason,
   });
   const kept: BrandOption[] = [
-    option("as-dreamed", "As Dreamed", dreamedHue, "as-dreamed"),
+    option("as-dreamed", "As Generated", dreamedHue, "as-dreamed"),
   ];
   const collapsesOntoKept = (candidate: GateColor): boolean =>
     kept.some((entry) => !brandDistinctness(candidate, colorOf(entry.brandHue)).distinct);
