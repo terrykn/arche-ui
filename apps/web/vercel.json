@@ -1,4 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
   "buildCommand": "pnpm --filter @arche/foundation --filter @arche/registry-core --filter @arche/mcp --filter @arche/ui --if-present run build && pnpm run build"
 }
