@@ -130,7 +130,14 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setTypefaceId("");
     setChipIds([]);
     setPhase("generating");
-    const result = await startGenerationAction(trimmed);
+    // A dropped/timed-out action rejects the promise; without this the
+    // full-screen loader would spin forever with no message.
+    const result = await startGenerationAction(trimmed).catch(() => null);
+    if (!result) {
+      setError("The generation request failed on the server — it may have timed out. Try again.");
+      setPhase("failed");
+      return;
+    }
     if (!result.ok) {
       setError(result.message);
       setPhase("failed");
@@ -198,9 +205,14 @@ export function CreationDock({ prefill }: { prefill: string }) {
       typefaceId: typefaceId || undefined,
       chipIds,
     };
-    const result = await finishGenerationAction(preview, prompt, selections);
+    const result = await finishGenerationAction(preview, prompt, selections).catch(() => null);
     // Success navigates to the Studio; failure lands back on the last step
     // with the message and nothing was stored.
+    if (!result) {
+      setError("Saving the draft failed on the server — it may have timed out. Nothing was created; try again.");
+      setPhase("words");
+      return;
+    }
     if (result.ok) {
       router.push(`/dashboard/identities/${result.libraryId}/edit`);
       return;

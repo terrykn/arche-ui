@@ -6,10 +6,9 @@
  * same payload. The model is the only nondeterministic step.
  */
 import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { contrastRatio } from "@arche/foundation/contract/validate-tokens";
 import type { ArcheIdentity } from "./index.js";
+import { resolveRuntimeAsset } from "./runtime-assets.js";
 
 export interface PromptConstraints {
   chromaCap?: number;
@@ -28,7 +27,7 @@ interface KeywordTable {
   namedHues: Record<string, number>;
 }
 
-const KEYWORD_FILE = join(dirname(fileURLToPath(import.meta.url)), "prompt-keywords.json");
+const KEYWORD_FILE = resolveRuntimeAsset(["prompt-keywords.json"]);
 
 let cachedTable: KeywordTable | null = null;
 
@@ -487,7 +486,7 @@ export function keywordTableVersion(): number {
   return loadKeywordTable().version;
 }
 
-const CORPUS_FILE = join(dirname(fileURLToPath(import.meta.url)), "generation", "corpus.json");
+const CORPUS_FILE = resolveRuntimeAsset(["generation", "corpus.json"]);
 
 let cachedCorpus: CorpusEntry[] | null = null;
 
