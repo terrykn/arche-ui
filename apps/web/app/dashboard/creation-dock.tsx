@@ -45,22 +45,9 @@ const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
   },
 };
 
-/** Brand-row reasons rendered as sentences (the draft stores the raw id). */
-const BRAND_REASON: Record<string, string> = {
-  "as-dreamed": "The generation's own brand hue, untouched.",
-  "brand-equals-primary": "The mark takes the primary hue — one family, unified.",
-  "bold-accentHue": "The accent hue as the mark; it clears the distinctness gate against primary.",
-  "bold-rotated-60": "Brand hue rotated 60° for a mark that is clearly its own color.",
-  "bold-rotated-120": "Brand hue rotated 120° — the accent candidate collapsed onto primary.",
-  "bold-rotated-180": "Brand hue rotated 180° — another mark clearly its own color.",
-  "bold-rotated-240": "Brand hue rotated 240° — another mark clearly its own color.",
-  "bold-rotated-300": "Brand hue rotated 300° — another mark clearly its own color.",
-};
-
 /**
- * Plain color strip per palette/brand option (compiled light-mode tokens).
- * The shared live preview above already shows the composed UI — the rows
- * only need to separate the options by their colors.
+ * Plain color strip (compiled light-mode tokens) — the palette and brand rows
+ * are color choices only. The shared live preview above shows the composed UI.
  */
 function SwatchStrip({ swatches }: { swatches: PalettePreviewSwatches }) {
   const chips = [
@@ -99,8 +86,10 @@ export function CreationDock({ prefill }: { prefill: string }) {
   const [prompt, setPrompt] = React.useState("");
   const [promptExpanded, setPromptExpanded] = React.useState(false);
   const [preview, setPreview] = React.useState<GenerationPreview | null>(null);
-  const [paletteId, setPaletteId] = React.useState("");
-  const [brandId, setBrandId] = React.useState("");
+  /** Palette row: the usage set for the mark. */
+  const [usageId, setUsageId] = React.useState("");
+  /** Brand row: one of five fixed colors; empty means the generation's own palette. */
+  const [brandColorId, setBrandColorId] = React.useState("");
   const [typefaceId, setTypefaceId] = React.useState("");
   const [chipIds, setChipIds] = React.useState<string[]>([]);
   const [error, setError] = React.useState<string | null>(null);
@@ -115,8 +104,8 @@ export function CreationDock({ prefill }: { prefill: string }) {
   const close = React.useCallback(() => {
     setPhase("idle");
     setPreview(null);
-    setPaletteId("");
-    setBrandId("");
+    setUsageId("");
+    setBrandColorId("");
     setTypefaceId("");
     setChipIds([]);
     setError(null);
@@ -136,8 +125,8 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setPromptExpanded(false);
     setError(null);
     setPreview(null);
-    setPaletteId("");
-    setBrandId("");
+    setUsageId("");
+    setBrandColorId("");
     setTypefaceId("");
     setChipIds([]);
     setPhase("generating");
@@ -148,10 +137,9 @@ export function CreationDock({ prefill }: { prefill: string }) {
       return;
     }
     setPreview(result.preview);
-    // Default to the model's own answers ("As Generated" in both rows); the
+    // Default to the model's own answers ("As Dreamed" in both rows); the
     // user narrows from there. Anything unpicked stays as the model generated it.
-    setPaletteId(result.preview.paletteOptions[0]?.id ?? "");
-    setBrandId(result.preview.brandOptions[0]?.id ?? "");
+    setUsageId(result.preview.usageOptions[0]?.id ?? "");
     setTypefaceId(result.preview.typeOptions[0]?.id ?? "");
     setPhase("palettes");
   }, []);
@@ -183,26 +171,30 @@ export function CreationDock({ prefill }: { prefill: string }) {
     };
   }, [open, phase, close]);
 
-  const paletteOptions = preview?.paletteOptions ?? [];
-  const brandOptions = preview?.brandOptions ?? [];
+  const brandColors = preview?.brandColors ?? [];
   const typeOptions = preview?.typeOptions ?? [];
-  // Live preview state: one shared preview above both rows. Selections only
-  // move local state — the compiled swatches already ship with the preview,
-  // so re-skinning is instant and free of model calls.
-  const activePalette =
-    paletteOptions.find((option) => option.id === (paletteId || paletteOptions[0]?.id)) ??
-    paletteOptions[0];
-  const activeBrand =
-    brandOptions.find((option) => option.id === (brandId || brandOptions[0]?.id)) ?? brandOptions[0];
-  const liveSwatches = activeBrand?.combinations[activePalette?.id ?? ""]?.light ?? activePalette?.swatches;
+  // The palette row follows the brand instantly: every brand color's row is
+  // precalculated with the preview, so switching brand is a tab-switch —
+  // no fetch, no waiting. No brand means the generation's own row. Either
+  // way the shared live preview above shows what the pick does — the rows
+  // themselves are just colors.
+  const usageOptions =
+    (brandColorId && preview?.brandPalettes?.[brandColorId]) || preview?.usageOptions || [];
+  const activeUsage =
+    usageOptions.find((option) => option.id === (usageId || usageOptions[0]?.id)) ?? usageOptions[0];
+  const liveSwatches = activeUsage?.swatches.light;
 
   const finish = async () => {
     if (preview == null) return;
     setError(null);
     setPhase("creating");
     const selections: FinishSelections = {
-      paletteId: paletteId || paletteOptions[0]?.id || "as-dreamed",
-      brandId: brandId || brandOptions[0]?.id || "as-dreamed",
+      // The palette row picks the brand usage; a picked brand color re-bases
+      // the system on its static palette server-side, so finish agrees with
+      // the preview row exactly.
+      paletteId: "as-dreamed",
+      brandId: usageId || usageOptions[0]?.id || "as-dreamed",
+      brandColorId: brandColorId || undefined,
       typefaceId: typefaceId || undefined,
       chipIds,
     };
@@ -372,75 +364,62 @@ export function CreationDock({ prefill }: { prefill: string }) {
                     />
                   </div>
                 ) : null}
-
-                {brandOptions.length > 0 ? (
-                  <fieldset className="flex flex-col">
-                    <legend className="mb-2 text-sm font-medium">Brand</legend>
-                    <div className="grid gap-2 sm:grid-cols-3" data-testid="brand-row">
-                      {brandOptions.map((option) => {
-                        const swatches =
-                          option.combinations[activePalette?.id ?? ""]?.light ??
-                          Object.values(option.combinations)[0]?.light;
-                        return (
-                          <label
-                            key={option.id}
-                            className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
-                          >
-                            <span className="flex items-center gap-2">
-                              <Input
-                                type="radio"
-                                name="brand"
-                                value={option.id}
-                                checked={activeBrand?.id === option.id}
-                                onChange={() => setBrandId(option.id)}
-                                className="h-4 w-4"
-                              />
-                              <span className="text-sm font-medium">{option.name}</span>
-                            </span>
-                            {swatches ? (
-                              <span
-                                aria-hidden
-                                data-testid="brand-swatch"
-                                title="Brand color"
-                                className="h-12 rounded-md border border-border"
-                                style={{ backgroundColor: swatches.brand }}
-                              />
-                            ) : null}
-                            <span className="text-xs font-medium">{option.roleLabel}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {BRAND_REASON[option.reason] ?? option.reason}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </fieldset>
-                ) : null}
-
                 <fieldset className="flex flex-col">
-                  <legend className="mb-2 text-sm font-medium">Palette</legend>
-                  <div className="grid gap-2 sm:grid-cols-3" data-testid="palette-row">
-                    {paletteOptions.map((option) => (
+                  <legend className="mb-2 text-sm font-medium">Brand</legend>
+                  <div className="flex flex-wrap gap-2" data-testid="brand-row">
+                    {brandColors.map((color) => (
                       <label
-                        key={option.id}
-                        className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
+                        key={color.id}
+                        className="cursor-pointer rounded-lg border-(length:--border-width) border-border bg-card p-2 has-checked:border-primary"
                       >
-                        <span className="flex items-center gap-2">
-                          <Input
-                            type="radio"
-                            name="palette"
-                            value={option.id}
-                            checked={activePalette?.id === option.id}
-                            onChange={() => setPaletteId(option.id)}
-                            className="h-4 w-4"
-                          />
-                          <span className="text-sm font-medium">{option.name}</span>
-                        </span>
-                        <SwatchStrip swatches={option.swatches} />
-                        <span className="text-xs text-muted-foreground">{option.reason}</span>
+                        <Input
+                          type="radio"
+                          name="brand"
+                          value={color.id}
+                          checked={brandColorId === color.id}
+                          onChange={() => setBrandColorId(color.id)}
+                          className="sr-only"
+                        />
+                        <span
+                          aria-hidden
+                          title={color.name}
+                          className="block h-8 w-16 rounded-md border border-border"
+                          style={{ backgroundColor: color.swatch }}
+                        />
                       </label>
                     ))}
                   </div>
+                </fieldset>
+
+                <fieldset className="flex flex-col">
+                  <legend className="mb-2 text-sm font-medium">Palette</legend>
+                  <div className="grid gap-2 sm:grid-cols-2" data-testid="palette-row">
+                    {usageOptions.map((option) => (
+                      <label
+                        key={option.id}
+                        className="cursor-pointer rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
+                      >
+                        <Input
+                          type="radio"
+                          name="palette"
+                          value={option.id}
+                          checked={activeUsage?.id === option.id}
+                          onChange={() => setUsageId(option.id)}
+                          className="sr-only"
+                        />
+                        <SwatchStrip swatches={option.swatches.light} />
+                      </label>
+                    ))}
+                  </div>
+                  {brandColorId ? (
+                    <button
+                      type="button"
+                      onClick={() => setBrandColorId("")}
+                      className="mt-2 w-fit text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+                    >
+                      Reset to generated palette
+                    </button>
+                  ) : null}
                 </fieldset>
               </div>
             ) : null}

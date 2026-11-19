@@ -51,7 +51,7 @@ export default async function DashboardHome({
       <CreationDock prefill={prefill} />
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-[-1] h-64 overflow-hidden opacity-60 [mask-image:linear-gradient(to_bottom,transparent,black_45%)] md:left-60"
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[-1] h-64 translate-y-[12%] overflow-hidden opacity-30 [mask-image:linear-gradient(to_bottom,transparent,black_35%)] md:left-60"
         style={{ filter: "brightness(0.9) saturate(1.3)" }}
       >
         <GradientBg
@@ -63,6 +63,15 @@ export default async function DashboardHome({
             width: "100%",
             height: "100%",
           }}
+        />
+        {/* Carves the top edge into a smile: the cover hangs lower in the
+            middle so the gradient's edges sweep up while the center dips
+            down in a rounded valley. Same color as the page, so it blends.
+            Overscanned past every edge and heavily blurred (not mask-feathered)
+            so no hard line survives where it meets the blurred aurora. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-[-25%] top-[-40px] h-[85%] bg-background blur-2xl [border-radius:0_0_50%_50%/0_0_100%_100%]"
         />
       </div>
     </main>

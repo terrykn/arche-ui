@@ -1,18 +1,22 @@
 /* global console */
 /**
  * Acceptance battery for the palette + brand picker (3 palette + up to 5
- * brand options on one step).
+ * Material 3 brand options on step 1).
  *
  * Deterministic: no model calls. The model is replaced by hand-authored DNA +
  * palette anchors, and the code path under test is schema → derive options →
  * fold the selection → compile → validate, with the network stubbed out.
  *
- * Covers: the brand row's option types and their reasons, the
- * distinctness/dedup gate (ΔH ≥ 30° OR ΔE₀₀ ≥ 15 OR ΔL ≥ 0.15), the
- * Verizon-style red-brand/ink-primary case, the monochrome collapse (C = 0,
- * no pink), enterprise brand exemption from the accent-collapse rule, AA on
- * every shown brand option in both modes (measured on emitted tokens), the
- * recorded draft fields, and the zero-model-call / determinism contract.
+ * Covers the eight acceptance criteria: (1) 3 + up-to-5 on one screen under
+ * one live preview, instant client-side re-skin, zero model calls;
+ * (2) the lede discloses only the dreamed choices are the model's answers;
+ * (3) the Verizon-style case (red dreamed, ink primary, muted secondary,
+ * tertiary distinct from both, neutral ink); (4) Material 3 derivation
+ * (tertiary = accent else +60/+120, secondary ≈ 0.45× chroma, ink C = 0);
+ * (5) monochrome collapses to one C = 0 option, no pink; (6) dedup hides
+ * Brand = Primary when the brand sits on primary (4 options, not 5);
+ * (7) AA on every shown brand option in both modes, measured on emitted
+ * tokens; (8) no regressions — the rest of the battery still passes.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -28,8 +32,11 @@ const require = createRequire(join(root, "package.json"));
 const {
   applyPickerDelta,
   brandDistinctness,
+  deriveBrandColors,
   deriveBrandOptions,
   derivePaletteOptions,
+  paletteFromBrand,
+  resolveBrandColor,
   validateIdentity,
 } = require("./dist/index.js");
 const { compileValidIdentity } = require("./dist/compiler.js");
@@ -54,6 +61,7 @@ function hueDist(a, b) {
   const d = Math.abs(((a - b) % 360 + 360) % 360);
   return Math.min(d, 360 - d);
 }
+/** Compile exactly like the service: the brand option's voice rides along. */
 const compile = (name, palette, axes = AXES, extra = {}) =>
   compileValidIdentity(
     {
@@ -66,38 +74,48 @@ const compile = (name, palette, axes = AXES, extra = {}) =>
     },
     validateIdentity,
   );
+const compileBrand = (name, palette, option, axes = AXES, extra = {}) =>
+  compile(name, { ...palette, brandHue: option.brandHue }, axes, {
+    ...extra,
+    brandChromaScale: option.chromaScale,
+  });
 
 // ---------------------------------------------------------------------------
-// 1. Row shape: three palettes, up to five brand options, all from one set
+// 1. Row shape: three palettes, up to five brand options, one screen
 // ---------------------------------------------------------------------------
 
-test("palette row keeps its 3 options; brand row offers 1–5, all hue-only", () => {
+test("palette derivation keeps 3 scheme options; the 5 brand usages ship in fixed order", () => {
   const palette = { primaryHue: 250, accentHue: 250, neutralHue: 250, brandHue: 5 };
   const palettes = derivePaletteOptions(palette);
   assert.equal(palettes.length, 3, "palette row is unchanged: exactly 3 options");
   const brands = deriveBrandOptions(palette);
-  assert.ok(brands.length >= 1 && brands.length <= 5, `brand row is 1–5 options (got ${brands.length})`);
-  assert.equal(brands[0].id, "as-dreamed");
-  assert.equal(brands[0].brandHue, 5, "As Generated is the model's own brandHue, untouched");
+  assert.deepEqual(
+    brands.map((o) => o.id),
+    ["as-dreamed", "brand-primary", "brand-secondary", "brand-tertiary", "brand-ink"],
+    "the five Material 3 slots ship in fixed order",
+  );
+  assert.deepEqual(
+    brands.map((o) => o.reason),
+    ["as-dreamed", "brand-equals-primary", "secondary-muted", "tertiary-rotated-60", "ink"],
+    "each slot records its reason (accent sat on primary, so tertiary rotates)",
+  );
+  assert.equal(brands[0].brandHue, 5, "As Dreamed is the model's own brandHue, untouched");
   for (const option of brands) {
     assert.ok(option.name && option.name !== String(option.brandHue), "evocative name, never a bare hue");
     assert.ok(option.roleLabel && option.roleLabel.length > 0, "each option carries its role label");
-    assert.ok(option.reason.length > 0, "each option records its reason");
     assert.ok(option.brandHue >= 0 && option.brandHue <= 360, "hue in range");
   }
   // The palette row's own anchors are never mutated by brand derivation.
   assert.deepEqual(palettes[0].anchors, { ...palette });
 });
 
-test("both rows differ only in the brand hue: the brand row never re-tints the system", async () => {
+test("both rows differ only in the mark color: the brand row never re-tints the system", async () => {
   const palette = { primaryHue: 250, accentHue: 250, neutralHue: 250, brandHue: 5 };
   const palettes = derivePaletteOptions(palette);
   const brands = deriveBrandOptions(palette);
   const chosenPalette = palettes.find((o) => o.id === "quiet-ground");
-  const result = await compile("t-bp-brand-only", {
-    ...chosenPalette.anchors,
-    brandHue: brands[brands.length - 1].brandHue,
-  });
+  const ink = brands.find((o) => o.id === "brand-ink");
+  const result = await compileBrand("t-bp-brand-only", chosenPalette.anchors, ink);
   const resultBare = await compile("t-bp-brand-only", chosenPalette.anchors);
   for (const token of ["--primary", "--accent", "--background", "--card", "--foreground", "--ring"]) {
     assert.equal(
@@ -110,7 +128,7 @@ test("both rows differ only in the brand hue: the brand row never re-tints the s
 });
 
 // ---------------------------------------------------------------------------
-// 2. Distinctness gate + dedup (ΔH, ΔE₀₀, ΔL)
+// Shared gate (spec: ΔH ≥ 30° OR ΔE₀₀ ≥ 15 OR ΔL ≥ 0.15)
 // ---------------------------------------------------------------------------
 
 test("distinctness gate: hue, CIEDE2000 and lightness are all measured", () => {
@@ -126,26 +144,35 @@ test("distinctness gate: hue, CIEDE2000 and lightness are all measured", () => {
   assert.equal(achromatic.distinct, false, "two grays are one color whatever the hue numbers");
 });
 
-test("verizon-style: red brand, ink primary, bold alternative distinct from both", async () => {
+// ---------------------------------------------------------------------------
+// 3. Verizon-style: red dreamed brand, ink primary, muted secondary,
+//    distinct tertiary, neutral ink
+// ---------------------------------------------------------------------------
+
+test("verizon-style: red brand, ink primary, muted secondary, distinct tertiary, ink", async () => {
   // 'bold red brand, black action buttons'
   const palette = { primaryHue: 250, accentHue: 250, neutralHue: 250, brandHue: 5 };
   const brands = deriveBrandOptions(palette);
+  assert.equal(brands.length, 5, "the verizon case offers all five brand colors");
   const dreamed = brands.find((o) => o.id === "as-dreamed");
   const primary = brands.find((o) => o.id === "brand-primary");
-  const bold = brands.find((o) => o.id === "bold-alternative");
-  assert.ok(dreamed && primary && bold, "the three named choices ship");
-  assert.equal(brands.length, 5, "the verizon case offers all five brand colors");
-  assert.equal(dreamed.brandHue, 5, "As Generated is the red brand");
+  const secondary = brands.find((o) => o.id === "brand-secondary");
+  const tertiary = brands.find((o) => o.id === "brand-tertiary");
+  const ink = brands.find((o) => o.id === "brand-ink");
+  assert.ok(dreamed && primary && secondary && tertiary && ink, "all five slots ship");
+  assert.equal(dreamed.brandHue, 5, "As Dreamed is the red brand");
   assert.equal(primary.brandHue, 250, "Brand = Primary is the ink/primary hue");
-  assert.ok(hueDist(bold.brandHue, 5) >= 30, "bold is distinct from the dreamed brand");
-  assert.ok(hueDist(bold.brandHue, 250) >= 30, "bold clears the gate against primary");
-  assert.ok(["bold-accentHue", "bold-rotated-60", "bold-rotated-120"].includes(bold.reason));
+  assert.equal(secondary.brandHue, 250, "Brand = Secondary shares the primary hue");
+  assert.ok(Math.abs(secondary.chromaScale - 0.45) < 1e-9, "secondary mutes to ~0.45× voice chroma");
+  assert.ok(hueDist(tertiary.brandHue, 5) >= 30, "tertiary is distinct from the dreamed brand");
+  assert.ok(hueDist(tertiary.brandHue, 250) >= 30, "tertiary clears the gate against primary");
+  assert.equal(ink.chromaScale, 0, "ink carries no chroma");
+  assert.equal(ink.brandHue, 250, "ink's hue anchor rests on primary");
   // Emitted values agree with the choices, and each ships AA in both modes.
+  const emitted = {};
   for (const option of brands) {
-    const compiled = await compile(`t-bp-verizon-${option.id}`, {
-      ...palette,
-      brandHue: option.brandHue,
-    });
+    const compiled = await compileBrand(`t-bp-verizon-${option.id}`, palette, option);
+    emitted[option.id] = compiled;
     const set = compiled.tokens.light;
     assert.ok(hueDist(oklch(set["--brand"].$value).h, option.brandHue) <= 2, `${option.id}: emitted brand hue`);
     assert.ok(hueDist(oklch(set["--primary"].$value).h, 250) <= 2, `${option.id}: primary stays the ink hue`);
@@ -155,40 +182,68 @@ test("verizon-style: red brand, ink primary, bold alternative distinct from both
       assert.ok(ratio >= 4.5, `${option.id} ${mode}: brand text passes AA (${ratio.toFixed(2)})`);
     }
   }
-});
-
-test("dedup: a generation whose brand sits on primary shows 4 brand options", () => {
-  const brands = deriveBrandOptions({ primaryHue: 210, accentHue: 20, neutralHue: 210, brandHue: 214 });
-  assert.equal(brands.length, 4, "Brand = Primary is hidden instead of shown identical");
-  assert.ok(!brands.some((o) => o.id === "brand-primary"), "no duplicate of As Generated");
-  const hues = brands.map((o) => o.brandHue);
-  assert.equal(new Set(hues).size, hues.length, "no two options share a hue");
-});
-
-test("bold falls back to +60 then +120 when the accent collapses onto primary", () => {
-  // Accent 10° is inside 30° of primary 0°, dreamed+60 lands exactly on
-  // primary, so only dreamed+120 clears the gate.
-  const brands = deriveBrandOptions({ primaryHue: 0, accentHue: 10, neutralHue: 0, brandHue: 300 });
-  const bold = brands.find((o) => o.id === "bold-alternative");
-  assert.ok(bold, "a bold option still ships");
-  assert.equal(bold.reason, "bold-rotated-120");
-  assert.equal(bold.brandHue, 60);
-  // Accent clear of primary is used directly.
-  const accentWins = deriveBrandOptions({ primaryHue: 210, accentHue: 100, neutralHue: 210, brandHue: 210 });
-  const accentBold = accentWins.find((o) => o.id === "bold-alternative");
-  assert.equal(accentBold.reason, "bold-accentHue");
-  assert.equal(accentBold.brandHue, 100);
+  // Material 3 relations hold on emitted values: secondary is the primary
+  // hue at ~0.45× chroma, ink is C = 0 on every brand role.
+  const primaryBrand = oklch(emitted["brand-primary"].tokens.light["--brand"].$value);
+  const secondaryBrand = oklch(emitted["brand-secondary"].tokens.light["--brand"].$value);
+  assert.ok(hueDist(secondaryBrand.h, primaryBrand.h) <= 2, "secondary shares the primary hue");
+  assert.ok(
+    Math.abs(secondaryBrand.c / primaryBrand.c - 0.45) < 0.05,
+    `secondary emits ~0.45× chroma (got ${(secondaryBrand.c / primaryBrand.c).toFixed(3)})`,
+  );
+  for (const mode of ["light", "dark"]) {
+    for (const token of ["--brand", "--brand-foreground", "--brand-soft"]) {
+      assert.equal(
+        oklch(emitted["brand-ink"].tokens[mode][token].$value).c,
+        0,
+        `ink ${mode}.${token} is C = 0`,
+      );
+    }
+  }
 });
 
 // ---------------------------------------------------------------------------
-// 3. Monochrome: every option is C = 0, no pink
+// 4. Material 3 derivation: tertiary cascade, secondary voice, ink
+// ---------------------------------------------------------------------------
+
+test("tertiary takes the accent when it clears the gate, else +60, else +120", () => {
+  // Accent 10° sits inside 30° of primary 0° and dreamed+60 is primary, so
+  // the cascade lands on primary + 60°.
+  const brands = deriveBrandOptions({ primaryHue: 0, accentHue: 10, neutralHue: 0, brandHue: 300 });
+  const tertiary = brands.find((o) => o.id === "brand-tertiary");
+  assert.ok(tertiary, "a tertiary option still ships");
+  assert.equal(tertiary.reason, "tertiary-rotated-60");
+  assert.equal(tertiary.brandHue, 60);
+  // Accent clear of primary is used directly.
+  const accentWins = deriveBrandOptions({ primaryHue: 210, accentHue: 100, neutralHue: 210, brandHue: 210 });
+  const accentTertiary = accentWins.find((o) => o.id === "brand-tertiary");
+  assert.equal(accentTertiary.reason, "tertiary-accentHue");
+  assert.equal(accentTertiary.brandHue, 100);
+});
+
+// ---------------------------------------------------------------------------
+// 6. Dedup: brand on primary hides Brand = Primary (4 options, not 5)
+// ---------------------------------------------------------------------------
+
+test("dedup: a generation whose brand sits on primary shows 4 brand options", () => {
+  const brands = deriveBrandOptions({ primaryHue: 210, accentHue: 20, neutralHue: 210, brandHue: 214 });
+  assert.deepEqual(
+    brands.map((o) => o.id),
+    ["as-dreamed", "brand-secondary", "brand-tertiary", "brand-ink"],
+    "Brand = Primary is hidden instead of shown identical; the muted mark survives by chroma",
+  );
+  assert.equal(brands.find((o) => o.id === "brand-tertiary").reason, "tertiary-accentHue");
+});
+
+// ---------------------------------------------------------------------------
+// 5. Monochrome: every option is C = 0, no pink
 // ---------------------------------------------------------------------------
 
 test("monochrome brief: every brand option emits C = 0 and the hues collapse", async () => {
   const palette = { primaryHue: 220, accentHue: 222, neutralHue: 221, brandHue: 0 };
   const constraints = { chromaCap: 0.02, hueSpreadMax: 10 };
   const brands = deriveBrandOptions(palette, { achromatic: true });
-  assert.equal(brands.length, 1, "hue-only options collapse to one gray: only As Generated ships");
+  assert.equal(brands.length, 1, "hue-only options collapse to one gray: only As Dreamed ships");
   for (const option of brands) {
     const compiled = await compile(
       `t-bp-mono-${option.id}`,
@@ -209,20 +264,24 @@ test("monochrome brief: every brand option emits C = 0 and the hues collapse", a
 });
 
 // ---------------------------------------------------------------------------
-// 4. Enterprise: brand stays exempt from the accent-collapse rule
+// Enterprise: brand stays exempt from the accent-collapse rule
 // ---------------------------------------------------------------------------
 
 test("enterprise: brand keeps its own hue while the accent collapses to primary", async () => {
   const enterpriseAxes = { ...AXES, formality: 0.85, chroma: 0.3 };
   const palette = { primaryHue: 250, accentHue: 200, neutralHue: 250, brandHue: 5 };
   const brands = deriveBrandOptions(palette, { profile: "enterprise" });
-  const bold = brands.find((o) => o.id === "bold-alternative");
-  assert.ok(bold, "enterprise still offers a bold mark");
-  assert.ok(bold.reason !== "bold-accentHue", "enterprise has no accent family to borrow from");
+  const tertiary = brands.find((o) => o.id === "brand-tertiary");
+  assert.ok(tertiary, "enterprise still offers a tertiary mark");
+  assert.ok(tertiary.reason !== "tertiary-accentHue", "enterprise has no accent family to borrow from");
+  assert.equal(tertiary.reason, "tertiary-rotated-60");
+  const secondary = brands.find((o) => o.id === "brand-secondary");
+  assert.equal(secondary.reason, "secondary-muted");
   for (const option of brands) {
-    const compiled = await compile(
+    const compiled = await compileBrand(
       `t-bp-enterprise-${option.id}`,
-      { ...palette, brandHue: option.brandHue },
+      palette,
+      option,
       enterpriseAxes,
     );
     assert.equal(compiled.dna.profile, "enterprise");
@@ -230,24 +289,30 @@ test("enterprise: brand keeps its own hue while the accent collapses to primary"
     const accent = oklch(compiled.tokens.light["--accent"].$value);
     const primary = oklch(compiled.tokens.light["--primary"].$value);
     // The brand is exempt from the accent-collapse rule: it keeps the chosen
-    // hue exactly (Brand = Primary is the one option that lands on primary).
+    // hue exactly (primary/secondary/ink share the primary hue by design).
     assert.ok(hueDist(brand.h, option.brandHue) <= 2, `${option.id}: the brand hue is used exactly as chosen`);
-    if (option.id !== "brand-primary") {
+    if (option.id === "as-dreamed" || option.id === "brand-tertiary") {
       assert.ok(hueDist(brand.h, primary.h) > 25, `${option.id}: the brand is not collapsed into primary`);
+    }
+    if (option.id === "brand-secondary") {
+      assert.ok(
+        Math.abs(brand.c / primary.c - 0.45) < 0.05,
+        `${option.id}: the muted mark emits ~0.45× chroma`,
+      );
     }
     assert.ok(hueDist(accent.h, primary.h) <= 1, `${option.id}: the accent family is collapsed`);
   }
 });
 
 // ---------------------------------------------------------------------------
-// 5. AA across a hue sweep, measured on emitted tokens (both modes)
+// 7. AA across a hue sweep, measured on emitted tokens (both modes)
 // ---------------------------------------------------------------------------
 
 test("every shown brand option passes 4.5:1 for its foreground, light and dark", async () => {
   for (const hue of [0, 25, 55, 100, 120, 180, 210, 250, 300, 340]) {
     const palette = { primaryHue: (hue + 140) % 360, accentHue: (hue + 200) % 360, neutralHue: 220, brandHue: hue };
     for (const option of deriveBrandOptions(palette)) {
-      const compiled = await compile(`t-bp-aa-${hue}-${option.id}`, { ...palette, brandHue: option.brandHue });
+      const compiled = await compileBrand(`t-bp-aa-${hue}-${option.id}`, palette, option);
       for (const mode of ["light", "dark"]) {
         const tokens = compiled.tokens[mode];
         const solidPair = contrastRatio(
@@ -266,7 +331,7 @@ test("every shown brand option passes 4.5:1 for its foreground, light and dark",
 });
 
 // ---------------------------------------------------------------------------
-// 6. Recording + determinism + zero model calls
+// Recording + determinism + zero model calls
 // ---------------------------------------------------------------------------
 
 test("the draft records both choices, the resulting brand hue and each reason", async () => {
@@ -274,7 +339,7 @@ test("the draft records both choices, the resulting brand hue and each reason", 
   const palettes = derivePaletteOptions(palette);
   const brands = deriveBrandOptions(palette);
   const paletteChoice = palettes.find((o) => o.id === "quiet-ground");
-  const brandChoice = brands.find((o) => o.id === "brand-primary");
+  const brandChoice = brands.find((o) => o.id === "brand-secondary");
   const applied = applyPickerDelta(
     AXES,
     palette,
@@ -284,7 +349,7 @@ test("the draft records both choices, the resulting brand hue and each reason", 
   );
   assert.equal(applied.anchors.brandHue, brandChoice.brandHue, "brand row owns brandHue alone");
   assert.equal(applied.anchors.primaryHue, paletteChoice.anchors.primaryHue, "palette row owns the system");
-  const compiled = await compile("t-bp-record", applied.anchors, { ...AXES, ...applied.axes });
+  const compiled = await compileBrand("t-bp-record", applied.anchors, brandChoice, { ...AXES, ...applied.axes });
   assert.equal(compiled.dna.palette.brandHue, brandChoice.brandHue, "compiled DNA carries the chosen hue");
   assert.equal(compiled.meta.brand.hue, brandChoice.brandHue, "the brand record agrees");
   // Recording shape the draft/log writes (reasons are stable ids).
@@ -302,7 +367,11 @@ test("the draft records both choices, the resulting brand hue and each reason", 
     "paletteChoiceId",
     "paletteReason",
   ]);
-  assert.equal(record.brandReason, "brand-equals-primary");
+  assert.equal(record.brandReason, "secondary-muted");
+  assert.ok(
+    hueDist(oklch(compiled.tokens.light["--brand"].$value).h, 250) <= 2,
+    "the muted mark compiles on the primary hue",
+  );
 });
 
 let fetchCalls = 0;
@@ -325,48 +394,62 @@ test("option derivation is pure: same palette → same options, any order of use
   // Fold order never changes the outcome: brand then palette == palette then brand.
   const palettes = derivePaletteOptions(palette);
   const brands = deriveBrandOptions(palette);
-  const a = applyPickerDelta(AXES, palette, { chipIds: [], paletteId: "surprising", brandId: "bold-alternative" }, palettes, brands);
-  const b = applyPickerDelta(AXES, palette, { chipIds: [], brandId: "bold-alternative", paletteId: "surprising" }, palettes, brands);
+  const a = applyPickerDelta(AXES, palette, { chipIds: [], paletteId: "surprising", brandId: "brand-secondary" }, palettes, brands);
+  const b = applyPickerDelta(AXES, palette, { chipIds: [], brandId: "brand-secondary", paletteId: "surprising" }, palettes, brands);
   assert.deepEqual(a, b);
 });
 
 // ---------------------------------------------------------------------------
-// 7. Step UI: one step, two rows, one shared live preview
+// Step UI: one step, two rows, one shared live preview
 // ---------------------------------------------------------------------------
 
-test("the picker step renders both rows on one screen under one live preview", () => {
+test("the picker step renders brand then palette on one screen under one live preview", () => {
   const dock = readFileSync(join(repoRoot, "apps", "web", "app", "dashboard", "creation-dock.tsx"), "utf8");
   assert.ok(dock.includes('data-testid="live-preview"'), "one shared live preview");
-  assert.ok(dock.includes('data-testid="brand-row"'), "row 1: brand");
-  assert.ok(dock.includes('data-testid="palette-row"'), "row 2: palette");
+  assert.ok(dock.includes('data-testid="palette-row"'), "palette row exists");
+  assert.ok(dock.includes('data-testid="brand-row"'), "brand row exists");
   assert.ok(
     dock.indexOf('data-testid="brand-row"') < dock.indexOf('data-testid="palette-row"'),
-    "the brand section renders before the palette section",
+    "the brand section renders above the palette section",
   );
-  assert.equal(
-    (dock.match(/<MiniSystemPreview/g) ?? []).length >= 1,
-    true,
-    "the shared live preview uses the mini component",
+  // Both rows are color choices only, with no names: the palette row strips
+  // the usage's emitted colors, the brand row shows one swatch per option.
+  // The composed mini component belongs to the shared live preview above
+  // them, which is what the pick is judged on.
+  const brandRow = dock.slice(
+    dock.indexOf('data-testid="brand-row"'),
+    dock.indexOf('data-testid="palette-row"'),
   );
-  assert.ok(
-    dock.includes('data-testid="palette-swatches"'),
-    "the palette row previews plain color swatches, not the composed UI",
-  );
-  assert.ok(
-    dock.includes('data-testid="brand-swatch"'),
-    "the brand row previews its single brand color",
-  );
-  assert.ok(/>Brand</.test(dock), "row 1 is labeled Brand");
-  assert.ok(/>Palette</.test(dock), "row 2 is labeled Palette");
+  const paletteRow = dock.slice(dock.indexOf('data-testid="palette-row"'));
+  assert.ok(paletteRow.includes("SwatchStrip"), "palette options are plain color strips");
+  assert.ok(!paletteRow.includes("MiniSystemPreview"), "the palette row composes nothing");
+  assert.ok(!brandRow.includes("MiniSystemPreview"), "the brand row composes nothing");
+  assert.ok(brandRow.includes("backgroundColor: color.swatch"), "brand options are one swatch each");
+  assert.ok(/>Brand</.test(dock), "brand section is labeled Brand");
+  assert.ok(/>Palette</.test(dock), "palette section is labeled Palette");
   const mini = readFileSync(join(repoRoot, "apps", "web", "components", "mini-system-preview.tsx"), "utf8");
   for (const marker of ["Acme", "seat", "Reserve", "About Us", "Limited Time Deal", "20% off", "Check availability"]) {
     assert.ok(mini.includes(marker), `mini component shows ${marker} (wordmark, focal word, buttons, brand deal card)`);
   }
   assert.ok(!mini.includes(">New<"), "mini component has no New badge");
   assert.ok(!mini.includes("preview-role-key"), "mini component does not list a color key");
-  // Selecting in either row only moves local state: no action round-trip.
-  assert.ok(dock.includes("onChange={() => setPaletteId(option.id)}"), "palette row re-skins client-side");
-  assert.ok(dock.includes("onChange={() => setBrandId(option.id)}"), "brand row re-skins client-side");
+  // No prompt-lede under the step: the rows are nameless colors and the
+  // live preview above is what the pick is judged on.
+  assert.ok(!/how the brand is used/i.test(dock), "no palette explainer under the prompt");
+  // Bound each row to its own fieldset: the typeface step below legitimately
+  // renders names, so an unbounded slice would false-positive.
+  const paletteField = paletteRow.slice(0, paletteRow.indexOf("</fieldset>"));
+  assert.ok(!paletteField.includes("{option.roleLabel}"), "palette options show no usage names");
+  assert.ok(!paletteField.includes("{option.name}"), "palette options show no color names");
+  assert.ok(!paletteField.includes("{option.reason}"), "palette options show no reason text");
+  assert.ok(!brandRow.includes(">{color.name}<"), "brand options render no name text");
+  // Every brand's palette row ships precalculated with the preview, so the
+  // brand pick is an instant tab-switch — no fetch, no waiting.
+  assert.ok(dock.includes("brandPalettes"), "brand rows are precalculated, not fetched");
+  assert.ok(!dock.includes("brandPending"), "no loading state between brand and palettes");
+  assert.ok(!dock.includes("Rebuilding palettes"), "no rebuilding note — it is instant");
+  assert.ok(dock.includes("onChange={() => setBrandColorId(color.id)}"), "brand pick moves local state only");
+  assert.ok(dock.includes("onChange={() => setUsageId(option.id)}"), "palette row re-skins client-side");
   // Generating shows the shared full-screen loader, never the picker modal.
   assert.ok(dock.includes("GeneratingLoader"), "generating shows the shared loader");
   assert.ok(dock.includes('phase !== "generating"'), "picker modal stays closed while generating");
@@ -382,10 +465,7 @@ test("every brand option ships an AA-verified preview for every palette option",
   const palettes = derivePaletteOptions(palette);
   for (const brand of deriveBrandOptions(palette)) {
     for (const paletteOption of palettes) {
-      const compiled = await compile(`t-bp-matrix-${brand.id}-${paletteOption.id}`, {
-        ...paletteOption.anchors,
-        brandHue: brand.brandHue,
-      });
+      const compiled = await compileBrand(`t-bp-matrix-${brand.id}-${paletteOption.id}`, paletteOption.anchors, brand);
       const ratio = contrastRatio(
         String(compiled.tokens.light["--brand-foreground"].$value),
         String(compiled.tokens.light["--brand"].$value),
@@ -394,4 +474,108 @@ test("every brand option ships an AA-verified preview for every palette option",
     }
   }
   console.log("brand × palette preview matrix: all pairings gated by AA");
+});
+
+// ---------------------------------------------------------------------------
+// Static brand: five fixed colors; picking one rebuilds the palettes
+// ---------------------------------------------------------------------------
+
+test("the brand row is exactly five fixed colors, independent of any generation", () => {
+  const colors = deriveBrandColors();
+  assert.deepEqual(
+    colors.map((color) => color.id),
+    ["brand-crimson", "brand-amber", "brand-jade", "brand-azure", "brand-violet"],
+    "five fixed options in wheel order",
+  );
+  assert.deepEqual(
+    colors.map((color) => color.brandHue),
+    [15, 55, 160, 225, 290],
+    "the hues are fixed, never derived",
+  );
+  for (const color of colors) {
+    assert.ok(color.name && !/^\d/.test(color.name), "fixed evocative name, never a bare hue");
+  }
+  assert.deepEqual(deriveBrandColors(), colors, "no palette in, same row out � independent by construction");
+  assert.equal(resolveBrandColor("brand-jade")?.brandHue, 160, "known ids resolve");
+  assert.equal(resolveBrandColor("tertiary"), undefined, "generation-derived ids no longer resolve");
+  assert.equal(resolveBrandColor(undefined), undefined, "absent stays absent");
+});
+
+test("paletteFromBrand calculates the whole system from the single brand hue", () => {
+  assert.deepEqual(
+    paletteFromBrand(15),
+    { primaryHue: 15, accentHue: 75, neutralHue: 15, brandHue: 15 },
+    "primary/neutral/mark on the hue, accent a static +60� away",
+  );
+  assert.deepEqual(
+    paletteFromBrand(330),
+    { primaryHue: 330, accentHue: 30, neutralHue: 330, brandHue: 330 },
+    "the accent wraps around the wheel",
+  );
+});
+
+test("a picked brand color re-bases the anchors on its static palette", () => {
+  const palette = { primaryHue: 250, accentHue: 250, neutralHue: 250, brandHue: 5 };
+  const plain = applyPickerDelta(AXES, palette, { chipIds: [], paletteId: "as-dreamed" });
+  assert.deepEqual(plain.anchors, palette, "no brand picked: the generation's own anchors stand");
+  const based = applyPickerDelta(AXES, palette, {
+    chipIds: [],
+    paletteId: "as-dreamed",
+    brandColorId: "brand-jade",
+  });
+  assert.deepEqual(
+    based.anchors,
+    { primaryHue: 160, accentHue: 220, neutralHue: 160, brandHue: 160 },
+    "the brand color's static palette wins over the generation",
+  );
+  assert.deepEqual(based.axes, plain.axes, "the brand never touches the axes");
+  // The usage still applies within the brand-derived system: tertiary pins
+  // the mark to the static accent while the system stays on the brand hue.
+  // (Callers pass usages derived from the same brand base — the service
+  // re-derives them for finish and recompile, exactly like the preview.)
+  const tertiary = applyPickerDelta(
+    AXES,
+    palette,
+    {
+      chipIds: [],
+      paletteId: "as-dreamed",
+      brandId: "brand-tertiary",
+      brandColorId: "brand-jade",
+    },
+    derivePaletteOptions(palette),
+    deriveBrandOptions(paletteFromBrand(160)),
+  );
+  assert.equal(tertiary.anchors.brandHue, 220, "usage pins the hue inside the brand palette");
+  assert.equal(tertiary.anchors.primaryHue, 160, "the system stays on the brand hue");
+  // An unknown brand id is ignored, never trusted.
+  const bogus = applyPickerDelta(AXES, palette, {
+    chipIds: [],
+    paletteId: "as-dreamed",
+    brandColorId: "not-a-color",
+  });
+  assert.deepEqual(bogus.anchors, palette, "unknown brand ids fall back to the generation");
+});
+
+test("the emitted mark follows the picked brand through the usage's voice", async () => {
+  const palette = { primaryHue: 250, accentHue: 250, neutralHue: 250, brandHue: 5 };
+  const brands = deriveBrandOptions(paletteFromBrand(160));
+  const muted = brands.find((o) => o.id === "brand-secondary");
+  const folded = applyPickerDelta(
+    AXES,
+    palette,
+    { chipIds: [], paletteId: "as-dreamed", brandId: "brand-secondary", brandColorId: "brand-jade" },
+    derivePaletteOptions(palette),
+    brands,
+  );
+  const emitted = await compile("t-bp-brand-wins", folded.anchors, AXES, {
+    brandChromaScale: muted.chromaScale,
+  });
+  assert.ok(
+    hueDist(oklch(emitted.tokens.light["--brand"].$value).h, 160) <= 2,
+    "the emitted hue is the picked brand color",
+  );
+  assert.ok(
+    hueDist(oklch(emitted.tokens.light["--primary"].$value).h, 160) <= 2,
+    "the system sits on the brand hue, not the generation's",
+  );
 });

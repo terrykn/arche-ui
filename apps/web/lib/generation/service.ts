@@ -6,8 +6,11 @@ import {
 import {
   applyPickerDelta,
   constraintSlots,
+  deriveBrandColors,
   deriveBrandOptions,
   derivePaletteOptions,
+  paletteFromBrand,
+  resolveBrandColor,
   deriveProfile,
   designRulesVersion,
   EXAMPLE_RECORDS,
@@ -403,27 +406,41 @@ export interface PalettePreviewOption {
   swatches: PalettePreviewSwatches;
 }
 
-/** Brand-row option: emitted values per palette option, both modes. */
+/** Emitted values for one compiled option, both modes. */
 export interface BrandSwatchSet {
   light: PalettePreviewSwatches;
   dark: PalettePreviewSwatches;
 }
 
-export interface BrandPreviewOption {
+/**
+ * Palette-row option: HOW the brand is used. One compiled system per usage,
+ * emitted values only — the row renders plain color strips, never a composed
+ * component preview.
+ */
+export interface UsagePreviewOption {
   id: string;
   /** Evocative color name of the emitted brand solid (naming table). */
   name: string;
-  /** Role label: As Dreamed | Brand = Primary | Bold Alternative. */
+  /** Usage label: As Dreamed | On Primary | Muted | Tertiary | Ink. */
   roleLabel: string;
-  /** Recorded reason, e.g. bold-accentHue / bold-rotated-60. */
+  /** Recorded reason, e.g. secondary-muted / tertiary-accentHue / ink. */
   reason: string;
   brandHue: number;
-  /**
-   * Keyed by palette option id. A pairing is listed only when its emitted
-   * brand pair passes AA in BOTH modes — a brand that cannot pass in a mode
-   * does not ship (the compiler never emits a failing foreground).
-   */
-  combinations: Record<string, BrandSwatchSet>;
+  swatches: BrandSwatchSet;
+}
+
+/**
+ * Brand-row option: ONE static color and nothing else. The five options are
+ * fixed and independent of the generation; picking one rebuilds the palette
+ * row from that single hue (paletteFromBrand), so the color drives the
+ * palettes.
+ */
+export interface BrandColorPreviewOption {
+  id: string;
+  name: string;
+  brandHue: number;
+  /** Emitted --brand at this hue and full voice (light mode) — the swatch. */
+  swatch: string;
 }
 
 export interface TypefacePreviewFace {
@@ -449,8 +466,23 @@ export interface GenerationPreview {
   constraints: PromptConstraints;
   slots: string[];
   paletteOptions: PalettePreviewOption[];
-  /** Independent brand-only row: up to five options, same single call. */
-  brandOptions: BrandPreviewOption[];
+  /**
+   * Palette row: up to five Material 3 brand usages (as dreamed, on primary,
+   * muted secondary, tertiary, ink), same single call. Rendered as colors.
+   */
+  usageOptions: UsagePreviewOption[];
+  /**
+   * Brand row: five static colors, independent of the generation — a single
+   * color selection, nothing composed. Picking one rebuilds the palette
+   * row from that hue.
+   */
+  brandColors: BrandColorPreviewOption[];
+  /**
+   * Precalculated palette rows, one per static brand color: switching brand
+   * is an instant tab-switch, never a fetch. Same compile as the main row,
+   * over each color's static palette — still zero model calls.
+   */
+  brandPalettes: Record<string, UsagePreviewOption[]>;
   typeOptions: TypefacePreviewOption[];
 }
 
@@ -551,64 +583,118 @@ function achromaticBrief(
 }
 
 /**
- * Compile each brand-only option against each palette option so the picker's
- * live preview shows real emitted values (never illustrative fills), and a
- * pairing that cannot pass AA in a mode never ships: the brand pair is
- * measured on the actual emitted solid + foreground, both modes.
+ * Compile each brand usage once so the palette row shows real emitted values
+ * (never illustrative fills). A usage whose emitted brand pair cannot pass AA
+ * in BOTH modes does not ship — the compiler never emits a failing foreground.
  */
-async function previewBrandOptions(args: {
+async function previewUsageOptions(args: {
   name: string;
   source: { type: "phrase"; promptText: string };
   axes: DnaObject;
   palette: DnaPalette;
-  paletteOptions: PalettePreviewOption[];
   profile: GenerationProfile;
   constraints: PromptConstraints;
   base: ArcheIdentity;
   achromatic: boolean;
-}): Promise<BrandPreviewOption[]> {
-  const options = deriveBrandOptions(args.palette, {
-    profile: args.profile,
-    achromatic: args.achromatic,
-  });
-  const out: BrandPreviewOption[] = [];
+}): Promise<UsagePreviewOption[]> {
+  return compileUsageOptions({ ...args, basePalette: args.palette });
+}
+
+/**
+ * Compile one usage set from an explicit base palette. The generation's own
+ * row uses the dreamed palette; a picked brand color re-runs the same
+ * compile over its static palette (paletteFromBrand), so selecting a brand
+ * rebuilds the palette row from that single hue — same code, same gates.
+ */
+async function compileUsageOptions(args: {
+  name: string;
+  source: { type: "phrase"; promptText: string };
+  axes: DnaObject;
+  basePalette: DnaPalette;
+  profile: GenerationProfile;
+  constraints: PromptConstraints;
+  base: ArcheIdentity;
+  achromatic: boolean;
+}): Promise<UsagePreviewOption[]> {
+  const context = { profile: args.profile, achromatic: args.achromatic };
+  const options = deriveBrandOptions(args.basePalette, context);
+  const out: UsagePreviewOption[] = [];
   for (const option of options) {
-    const combinations: Record<string, BrandSwatchSet> = {};
-    for (const paletteOption of args.paletteOptions) {
-      const palette: DnaPalette = { ...paletteOption.anchors, brandHue: option.brandHue };
-      try {
-        const compiled = await compileValidIdentity(
-          {
-            name: args.name,
-            source: args.source,
-            axes: args.axes,
-            palette,
-            profile: args.profile,
-            base: args.base,
-            constraints: args.constraints,
-          },
-          validateIdentity,
-        );
-        const light = swatchesFor(compiled, "light");
-        const dark = swatchesFor(compiled, "dark");
-        const lightOk = contrastRatio(light.onBrand, light.brand) >= 4.5;
-        const darkOk = contrastRatio(dark.onBrand, dark.brand) >= 4.5;
-        if (lightOk && darkOk) combinations[paletteOption.id] = { light, dark };
-      } catch {
-        // A pairing the gate rejects cannot ship; the option stays absent here.
-      }
+    try {
+      const compiled = await compileValidIdentity(
+        {
+          name: args.name,
+          source: args.source,
+          axes: args.axes,
+          // The usage pins the hue within the base palette.
+          palette: { ...args.basePalette, brandHue: option.brandHue },
+          profile: args.profile,
+          base: args.base,
+          constraints: args.constraints,
+          // The mark renders at the usage's voice: muted and neutral ink
+          // compile their own solids (AA-gated below).
+          brandChromaScale: option.chromaScale,
+        },
+        validateIdentity,
+      );
+      const light = swatchesFor(compiled, "light");
+      const dark = swatchesFor(compiled, "dark");
+      const lightOk = contrastRatio(light.onBrand, light.brand) >= 4.5;
+      const darkOk = contrastRatio(dark.onBrand, dark.brand) >= 4.5;
+      if (!lightOk || !darkOk) continue;
+      out.push({
+        id: option.id,
+        name: nameColor(light.brand),
+        roleLabel: option.roleLabel,
+        reason: option.reason,
+        brandHue: option.brandHue,
+        swatches: { light, dark },
+      });
+    } catch {
+      // A usage the gate rejects cannot ship; it stays out of the row.
     }
-    if (Object.keys(combinations).length === 0) continue;
-    const first =
-      combinations[args.paletteOptions[0]?.id ?? ""] ?? Object.values(combinations)[0]!;
-    out.push({
-      id: option.id,
-      name: nameColor(first.light.brand),
-      roleLabel: option.roleLabel,
-      reason: option.reason,
-      brandHue: option.brandHue,
-      combinations,
-    });
+  }
+  return out;
+}
+
+
+
+/**
+ * Compile the five static brand colors at full voice so the row shows real
+ * emitted values: each option carries exactly one emitted --brand. Fixed
+ * and independent of the generation — the same five hues every time.
+ */
+async function previewBrandColors(args: {
+  name: string;
+  source: { type: "phrase"; promptText: string };
+  axes: DnaObject;
+  palette: DnaPalette;
+  profile: GenerationProfile;
+  constraints: PromptConstraints;
+  base: ArcheIdentity;
+  achromatic: boolean;
+}): Promise<BrandColorPreviewOption[]> {
+  const colors = deriveBrandColors();
+  const out: BrandColorPreviewOption[] = [];
+  for (const color of colors) {
+    try {
+      const compiled = await compileValidIdentity(
+        {
+          name: args.name,
+          source: args.source,
+          axes: args.axes,
+          palette: { ...args.palette, brandHue: color.brandHue },
+          profile: args.profile,
+          base: args.base,
+          constraints: args.constraints,
+        },
+        validateIdentity,
+      );
+      const brand = swatchesFor(compiled, "light").brand;
+      out.push({ id: color.id, name: color.name, brandHue: color.brandHue, swatch: brand });
+    } catch {
+      // A color the compiler rejects cannot be offered.
+    }
   }
   return out;
 }
@@ -667,19 +753,44 @@ export async function previewGeneration(userId: string, prompt: string): Promise
       base: auroraBase(),
       constraints,
     });
-    // Brand row (palette + brand picker): independent of the palette row,
-    // derived from the same single call — no extra model call, ever.
-    const brandOptions = await previewBrandOptions({
+    // Two rows from the same single call, no extra model call, ever: the
+    // palette row offers the brand usages, the brand row the colors.
+    const usageOptions = await previewUsageOptions({
       name: identityName,
       source: { type: "phrase", promptText: trimmed.slice(0, 120) },
       axes: call.output.axes,
       palette: call.output.palette,
-      paletteOptions,
       profile: derived,
       constraints,
       base: auroraBase(),
       achromatic: achromaticBrief(call.output.axes, call.output.palette, constraints),
     });
+    const brandColors = await previewBrandColors({
+      name: identityName,
+      source: { type: "phrase", promptText: trimmed.slice(0, 120) },
+      axes: call.output.axes,
+      palette: call.output.palette,
+      profile: derived,
+      constraints,
+      base: auroraBase(),
+      achromatic: achromaticBrief(call.output.axes, call.output.palette, constraints),
+    });
+    // Precalculate every brand's palette row up front, so switching brand
+    // is an instant tab-switch: no fetch, no waiting, still zero model
+    // calls — the same usage compile over each static brand palette.
+    const brandPalettes: Record<string, UsagePreviewOption[]> = {};
+    for (const color of deriveBrandColors()) {
+      brandPalettes[color.id] = await compileUsageOptions({
+        name: identityName,
+        source: { type: "phrase", promptText: trimmed.slice(0, 120) },
+        axes: call.output.axes,
+        basePalette: paletteFromBrand(color.brandHue),
+        profile: derived,
+        constraints,
+        base: auroraBase(),
+        achromatic: achromaticBrief(call.output.axes, call.output.palette, constraints),
+      });
+    }
     const typeOptions = previewTypefaceOptions(typefaceVariants, compilerPick);
     // Brand Token brief: the understood brand rides with the slots, and a
     // missing brandHue defaults to the primary hue — recorded, not silent.
@@ -700,13 +811,14 @@ export async function previewGeneration(userId: string, prompt: string): Promise
         slots,
         brandDefaulted,
         paletteVariants: paletteVariants.map((v) => ({ id: v.id, name: v.name, anchors: v.anchors })),
-        brandVariants: brandOptions.map((v) => ({
+        brandVariants: usageOptions.map((v) => ({
           id: v.id,
           name: v.name,
           roleLabel: v.roleLabel,
           brandHue: v.brandHue,
           reason: v.reason,
         })),
+        brandColors: brandColors.map((v) => ({ id: v.id, name: v.name, brandHue: v.brandHue })),
         typefaceVariants: typefaceVariants.map((v) => ({ id: v.id, name: v.name, display: v.display, body: v.body })),
       },
       model: call.model,
@@ -722,7 +834,9 @@ export async function previewGeneration(userId: string, prompt: string): Promise
       constraints,
       slots,
       paletteOptions,
-      brandOptions,
+      usageOptions,
+      brandColors,
+      brandPalettes,
       typeOptions,
     };
   } catch (err) {
@@ -740,9 +854,12 @@ export async function previewGeneration(userId: string, prompt: string): Promise
 }
 
 export interface FinishSelections {
+  /** Palette scheme; the modal always sends As Generated ("as-dreamed"). */
   paletteId: string;
-  /** Brand-row selection (brand-only delta); defaults to As Dreamed. */
+  /** Palette-row usage (how the brand is used); defaults to As Dreamed. */
   brandId?: string;
+  /** Brand-row color; when set it wins over the usage's pinned hue. */
+  brandColorId?: string;
   typefaceId?: string;
   exampleId?: string;
   chipIds: string[];
@@ -804,9 +921,19 @@ export async function completeGeneration(
   // stays as the model dreamed it. The brand row is re-derived here from the
   // generation's own anchors — never trusted from the round-tripped client
   // state, and never a model call.
-  const brandId = deriveBrandOptions(palette, {
+  // Brand-row color, resolved against the static row (never trusted from the
+  // client). Present means the palettes rebuild from that single hue;
+  // absent means the generation's own palette stands.
+  const brandColorId = resolveBrandColor(selections.brandColorId)?.id ?? null;
+  // Usages are derived from the brand's static palette when a color is
+  // picked, else from the generation's own palette — the same base the
+  // preview row was compiled from, so finish can never disagree with it.
+  const brandBase = brandColorId
+    ? paletteFromBrand(resolveBrandColor(brandColorId)!.brandHue)
+    : palette;
+  const brandId = deriveBrandOptions(brandBase, {
     profile,
-    achromatic: achromaticBrief(axes, palette, constraints),
+    achromatic: achromaticBrief(axes, brandBase, constraints),
   }).find((option) => option.id === selections.brandId)?.id ?? "as-dreamed";
   const selectedTypeface = typefaceOptions.find((o) => o.id === (selections.typefaceId ?? "")) ?? typefaceOptions[0]!;
   const typefaceOverride = { display: selectedTypeface.display, sans: selectedTypeface.body };
@@ -822,15 +949,18 @@ export async function completeGeneration(
       }
       paletteOverride = { ...record.palette };
     }
-    const localBrands = deriveBrandOptions(dnaPalette, {
+    const foldBase = brandColorId
+      ? paletteFromBrand(resolveBrandColor(brandColorId)!.brandHue)
+      : dnaPalette;
+    const localBrands = deriveBrandOptions(foldBase, {
       profile,
-      achromatic: achromaticBrief(dnaAxes, dnaPalette, constraints),
+      achromatic: achromaticBrief(dnaAxes, foldBase, constraints),
     });
     const brand = localBrands.find((option) => option.id === brandId) ?? localBrands[0]!;
     const applied = applyPickerDelta(
       dnaAxes,
       dnaPalette,
-      { chipIds, paletteId, brandId: brand.id },
+      { chipIds, paletteId, brandId: brand.id, brandColorId: brandColorId ?? undefined },
       paletteOptions,
       localBrands,
     );
@@ -856,6 +986,7 @@ export async function completeGeneration(
           base,
           constraints,
           typeface: typefaceOverride,
+          brandChromaScale: folded.brand.chromaScale,
         },
         validateIdentity,
       );
@@ -882,6 +1013,7 @@ export async function completeGeneration(
           base,
           constraints,
           typeface: typefaceOverride,
+          brandChromaScale: folded.brand.chromaScale,
         },
         validateIdentity,
       );
@@ -902,6 +1034,7 @@ export async function completeGeneration(
       paletteId,
       paletteReason: paletteOptions.find((o) => o.id === paletteId)?.reason ?? null,
       brandId: folded.brand.id,
+      brandColorId,
       brandHue: compiled.dna!.palette.brandHue,
       brandReason: folded.brand.reason,
       typefaceId: selections.typefaceId ?? typefaceOptions[0]!.id,
@@ -937,6 +1070,7 @@ export async function completeGeneration(
             paletteId,
             paletteReason: paletteOptions.find((o) => o.id === paletteId)?.reason ?? null,
             brandId: folded.brand.id,
+            brandColorId,
             brandHue: compiled.dna!.palette.brandHue,
             brandReason: folded.brand.reason,
             typefaceId: selections.typefaceId ?? typefaceOptions[0]!.id,
@@ -1059,6 +1193,7 @@ export interface PickerProgress {
   paletteId?: string;
   paletteReason?: string | null;
   brandId?: string;
+  brandColorId?: string | null;
   brandHue?: number;
   brandReason?: string;
   exampleId?: string;
@@ -1095,9 +1230,13 @@ export async function recompileWithPicker(
   const constraints =
     ((current.meta as Record<string, unknown>).promptConstraints as PromptConstraints | undefined) ??
     (dna.source.type === "phrase" && dna.source.promptText ? parseConstraints(dna.source.promptText) : {});
-  const brandOptions = deriveBrandOptions(dna.palette, {
+  // A picked static brand color re-bases the usages on its static palette,
+  // exactly like the modal finish path — the draft owns both choices.
+  const storedBrand = resolveBrandColor(selections.brandColorId);
+  const brandBase = storedBrand ? paletteFromBrand(storedBrand.brandHue) : dna.palette;
+  const brandOptions = deriveBrandOptions(brandBase, {
     profile,
-    achromatic: achromaticBrief(dna.axes, dna.palette, constraints),
+    achromatic: achromaticBrief(dna.axes, brandBase, constraints),
   });
   const brand = brandOptions.find((option) => option.id === selections.brandId) ?? brandOptions[0]!;
   const applied = applyPickerDelta(
@@ -1113,8 +1252,10 @@ export async function recompileWithPicker(
       name: current.meta.name,
       source: dna.source,
       axes: { ...dna.axes, ...applied.axes },
-      // The brand row survives an example override: it owns only brandHue.
+      // The brand row survives an example override: it owns the mark color
+      // (hue + voice), never the system.
       palette: { ...anchors, brandHue: applied.anchors.brandHue },
+      brandChromaScale: brand.chromaScale,
       profile,
       base: current,
       constraints,
@@ -1150,9 +1291,11 @@ export async function applyPickerStep(
   let selections: PickerSelections;
   let paletteOverride: DnaPalette | undefined;
   let progress: PickerProgress;
+  // Both brand rows survive every later step: the usage and the color.
+  const brandColorId = stored.brandColorId ?? undefined;
   if (step === "palettes") {
     const paletteId = String(value);
-    selections = { chipIds, paletteId, brandId: stored.brandId };
+    selections = { chipIds, paletteId, brandId: stored.brandId, brandColorId };
     progress = { step: PICKER_NEXT[step], paletteId, exampleId: stored.exampleId, chipIds };
   } else if (step === "examples") {
     const exampleId = String(value);
@@ -1161,18 +1304,29 @@ export async function applyPickerStep(
       throw new Error(`unknown example '${exampleId}'`);
     }
     paletteOverride = { ...record.palette };
-    selections = { chipIds, paletteId: stored.paletteId ?? "as-dreamed", brandId: stored.brandId };
+    selections = {
+      chipIds,
+      paletteId: stored.paletteId ?? "as-dreamed",
+      brandId: stored.brandId,
+      brandColorId,
+    };
     progress = { step: PICKER_NEXT[step], paletteId: stored.paletteId, exampleId, chipIds };
   } else {
     const known = new Set(WORD_CHIPS.map((chip) => chip.id));
     const picked = (Array.isArray(value) ? value : [value]).map(String).filter((id) => known.has(id));
-    selections = { chipIds: picked, paletteId: stored.paletteId ?? "as-dreamed", brandId: stored.brandId };
+    selections = {
+      chipIds: picked,
+      paletteId: stored.paletteId ?? "as-dreamed",
+      brandId: stored.brandId,
+      brandColorId,
+    };
     progress = { step: PICKER_NEXT[step], paletteId: stored.paletteId, exampleId: stored.exampleId, chipIds: picked };
   }
   const { compiled, unknownChips, brand } = await recompileWithPicker(current, selections, paletteOverride);
   // The brand row is preserved across every later step and recorded with its
   // resulting hue and reason (the draft owns both choices).
   progress.brandId = brand.id;
+  progress.brandColorId = selections.brandColorId ?? null;
   progress.brandHue = compiled.dna?.palette.brandHue;
   progress.brandReason = brand.reason;
   if (current.dna) {

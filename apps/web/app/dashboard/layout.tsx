@@ -16,7 +16,10 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground md:flex">
+    // `isolate` makes this div a stacking context so its own background
+    // paints before the page's negative-z aurora (bottom gradient) — without
+    // it the opaque bg-background covers that layer instead.
+    <div className="isolate min-h-screen bg-background text-foreground md:flex">
       <DashboardHeader />
       <div className="min-w-0 flex-1">{children}</div>
     </div>
