@@ -279,7 +279,7 @@ function PreviewGrid({
   boxClass,
   emptyLabel,
   renderItem,
-  colsClass = "grid-cols-2",
+  colsClass = "grid-cols-1 sm:grid-cols-2",
   onExpand,
 }: {
   items: Manifest[];
@@ -601,17 +601,17 @@ export function IdentityEditor({
   };
 
   return (
-    <div className="flex h-[calc(100dvh-65px)] min-h-0">
+    <div className="flex flex-col lg:h-[calc(100dvh-65px)] lg:min-h-0 lg:flex-row">
       <IdentityFontLinks fonts={initialPayload.fonts} />
 
       {/* ---------- Left: theme editor ---------- */}
-      <div className="flex min-h-0 w-fit max-w-[50%] shrink-0 flex-col border-r border-border">
+      <div className="flex min-h-0 w-full shrink-0 flex-col border-b border-border lg:w-fit lg:max-w-[50%] lg:border-b-0 lg:border-r">
         <Tabs defaultValue="colors" className="flex min-h-0 flex-1 flex-col gap-0">
-          <div className="flex h-13 shrink-0 items-center border-b border-border px-3">
+          <div className="flex h-13 shrink-0 items-center border-b border-border px-2 sm:px-3">
             <TabsList aria-label="Theme editor" className="min-w-0 flex-1 overflow-x-auto">
               {["Colors", "Typography", "Other", "Generate"].map((tab) => (
                 <TabsTrigger key={tab} value={tab.toLowerCase()} className="shrink-0">
-                  {tab === "Generate" ? "Generate ✨" : tab}
+                  {tab}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -768,14 +768,14 @@ export function IdentityEditor({
       </div>
 
       {/* ---------- Right: live preview ---------- */}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className="flex h-13 items-center gap-1 border-b border-border px-3">
+      <div className="flex min-h-[60dvh] min-w-0 flex-1 flex-col lg:min-h-0">
+        <div className="flex flex-wrap items-center gap-1 border-b border-border px-3 py-2 sm:h-13 sm:flex-nowrap sm:py-0">
           <Tabs
             value={previewTab}
             onValueChange={(v) => setPreviewTab(v as PreviewTab)}
-            className="gap-0"
+            className="min-w-0 gap-0"
           >
-            <TabsList aria-label="Preview library">
+            <TabsList aria-label="Preview library" className="max-w-full overflow-x-auto">
               <TabsTrigger value="components">Components</TabsTrigger>
               <TabsTrigger value="blocks">Blocks</TabsTrigger>
             </TabsList>
@@ -801,7 +801,7 @@ export function IdentityEditor({
           <Button type="button" variant="ghost" size="sm" onClick={resetAll} title="Reset to saved">
             Reset
           </Button>
-          {savedAt ? <span className="text-xs text-muted-foreground">Saved {savedAt}</span> : null}
+          {savedAt ? <span className="hidden text-xs text-muted-foreground sm:inline">Saved {savedAt}</span> : null}
           <Dialog>
             <DialogTrigger asChild>
               <Button type="button" variant="ghost" size="sm">
@@ -917,7 +917,7 @@ export function IdentityEditor({
           aria-label={`${expandedBlock.title} preview`}
         >
           <div className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-border bg-background">
-            <div className="flex h-13 shrink-0 items-center gap-2 border-b border-border px-3">
+            <div className="flex min-h-13 shrink-0 flex-wrap items-center gap-2 border-b border-border px-3 py-2">
               <Button
                 type="button"
                 variant="ghost"

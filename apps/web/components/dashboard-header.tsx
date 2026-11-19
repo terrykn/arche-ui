@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
 import { ArcheLogo } from "@/components/arche-logo";
-import { DashboardNav } from "@/components/dashboard-nav";
+import { DASH_LINKS, DashboardNav } from "@/components/dashboard-nav";
+import { MobileNavMenu } from "@/components/mobile-nav-menu";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/app/(auth)/actions";
 
@@ -21,18 +22,23 @@ export function DashboardHeader() {
 
   return (
     <>
-      {/* Compact top bar on small screens */}
+      {/* Compact top bar on small screens: links + sign out live in the menu. */}
       <header className="border-b-(length:--border-width) border-border md:hidden">
-        <div className="flex items-center justify-between gap-4 px-4 py-3">
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
           <Link href="/" aria-label="Arche UI home" className="inline-flex items-center">
             <ArcheLogo size={32} />
           </Link>
-          <DashboardNav />
-          <form action={signOut}>
-            <Button variant="outline" size="sm" type="submit">
-              Sign out
-            </Button>
-          </form>
+          <MobileNavMenu
+            links={DASH_LINKS}
+            label="Open dashboard menu"
+            footer={
+              <form action={signOut}>
+                <Button variant="outline" size="sm" type="submit" className="w-full">
+                  Sign out
+                </Button>
+              </form>
+            }
+          />
         </div>
       </header>
       {/* Sidebar on medium screens and up */}

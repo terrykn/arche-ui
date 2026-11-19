@@ -92,7 +92,7 @@ export default function Home() {
       <div className="proto-view">
         <div className="proto-wrap">
           <div className="pt-6">
-            <section className="relative overflow-hidden rounded-3xl py-20">
+            <section className="relative overflow-hidden rounded-3xl px-4 py-14 sm:px-6 sm:py-20">
               <div aria-hidden="true" className="absolute inset-0">
                 <GradientBg
                   className="hero-bg"
@@ -108,7 +108,7 @@ export default function Home() {
                 />
               </div>
               <div className="relative mx-auto max-w-2xl text-center">
-                <h1 className="font-display text-5xl font-extrabold tracking-tight text-white sm:text-6xl">
+                <h1 className="font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
                   Create a React design system in minutes
                 </h1>
                 <p className="mx-auto mt-4 max-w-xl text-base text-white/85">

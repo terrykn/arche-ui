@@ -13,6 +13,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { DocsSearch } from "@/components/docs-search";
+import { MobileNavMenu } from "@/components/mobile-nav-menu";
 
 // Backdrop wash derived only from identity tokens (primary/secondary/accent).
 // No hardcoded colors here — the hero headline gradient is the single exception.
@@ -25,6 +26,9 @@ const NAV_LINKS = [
   { href: "/examples", label: "Examples" },
   { href: "/pricing", label: "Pricing" },
 ];
+
+/** The inline row hides below `md`; the menu carries the same links plus the CTA. */
+const MOBILE_NAV_LINKS = [...NAV_LINKS, { href: "/sign-up", label: "Get Started" }];
 
 export function ProtoNav() {
   const [signInOpen, setSignInOpen] = React.useState(false);
@@ -44,24 +48,27 @@ export function ProtoNav() {
           <Link href="/" aria-label="Arche home" className="inline-flex items-center">
             <ArcheLogo size={36} />
           </Link>
-          <NavigationMenu aria-label="Public">
-            <NavigationMenuList>
-              {NAV_LINKS.map((link) => (
-                <NavigationMenuItem key={link.href}>
-                  <NavigationMenuLink asChild>
-                    <Link href={link.href}>{link.label}</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
-          <div className="flex items-center gap-2">
+          <div className="hidden md:block">
+            <NavigationMenu aria-label="Public">
+              <NavigationMenuList>
+                {NAV_LINKS.map((link) => (
+                  <NavigationMenuItem key={link.href}>
+                    <NavigationMenuLink asChild>
+                      <Link href={link.href}>{link.label}</Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
             <DocsSearch />
-            <Button variant="default" size="sm" asChild>
+            <Button variant="default" size="sm" asChild className="hidden md:inline-flex">
               <Link href="/sign-up">
                 Get Started <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
+            <MobileNavMenu links={MOBILE_NAV_LINKS} className="md:hidden" />
           </div>
         </div>
       </header>

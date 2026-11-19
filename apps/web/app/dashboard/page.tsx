@@ -27,7 +27,7 @@ export default async function DashboardHome({
   const rows = (libraries ?? []) as unknown as IdentityRow[];
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-6 py-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 py-8 sm:px-6 sm:py-10">
       <div className="flex-1">
         {rows.length === 0 ? (
           <div className="flex min-h-[40dvh] items-center justify-center">

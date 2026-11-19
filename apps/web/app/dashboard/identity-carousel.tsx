@@ -33,11 +33,8 @@ export function IdentityCarousel({ libraries }: { libraries: IdentityRow[] }) {
           <Card
             key={library.id}
             style={libraryVars(library.payload, "dark")}
-            className="dark relative overflow-hidden font-sans"
+            className="dark relative min-h-40 overflow-hidden font-sans"
           >
-            <Badge variant="secondary" className="absolute right-3 top-3">
-              {library.visibility}
-            </Badge>
             <CardHeader>
               <CardTitle className="font-display">
                 <Link
@@ -47,6 +44,9 @@ export function IdentityCarousel({ libraries }: { libraries: IdentityRow[] }) {
                   {library.name}
                 </Link>
               </CardTitle>
+              <Badge variant="secondary" className="w-fit">
+                {library.visibility}
+              </Badge>
               <CardDescription>
                 updated {new Date(library.updated_at).toLocaleDateString()}
               </CardDescription>

@@ -58,7 +58,7 @@ export function EditorTopBar({
   };
 
   return (
-    <div className="flex h-16 items-center justify-between gap-2 border-b-(length:--border-width) border-border px-3">
+    <div className="flex min-h-16 flex-wrap items-center justify-between gap-2 border-b-(length:--border-width) border-border px-3 py-2 sm:flex-nowrap">
       <Button variant="ghost" size="sm" asChild className="shrink-0">
         <Link href="/dashboard">
           <ArrowLeft aria-hidden /> Dashboard
@@ -82,7 +82,7 @@ export function EditorTopBar({
             maxLength={80}
             spellCheck={false}
             controlSize="sm"
-            className="w-48"
+            className="w-full max-w-48"
           />
           <Button
             variant="ghost"

@@ -75,7 +75,7 @@ export default async function StyleIdentity({
 
   if (!dna) {
     return (
-      <main className="mx-auto max-w-6xl px-6 py-16">
+      <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
         <div className="max-w-md">
         <h1 className="font-display text-3xl">Style {row.name}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -100,7 +100,7 @@ export default async function StyleIdentity({
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
+    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
       <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label.n}</p>
       <div className="mt-1 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="font-display text-3xl">

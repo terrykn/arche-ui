@@ -36,7 +36,7 @@ const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
   typefaces: {
     n: "Step 2 of 3",
     title: "Pick a typeface",
-    lede: "Three header/body pairings from your prompt — a separate choice, never bundled with a palette. The winner sets the draft's fonts.",
+    lede: "",
   },
   words: {
     n: "Step 3 of 3",
@@ -286,7 +286,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
             tabIndex={-1}
             className="flex max-h-[90dvh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border-(length:--border-width) border-border bg-background outline-none"
           >
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-display text-2xl">
@@ -488,7 +488,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
           </div>
 
           {(phase === "palettes" || phase === "typefaces" || phase === "words") && (
-            <div className="flex items-center justify-between gap-3 border-t border-border bg-background px-6 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-background px-4 py-4 sm:px-6">
                 <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   {STEP_LABEL[phase]?.n}
                 </p>

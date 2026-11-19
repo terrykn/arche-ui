@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 /** Designed loading state for dashboard routes: layout-matching skeletons, never a blank void. */
 export default function DashboardLoading() {
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10" aria-busy="true" aria-label="Loading dashboard">
+    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10" aria-busy="true" aria-label="Loading dashboard">
       <div className="flex items-center justify-between gap-4">
         <Skeleton className="h-9 w-56" />
         <Skeleton className="h-10 w-32" />

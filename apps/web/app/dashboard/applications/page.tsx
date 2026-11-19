@@ -29,14 +29,14 @@ export default async function ApplicationsPage({
   const libs = (libraries ?? []) as unknown as Array<{ id: string; name: string; application_id: string | null }>;
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
+    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
       <h1 className="font-display text-3xl">Applications</h1>
       {error ? (
         <p role="alert" className="mt-3 text-sm text-destructive">
           {error}
         </p>
       ) : null}
-      <form action={createApplication} className="mt-6 flex gap-2">
+      <form action={createApplication} className="mt-6 flex flex-wrap gap-2">
         <Input
           name="name"
           required
@@ -50,7 +50,7 @@ export default async function ApplicationsPage({
       <ul className="mt-6 flex flex-col gap-4">
         {apps.map((app) => (
           <li key={app.id} className="rounded-lg border-(length:--border-width) border-border bg-card p-4 text-card-foreground">
-            <form action={renameApplication} className="flex items-center gap-2">
+            <form action={renameApplication} className="flex flex-wrap items-center gap-2">
               <input type="hidden" name="id" value={app.id} />
               <Input
                 name="name"
