@@ -69,6 +69,12 @@ export interface CompileInput {
    * slot stays derived by the compiler. Absent → the DNA-derived pick.
    */
   typeface?: { display: string; sans: string };
+  /**
+   * Picker brand voice: 1 = full voice (default), 0.45 = Material 3
+   * secondary muting, 0 = neutral ink. Only the brand scale moves; the
+   * system compiles exactly as dreamed otherwise.
+   */
+  brandChromaScale?: number;
 }
 
 export interface Adjustment {
@@ -409,6 +415,7 @@ function buildModeTokens(
   voice: Voice,
   profile: GenerationProfile,
   monochrome: boolean,
+  brandScale: number,
 ): TokenRecord {
   const dark = mode === "dark";
   const P = palette.primaryHue;
@@ -457,18 +464,29 @@ function buildModeTokens(
   // lightness if needed). Text on the solid is derived per mode from the
   // actual emitted value (autoText: white when it passes, else dark).
   const B = resolveBrandHue(palette);
-  const brand = scaleColor(B, C, 8);
-  const brandInk = dechroma(autoText(brand));
+  // Picker brand voice: the muted secondary and neutral ink marks scale
+  // only the brand chroma (monochrome still forces zero everywhere).
+  const BC = monochrome || voice.target === 0 || brandScale === 0 ? 0 : C * brandScale;
+  const brand = scaleColor(B, BC, 8);
+  const brandFg = autoText(brand);
+  const brandInk = (() => {
+    if (grayscale || brandScale === 0) {
+      const parsed = parseOklch(brandFg);
+      parsed.c = 0;
+      return formatOklch(parsed);
+    }
+    return brandFg;
+  })();
   const brandSoft = dark
     ? (() => {
         const fg = dechroma(scaleColor(N, NC * 2, 0));
         for (const step of [9, 10, 11]) {
-          const candidate = scaleColor(B, Math.round(C * 0.45 * 1000) / 1000, step);
+          const candidate = scaleColor(B, Math.round(BC * 0.45 * 1000) / 1000, step);
           if (contrastRatio(fg, candidate) >= 4.5) return candidate;
         }
-        return scaleColor(B, Math.round(C * 0.45 * 1000) / 1000, 11);
+        return scaleColor(B, Math.round(BC * 0.45 * 1000) / 1000, 11);
       })()
-    : scaleColor(B, Math.round(C * 0.45 * 1000) / 1000, 2);
+    : scaleColor(B, Math.round(BC * 0.45 * 1000) / 1000, 2);
   const muted = scaleColor(N, monochrome ? 0 : NC * 1.5, dark ? 9 : 2);
   const mutedInk = dechroma(scaleColor(N, monochrome ? 0 : NC * 2, dark ? 2 : 9));
   const destructive = formatOklch({ l: dark ? 0.6 : 0.55, c: grayscale ? 0 : 0.22, h: 25 });
@@ -753,9 +771,13 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   // Type scale is selected, never derived free-form (Deliverable 5).
   compiled.typeScale = typeScaleFor(effectiveAxes, profile);
 
+  const brandScale =
+    typeof input.brandChromaScale === "number"
+      ? Math.min(1, Math.max(0, input.brandChromaScale))
+      : 1;
   const tokens: Record<string, TokenRecord> = {
-    light: buildModeTokens("light", effectiveAxes, palette, voice, profile, monochrome),
-    dark: buildModeTokens("dark", effectiveAxes, palette, voice, profile, monochrome),
+    light: buildModeTokens("light", effectiveAxes, palette, voice, profile, monochrome, brandScale),
+    dark: buildModeTokens("dark", effectiveAxes, palette, voice, profile, monochrome, brandScale),
   };
 
   // Font stacks must mirror the selected registry families exactly.
@@ -808,7 +830,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   // clamped into the envelope with hue/lightness preserved where the rule
   // allows it; every repair is recorded with its design-rule id.
   const adjustments: Adjustment[] = [];
-  repairDesign(tokens, profile, adjustments, voice.target, monochrome);
+  repairDesign(tokens, profile, adjustments, voice.target, monochrome, brandScale);
 
   // Prompt-adherence enforcement (Brief: words → numbers → code). Runs
   // AFTER design repair (so the true-zero monochrome rule runs after any
@@ -871,7 +893,10 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
     const d = Math.abs(((a - b) % 360 + 360) % 360);
     return Math.min(d, 360 - d);
   })(brandHue, palette.primaryHue);
-  (compiled.meta as Record<string, unknown>).brand = {
+  // Picker ink voice: stamped for the design-rule validator (a neutral
+  // mark is intent, not an accident). Recorded only when muted so default
+  // payloads — and goldens — never change shape.
+  const brandRecord: Record<string, unknown> = {
     hue: Math.round(brandHue * 1000) / 1000,
     foreground: {
       light: String(tokens.light!["--brand-foreground"]!.$value),
@@ -879,6 +904,8 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
     },
     heroCta: hueSep > 30 ? "brand" : "primary",
   };
+  if (brandScale !== 1) brandRecord.scale = Math.round(brandScale * 1000) / 1000;
+  (compiled.meta as Record<string, unknown>).brand = brandRecord;
   if (migrated.migrated) {
     (compiled.meta as Record<string, unknown>).dnaMigration = "v1→v2: retroFuturism dropped, chroma defaulted";
   }
@@ -997,6 +1024,7 @@ function repairDesign(
   adjustments: Adjustment[],
   chromaTarget: number,
   monochrome = false,
+  brandScale = 1,
 ): void {
   const bgCap = (mode: "light" | "dark"): number =>
     Math.round(
@@ -1048,11 +1076,14 @@ function repairDesign(
     const solidFloor = monochrome ? 0 : Math.round(SOLID_FLOOR * chromaTarget * 1000) / 1000;
     // Brand Token brief: the brand solid lives in the same chroma band —
     // ceilings bind runaway saturation; the floor yields to low-chroma
-    // intent exactly like the other solids.
+    // intent exactly like the other solids. The picker ink voice is intent
+    // too: a neutral mark never gets floored back into color.
+    const brandFloor = monochrome || brandScale === 0 ? 0 : solidFloor;
     for (const token of ["--primary", "--accent", "--destructive", "--brand"]) {
+      const floor = token === "--brand" ? brandFloor : solidFloor;
       const c = chromaOf(token);
-      if (c !== null && c < solidFloor) {
-        repairTokenChroma(tokens, mode, token, solidFloor, "color-solid-chroma-band", adjustments);
+      if (c !== null && c < floor) {
+        repairTokenChroma(tokens, mode, token, floor, "color-solid-chroma-band", adjustments);
       } else if (c !== null && c > solidCeiling) {
         repairTokenChroma(tokens, mode, token, solidCeiling, "color-solid-chroma-band", adjustments);
       }

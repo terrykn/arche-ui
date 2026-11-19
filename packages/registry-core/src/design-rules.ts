@@ -220,13 +220,19 @@ export function checkDesignRules(identity: ArcheIdentity): DesignRuleFinding[] {
       ? 0
       : Math.round(0.08 * (typeof chromaAxis === "number" ? Math.min(1, Math.max(0, chromaAxis)) : 1) * 1000) / 1000;
     const ceiling = profile === "enterprise" ? 0.19 : profile === "expressive" ? 0.26 : 0.24;
+    // Picker ink voice (palette + brand picker brief): the compiler stamps
+    // a muted brand voice on meta.brand, and a neutral mark is intent, not
+    // an accident — the floor yields to it exactly like monochrome.
+    const brandScale = (identity.meta as { brand?: { scale?: unknown } } | undefined)?.brand?.scale;
+    const brandFloor = monochrome || brandScale === 0 ? 0 : solidFloor;
     for (const name of SOLID_TOKENS) {
+      const floor = name === "--brand" ? brandFloor : solidFloor;
       const c = tokenColor(set, name);
-      if (c && (c.c < solidFloor || c.c > ceiling)) {
+      if (c && (c.c < floor || c.c > ceiling)) {
         findings.push({
           rule: "color-solid-chroma-band",
           path: at(name),
-          message: `${name} chroma ${c.c} is outside the ${profile} solid band [${solidFloor}, ${ceiling}]`,
+          message: `${name} chroma ${c.c} is outside the ${profile} solid band [${floor}, ${ceiling}]`,
         });
       }
     }
