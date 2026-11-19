@@ -4,6 +4,12 @@ import { CreationDock } from "./creation-dock";
 import { IdentityCarousel, type IdentityRow } from "./identity-carousel";
 import GradientBg from "@/components/gradient-bg";
 
+/**
+ * The creation server actions run a model call plus the deterministic
+ * compiles, which outlasts a serverless function's default duration.
+ */
+export const maxDuration = 60;
+
 export default async function DashboardHome({
   searchParams,
 }: {

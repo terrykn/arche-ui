@@ -54,11 +54,24 @@ export interface Manifest {
 // installed layout (node_modules/@arche/registry-core ->
 // node_modules/@arche/foundation) resolve statically.
 function locateFoundation(): string {
-  const distDir = dirname(fileURLToPath(import.meta.url));
-  const candidates = [
-    join(distDir, "..", "..", "foundation"),
-    join(distDir, "..", "..", "@arche", "foundation"),
-  ];
+  const candidates: string[] = [];
+  try {
+    const distDir = dirname(fileURLToPath(import.meta.url));
+    candidates.push(
+      join(distDir, "..", "..", "foundation"),
+      join(distDir, "..", "..", "@arche", "foundation"),
+    );
+  } catch {
+    // Bundled CommonJS output has no file URL; cwd candidates still resolve.
+  }
+  // Server builds bundle this package, so import.meta.url is a bundler chunk:
+  // walk up from the process cwd to the repo/package root instead.
+  let cwd = process.cwd();
+  for (let i = 0; i < 6; i++) {
+    candidates.push(join(cwd, "packages", "foundation"));
+    candidates.push(join(cwd, "node_modules", "@arche", "foundation"));
+    cwd = dirname(cwd);
+  }
   const found = candidates.find((dir) => existsSync(join(dir, "src", "manifests")));
   if (!found) {
     throw new Error("@arche/foundation manifests not found from registry-core");
