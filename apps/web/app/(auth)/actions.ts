@@ -19,11 +19,28 @@ async function consumeHeroPrompt(): Promise<string | null> {
   return sanitizeHeroPrompt(raw);
 }
 
+/** This deployment's own origin (Vercel host in prod, localhost in dev). */
+async function appOrigin(): Promise<string> {
+  const headersList = await headers();
+  const host =
+    headersList.get("x-forwarded-host") ?? headersList.get("host") ?? "localhost:3000";
+  const proto =
+    headersList.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
 export async function signUp(formData: FormData) {
   const supabase = await createClient();
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
-  const { error } = await supabase.auth.signUp({ email, password });
+  // Without this, confirmation emails use the Supabase project's Site URL
+  // (localhost), so signing up on the deployed site bounces you to localhost.
+  const emailRedirectTo = `${await appOrigin()}/auth/callback?next=/dashboard`;
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo },
+  });
   if (error) {
     redirect(`/sign-up?error=${encodeURIComponent(error.message)}`);
   }
@@ -52,12 +69,7 @@ export async function signIn(formData: FormData) {
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
-  const headersList = await headers();
-  const host =
-    headersList.get("x-forwarded-host") ?? headersList.get("host") ?? "localhost:3000";
-  const proto =
-    headersList.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  const redirectTo = `${proto}://${host}/auth/callback?next=/dashboard`;
+  const redirectTo = `${await appOrigin()}/auth/callback?next=/dashboard`;
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo },

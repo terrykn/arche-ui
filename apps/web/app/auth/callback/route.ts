@@ -6,11 +6,15 @@ import {
   sanitizeHeroPrompt,
 } from "@/lib/hero-prompt";
 
+function safeNext(raw: string | null): string {
+  return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : "/dashboard";
+}
+
 /** OAuth (and magic-link) return path: exchanges `code` for a session, then redirects. */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = safeNext(searchParams.get("next"));
 
   if (code) {
     const supabase = await createClient();
