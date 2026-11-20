@@ -15,6 +15,6 @@ function TooltipProvider(props: React.ComponentProps<typeof Primitive.Provider>)
 function Tooltip(props: React.ComponentProps<typeof Primitive.Root>) { return <Primitive.Root data-slot="tooltip" {...props} />; }
 function TooltipTrigger(props: React.ComponentProps<typeof Primitive.Trigger>) { return <Primitive.Trigger data-slot="tooltip-trigger" {...props} />; }
 function TooltipPortal(props: React.ComponentProps<typeof Primitive.Portal>) { return <Primitive.Portal data-slot="tooltip-portal" {...props} />; }
-function TooltipContent({ className, radius, ...props }: React.ComponentProps<typeof Primitive.Content> & VariantProps<typeof tooltipContentVariants>) { return <TooltipPortal><Primitive.Content data-slot="tooltip-content" className={cn(tooltipContentVariants({ radius }), className)} {...props} /></TooltipPortal>; }
+function TooltipContent({ className, radius, container, ...props }: React.ComponentProps<typeof Primitive.Content> & VariantProps<typeof tooltipContentVariants> & { container?: HTMLElement | null }) { return <TooltipPortal container={container ?? undefined}><Primitive.Content data-slot="tooltip-content" className={cn(tooltipContentVariants({ radius }), className)} {...props} /></TooltipPortal>; }
 function TooltipArrow({ className, ...props }: React.ComponentProps<typeof Primitive.Arrow>) { return <Primitive.Arrow data-slot="tooltip-arrow" className={cn("fill-foreground", className)} {...props} />; }
 export { TooltipProvider, Tooltip, TooltipTrigger, TooltipPortal, TooltipContent, TooltipArrow, tooltipContentVariants };

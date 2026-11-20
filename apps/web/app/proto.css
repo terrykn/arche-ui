@@ -790,9 +790,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  background: var(--card);
-  border-radius: 16px;
-  padding: 12px 10px;
 }
 
 /* Dashboard docs sit beside the full-height app sidebar (no public header

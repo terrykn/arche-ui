@@ -27,11 +27,12 @@ export interface AppShellProps extends VariantProps<typeof appShellVariants> {
   userName?: string;
   main: React.ReactNode;
   className?: string;
+  portalContainer?: HTMLElement | null;
 }
 
 const DEFAULT_NAV = ["Board", "Orders", "Capacity", "Crew"];
 
-function AppShell({ brand = "Acme", navItems = DEFAULT_NAV, activeItem = DEFAULT_NAV[0], userName = "Maya Chen", main, sidebar, className }: AppShellProps) {
+function AppShell({ brand = "Acme", navItems = DEFAULT_NAV, activeItem = DEFAULT_NAV[0], userName = "Maya Chen", main, sidebar, className, portalContainer }: AppShellProps) {
   const [collapsed, setCollapsed] = React.useState(false);
   const narrow = sidebar === "collapsible" && collapsed;
   return (
@@ -72,7 +73,7 @@ function AppShell({ brand = "Acme", navItems = DEFAULT_NAV, activeItem = DEFAULT
                   <span className="truncate text-sm">{userName}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
+              <DropdownMenuContent align="start" container={portalContainer ?? undefined}>
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />

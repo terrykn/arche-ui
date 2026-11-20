@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const tableVariants = cva("w-full caption-bottom text-sm", {
-  variants: { density: { sm: "[&_td]:py-1 [&_th]:py-1", default: "[&_td]:py-2 [&_th]:py-2", lg: "[&_td]:py-4 [&_th]:py-4" } },
+  variants: { density: { none: "[&_td]:py-0 [&_th]:py-0", sm: "[&_td]:py-1 [&_th]:py-1", default: "[&_td]:py-2 [&_th]:py-2", lg: "[&_td]:py-4 [&_th]:py-4" } },
   defaultVariants: {
       density: "default",
     },

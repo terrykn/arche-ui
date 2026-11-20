@@ -27,6 +27,7 @@ export interface SiteHeaderProps {
   actions?: SiteHeaderAction[];
   userName?: string;
   className?: string;
+  portalContainer?: HTMLElement | null;
 }
 
 const DEFAULT_LINKS: SiteHeaderLink[] = [
@@ -36,7 +37,7 @@ const DEFAULT_LINKS: SiteHeaderLink[] = [
   { label: "Docs", href: "#docs" },
 ];
 
-function SiteHeader({ logo = "Acme", links = DEFAULT_LINKS, actions = [{ label: "Get started", href: "#get-started" }], userName, className }: SiteHeaderProps) {
+function SiteHeader({ logo = "Acme", links = DEFAULT_LINKS, actions = [{ label: "Get started", href: "#get-started" }], userName, className, portalContainer }: SiteHeaderProps) {
   const [open, setOpen] = React.useState(false);
   return (
     <header data-block="site-header" className={cn("sticky top-0 z-40 border-b border-(length:--border-width) border-border bg-background", className)}>
@@ -71,7 +72,7 @@ function SiteHeader({ logo = "Acme", links = DEFAULT_LINKS, actions = [{ label: 
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" container={portalContainer ?? undefined}>
                 <DropdownMenuItem>{userName}</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Settings</DropdownMenuItem>

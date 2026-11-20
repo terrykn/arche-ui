@@ -25,8 +25,8 @@ function AlertDialogPortal(props: React.ComponentProps<typeof AlertDialogPrimiti
 function AlertDialogOverlay({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Overlay>) {
   return <AlertDialogPrimitive.Overlay data-slot="alert-dialog-overlay" className={cn("fixed inset-0 z-50 bg-foreground/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0", className)} {...props} />;
 }
-function AlertDialogContent({ className, size, radius, shadow, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & VariantProps<typeof alertDialogContentVariants>) {
-  return <AlertDialogPortal><AlertDialogOverlay /><AlertDialogPrimitive.Content data-slot="alert-dialog-content" className={cn(alertDialogContentVariants({ size, radius, shadow }), className)} {...props} /></AlertDialogPortal>;
+function AlertDialogContent({ className, size, radius, shadow, container, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & VariantProps<typeof alertDialogContentVariants> & { container?: HTMLElement | null }) {
+  return <AlertDialogPortal container={container ?? undefined}><AlertDialogOverlay /><AlertDialogPrimitive.Content data-slot="alert-dialog-content" className={cn(alertDialogContentVariants({ size, radius, shadow }), className)} {...props} /></AlertDialogPortal>;
 }
 function AlertDialogHeader({ className, ...props }: React.ComponentProps<"div">) { return <div data-slot="alert-dialog-header" className={cn("flex flex-col gap-2 text-center sm:text-left", className)} {...props} />; }
 function AlertDialogFooter({ className, ...props }: React.ComponentProps<"div">) { return <div data-slot="alert-dialog-footer" className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)} {...props} />; }

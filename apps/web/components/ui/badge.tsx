@@ -9,7 +9,7 @@ const badgeVariants = cva("inline-flex w-fit items-center gap-1 rounded-md borde
   // Brand Token brief: the loud brand badge — solid --brand with
   // --brand-foreground text (an AA-gated contract pair) for sale, "new",
   // and highlight moments.
-  variants: { variant: { default: "bg-primary text-primary-foreground", secondary: "bg-secondary text-secondary-foreground", destructive: "bg-destructive text-destructive-foreground", outline: "border-border text-foreground", ghost: "text-foreground hover:bg-muted", link: "text-primary underline-offset-4 hover:underline", brand: "border-transparent bg-brand text-brand-foreground" } },
+  variants: { variant: { default: "border-transparent bg-primary text-primary-foreground", secondary: "border-transparent bg-secondary text-secondary-foreground", destructive: "border-transparent bg-destructive text-destructive-foreground", outline: "border-border text-foreground", ghost: "border-transparent text-foreground hover:bg-muted", link: "border-transparent text-primary underline-offset-4 hover:underline", brand: "border-transparent bg-brand text-brand-foreground" } },
   defaultVariants: {
       variant: "default",
     },

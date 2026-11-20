@@ -6,10 +6,9 @@ import { cn } from "@/lib/utils";
 
 const cardVariants = cva("flex flex-col gap-6 border-(length:--border-width) bg-card py-6 text-card-foreground", {
   // Brand Token brief: the featured/highlight card — a --brand top-edge
-  // accent over a full --brand-soft surface. The body never becomes a
-  // brand solid: text stays normal foreground (readable because the soft
-  // surface is an AA-gated contract pair with --foreground).
-  variants: { variant: { default: "", brand: "border-brand/40 border-t-4 border-t-brand bg-brand-soft" }, radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } },
+  // accent and a brand-tinted border on the default card surface. The
+  // body never becomes a brand solid: text stays normal foreground.
+  variants: { variant: { default: "", brand: "border-brand/40 border-t-4 border-t-brand" }, radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" }, shadow: { none: "shadow-none", sm: "shadow-(--shadow-sm)", md: "shadow-(--shadow-md)", lg: "shadow-(--shadow-lg)", xl: "shadow-(--shadow-xl)" } },
   defaultVariants: {
       variant: "default",
       radius: "xl",

@@ -149,6 +149,7 @@ interface DialogContentProps
     VariantProps<typeof dialogOverlayVariants>,
     VariantProps<typeof dialogContentVariants> {
   className?: string;
+  container?: HTMLElement | null;
 }
 
 function DialogContent({
@@ -162,10 +163,11 @@ function DialogContent({
   border,
   radius,
   motion,
+  container,
   ...props
 }: DialogContentProps) {
   return (
-    <DialogPortal data-slot="dialog-portal">
+    <DialogPortal data-slot="dialog-portal" container={container ?? undefined}>
       <DialogOverlay
         overlayBackground={overlayBackground}
         overlayOpacity={overlayOpacity}
