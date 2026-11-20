@@ -35,6 +35,7 @@ import type { NewsletterSignupProps } from "@/components/blocks/newsletter-signu
 import type { SiteFooterProps } from "@/components/blocks/site-footer";
 import type { AuthLoginProps } from "@/components/blocks/auth-login";
 import type { AuthSignupProps } from "@/components/blocks/auth-signup";
+import { PreviewPortalContext } from "@/components/preview-portal";
 
 /**
  * Live block preview (Parts 6-7): every v1 block rendered with its default
@@ -42,9 +43,12 @@ import type { AuthSignupProps } from "@/components/blocks/auth-signup";
  * props receive representative content here — never inside the templates.
  */
 export function BlockPreview({ name, axes }: { name: string; axes?: Record<string, string> }) {
+  // Overlay content (dropdowns in app-shell / site-header) portals here so
+  // library tokens apply; null outside a host falls back to document.body.
+  const portalContainer = React.useContext(PreviewPortalContext) ?? undefined;
   switch (name) {
     case "site-header":
-      return <SiteHeader />;
+      return <SiteHeader portalContainer={portalContainer} />;
     case "hero":
       return (
         <Hero
@@ -78,6 +82,7 @@ export function BlockPreview({ name, axes }: { name: string; axes?: Record<strin
     case "app-shell":
       return (
         <AppShell
+          portalContainer={portalContainer}
           activeItem="Board"
           main={
             <div className="flex flex-col gap-6">

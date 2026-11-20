@@ -5,6 +5,7 @@ import { IdentityFontLinks } from "@/components/identity-fonts";
 import { PromptEdit } from "./prompt-edit";
 import { ComponentPreview } from "@/components/component-preview";
 import { BlockPreview } from "@/components/block-preview";
+import { PreviewPortalHost } from "@/components/preview-portal";
 import { savePayload } from "../../actions";
 import { PublishButton } from "../publish-button";
 import { InstallBlock } from "@/components/install-block";
@@ -24,7 +25,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { NEUTRAL_CONTEXT, nextVariantAxes } from "@arche/registry-core/selector";
-import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, X, Shuffle } from "lucide-react";
+import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -70,7 +71,7 @@ interface Payload {
   components: Record<string, Record<string, unknown>>;
 }
 
-type Doc = Pick<Payload, "tokens" | "components">;
+type Doc = Pick<Payload, "tokens" | "components" | "fonts">;
 
 // ---------------------------------------------------------------------------
 // Minimal oklch <-> hex conversion so the native color picker can edit the
@@ -159,7 +160,7 @@ const COLOR_SECTIONS: ColorSection[] = [
   { id: "primary", title: "Primary", tokens: ["--primary", "--primary-foreground"] },
   { id: "secondary", title: "Secondary", tokens: ["--secondary", "--secondary-foreground"] },
   { id: "accent", title: "Accent", tokens: ["--accent", "--accent-foreground"] },
-  { id: "brand", title: "Brand", tokens: ["--brand", "--brand-foreground", "--brand-soft"] },
+  { id: "brand", title: "Brand", tokens: ["--brand", "--brand-foreground"] },
   { id: "base", title: "Base", tokens: ["--background", "--foreground"] },
   { id: "card", title: "Card", tokens: ["--card", "--card-foreground"] },
   { id: "popover", title: "Popover", tokens: ["--popover", "--popover-foreground"] },
@@ -178,7 +179,377 @@ const COLOR_SECTIONS: ColorSection[] = [
 const SIDEBAR_FOLLOWS = ["--card", "--card-foreground", "--accent", "--border"];
 
 // ---------------------------------------------------------------------------
-// Knob controls (component tuning, Other tab)
+// Quick tweaks: preset suggestion boxes for the AI Edit tab. Each one is a
+// simple calculated change on the current token values (no model call),
+// applied as a single commit so it stays undoable.
+// ---------------------------------------------------------------------------
+
+function parseLength(value: unknown): { n: number; unit: "px" | "rem" } | null {
+  if (typeof value !== "string") return null;
+  const match = value.trim().match(/^(-?[\d.]+)(px|rem)$/);
+  if (!match) return null;
+  return { n: Number(match[1]), unit: match[2] as "px" | "rem" };
+}
+
+function formatLength(n: number, unit: "px" | "rem"): string {
+  const rounded = Math.round(n * 1000) / 1000;
+  return `${rounded}${unit}`;
+}
+
+/** Parsed `offsetX offsetY blur spread color` shadow (lengths may omit px). */
+interface ShadowParts {
+  x: number;
+  y: number;
+  blur: number;
+  spread: number;
+  color: string;
+}
+
+function parseShadow(value: unknown): ShadowParts | null {
+  if (typeof value !== "string") return null;
+  const match = value
+    .trim()
+    .match(/^(-?[\d.]+)(?:px)?\s+(-?[\d.]+)(?:px)?\s+([\d.]+)(?:px)?\s+(-?[\d.]+)(?:px)?\s+(.+)$/);
+  if (!match) return null;
+  const [x = NaN, y = NaN, blur = NaN, spread = NaN] = [match[1], match[2], match[3], match[4]].map(
+    (v) => Number(v ?? ""),
+  );
+  if ([x, y, blur, spread].some((n) => !Number.isFinite(n))) return null;
+  return { x, y, blur, spread, color: (match[5] ?? "").trim() };
+}
+
+/** Alpha (0–1) from an `oklch(... / a)` or `/ a%` color suffix; null when opaque/unknown. */
+function parseShadowAlpha(color: string): number | null {
+  const match = color.match(/\/\s*([\d.]+)(%?)\s*\)?\s*$/);
+  if (!match) return null;
+  const n = Number(match[1]);
+  if (!Number.isFinite(n)) return null;
+  const alpha = match[2] === "%" ? n / 100 : n;
+  return Math.min(1, Math.max(0, alpha));
+}
+
+function parseMs(value: unknown): number | null {
+  if (typeof value !== "string") return null;
+  const match = value.trim().match(/^(-?[\d.]+)(ms|s)$/);
+  if (!match) return null;
+  const n = Number(match[1]);
+  return match[2] === "s" ? n * 1000 : n;
+}
+
+function scaleDuration(pair: unknown, factor: number): Record<string, string> | null {
+  if (typeof pair !== "object" || pair === null) return null;
+  const { duration, easing } = pair as Record<string, unknown>;
+  const ms = parseMs(duration);
+  if (ms == null || typeof easing !== "string") return null;
+  return { duration: `${Math.max(0, Math.round(ms * factor))}ms`, easing };
+}
+
+interface QuickTweak {
+  id: string;
+  title: string;
+  hint: string;
+  tokens: string[];
+  apply: (values: Record<string, unknown>) => Record<string, unknown> | null;
+}
+
+const QUICK_TWEAKS: QuickTweak[] = [
+  {
+    id: "rounder",
+    title: "Rounder",
+    hint: "Corner radius up",
+    tokens: ["--radius"],
+    apply: (values) => {
+      const parsed = parseLength(values["--radius"]);
+      if (!parsed) return null;
+      const step = parsed.unit === "rem" ? 0.25 : 4;
+      return { "--radius": formatLength(parsed.n + step, parsed.unit) };
+    },
+  },
+  {
+    id: "sharper",
+    title: "Sharper",
+    hint: "Corner radius down",
+    tokens: ["--radius"],
+    apply: (values) => {
+      const parsed = parseLength(values["--radius"]);
+      if (!parsed) return null;
+      const step = parsed.unit === "rem" ? 0.25 : 4;
+      return { "--radius": formatLength(Math.max(0, parsed.n - step), parsed.unit) };
+    },
+  },
+  {
+    id: "bolder-borders",
+    title: "Bolder borders",
+    hint: "Border width +1px",
+    tokens: ["--border-width"],
+    apply: (values) => {
+      const parsed = parseLength(values["--border-width"]);
+      if (!parsed || parsed.unit !== "px") return null;
+      return { "--border-width": formatLength(parsed.n + 1, "px") };
+    },
+  },
+  {
+    id: "finer-borders",
+    title: "Finer borders",
+    hint: "Border width −1px",
+    tokens: ["--border-width"],
+    apply: (values) => {
+      const parsed = parseLength(values["--border-width"]);
+      if (!parsed || parsed.unit !== "px") return null;
+      return { "--border-width": formatLength(Math.max(0, parsed.n - 1, 0), "px") };
+    },
+  },
+  {
+    id: "snappier-motion",
+    title: "Snappier motion",
+    hint: "Durations ×0.6",
+    tokens: ["--motion-fast", "--motion-normal"],
+    apply: (values) => {
+      const next: Record<string, unknown> = {};
+      for (const name of ["--motion-fast", "--motion-normal"]) {
+        const scaled = scaleDuration(values[name], 0.6);
+        if (!scaled) return null;
+        next[name] = scaled;
+      }
+      return next;
+    },
+  },
+  {
+    id: "calmer-motion",
+    title: "Calmer motion",
+    hint: "Durations ×1.5",
+    tokens: ["--motion-fast", "--motion-normal"],
+    apply: (values) => {
+      const next: Record<string, unknown> = {};
+      for (const name of ["--motion-fast", "--motion-normal"]) {
+        const scaled = scaleDuration(values[name], 1.5);
+        if (!scaled) return null;
+        next[name] = scaled;
+      }
+      return next;
+    },
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Left rail shared bits: friendly labels, per-tab search, collapsible
+// sections, and closed-registry font stacks. Token names (e.g. --primary)
+// are never shown in the UI — only plain-language labels.
+// ---------------------------------------------------------------------------
+
+/** Registry font metadata the server page passes in (serializable subset). */
+export interface EditorFontOption {
+  id: string;
+  family: string;
+  roles: string[];
+  slots: string[];
+  displayOnly: boolean;
+  classification: string;
+}
+
+const TOKEN_LABEL_OVERRIDES: Record<string, string> = {
+  "--radius": "Corner radius",
+  "--border-width": "Border width",
+  "--shadow-sm": "Subtle shadow",
+  "--shadow-md": "Medium shadow",
+  "--shadow-lg": "Large shadow",
+  "--shadow-xl": "Extra large shadow",
+  "--motion-fast": "Fast",
+  "--motion-normal": "Normal",
+};
+
+const KNOB_LABEL_OVERRIDES: Record<string, string> = {
+  radiusFrom: "Corner radius",
+  shadow: "Shadow",
+  border: "Border",
+  motion: "Animation",
+  backdropBlur: "Background blur",
+  overlayBackground: "Overlay background",
+  overlayOpacity: "Overlay opacity",
+  fontWeight: "Font weight",
+  position: "Position",
+};
+
+/**
+ * Variant/size selectors are not editable knobs: every preview shows all
+ * variants, and shipped defaults stay at the template defaults. They are
+ * stripped from saved selections on load and hidden below, so each remaining
+ * control appears exactly once.
+ */
+const NON_TOKEN_KNOBS = new Set([
+  "variant",
+  "size",
+  "density",
+  "spacing",
+  "controlSize",
+  "defaultVariant",
+  "defaultSize",
+]);
+
+/** Drop variant/size selectors from loaded selections — no invisible state. */
+function normalizeComponents(components: Doc["components"]): Doc["components"] {
+  const next: Doc["components"] = {};
+  for (const [name, selection] of Object.entries(components ?? {})) {
+    const clean: Record<string, unknown> = {};
+    for (const [knob, value] of Object.entries(selection ?? {})) {
+      if (!NON_TOKEN_KNOBS.has(knob)) clean[knob] = value;
+    }
+    next[name] = clean;
+  }
+  return next;
+}
+
+/** Human-friendly label for a component knob name — never the raw variable. */
+function friendlyKnobLabel(knob: string): string {
+  const override = KNOB_LABEL_OVERRIDES[knob];
+  if (override) return override;
+  return knob
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .split(/[-_\s]+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/** Human-friendly label for a token name. Falls back to Title Case words. */
+function friendlyTokenLabel(name: string): string {
+  const override = TOKEN_LABEL_OVERRIDES[name];
+  if (override) return override;
+  return name
+    .replace(/^--/, "")
+    .split("-")
+    .map((word) =>
+      word === "foreground" ? "Text" : word.charAt(0).toUpperCase() + word.slice(1),
+    )
+    .join(" ");
+}
+
+/** Search bar pinned at the top of the left rail (one shared query). */
+function TabSearch({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <div className="shrink-0 border-b border-border bg-background px-4 py-2">
+      <div className="relative">
+        <Search
+          size={14}
+          aria-hidden
+          className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+        />
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          aria-label={placeholder}
+          spellCheck={false}
+          className="pl-8"
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Collapsible sections with auto-expand while searching. Parents pre-filter. */
+function FilteredSections({
+  sections,
+  searching,
+  emptyLabel,
+}: {
+  sections: Array<{ id: string; title: string; body: React.ReactNode }>;
+  searching: boolean;
+  emptyLabel: string;
+}) {
+  const ids = sections.map((s) => s.id);
+  const [open, setOpen] = React.useState<string[] | null>(null);
+  return (
+    <>
+      <Accordion
+        type="multiple"
+        value={searching ? ids : (open ?? ids)}
+        onValueChange={setOpen}
+        className="mt-2"
+      >
+        {sections.map((s) => (
+          <AccordionItem key={s.id} value={s.id}>
+            <AccordionTrigger className="text-sm">{s.title}</AccordionTrigger>
+            <AccordionContent>{s.body}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+      {searching && sections.length === 0 ? (
+        <p className="mt-4 text-sm text-muted-foreground">No matches for “{emptyLabel}”.</p>
+      ) : null}
+    </>
+  );
+}
+
+/** Color sections accordion (shared by the Colors tab and cross-tab results). */
+function ColorsAccordion({
+  sections,
+  query,
+  value,
+  onValueChange,
+  renderRow,
+  sidebarBody,
+}: {
+  sections: ColorSection[];
+  query: string;
+  value: string[];
+  onValueChange: (next: string[]) => void;
+  renderRow: (token: string) => React.ReactNode;
+  sidebarBody: React.ReactNode;
+}) {
+  const q = query.trim().toLowerCase();
+  return (
+    <Accordion type="multiple" value={value} onValueChange={onValueChange} className="mt-2">
+      {sections.map((section) => (
+        <AccordionItem key={section.id} value={section.id}>
+          <AccordionTrigger className="text-sm">{section.title}</AccordionTrigger>
+          <AccordionContent>
+            {section.id === "sidebar"
+              ? sidebarBody
+              : section.tokens.filter((t) => q === "" || t.toLowerCase().includes(q)).map(renderRow)}
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
+/** Canonical --font-* stack for a registry family (mirrors the registry gate). */
+function fontStackFor(family: string, classification: string, role: string): string {
+  if (classification === "serif" || classification === "display-serif") {
+    return `${family}, ui-serif, Georgia, Times New Roman, serif`;
+  }
+  if (classification === "calligraphic" || classification === "handwritten") {
+    return `${family}, Segoe Script, Comic Sans MS, cursive`;
+  }
+  if (role === "mono" || classification === "monospace") {
+    return `${family}, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
+  }
+  return `${family}, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif`;
+}
+
+/** First family in a raw stack, without quotes. */
+function stackFamily(stack: unknown): string | null {
+  if (typeof stack !== "string") return null;
+  const family = (stack.split(",")[0] ?? "").trim().replace(/^['"]|['"]$/g, "");
+  return family === "" ? null : family;
+}
+
+const FONT_SLOTS = [
+  { slot: "sans", token: "--font-sans", role: "sans", label: "Body" },
+  { slot: "display", token: "--font-display", role: "display", label: "Display" },
+  { slot: "mono", token: "--font-mono", role: "mono", label: "Monospace" },
+] as const;
+
+// ---------------------------------------------------------------------------
+// Knob controls (component tuning, Tune tab)
 // ---------------------------------------------------------------------------
 
 function KnobControl({
@@ -234,9 +605,7 @@ function KnobControl({
   if (spec.type === "token" && spec.value && spec.scale) {
     return (
       <label className="flex items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">
-          {label} <span className="opacity-70">({spec.value})</span>
-        </span>
+        <span className="text-muted-foreground">{label}</span>
         <Select value={String(value)} onValueChange={onChange}>
           <SelectTrigger className="w-36">
             <SelectValue />
@@ -273,7 +642,13 @@ function KnobControl({
   );
 }
 
-/** Two-column grid of uniform preview boxes with centered content. */
+/**
+ * Two-column grid of uniform preview boxes with centered content.
+ *
+ * Only the inner content wrapper carries the library tokens (`previewVars` /
+ * `.dark`): the box, its header, and the canvas behind it all use the app's own
+ * theme, so library edits never restyle the editor chrome.
+ */
 function PreviewGrid({
   items,
   boxClass,
@@ -281,6 +656,9 @@ function PreviewGrid({
   renderItem,
   colsClass = "grid-cols-1 sm:grid-cols-2",
   onExpand,
+  onEdit,
+  previewVars,
+  dark,
 }: {
   items: Manifest[];
   boxClass: string;
@@ -288,38 +666,80 @@ function PreviewGrid({
   renderItem: (item: Manifest) => React.ReactNode;
   colsClass?: string;
   onExpand?: (item: Manifest) => void;
+  onEdit?: (item: Manifest) => void;
+  previewVars: React.CSSProperties;
+  dark: boolean;
 }) {
   if (items.length === 0) {
     return <p className="p-4 text-sm text-muted-foreground">No {emptyLabel} match the search.</p>;
   }
   return (
     <div className={`grid gap-4 p-4 ${colsClass}`}>
-      {items.map((item) => (
+      {items.map((item) => {
+        const editable =
+          !onEdit ||
+          Object.values(item.styleSurface).some((knobs) =>
+            Object.keys(knobs).some((knob) => !NON_TOKEN_KNOBS.has(knob)),
+          );
+        const editButton = (disabled: boolean) => (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => onEdit?.(item)}
+            aria-label={disabled ? `${item.title} has no component-specific tokens` : `Edit ${item.title}`}
+            title={disabled ? undefined : `Edit ${item.title}`}
+            disabled={disabled}
+          >
+            <Pencil aria-hidden />
+          </Button>
+        );
+        return (
         <div
           key={item.name}
-          className={`flex flex-col overflow-hidden rounded-lg border border-border ${boxClass}`}
+          className={`flex flex-col overflow-hidden rounded-lg border border-border bg-background ${boxClass}`}
         >
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-2">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-3 py-2">
             <p className="min-w-0 flex-1 truncate text-sm font-medium">{item.title}</p>
-            {onExpand ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-7 w-7 shrink-0"
-                onClick={() => onExpand(item)}
-                aria-label={`Expand ${item.title} preview`}
-                title={`Expand ${item.title} preview`}
-              >
-                <Maximize2 aria-hidden />
-              </Button>
-            ) : null}
+            <span className="flex shrink-0 items-center gap-1">
+              {onEdit ? (
+                editable ? (
+                  editButton(false)
+                ) : (
+                  <span title="No component-specific tokens" className="inline-flex">
+                    {editButton(true)}
+                  </span>
+                )
+              ) : null}
+              {onExpand ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => onExpand(item)}
+                  aria-label={`Expand ${item.title} preview`}
+                  title={`Expand ${item.title} preview`}
+                >
+                  <Maximize2 aria-hidden />
+                </Button>
+              ) : null}
+            </span>
           </div>
-          <div className="flex min-h-0 flex-1 overflow-auto p-4">
-            <div className="m-auto max-w-full">{renderItem(item)}</div>
+          <div className="min-h-0 flex-1 overflow-auto">
+            <div
+              style={previewVars}
+              className={`flex min-h-full bg-background p-4 font-sans text-foreground ${dark ? "dark" : ""}`}
+            >
+              <PreviewPortalHost>
+                <div className="m-auto max-w-full">{renderItem(item)}</div>
+              </PreviewPortalHost>
+            </div>
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -336,6 +756,7 @@ export function IdentityEditor({
   blocks,
   contract,
   install,
+  fonts,
 }: {
   libraryId: string;
   libraryName: string;
@@ -344,10 +765,12 @@ export function IdentityEditor({
   blocks: Manifest[];
   contract: { tokens: TokenDef[] };
   install: { base: string; username: string; slug: string; authed: boolean };
+  fonts: EditorFontOption[];
 }) {
   const savedDoc = React.useRef<Doc>({
     tokens: initialPayload.tokens,
-    components: initialPayload.components,
+    components: normalizeComponents(initialPayload.components),
+    fonts: initialPayload.fonts,
   });
   const docRef = React.useRef<Doc>(savedDoc.current);
   const [doc, setDoc] = React.useState<Doc>(docRef.current);
@@ -355,12 +778,11 @@ export function IdentityEditor({
   const future = React.useRef<Doc[]>([]);
   const [, setTick] = React.useState(0);
 
-  const [mode, setMode] = React.useState<"light" | "dark">("light");
+  const [mode, setMode] = React.useState<"light" | "dark">("dark");
   const [previewTab, setPreviewTab] = React.useState<PreviewTab>("components");
   const [previewQuery, setPreviewQuery] = React.useState("");
-  const [tunedComponent, setTunedComponent] = React.useState<string | null>(
-    manifests[0]?.name ?? null,
-  );
+  const [tab, setTab] = React.useState("colors");
+  const [editingComponent, setEditingComponent] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState("");
   const [openSections, setOpenSections] = React.useState<string[]>(["primary"]);
   const [expandedBlock, setExpandedBlock] = React.useState<Manifest | null>(null);
@@ -419,8 +841,8 @@ export function IdentityEditor({
   };
   const resetAll = () => commit(structuredClone(savedDoc.current));
 
-  const manifest = manifests.find((m) => m.name === tunedComponent) ?? null;
-  const selection = manifest ? (doc.components[manifest.name] ?? {}) : {};
+  const editingManifest = manifests.find((m) => m.name === editingComponent) ?? null;
+  const selection = editingManifest ? (doc.components[editingManifest.name] ?? {}) : {};
 
   const dirty = React.useMemo(
     () => JSON.stringify(docRef.current) !== JSON.stringify(savedDoc.current),
@@ -469,8 +891,8 @@ export function IdentityEditor({
   };
 
   const setKnob = (knob: string, next: unknown) => {
-    if (!manifest) return;
-    const name = manifest.name;
+    if (!editingManifest) return;
+    const name = editingManifest.name;
     commit({
       ...docRef.current,
       components: {
@@ -480,12 +902,68 @@ export function IdentityEditor({
     });
   };
 
+  /** Typeface options valid for a font slot (closed registry, no raw stacks). */
+  const fontOptionsFor = (slot: "sans" | "display" | "mono"): EditorFontOption[] =>
+    fonts.filter((f) => f.roles.includes(slot) && (slot !== "sans" || !f.displayOnly));
+
+  /** Resolve the dropdown value: saved selection, else match the stack's family. */
+  const fontSelectionFor = (slot: "sans" | "display" | "mono", token: string): string => {
+    const options = fontOptionsFor(slot);
+    if (options.some((o) => o.id === doc.fonts[slot])) return doc.fonts[slot];
+    const family = stackFamily(valueOf(token));
+    return options.find((o) => o.family === family)?.id ?? "";
+  };
+
+  /** Set a typeface: updates the fonts selection and mirrors the token stack in every mode. */
+  const setFontSlot = (slot: "sans" | "display" | "mono", token: string, id: string) => {
+    const entry = fonts.find((f) => f.id === id);
+    if (!entry) return;
+    const stack = fontStackFor(entry.family, entry.classification, slot);
+    const nextTokens = { ...docRef.current.tokens };
+    for (const m of Object.keys(nextTokens)) {
+      const mt = nextTokens[m] ?? {};
+      nextTokens[m] = {
+        ...mt,
+        [token]: { $type: mt[token]?.$type ?? "other", $value: stack },
+      };
+    }
+    commit({
+      ...docRef.current,
+      fonts: { ...docRef.current.fonts, [slot]: id },
+      tokens: nextTokens,
+    });
+  };
+
+  /** Apply a quick-tweak preset as one commit (undoable). Returns its computed values for enablement checks. */
+  const computeTweak = (tweak: QuickTweak): Record<string, unknown> | null => {
+    const modeTokens = docRef.current.tokens[mode] ?? {};
+    const current: Record<string, unknown> = {};
+    for (const name of tweak.tokens) current[name] = modeTokens[name]?.$value;
+    return tweak.apply(current);
+  };
+
+  const applyTweak = (tweak: QuickTweak) => {
+    const nextValues = computeTweak(tweak);
+    if (!nextValues) {
+      return;
+    }
+    const modeTokens = docRef.current.tokens[mode] ?? {};
+    const next = { ...modeTokens };
+    for (const [name, value] of Object.entries(nextValues)) {
+      next[name] = { $type: modeTokens[name]?.$type ?? "other", $value: value };
+    }
+    commit({
+      ...docRef.current,
+      tokens: { ...docRef.current.tokens, [mode]: next },
+    });
+  };
+
   const save = async () => {
     setSaving(true);
     setIssues(null);
     const result = await savePayload(libraryId, {
       meta: initialPayload.meta,
-      fonts: initialPayload.fonts,
+      fonts: doc.fonts,
       icons: initialPayload.icons,
       typeScale: initialPayload.typeScale,
       dna: initialPayload.dna,
@@ -528,13 +1006,143 @@ export function IdentityEditor({
 
   const valueOf = (name: string): unknown => doc.tokens[mode]?.[name]?.$value ?? "";
 
+  const fmtShadowNum = (n: number): string => String(Math.round(n * 100) / 100);
+
+  const setShadow = (name: string, parts: ShadowParts) => {
+    const color = parts.color === "" ? "transparent" : parts.color;
+    setToken(
+      name,
+      null,
+      `${fmtShadowNum(parts.x)}px ${fmtShadowNum(parts.y)}px ${fmtShadowNum(parts.blur)}px ${fmtShadowNum(parts.spread)}px ${color}`,
+    );
+  };
+
+  const patchShadow = (name: string, parts: ShadowParts, patch: Partial<ShadowParts>) =>
+    setShadow(name, { ...parts, ...patch });
+
+  const setShadowColor = (name: string, parts: ShadowParts, hex: string) => {
+    const oklch = hexToOklch(hex);
+    const alpha = parseShadowAlpha(parts.color);
+    const rounded = Math.round((alpha ?? 1) * 1000) / 1000;
+    patchShadow(name, parts, {
+      color: alpha == null || rounded >= 1 ? oklch : oklch.replace(/\)$/, ` / ${rounded})`) ,
+    });
+  };
+
+  const setShadowOpacity = (name: string, parts: ShadowParts, percent: number) => {
+    if (!Number.isFinite(percent)) return;
+    const alpha = Math.min(1, Math.max(0, percent / 100));
+    let base = parts.color;
+    if (!base.startsWith("oklch(")) {
+      const hex = colorToHex(base);
+      if (!hex) return;
+      base = hexToOklch(hex);
+    }
+    const bare = base.replace(/\s*\/\s*[\d.]+%?\s*\)\s*$/, ")").replace(/\)\s*$/, ")");
+    patchShadow(name, parts, {
+      color: alpha >= 1 ? bare : bare.replace(/\)$/, ` / ${Math.round(alpha * 1000) / 1000})`) ,
+    });
+  };
+
+  /** Structured shadow editor: color swatch plus numeric X / Y / blur / spread / opacity. */
+  const renderShadowRow = (name: string, str: string) => {
+    const label = friendlyTokenLabel(name);
+    const parts = parseShadow(str);
+    if (!parts) {
+      return (
+        <div key={name} className="flex items-center gap-2 py-1.5">
+          <span className="w-28 shrink-0 truncate text-xs text-muted-foreground">{label}</span>
+          <Input
+            value={str}
+            onChange={(e) => setToken(name, null, e.target.value)}
+            aria-label={`${name} value`}
+            spellCheck={false}
+            controlSize="sm"
+            className="min-w-0 flex-1 font-mono"
+          />
+        </div>
+      );
+    }
+    const hex = colorToHex(parts.color);
+    const alpha = parseShadowAlpha(parts.color);
+    const num = (
+      field: "x" | "y" | "blur" | "spread",
+      caption: string,
+      min?: number,
+    ) => (
+      <label className="flex min-w-0 flex-col gap-0.5 text-[11px] leading-none text-muted-foreground">
+        {caption}
+        <Input
+          type="number"
+          value={parts[field]}
+          min={min}
+          step="any"
+          onChange={(e) => {
+            const next = Number(e.target.value);
+            if (!Number.isFinite(next)) return;
+            patchShadow(name, parts, { [field]: next } as Partial<ShadowParts>);
+          }}
+          aria-label={`${label} ${caption}`}
+          controlSize="sm"
+          className="font-mono"
+        />
+      </label>
+    );
+    return (
+      <div key={name} className="flex flex-col gap-1.5 py-1.5">
+        <div className="flex items-center gap-2">
+          <span className="relative inline-flex h-6 w-6 shrink-0 overflow-hidden rounded border-(length:--border-width) border-border">
+            <span aria-hidden className="absolute inset-0" style={{ background: parts.color }} />
+            {hex ? (
+              <input
+                type="color"
+                value={hex}
+                onChange={(e) => setShadowColor(name, parts, e.target.value)}
+                aria-label={`${label} shadow color picker`}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            ) : null}
+          </span>
+          <span className="min-w-0 flex-1 truncate text-xs">{label}</span>
+        </div>
+        <div className="grid grid-cols-3 gap-1.5">
+          {num("x", "Offset X")}
+          {num("y", "Offset Y")}
+          {num("blur", "Blur", 0)}
+          {num("spread", "Spread")}
+          <label className="flex min-w-0 flex-col gap-0.5 text-[11px] leading-none text-muted-foreground">
+            Opacity %
+            <Input
+              type="number"
+              value={Math.round((alpha ?? 1) * 100)}
+              min={0}
+              max={100}
+              step="any"
+              disabled={hex == null && !parts.color.startsWith("oklch(")}
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                if (!Number.isFinite(next)) return;
+                setShadowOpacity(name, parts, next);
+              }}
+              aria-label={`${label} opacity percent`}
+              controlSize="sm"
+              className="font-mono"
+            />
+          </label>
+        </div>
+      </div>
+    );
+  };
+
   const renderTokenRow = (name: string) => {
     const raw: unknown = valueOf(name);
     if (typeof raw === "object" && raw !== null) {
       const pair = raw as Record<string, string>;
       return (
-        <div key={name} className="flex items-center gap-2 py-1">
-          <span className="w-28 shrink-0 truncate font-mono text-xs text-muted-foreground">{name}</span>
+        <div key={name} className="flex items-center gap-2 py-1.5">
+          <span className="w-28 shrink-0 truncate text-xs text-muted-foreground">
+            {friendlyTokenLabel(name)}
+          </span>
           <Input
             value={pair.duration ?? ""}
             onChange={(e) => setToken(name, "duration", e.target.value)}
@@ -555,9 +1163,10 @@ export function IdentityEditor({
       );
     }
     const str = String(raw);
+    if (doc.tokens[mode]?.[name]?.$type === "shadow") return renderShadowRow(name, str);
     const hex = colorToHex(str);
     return (
-      <div key={name} className="flex items-center gap-2 py-1">
+      <div key={name} className="flex items-center gap-2 py-1.5">
         <span className="relative inline-flex h-6 w-6 shrink-0 overflow-hidden rounded border-(length:--border-width) border-border">
           <span aria-hidden className="absolute inset-0" style={{ background: str || "transparent" }} />
           {hex ? (
@@ -570,7 +1179,9 @@ export function IdentityEditor({
             />
           ) : null}
         </span>
-        <span className="w-28 shrink-0 truncate font-mono text-xs text-muted-foreground">{name}</span>
+        <span className="w-28 shrink-0 truncate text-xs text-muted-foreground">
+          {friendlyTokenLabel(name)}
+        </span>
         <Input
           value={str}
           onChange={(e) => setToken(name, null, e.target.value)}
@@ -600,171 +1211,279 @@ export function IdentityEditor({
     commit({ ...docRef.current, tokens: { ...docRef.current.tokens, [mode]: next } });
   };
 
+  /** Row-level match on friendly label plus token name (names stay searchable, never shown). */
+  const rowMatch = (label: string, token: string) =>
+    q === "" || `${label} ${token}`.toLowerCase().includes(q);
+
+  const visibleFontSlots = FONT_SLOTS.filter(
+    ({ label, token }) => q === "" || `${label} typeface font ${token}`.toLowerCase().includes(q),
+  );
+
+  const shadowTokens = ["--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"].filter((t) =>
+    rowMatch(`${friendlyTokenLabel(t)} shadow elevation`, t),
+  );
+  const shapeSections = [
+    ...(rowMatch("Corner radius rounding", "--radius")
+      ? [{ id: "radius", title: "Radius", body: renderTokenRow("--radius") }]
+      : []),
+    ...(shadowTokens.length > 0
+      ? [{ id: "elevation", title: "Elevation", body: shadowTokens.map(renderTokenRow) }]
+      : []),
+  ];
+
+  const motionTokens = ["--motion-fast", "--motion-normal"].filter((t) =>
+    rowMatch(`${friendlyTokenLabel(t)} timing duration easing`, t),
+  );
+  const motionSections =
+    motionTokens.length > 0
+      ? [{ id: "timing", title: "Timing", body: motionTokens.map(renderTokenRow) }]
+      : [];
+
+  const tuneSlots = editingManifest ? Object.entries(editingManifest.styleSurface) : [];
+  const tuneSections = [
+    ...tuneSlots.flatMap(([slot, knobs]) => {
+      const rows = Object.entries(knobs).filter(
+        ([knob]) =>
+          !NON_TOKEN_KNOBS.has(knob) && rowMatch(`${knob} ${slot} ${friendlyKnobLabel(knob)}`, knob),
+      );
+      if (rows.length === 0) return [];
+      return [
+        {
+          id: `slot-${slot}`,
+          title: slot.charAt(0).toUpperCase() + slot.slice(1),
+          body: (
+            <div className="flex flex-col gap-2.5">
+              {rows.map(([knob, spec]) => (
+                <KnobControl
+                  key={`${slot}.${knob}`}
+                  label={friendlyKnobLabel(knob)}
+                  spec={spec}
+                  value={selection[knob]}
+                  onChange={(next) => setKnob(knob, next)}
+                />
+              ))}
+            </div>
+          ),
+        },
+      ];
+    }),
+  ];
+
+  const visibleTweaks = QUICK_TWEAKS.filter(
+    (t) => q === "" || `${t.title} ${t.hint}`.toLowerCase().includes(q),
+  );
+
+  const sidebarRows = SIDEBAR_FOLLOWS.filter((t) => q === "" || t.toLowerCase().includes(q));
+  const sidebarBody = (
+    <div>
+      <p className="pb-1 text-xs text-muted-foreground">
+        Sidebar surfaces follow these tokens — this contract has no separate sidebar tokens.
+      </p>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={syncSidebar}
+        title="Sync sidebar tokens with last saved values"
+        className="mb-1 text-muted-foreground"
+      >
+        <RefreshCw aria-hidden /> Sync
+      </Button>
+      {sidebarRows.map(renderTokenRow)}
+    </div>
+  );
+
+  const renderFontSlot = ({
+    slot,
+    token,
+    label,
+  }: Pick<(typeof FONT_SLOTS)[number], "slot" | "token" | "label">) => (
+    <div key={slot} className="flex flex-col gap-1 py-1">
+      <span className="text-sm">{label}</span>
+      <Select value={fontSelectionFor(slot, token)} onValueChange={(id) => setFontSlot(slot, token, id)}>
+        <SelectTrigger aria-label={`${label} typeface`} className="w-full">
+          <SelectValue placeholder="Select a typeface" />
+        </SelectTrigger>
+        <SelectContent>
+          {fontOptionsFor(slot).map((o) => (
+            <SelectItem key={o.id} value={o.id}>
+              {o.family}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  const renderTweak = (tweak: QuickTweak) => {
+    const applicable = computeTweak(tweak) !== null;
+    return (
+      <button
+        key={tweak.id}
+        type="button"
+        disabled={!applicable}
+        onClick={() => applyTweak(tweak)}
+        title={applicable ? tweak.hint : `${tweak.hint} (not applicable to current values)`}
+        className="rounded-lg border-(length:--border-width) border-border bg-card p-2.5 text-left transition-colors hover:border-primary disabled:opacity-40"
+      >
+        <span className="block text-sm font-medium">{tweak.title}</span>
+        <span className="mt-0.5 block text-xs text-muted-foreground">{tweak.hint}</span>
+      </button>
+    );
+  };
+
+  /** Cross-tab results: every matching group across Colors … AI Edit. */
+  const globalSections = [
+    ...visibleSections.flatMap((section) => {
+      const rows =
+        section.id === "sidebar"
+          ? sidebarRows
+          : section.tokens.filter((t) => t.toLowerCase().includes(q));
+      if (rows.length === 0) return [];
+      return [
+        {
+          id: `find-colors-${section.id}`,
+          title: `Colors · ${section.title}`,
+          body: section.id === "sidebar" ? sidebarBody : rows.map(renderTokenRow),
+        },
+      ];
+    }),
+    ...visibleFontSlots.map(({ slot, token, label }) => ({
+      id: `find-type-${slot}`,
+      title: `Typography · ${label}`,
+      body: renderFontSlot({ slot, token, label }),
+    })),
+    ...(rowMatch("Corner radius rounding", "--radius")
+      ? [{ id: "find-shape-radius", title: "Shape · Radius", body: renderTokenRow("--radius") }]
+      : []),
+    ...(shadowTokens.length > 0
+      ? [{ id: "find-shape-elevation", title: "Shape · Elevation", body: shadowTokens.map(renderTokenRow) }]
+      : []),
+    ...(motionTokens.length > 0
+      ? [{ id: "find-motion", title: "Motion · Timing", body: motionTokens.map(renderTokenRow) }]
+      : []),
+    ...(visibleTweaks.length > 0
+      ? [
+          {
+            id: "find-tweaks",
+            title: "AI Edit · Quick tweaks",
+            body: <div className="grid grid-cols-2 gap-2">{visibleTweaks.map(renderTweak)}</div>,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <div className="flex flex-col lg:h-[calc(100dvh-65px)] lg:min-h-0 lg:flex-row">
-      <IdentityFontLinks fonts={initialPayload.fonts} />
+      <IdentityFontLinks fonts={doc.fonts} />
 
       {/* ---------- Left: theme editor ---------- */}
       <div className="flex min-h-0 w-full shrink-0 flex-col border-b border-border lg:w-fit lg:max-w-[50%] lg:border-b-0 lg:border-r">
-        <Tabs defaultValue="colors" className="flex min-h-0 flex-1 flex-col gap-0">
+        {editingManifest ? (
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="flex h-13 shrink-0 items-center gap-2 border-b border-border px-3">
+              <p className="min-w-0 flex-1 truncate text-sm font-medium">
+                Editing {editingManifest.title}
+              </p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setEditingComponent(null)}
+                aria-label="Close component editor"
+                title="Close component editor"
+              >
+                <X aria-hidden />
+              </Button>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">
+              {tuneSections.length === 0 ? (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {q === ""
+                    ? `No component-specific tokens — ${editingManifest.title} inherits everything from the global theme.`
+                    : `No matches for “${query}”.`}
+                </p>
+              ) : (
+                <FilteredSections
+                  key={editingManifest.name}
+                  searching={false}
+                  emptyLabel=""
+                  sections={tuneSections}
+                />
+              )}
+            </div>
+          </div>
+        ) : (
+          <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col gap-0">
           <div className="flex h-13 shrink-0 items-center border-b border-border px-2 sm:px-3">
-            <TabsList aria-label="Theme editor" className="min-w-0 flex-1 overflow-x-auto">
-              {["Colors", "Typography", "Other", "Generate"].map((tab) => (
-                <TabsTrigger key={tab} value={tab.toLowerCase()} className="shrink-0">
-                  {tab}
+            <TabsList aria-label="Theme editor" className="w-fit max-w-full overflow-x-auto">
+              {[
+                { label: "Colors", value: "colors" },
+                { label: "Typography", value: "typography" },
+                { label: "Shape", value: "shape" },
+                { label: "Motion", value: "motion" },
+                { label: "AI Edit", value: "ai-edit" },
+              ].map((tab) => (
+                <TabsTrigger key={tab.value} value={tab.value} className="shrink-0">
+                  {tab.label}
                 </TabsTrigger>
               ))}
             </TabsList>
           </div>
+          <TabSearch value={query} onChange={setQuery} placeholder="Search tokens…" />
 
-          <TabsContent value="colors" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3">
-            <div className="sticky top-0 z-10 -mx-3 bg-background px-3 pb-2 pt-3">
-              <div className="relative">
-                <Search
-                  size={14}
-                  aria-hidden
-                  className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search tokens…"
-                  aria-label="Search tokens"
-                  spellCheck={false}
-                  className="pl-8"
-                />
-              </div>
-            </div>
-            <Accordion
-              type="multiple"
+          {/* Panels are size-contained on the inline axis so the rail hugs the tab strip, not the widest row. */}
+          {q === "" ? (
+            <>
+          <TabsContent value="colors" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
+            <ColorsAccordion
+              sections={visibleSections}
+              query={query}
               value={accordionValue}
               onValueChange={(v) => setOpenSections(v as string[])}
-              className="mt-2"
-            >
-              {visibleSections.map((section) => (
-                <AccordionItem key={section.id} value={section.id}>
-                  <AccordionTrigger className="text-sm">{section.title}</AccordionTrigger>
-                  <AccordionContent>
-                    {section.id === "sidebar" ? (
-                      <div>
-                        <p className="pb-1 text-xs text-muted-foreground">
-                          Sidebar surfaces follow these tokens — this contract has no separate sidebar tokens.
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={syncSidebar}
-                          title="Sync sidebar tokens with last saved values"
-                          className="mb-1 text-muted-foreground"
-                        >
-                          <RefreshCw aria-hidden /> Sync
-                        </Button>
-                        {SIDEBAR_FOLLOWS.map(renderTokenRow)}
-                      </div>
-                    ) : (
-                      section.tokens
-                        .filter((t) => q === "" || t.toLowerCase().includes(q))
-                        .map(renderTokenRow)
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-            {q !== "" && visibleSections.length === 0 ? (
-              <p className="mt-4 text-sm text-muted-foreground">No tokens match “{query}”.</p>
-            ) : null}
+              renderRow={renderTokenRow}
+              sidebarBody={sidebarBody}
+            />
           </TabsContent>
 
-          <TabsContent value="typography" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 py-3">
-            <div className="flex flex-col gap-1">
-              {["--font-sans", "--font-display", "--font-mono"].map((name) => (
-                <div key={name} className="flex flex-col gap-1 py-1">
-                  <span className="font-mono text-xs text-muted-foreground">{name}</span>
-                  <Input
-                    value={String(valueOf(name))}
-                    onChange={(e) => setToken(name, null, e.target.value)}
-                    aria-label={`${name} value`}
-                    spellCheck={false}
-                    controlSize="sm"
-                    className="font-mono"
-                  />
-                </div>
-              ))}
+          <TabsContent value="typography" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
+            <FilteredSections
+              searching={q !== ""}
+              emptyLabel={query}
+              sections={visibleFontSlots.map(({ slot, token, label }) => ({
+                id: slot,
+                title: label,
+                body: renderFontSlot({ slot, token, label }),
+              }))}
+            />
+          </TabsContent>
+
+          <TabsContent value="shape" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
+            <FilteredSections searching={q !== ""} emptyLabel={query} sections={shapeSections} />
+          </TabsContent>
+
+          <TabsContent value="motion" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
+            <FilteredSections searching={q !== ""} emptyLabel={query} sections={motionSections} />
+          </TabsContent>
+
+          <TabsContent value="ai-edit" className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3 pt-3 [contain:inline-size]">
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              <p className="text-xs text-muted-foreground">Suggested changes</p>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {visibleTweaks.map(renderTweak)}
+              </div>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Type scale: {initialPayload.typeScale ?? "not set"} (closed registry — edited at generation, not here).
-            </p>
-          </TabsContent>
-
-          <TabsContent value="other" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 py-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Radius & elevation</p>
-            {["--radius", "--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"].map(renderTokenRow)}
-            <p className="mt-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">Motion</p>
-            {["--motion-fast", "--motion-normal"].map(renderTokenRow)}
-            <div className="mt-4 border-t border-border pt-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Component</p>
-              <Select
-                value={tunedComponent ?? ""}
-                onValueChange={(v) => setTunedComponent(v || null)}
-              >
-                <SelectTrigger aria-label="Component to tune" className="mt-2 w-full">
-                  <SelectValue placeholder="Select a component to tune" />
-                </SelectTrigger>
-                <SelectContent>
-                  {manifests.map((m) => (
-                    <SelectItem key={m.name} value={m.name}>
-                      {m.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {manifest ? (
-                <>
-                  <div className="mt-3 flex flex-col gap-2">
-                    {Object.entries(manifest.axes).map(([axis, def]) => (
-                      <KnobControl
-                        key={axis}
-                        label={axis}
-                        spec={{ type: "enum", values: def.values, default: def.default }}
-                        value={selection[axis]}
-                        onChange={(next) => setKnob(axis, next)}
-                      />
-                    ))}
-                    {Object.entries(manifest.styleSurface).map(([slot, knobs]) =>
-                      Object.entries(knobs).map(([knob, spec]) => (
-                        <KnobControl
-                          key={`${slot}.${knob}`}
-                          label={`${knob} (${slot})`}
-                          spec={spec}
-                          value={selection[knob]}
-                          onChange={(next) => setKnob(knob, next)}
-                        />
-                      )),
-                    )}
-                  </div>
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    Tokens used: {manifest.tokensUsed.join(", ")}
-                  </p>
-                </>
-              ) : (
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Click a component box in the preview to tune its knobs here.
-                </p>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="generate" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 py-3">
-            <p className="text-sm font-medium">Generate with AI ✨</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Describe a change in plain language — one model call returns a token delta, recompiled deterministically.
-            </p>
-            <div className="mt-3">
+            <div className="shrink-0 pt-3">
               <PromptEdit libraryId={libraryId} />
+            </div>          </TabsContent>
+            </>
+          ) : (
+            <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">
+              <FilteredSections searching emptyLabel={query} sections={globalSections} />
             </div>
-          </TabsContent>
-        </Tabs>
+          )}
+          </Tabs>
+        )}
       </div>
 
       {/* ---------- Right: live preview ---------- */}
@@ -846,7 +1565,7 @@ export function IdentityEditor({
           />
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-background">
           <div className="sticky top-0 z-10 border-b border-border bg-background px-4 py-2">
             <div className="relative">
               <Search
@@ -873,40 +1592,45 @@ export function IdentityEditor({
               ))}
             </ul>
           ) : null}
-          <div className={mode === "dark" ? "dark" : ""}>
-            <div
-              style={previewVars as React.CSSProperties}
-              className="bg-background font-sans text-foreground"
-            >
-              {previewTab === "components" ? (
-                <PreviewGrid
-                  items={manifests.filter(
-                    (m) =>
-                      previewQuery.trim() === "" ||
-                      `${m.title} ${m.name}`.toLowerCase().includes(previewQuery.trim().toLowerCase()),
-                  )}
-                  boxClass="h-72"
-                  emptyLabel="components"
-                  renderItem={(m) => (
-                    <ComponentPreview name={m.name} selection={doc.components[m.name] ?? {}} />
-                  )}
-                />
-              ) : (
-                <PreviewGrid
-                  items={blocks.filter(
-                    (b) =>
-                      previewQuery.trim() === "" ||
-                      `${b.title} ${b.name}`.toLowerCase().includes(previewQuery.trim().toLowerCase()),
-                  )}
-                  boxClass="h-96"
-                  colsClass="grid-cols-1"
-                  emptyLabel="blocks"
-                  onExpand={openExpanded}
-                  renderItem={(b) => <BlockPreview name={b.name} />}
+          {previewTab === "components" ? (
+            <PreviewGrid
+              items={manifests.filter(
+                (m) =>
+                  previewQuery.trim() === "" ||
+                  `${m.title} ${m.name}`.toLowerCase().includes(previewQuery.trim().toLowerCase()),
+              )}
+              boxClass="h-72"
+              emptyLabel="components"
+              onEdit={(m) => {
+                setQuery("");
+                setEditingComponent(m.name);
+              }}
+              previewVars={previewVars as React.CSSProperties}
+              dark={mode === "dark"}
+              renderItem={(m) => (
+                <ComponentPreview
+                  name={m.name}
+                  selection={doc.components[m.name] ?? {}}
+                  axes={m.axes}
                 />
               )}
-            </div>
-          </div>
+            />
+          ) : (
+            <PreviewGrid
+              items={blocks.filter(
+                (b) =>
+                  previewQuery.trim() === "" ||
+                  `${b.title} ${b.name}`.toLowerCase().includes(previewQuery.trim().toLowerCase()),
+              )}
+              boxClass="h-96"
+              colsClass="grid-cols-1"
+              emptyLabel="blocks"
+              onExpand={openExpanded}
+              previewVars={previewVars as React.CSSProperties}
+              dark={mode === "dark"}
+              renderItem={(b) => <BlockPreview name={b.name} />}
+            />
+          )}
         </div>
       </div>
       {expandedBlock ? (
@@ -942,12 +1666,14 @@ export function IdentityEditor({
                 </Button>
               ) : null}
             </div>
-            <div className={`min-h-0 flex-1 overflow-y-auto ${mode === "dark" ? "dark" : ""}`}>
+            <div className="min-h-0 flex-1 overflow-y-auto">
               <div
                 style={previewVars as React.CSSProperties}
-                className="bg-background font-sans text-foreground"
+                className={`min-h-full bg-background font-sans text-foreground ${mode === "dark" ? "dark" : ""}`}
               >
-                <BlockPreview name={expandedBlock.name} axes={expandedAxes ?? undefined} />
+                <PreviewPortalHost>
+                  <BlockPreview name={expandedBlock.name} axes={expandedAxes ?? undefined} />
+                </PreviewPortalHost>
               </div>
             </div>
           </div>

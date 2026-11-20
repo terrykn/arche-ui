@@ -1,7 +1,7 @@
 import type { DocsPageData } from "@/lib/docs-content";
 
 export const installation: DocsPageData = {
-  slug: "",
+  slug: "/installation",
   title: "Installation",
   lede: "Install Arche in three steps.",
   blocks: [

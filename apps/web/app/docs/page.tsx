@@ -1,6 +1,6 @@
-import { DocsPage } from "@/components/docs/docs-page";
-import { installation } from "@/content/docs/installation";
+import { redirect } from "next/navigation";
 
-export default function Installation() {
-  return <DocsPage page={installation} />;
+// Docs start at the first section tab (Configuration), not Installation.
+export default function DocsIndex() {
+  redirect("/docs/configuration");
 }

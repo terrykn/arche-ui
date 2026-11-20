@@ -391,9 +391,6 @@ export interface PalettePreviewSwatches {
   onAccent: string;
   brand: string;
   onBrand: string;
-  brandSoft: string;
-  /** --foreground: the text pair the compiler AA-gates on --brand-soft. */
-  brandSoftText: string;
   secondary: string;
   secondaryText: string;
 }
@@ -504,8 +501,6 @@ function swatchesFor(
     onAccent: str("--accent-foreground", "#ffffff"),
     brand: str("--brand", "#333333"),
     onBrand: str("--brand-foreground", "#ffffff"),
-    brandSoft: str("--brand-soft", "#eeeeee"),
-    brandSoftText: str("--foreground", "#111111"),
     secondary: str("--secondary", "#eeeeee"),
     secondaryText: str("--secondary-foreground", "#111111"),
   };
@@ -520,8 +515,6 @@ const FALLBACK_SWATCHES: PalettePreviewSwatches = {
   onAccent: "#ffffff",
   brand: "#333333",
   onBrand: "#ffffff",
-  brandSoft: "#eeeeee",
-  brandSoftText: "#111111",
   secondary: "#eeeeee",
   secondaryText: "#111111",
 };

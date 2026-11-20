@@ -1,5 +1,6 @@
-import Installation from "@/app/docs/page";
+import { redirect } from "next/navigation";
 
+// Dashboard docs mirror the public index: start at Configuration.
 export default function DashboardDocsIndex() {
-  return <Installation />;
+  redirect("/dashboard/docs/configuration");
 }

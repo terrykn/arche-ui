@@ -38,10 +38,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Toggle } from "@/components/ui/toggle";
 import { Toolbar, ToolbarButton } from "@/components/ui/toolbar";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { PreviewPortalContext } from "@/components/preview-portal";
 
 type Selection = Record<string, unknown>;
 
-/** First defined string among the knob keys (axis name first, then style-surface knob). */
+/** First defined string among the knob keys. */
 function pick(selection: Selection, ...keys: string[]): string | undefined {
   for (const key of keys) {
     const value = selection[key];
@@ -50,23 +51,45 @@ function pick(selection: Selection, ...keys: string[]): string | undefined {
   return undefined;
 }
 
+/** Values of a manifest axis as strings (empty when the component has none). */
+function axisValues(
+  axes: Record<string, { values: Array<string | number>; default: string | number }> | undefined,
+  key: string,
+): string[] {
+  const values = axes?.[key]?.values;
+  return Array.isArray(values) ? values.map(String) : [];
+}
+
+/** Capitalized label for an enumerated variant/size demo. */
+function cap(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 /**
  * Single-component preview for the identity editor. Same Acme sample content
- * as the docs previews, but the editor's knob selection applies as component
- * props — axes first (variant, size, …), style-surface knobs as fallback —
- * so edits show live. Content-part knobs (menus, popover, dialog, …) apply
- * to the opened surface: click the trigger to see them.
+ * as the docs previews, but the editor's token-bound knob selection applies
+ * as component props so edits show live. Variant/size axes are never read
+ * from the selection — every variant renders, so nothing is hidden — and
+ * shipped defaults stay at the template defaults.
  */
-export function ComponentPreview({ name, selection }: { name: string; selection: Selection }) {
+export function ComponentPreview({
+  name,
+  selection,
+  axes,
+}: {
+  name: string;
+  selection: Selection;
+  axes?: Record<string, { values: Array<string | number>; default: string | number }>;
+}) {
   const [toastOpen, setToastOpen] = React.useState(false);
+  // Overlay content portals here (inside the themed tree) so library tokens
+  // apply; null outside a host falls back to document.body.
+  const portalContainer = React.useContext(PreviewPortalContext) ?? undefined;
   switch (name) {
     case "accordion":
       return (
         <Accordion type="single" collapsible>
-          <AccordionItem
-            value="one"
-            spacing={pick(selection, "spacing") as React.ComponentProps<typeof AccordionItem>["spacing"]}
-          >
+          <AccordionItem value="one">
             <AccordionTrigger>Launch checklist</AccordionTrigger>
             <AccordionContent>Ship notes, changelog, store assets.</AccordionContent>
           </AccordionItem>
@@ -79,7 +102,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             <Button>Open alert</Button>
           </AlertDialogTrigger>
           <AlertDialogContent
-            size={pick(selection, "size") as React.ComponentProps<typeof AlertDialogContent>["size"]}
+            container={portalContainer}
             radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof AlertDialogContent>["radius"]}
             shadow={pick(selection, "shadow") as React.ComponentProps<typeof AlertDialogContent>["shadow"]}
           >
@@ -92,60 +115,97 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
       );
     case "aspect-ratio":
       return (
-        <AspectRatio ratio={16 / 9} className="w-48 bg-muted">
-          Release teaser
-        </AspectRatio>
-      );
-    case "avatar":
-      return (
-        <Avatar size={pick(selection, "size") as React.ComponentProps<typeof Avatar>["size"]}>
-          <AvatarFallback>MC</AvatarFallback>
-        </Avatar>
-      );
-    case "badge":
-      return (
-        <div style={{ display: "flex", gap: 8 }}>
-          <Badge variant={pick(selection, "variant", "defaultVariant") as React.ComponentProps<typeof Badge>["variant"]}>
-            New
-          </Badge>
-          <Badge variant="secondary">Beta</Badge>
-        </div>
-      );
-    case "button":
-      return (
-        <div style={{ display: "flex", gap: 8 }}>
-          <Button
-            variant={pick(selection, "variant", "defaultVariant") as React.ComponentProps<typeof Button>["variant"]}
-            size={pick(selection, "size", "defaultSize") as React.ComponentProps<typeof Button>["size"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof Button>["shadow"]}
-            fontWeight={pick(selection, "fontWeight") as React.ComponentProps<typeof Button>["fontWeight"]}
+        <div className="w-48">
+          <AspectRatio
+            ratio={16 / 9}
+            className="flex items-center justify-center border border-dotted bg-muted"
           >
-            Ship order
-          </Button>
-          <Button variant="ghost">Later</Button>
+            Release teaser
+          </AspectRatio>
         </div>
       );
-    case "card":
+    case "avatar": {
+      const values = axisValues(axes, "size");
+      const list = values.length > 0 ? values : ["default"];
       return (
-        <Card
-          radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Card>["radius"]}
-          shadow={pick(selection, "shadow") as React.ComponentProps<typeof Card>["shadow"]}
-        >
-          <CardHeader>
-            <CardTitle>Order #4821</CardTitle>
-          </CardHeader>
-          <CardContent>12 tasks · due Friday · owner Maya Chen</CardContent>
-        </Card>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {list.map((s) => (
+            <Avatar key={s} size={s as React.ComponentProps<typeof Avatar>["size"]}>
+              <AvatarFallback>MC</AvatarFallback>
+            </Avatar>
+          ))}
+        </div>
       );
-    case "checkbox":
+    }
+    case "badge": {
+      const values = axisValues(axes, "variant");
+      const list = values.length > 0 ? values : ["default"];
       return (
-        <Checkbox
-          aria-label="Demo checkbox"
-          defaultChecked
-          size={pick(selection, "size") as React.ComponentProps<typeof Checkbox>["size"]}
-          radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Checkbox>["radius"]}
-        />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {list.map((v) => (
+            <Badge key={v} variant={v as React.ComponentProps<typeof Badge>["variant"]}>
+              {cap(v)}
+            </Badge>
+          ))}
+        </div>
       );
+    }
+    case "button": {
+      const values = axisValues(axes, "variant");
+      const list = values.length > 0 ? values : ["default"];
+      return (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {list.map((v) => (
+            <Button
+              key={v}
+              variant={v as React.ComponentProps<typeof Button>["variant"]}
+              shadow={pick(selection, "shadow") as React.ComponentProps<typeof Button>["shadow"]}
+              fontWeight={pick(selection, "fontWeight") as React.ComponentProps<typeof Button>["fontWeight"]}
+            >
+              {cap(v)}
+            </Button>
+          ))}
+        </div>
+      );
+    }
+    case "card": {
+      const values = axisValues(axes, "variant");
+      const list = values.length > 0 ? values : ["default"];
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {list.map((v) => (
+            <Card
+              key={v}
+              variant={v as React.ComponentProps<typeof Card>["variant"]}
+              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Card>["radius"]}
+              shadow={pick(selection, "shadow") as React.ComponentProps<typeof Card>["shadow"]}
+            >
+              <CardHeader>
+                <CardTitle>Order #4821</CardTitle>
+              </CardHeader>
+              <CardContent>12 tasks · due Friday · owner Maya Chen</CardContent>
+            </Card>
+          ))}
+        </div>
+      );
+    }
+    case "checkbox": {
+      const values = axisValues(axes, "size");
+      const list = values.length > 0 ? values : ["default"];
+      return (
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {list.map((s) => (
+            <Checkbox
+              key={s}
+              aria-label={`Demo checkbox ${s}`}
+              defaultChecked
+              size={s as React.ComponentProps<typeof Checkbox>["size"]}
+              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Checkbox>["radius"]}
+            />
+          ))}
+        </div>
+      );
+    }
     case "collapsible":
       return (
         <Collapsible>
@@ -160,6 +220,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             Right-click task “Restock packing tape”
           </ContextMenuTrigger>
           <ContextMenuContent
+            container={portalContainer}
             radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof ContextMenuContent>["radius"]}
             shadow={pick(selection, "shadow") as React.ComponentProps<typeof ContextMenuContent>["shadow"]}
           >
@@ -174,7 +235,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             <Button>Open dialog</Button>
           </DialogTrigger>
           <DialogContent
-            size={pick(selection, "size") as React.ComponentProps<typeof DialogContent>["size"]}
+            container={portalContainer}
             overlayBackground={pick(selection, "overlayBackground") as React.ComponentProps<typeof DialogContent>["overlayBackground"]}
             overlayOpacity={pick(selection, "overlayOpacity") as React.ComponentProps<typeof DialogContent>["overlayOpacity"]}
             backdropBlur={pick(selection, "backdropBlur") as React.ComponentProps<typeof DialogContent>["backdropBlur"]}
@@ -196,6 +257,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             <Button>Open menu</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
+            container={portalContainer}
             radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof DropdownMenuContent>["radius"]}
             shadow={pick(selection, "shadow") as React.ComponentProps<typeof DropdownMenuContent>["shadow"]}
           >
@@ -221,6 +283,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             <a href="#sink-maya">Maya Chen</a>
           </HoverCardTrigger>
           <HoverCardContent
+            container={portalContainer}
             radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof HoverCardContent>["radius"]}
             shadow={pick(selection, "shadow") as React.ComponentProps<typeof HoverCardContent>["shadow"]}
           >
@@ -228,15 +291,23 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
           </HoverCardContent>
         </HoverCard>
       );
-    case "input":
+    case "input": {
+      const values = axisValues(axes, "controlSize");
+      const list = values.length > 0 ? values : ["default"];
       return (
-        <Input
-          placeholder="Search tasks…"
-          aria-label="Demo input"
-          controlSize={pick(selection, "controlSize") as React.ComponentProps<typeof Input>["controlSize"]}
-          radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Input>["radius"]}
-        />
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {list.map((s) => (
+            <Input
+              key={s}
+              placeholder="Search tasks…"
+              aria-label={`Demo input ${s}`}
+              controlSize={s as React.ComponentProps<typeof Input>["controlSize"]}
+              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Input>["radius"]}
+            />
+          ))}
+        </div>
       );
+    }
     case "label":
       return (
         <div className="grid gap-1">
@@ -250,6 +321,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
           <MenubarMenu>
             <MenubarTrigger>File</MenubarTrigger>
             <MenubarContent
+              container={portalContainer}
               radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof MenubarContent>["radius"]}
               shadow={pick(selection, "shadow") as React.ComponentProps<typeof MenubarContent>["shadow"]}
             >
@@ -297,6 +369,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             <Button>Open popover</Button>
           </PopoverTrigger>
           <PopoverContent
+            container={portalContainer}
             radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof PopoverContent>["radius"]}
             shadow={pick(selection, "shadow") as React.ComponentProps<typeof PopoverContent>["shadow"]}
           >
@@ -339,6 +412,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             <SelectValue placeholder="Pick a status" />
           </SelectTrigger>
           <SelectContent
+            container={portalContainer}
             radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof SelectContent>["radius"]}
             shadow={pick(selection, "shadow") as React.ComponentProps<typeof SelectContent>["shadow"]}
           >
@@ -368,7 +442,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
       return <Switch aria-label="Demo switch" defaultChecked />;
     case "table":
       return (
-        <Table density={pick(selection, "density") as React.ComponentProps<typeof Table>["density"]}>
+        <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Order</TableHead>
@@ -381,16 +455,23 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
           </TableBody>
         </Table>
       );
-    case "tabs":
+    case "tabs": {
+      const values = axisValues(axes, "variant");
+      const list = values.length > 0 ? values : ["default"];
       return (
-        <Tabs defaultValue="one">
-          <TabsList variant={pick(selection, "variant", "defaultVariant") as React.ComponentProps<typeof TabsList>["variant"]}>
-            <TabsTrigger value="one">Board</TabsTrigger>
-            <TabsTrigger value="two">Calendar</TabsTrigger>
-          </TabsList>
-          <TabsContent value="one">Board panel</TabsContent>
-        </Tabs>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {list.map((v) => (
+            <Tabs key={v} defaultValue="one">
+              <TabsList variant={v as React.ComponentProps<typeof TabsList>["variant"]}>
+                <TabsTrigger value="one">Board</TabsTrigger>
+                <TabsTrigger value="two">Calendar</TabsTrigger>
+              </TabsList>
+              <TabsContent value="one">Board panel</TabsContent>
+            </Tabs>
+          ))}
+        </div>
       );
+    }
     case "textarea":
       return (
         <Textarea
@@ -414,19 +495,33 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
             <ToastDescription>Order #4821 left the warehouse.</ToastDescription>
             <ToastClose>Close</ToastClose>
           </Toast>
-          <ToastViewport />
+          <ToastViewport position={pick(selection, "position") as React.ComponentProps<typeof ToastViewport>["position"]} />
         </ToastProvider>
       );
-    case "toggle":
+    case "toggle": {
+      const variantValues = axisValues(axes, "variant");
+      const sizeValues = axisValues(axes, "size");
+      const vList = variantValues.length > 0 ? variantValues : ["default"];
+      const sList = sizeValues.length > 0 ? sizeValues : ["default"];
       return (
-        <Toggle
-          aria-label="Demo toggle"
-          variant={pick(selection, "variant", "defaultVariant") as React.ComponentProps<typeof Toggle>["variant"]}
-          size={pick(selection, "size", "defaultSize") as React.ComponentProps<typeof Toggle>["size"]}
-        >
-          Notify me
-        </Toggle>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {vList.map((v) => (
+            <div key={v} style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {sList.map((s) => (
+                <Toggle
+                  key={`${v}-${s}`}
+                  aria-label={`Demo toggle ${v} ${s}`}
+                  variant={v as React.ComponentProps<typeof Toggle>["variant"]}
+                  size={s as React.ComponentProps<typeof Toggle>["size"]}
+                >
+                  Notify me
+                </Toggle>
+              ))}
+            </div>
+          ))}
+        </div>
       );
+    }
     case "toggle-group":
       return (
         <ToggleGroup type="single" aria-label="Demo view">
@@ -448,6 +543,7 @@ export function ComponentPreview({ name, selection }: { name: string; selection:
               <Button>Hover me</Button>
             </TooltipTrigger>
             <TooltipContent
+              container={portalContainer}
               radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof TooltipContent>["radius"]}
             >
               Ships Friday

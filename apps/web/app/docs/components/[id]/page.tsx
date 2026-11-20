@@ -6,11 +6,8 @@ import { CopyButton } from "@/components/copy-button";
 import { ArrowLeft } from "lucide-react";
 import { DocsPageHeader } from "@/components/docs-page-header";
 
-export const DOC_IDS = [
-  "button", "card", "input", "dialog", "dropdown-menu", "select", "checkbox",
-  "switch", "tabs", "accordion", "tooltip", "popover", "badge", "avatar",
-  "slider", "progress", "toast", "alert-dialog",
-];
+// Every component manifest gets a docs detail page — no curated subset.
+export const DOC_IDS = getManifests().map((manifest) => manifest.name);
 
 export function generateStaticParams() {
   return DOC_IDS.map((id) => ({ id }));
@@ -19,7 +16,7 @@ export function generateStaticParams() {
 export default async function ComponentDoc({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const manifest = getManifests().find((m) => m.name === id);
-  if (!manifest || !DOC_IDS.includes(id)) notFound();
+  if (!manifest) notFound();
 
   const behavior = manifest.primitive
     ? `${manifest.primitive.package}. Parts: ${manifest.primitive.parts.join(", ")}`

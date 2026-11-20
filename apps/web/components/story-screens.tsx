@@ -71,7 +71,7 @@ export function DemoSkin({
   children: React.ReactNode;
   dark?: boolean;
 }) {
-  return <div style={demoSkin(dark ? toDark(identity) : identity)} className="border border-border">{children}</div>;
+  return <div style={demoSkin(dark ? toDark(identity) : identity)}>{children}</div>;
 }
 
 function Shell({

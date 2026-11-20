@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getBlockManifests, getManifests, getTokenContract } from "@arche/registry-core";
+import { FONT_REGISTRY_DATA } from "@arche/foundation/font-data";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { IdentityEditor } from "./editor";
@@ -60,6 +61,14 @@ export default async function EditIdentity({
         slug: row.slug,
         authed: row.visibility === "private",
       }}
+      fonts={FONT_REGISTRY_DATA.fonts.map((f) => ({
+        id: f.id,
+        family: f.family,
+        roles: f.roles,
+        slots: f.slots,
+        displayOnly: f.displayOnly,
+        classification: f.classification,
+      }))}
       />
     </>
   );

@@ -2,68 +2,69 @@ import { DocsLink } from "@/components/docs-base";
 import { getBlockManifests, getManifests, getTokenContract } from "@arche/registry-core";
 import { buildToolRegistry } from "@arche/mcp";
 import { DocsMarkdown } from "@/components/docs/markdown";
+import { DocPreview } from "@/components/doc-preview";
+import { BlockPreview } from "@/components/block-preview";
 
 // Data-only docs blocks that need registry or manifest data. Each one is a
-// server component: nothing here ships to the client.
+// server component: nothing here ships to the client (DocPreview and
+// BlockPreview are client islands for the live previews).
 
-const DOC_IDS = [
-  "button", "card", "input", "dialog", "dropdown-menu", "select", "checkbox",
-  "switch", "tabs", "accordion", "tooltip", "popover", "badge", "avatar",
-  "slider", "progress", "toast", "alert-dialog",
-];
-
+// Every component manifest, each with a small live preview. Title only —
+// no badge, no description. Dense grid: the previews are small.
 export function ComponentsIndex() {
-  const manifests = getManifests().filter((manifest) => DOC_IDS.includes(manifest.name));
+  const manifests = getManifests();
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 22 }}>
+    <div
+      style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 14, marginTop: 22 }}
+    >
       {manifests.map((manifest) => (
         <DocsLink
           key={manifest.name}
           path={`/components/${manifest.name}`}
           className="proto-card"
-          style={{ padding: 18, textDecoration: "none", color: "inherit", display: "block" }}
+          style={{ padding: 12, textDecoration: "none", color: "inherit", display: "block" }}
         >
-          <strong>{manifest.title}</strong>
-          <p style={{ color: "var(--muted-foreground)", margin: "6px 0 0", fontSize: 13.5 }}>{manifest.description}</p>
-          <p style={{ color: "var(--faint)", margin: "8px 0 0", fontSize: 12.5 }}>{manifest.category}</p>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: 72,
+              overflow: "hidden",
+              pointerEvents: "none",
+            }}
+          >
+            <DocPreview id={manifest.name} />
+          </div>
+          <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>
         </DocsLink>
       ))}
     </div>
   );
 }
 
-export function BlocksIndex({ groups = ["marketing", "application"] }: { groups?: string[] }) {
+// Every block manifest, each with a small live preview, 3 per row.
+// Title only — no badge, no description.
+export function BlocksIndex() {
   const manifests = getBlockManifests();
   return (
-    <>
-      {groups.map((category) => {
-        const items = manifests.filter((manifest) => manifest.category === category);
-        if (items.length === 0) return null;
-        return (
-          <div key={category} style={{ marginTop: 26 }}>
-            <h2 style={{ textTransform: "capitalize", fontSize: 17 }}>{category}</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 12 }}>
-              {items.map((manifest) => (
-                <DocsLink
-                  key={manifest.name}
-                  path={`/blocks/${manifest.name}`}
-                  className="proto-card"
-                  style={{ padding: 18, textDecoration: "none", color: "inherit", display: "block" }}
-                >
-                  <strong>{manifest.title}</strong>
-                  <p style={{ color: "var(--muted-foreground)", margin: "6px 0 0", fontSize: 13.5 }}>
-                    {manifest.description}
-                  </p>
-                  <p style={{ color: "var(--faint)", margin: "8px 0 0", fontSize: 12.5 }}>
-                    {(manifest.composition?.childComponents ?? []).map((child) => child.name).join(" · ")}
-                  </p>
-                </DocsLink>
-              ))}
-            </div>
+    <div
+      style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14, marginTop: 22 }}
+    >
+      {manifests.map((manifest) => (
+        <DocsLink
+          key={manifest.name}
+          path={`/blocks/${manifest.name}`}
+          className="proto-card"
+          style={{ padding: 12, textDecoration: "none", color: "inherit", display: "block", minWidth: 0 }}
+        >
+          <div style={{ height: 170, overflow: "hidden", pointerEvents: "none" }}>
+            <BlockPreview name={manifest.name} />
           </div>
-        );
-      })}
-    </>
+          <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>
+        </DocsLink>
+      ))}
+    </div>
   );
 }
 
