@@ -11,7 +11,7 @@ function Popover(props: React.ComponentProps<typeof Primitive.Root>) { return <P
 function PopoverTrigger(props: React.ComponentProps<typeof Primitive.Trigger>) { return <Primitive.Trigger data-slot="popover-trigger" {...props} />; }
 function PopoverAnchor(props: React.ComponentProps<typeof Primitive.Anchor>) { return <Primitive.Anchor data-slot="popover-anchor" {...props} />; }
 function PopoverPortal(props: React.ComponentProps<typeof Primitive.Portal>) { return <Primitive.Portal data-slot="popover-portal" {...props} />; }
-function PopoverContent({ className, radius, shadow, ...props }: React.ComponentProps<typeof Primitive.Content> & VariantProps<typeof popoverContentVariants>) { return <PopoverPortal><Primitive.Content data-slot="popover-content" className={cn(popoverContentVariants({ radius, shadow }), className)} {...props} /></PopoverPortal>; }
+function PopoverContent({ className, radius, shadow, container, ...props }: React.ComponentProps<typeof Primitive.Content> & VariantProps<typeof popoverContentVariants> & { container?: HTMLElement | null }) { return <PopoverPortal container={container ?? undefined}><Primitive.Content data-slot="popover-content" className={cn(popoverContentVariants({ radius, shadow }), className)} {...props} /></PopoverPortal>; }
 function PopoverClose(props: React.ComponentProps<typeof Primitive.Close>) { return <Primitive.Close data-slot="popover-close" {...props} />; }
 function PopoverArrow({ className, ...props }: React.ComponentProps<typeof Primitive.Arrow>) { return <Primitive.Arrow data-slot="popover-arrow" className={cn("fill-popover", className)} {...props} />; }
 export { Popover, PopoverTrigger, PopoverAnchor, PopoverPortal, PopoverContent, PopoverClose, PopoverArrow, popoverContentVariants };

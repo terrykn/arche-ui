@@ -2,7 +2,7 @@
   "name": "avatar", "title": "Avatar", "description": "An image or fallback identifying a person or entity.", "category": "data", "manifestVersion": 1,
   "primitive": { "package": "@radix-ui/react-avatar", "parts": ["Root", "Image", "Fallback"], "propsInherited": true },
   "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "image", "part": "Image", "required": false }, { "name": "fallback", "part": "Fallback", "required": true }],
-  "axes": { "size": { "values": ["sm", "default", "lg"], "default": "default" } }, "styleSurface": { "root": { "size": { "type": "enum", "values": ["sm", "default", "lg"], "default": "default" } } },
+  "axes": { "size": { "values": ["sm", "default", "lg"], "default": "default" } }, "styleSurface": {},
   "tokensUsed": ["--muted", "--muted-foreground"], "dependencies": ["@radix-ui/react-avatar", "class-variance-authority"], "registryDependencies": ["utils"],
   "files": [{ "name": "avatar", "source": "src/templates/avatar.tsx", "target": "components/ui/avatar.tsx", "type": "registry:ui" }],
   "standards": { "purpose": "Identify a person or entity visually.", "useWhen": ["A compact identity indicator aids recognition."], "doNotUseWhen": ["The image is decorative rather than identifying."], "rules": [{ "id": "avatar-provide-fallback", "severity": "error", "check": "Provide a meaningful fallback when the image is unavailable." }] }

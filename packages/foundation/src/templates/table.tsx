@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils.js";
 
 const tableVariants = cva("w-full caption-bottom text-sm", {
-  variants: { density: { sm: "[&_td]:py-1 [&_th]:py-1", default: "[&_td]:py-2 [&_th]:py-2", lg: "[&_td]:py-4 [&_th]:py-4" } },
+  variants: { density: { none: "[&_td]:py-0 [&_th]:py-0", sm: "[&_td]:py-1 [&_th]:py-1", default: "[&_td]:py-2 [&_th]:py-2", lg: "[&_td]:py-4 [&_th]:py-4" } },
   defaultVariants: { density: "default" },
 });
 function Table({ className, density, ...props }: React.ComponentProps<"table"> & VariantProps<typeof tableVariants>) { return <div data-slot="table-container" className="relative w-full overflow-x-auto"><table data-slot="table" className={cn(tableVariants({ density }), className)} {...props} /></div>; }

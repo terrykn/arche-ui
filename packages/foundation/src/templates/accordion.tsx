@@ -8,7 +8,7 @@ import { cn } from "./lib/utils.js";
 
 const accordionItemVariants = cva("border-b-(length:--border-width)", {
   variants: {
-    spacing: { sm: "py-1", default: "py-2", lg: "py-4" },
+    spacing: { none: "py-0", sm: "py-1", default: "py-2", lg: "py-4" },
   },
   defaultVariants: { spacing: "default" },
 });
@@ -20,7 +20,7 @@ function AccordionItem({ className, spacing, ...props }: React.ComponentProps<ty
   return <AccordionPrimitive.Item data-slot="accordion-item" className={cn(accordionItemVariants({ spacing }), className)} {...props} />;
 }
 function AccordionTrigger({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
-  return <AccordionPrimitive.Header data-slot="accordion-header" className="flex"><AccordionPrimitive.Trigger data-slot="accordion-trigger" className={cn("flex flex-1 items-center justify-between rounded-md text-left font-medium outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180", className)} {...props}>{children}<ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform" aria-hidden="true" /></AccordionPrimitive.Trigger></AccordionPrimitive.Header>;
+  return <AccordionPrimitive.Header data-slot="accordion-header" className="flex"><AccordionPrimitive.Trigger data-slot="accordion-trigger" className={cn("flex flex-1 items-center justify-between gap-2 rounded-md text-left font-medium outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180", className)} {...props}>{children}<ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform" aria-hidden="true" /></AccordionPrimitive.Trigger></AccordionPrimitive.Header>;
 }
 function AccordionContent({ className, ...props }: React.ComponentProps<typeof AccordionPrimitive.Content>) {
   return <AccordionPrimitive.Content data-slot="accordion-content" className={cn("overflow-hidden text-sm data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up", className)} {...props} />;
