@@ -308,10 +308,6 @@
         "$type": "color",
         "$value": "oklch(0.2 0.01 250)"
       },
-      "--brand-soft": {
-        "$type": "color",
-        "$value": "oklch(0.475 0.091 220)"
-      },
       "--card": {
         "$type": "color",
         "$value": "oklch(0.38 0.005 248)"
@@ -467,10 +463,6 @@
       "--brand-foreground": {
         "$type": "color",
         "$value": "oklch(0.2 0.01 250)"
-      },
-      "--brand-soft": {
-        "$type": "color",
-        "$value": "oklch(0.925 0.073 220)"
       },
       "--card": {
         "$type": "color",

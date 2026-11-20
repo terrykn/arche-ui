@@ -458,10 +458,7 @@ function buildModeTokens(
   const accentInk = dechroma(scaleColor(AH, C, dark ? 1 : 10));
   // Brand scale (Brand Token brief): the recognizable hue at full voice.
   // Solid = step 9 (index 8) in both modes — the loud brand moment, never
-  // tamed into a button. Soft = tinted brand surface: light step 3 in
-  // light mode; in dark mode the deepest of steps 10-12 still readable
-  // with --foreground, else the deepest step (the AA pass finishes by
-  // lightness if needed). Text on the solid is derived per mode from the
+  // tamed into a button. Text on the solid is derived per mode from the
   // actual emitted value (autoText: white when it passes, else dark).
   const B = resolveBrandHue(palette);
   // Picker brand voice: the muted secondary and neutral ink marks scale
@@ -477,16 +474,6 @@ function buildModeTokens(
     }
     return brandFg;
   })();
-  const brandSoft = dark
-    ? (() => {
-        const fg = dechroma(scaleColor(N, NC * 2, 0));
-        for (const step of [9, 10, 11]) {
-          const candidate = scaleColor(B, Math.round(BC * 0.45 * 1000) / 1000, step);
-          if (contrastRatio(fg, candidate) >= 4.5) return candidate;
-        }
-        return scaleColor(B, Math.round(BC * 0.45 * 1000) / 1000, 11);
-      })()
-    : scaleColor(B, Math.round(BC * 0.45 * 1000) / 1000, 2);
   const muted = scaleColor(N, monochrome ? 0 : NC * 1.5, dark ? 9 : 2);
   const mutedInk = dechroma(scaleColor(N, monochrome ? 0 : NC * 2, dark ? 2 : 9));
   const destructive = formatOklch({ l: dark ? 0.6 : 0.55, c: grayscale ? 0 : 0.22, h: 25 });
@@ -515,7 +502,6 @@ function buildModeTokens(
     "--destructive-foreground": color(destructiveInk),
     "--brand": color(brand),
     "--brand-foreground": color(brandInk),
-    "--brand-soft": color(brandSoft),
     "--muted": color(muted),
     "--muted-foreground": color(mutedInk),
     "--border": color(scaleColor(N, NC, dark ? 8 : 3)),
@@ -702,47 +688,6 @@ function adjustPair(
   }
 }
 
-/**
- * Brand-soft contrast (Brand Token brief): --foreground on --brand-soft
- * must pass AA in both modes. Background-only repair — the shared
- * --foreground text never moves; the surface's lightness moves away from
- * the text until the pair passes (hue untouched). Deterministic.
- */
-function adjustBrandSoft(
-  tokens: TokenRecord,
-  mode: string,
-  adjustments: Adjustment[],
-): void {
-  const fg = tokens["--foreground"];
-  const bg = tokens["--brand-soft"];
-  if (!fg || !bg || typeof fg.$value !== "string" || typeof bg.$value !== "string") return;
-  let ratio = contrastRatio(fg.$value as string, bg.$value as string);
-  if (Number.isNaN(ratio) || ratio >= 4.5) return;
-  const ratioBefore = ratio;
-  const compiledBg = bg.$value as string;
-  const fgL = parseOklch(fg.$value as string).l;
-  const bgUp = parseOklch(compiledBg).l >= fgL;
-  for (let i = 0; i < AA_MAX_STEPS; i++) {
-    const cur = parseOklch(bg.$value as string).l;
-    const next = bgUp ? cur + AA_STEP : cur - AA_STEP;
-    if (next > 0.995 || next < 0.02) break;
-    bg.$value = withLightness(bg.$value as string, next);
-    ratio = contrastRatio(fg.$value as string, bg.$value as string);
-    if (ratio >= 4.5) break;
-  }
-  if (bg.$value !== compiledBg) {
-    adjustments.push({
-      mode,
-      token: "--brand-soft",
-      compiledValue: compiledBg,
-      adjustedValue: bg.$value as string,
-      pair: "--foreground on --brand-soft",
-      ratioBefore,
-      ratioAfter: ratio,
-    });
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Main entry
 // ---------------------------------------------------------------------------
@@ -853,14 +798,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
 
   // AA pass per mode, pairs in contract order (deterministic).
   for (const mode of ["light", "dark"] as const) {
-    // Brand-soft first, background-only: its text is the shared
-    // --foreground, which must never move for one surface (it would break
-    // every other pair). Only the surface's lightness moves — hue never.
-    adjustBrandSoft(tokens[mode]!, mode, adjustments);
     for (const pair of tokenContract.contrastPairs) {
-      // Handled above with background-only moves (the generic pass would
-      // move the shared --foreground text).
-      if (pair.fg === "--foreground" && pair.bg === "--brand-soft") continue;
       adjustPair(tokens[mode]!, mode, pair.fg, pair.bg, pair.minRatio, adjustments);
     }
   }

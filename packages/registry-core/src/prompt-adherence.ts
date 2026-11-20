@@ -266,7 +266,7 @@ export function enforceConstraints(
     const families: Record<string, string[]> = {
       primary: ["--primary", "--secondary", "--ring"],
       accent: ["--accent"],
-      brand: ["--brand", "--brand-soft"],
+      brand: ["--brand"],
     };
     for (const mode of modes) {
       const set = tokens[mode]!;
@@ -356,7 +356,6 @@ export function verifyAdherence(
     ["--accent-foreground", "--accent"],
     ["--destructive-foreground", "--destructive"],
     ["--brand-foreground", "--brand"],
-    ["--foreground", "--brand-soft"],
     ["--card-foreground", "--card"],
     ["--popover-foreground", "--popover"],
     ["--foreground", "--background"],

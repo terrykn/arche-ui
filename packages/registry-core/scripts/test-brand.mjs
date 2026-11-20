@@ -124,7 +124,6 @@ test("verizon-style DNA: red brand, black-ink primary, both roles readable", asy
   for (const mode of ["light", "dark"]) {
     const set = verizon.tokens[mode];
     assert.ok(ratio(set, "--brand-foreground", "--brand") >= 4.5, `${mode}: brand solid text passes AA`);
-    assert.ok(ratio(set, "--foreground", "--brand-soft") >= 4.5, `${mode}: brand-soft surface text passes AA`);
   }
 });
 
@@ -152,7 +151,6 @@ test("missing brandHue compiles to the primary family, never to a surprise", asy
     const p = oklch(plain.tokens[mode]["--primary"].$value);
     assert.ok(hueDist(b.h, p.h) <= 1, `${mode}: default brand hue equals the primary hue`);
     assert.ok(ratio(plain.tokens[mode], "--brand-foreground", "--brand") >= 4.5, `${mode}: gated pair passes`);
-    assert.ok(ratio(plain.tokens[mode], "--foreground", "--brand-soft") >= 4.5, `${mode}: soft pair passes`);
   }
   assert.equal(plain.meta.brand.heroCta, "primary", "coincident hues keep the primary CTA");
 });
@@ -165,7 +163,6 @@ test("brand survives a hue sweep: every family passes the AA gate", async () => 
     for (const mode of ["light", "dark"]) {
       const set = compiled.tokens[mode];
       assert.ok(ratio(set, "--brand-foreground", "--brand") >= 4.5, `hue ${hue} ${mode}: solid pair passes`);
-      assert.ok(ratio(set, "--foreground", "--brand-soft") >= 4.5, `hue ${hue} ${mode}: soft pair passes`);
     }
   }
 });
@@ -182,7 +179,7 @@ test("monochrome brief: brand chroma is exactly zero, never pink", async () => {
     { chromaCap: 0.02, hueSpreadMax: 10 },
   );
   for (const mode of ["light", "dark"]) {
-    for (const token of ["--brand", "--brand-foreground", "--brand-soft"]) {
+    for (const token of ["--brand", "--brand-foreground"]) {
       assert.equal(oklch(mono.tokens[mode][token].$value).c, 0, `${mode}.${token} is achromatic`);
     }
   }

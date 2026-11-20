@@ -504,11 +504,10 @@ const HEX_COLOR_VARS = [
   "chart-3",
   "chart-4",
   "chart-5",
-  // Brand Token brief: the brand family resolves to bg-brand,
-  // text-brand-foreground, and bg-brand-soft utilities in consumers.
+  // Brand Token brief: the brand family resolves to bg-brand and
+  // text-brand-foreground utilities in consumers.
   "brand",
   "brand-foreground",
-  "brand-soft",
 ];
 
 interface ThemeEmission {

@@ -192,7 +192,7 @@ test("verizon-style: red brand, ink primary, muted secondary, distinct tertiary,
     `secondary emits ~0.45× chroma (got ${(secondaryBrand.c / primaryBrand.c).toFixed(3)})`,
   );
   for (const mode of ["light", "dark"]) {
-    for (const token of ["--brand", "--brand-foreground", "--brand-soft"]) {
+    for (const token of ["--brand", "--brand-foreground"]) {
       assert.equal(
         oklch(emitted["brand-ink"].tokens[mode][token].$value).c,
         0,
@@ -252,7 +252,7 @@ test("monochrome brief: every brand option emits C = 0 and the hues collapse", a
       { constraints },
     );
     for (const mode of ["light", "dark"]) {
-      for (const token of ["--brand", "--brand-foreground", "--brand-soft"]) {
+      for (const token of ["--brand", "--brand-foreground"]) {
         assert.equal(
           oklch(compiled.tokens[mode][token].$value).c,
           0,
@@ -319,12 +319,7 @@ test("every shown brand option passes 4.5:1 for its foreground, light and dark",
           String(tokens["--brand-foreground"].$value),
           String(tokens["--brand"].$value),
         );
-        const softPair = contrastRatio(
-          String(tokens["--foreground"].$value),
-          String(tokens["--brand-soft"].$value),
-        );
         assert.ok(solidPair >= 4.5, `hue ${hue} ${option.id} ${mode}: solid pair ${solidPair.toFixed(2)}`);
-        assert.ok(softPair >= 4.5, `hue ${hue} ${option.id} ${mode}: soft pair ${softPair.toFixed(2)}`);
       }
     }
   }

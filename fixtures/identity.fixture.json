@@ -165,10 +165,6 @@
       "--brand-foreground": {
         "$type": "color",
         "$value": "oklch(0.985 0.005 260)"
-      },
-      "--brand-soft": {
-        "$type": "color",
-        "$value": "oklch(0.93 0.019 260)"
       }
     },
     "dark": {
@@ -325,10 +321,6 @@
       "--brand-foreground": {
         "$type": "color",
         "$value": "oklch(0.185 0.03 265)"
-      },
-      "--brand-soft": {
-        "$type": "color",
-        "$value": "oklch(0.269 0.03 264)"
       }
     }
   },
