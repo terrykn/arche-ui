@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export const DASH_LINKS = [
+export const DASH_LINKS: Array<{ href: string; label: string; match?: string }> = [
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/dashboard/docs", label: "Docs" },
+  // Docs open on Configuration, the first page in the reading order, while
+  // every docs page keeps the tab lit.
+  { href: "/dashboard/docs/configuration", label: "Docs", match: "/dashboard/docs" },
   { href: "/dashboard/settings", label: "Settings" },
 ];
 
@@ -19,10 +21,11 @@ export function DashboardNav({ orientation = "row" }: { orientation?: "row" | "c
       aria-label="Dashboard"
     >
       {DASH_LINKS.map((link) => {
+        const match = link.match ?? link.href;
         const active =
           link.href === "/dashboard"
             ? pathname === link.href
-            : pathname === link.href || pathname.startsWith(`${link.href}/`);
+            : pathname === match || pathname.startsWith(`${match}/`);
         const className = vertical
           ? active
             ? "rounded-md bg-muted px-2 py-1.5 font-medium text-foreground"

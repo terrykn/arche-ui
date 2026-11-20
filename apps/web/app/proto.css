@@ -1142,6 +1142,24 @@
 .proto-docs-main code {
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 0.92em;
+  overflow-wrap: anywhere;
+}
+
+/* Docs code blocks never push the reading column wider than the page gutter:
+   long lines wrap and long unbroken tokens (URLs, registries) break instead of
+   running off the edge on a phone. */
+.proto-docs-main .proto-code,
+.proto-docs-main pre {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.proto-docs-main .proto-code code,
+.proto-docs-main pre code {
+  white-space: inherit;
+  overflow-wrap: inherit;
+  word-break: inherit;
 }
 
 .proto-docs-link {
@@ -1731,6 +1749,12 @@
   }
   .proto-docs {
     grid-template-columns: 1fr;
+  }
+  /* Tighten code blocks so a full command line fits on a phone. */
+  .proto-docs-main .proto-code,
+  .proto-docs-main pre {
+    padding: 10px 12px;
+    font-size: 12px;
   }
   .proto-block-frame {
     padding: 16px;

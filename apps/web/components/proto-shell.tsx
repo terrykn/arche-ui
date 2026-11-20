@@ -22,7 +22,8 @@ export function ProtoAurora() {
 }
 
 const NAV_LINKS = [
-  { href: "/docs", label: "Docs" },
+  // Docs open on Configuration, the first page in the reading order.
+  { href: "/docs/configuration", label: "Docs" },
   { href: "/examples", label: "Examples" },
   { href: "/pricing", label: "Pricing" },
 ];

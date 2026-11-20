@@ -59,15 +59,19 @@ export function MobileNavMenu({
       </DialogTrigger>
       <DialogContent
         size="full"
+        // The overlay defaults to --foreground, which is near-white in dark
+        // mode; at 60% it greyed out the whole panel. --muted keeps the veil
+        // dark so the primary text stays crisp.
+        overlayBackground="--muted"
         overlayOpacity={0.6}
         backdropBlur="lg"
-        className="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none border-0 bg-background/80 p-0 backdrop-blur-2xl [&>button[data-slot=dialog-close]]:hidden"
+        className="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none border-0 bg-background/85 p-0 backdrop-blur-2xl [&>button[data-slot=dialog-close]]:hidden"
       >
         <DialogDescription className="sr-only">
           Site navigation. Choose a page to open it.
         </DialogDescription>
         <div className="flex items-center justify-between px-6 pt-5">
-          <DialogTitle className="text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase">
+          <DialogTitle className="text-xs font-semibold tracking-[0.08em] text-foreground uppercase">
             Menu
           </DialogTitle>
           <DialogClose asChild>
@@ -91,8 +95,12 @@ export function MobileNavMenu({
                     aria-current={active ? "page" : undefined}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "block border-b-(length:--border-width) border-border py-5 font-display text-3xl font-bold tracking-tight transition-colors",
-                      active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                      // Primary text for every option — the current page is marked
+                      // with an accent bar instead of being dimmed to grey.
+                      "relative block border-b-(length:--border-width) border-border py-5 font-display text-3xl font-bold tracking-tight text-foreground transition-colors",
+                      active
+                        ? "before:absolute before:top-1/2 before:-left-4 before:h-7 before:w-1 before:-translate-y-1/2 before:rounded-full before:bg-foreground"
+                        : "hover:opacity-80",
                     )}
                   >
                     {link.label}

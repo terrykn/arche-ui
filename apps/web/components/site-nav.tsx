@@ -8,7 +8,8 @@ const LINKS = [
   { href: "/identities", label: "Identities" },
   { href: "/components", label: "Components" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/docs", label: "Docs" },
+  // Docs open on Configuration, the first page in the reading order.
+  { href: "/docs/configuration", label: "Docs" },
 ];
 
 export async function SiteNav() {
