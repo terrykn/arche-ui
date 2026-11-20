@@ -1297,23 +1297,32 @@ export function IdentityEditor({
     slot,
     token,
     label,
-  }: Pick<(typeof FONT_SLOTS)[number], "slot" | "token" | "label">) => (
-    <div key={slot} className="flex flex-col gap-1 py-1">
-      <span className="text-sm">{label}</span>
-      <Select value={fontSelectionFor(slot, token)} onValueChange={(id) => setFontSlot(slot, token, id)}>
-        <SelectTrigger aria-label={`${label} typeface`} className="w-full">
-          <SelectValue placeholder="Select a typeface" />
-        </SelectTrigger>
-        <SelectContent>
-          {fontOptionsFor(slot).map((o) => (
-            <SelectItem key={o.id} value={o.id}>
-              {o.family}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
+  }: Pick<(typeof FONT_SLOTS)[number], "slot" | "token" | "label">) => {
+    const options = fontOptionsFor(slot);
+    const selected = options.find((o) => o.id === fontSelectionFor(slot, token));
+    return (
+      <div key={slot} className="flex flex-col gap-1 py-1">
+        <Select value={fontSelectionFor(slot, token)} onValueChange={(id) => setFontSlot(slot, token, id)}>
+          <SelectTrigger aria-label={`${label} typeface`} className="w-full">
+            <SelectValue placeholder="Select a typeface">
+              {selected ? (
+                <span style={{ fontFamily: fontStackFor(selected.family, selected.classification, slot) }}>
+                  {selected.family}
+                </span>
+              ) : undefined}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((o) => (
+              <SelectItem key={o.id} value={o.id}>
+                <span style={{ fontFamily: fontStackFor(o.family, o.classification, slot) }}>{o.family}</span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    );
+  };
 
   const renderTweak = (tweak: QuickTweak) => {
     const applicable = computeTweak(tweak) !== null;
