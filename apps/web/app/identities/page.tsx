@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getDemoFixtures, tokenVars } from "@/lib/fixtures";
 import { getPublicLibraries } from "@/lib/public-libraries";
 import { SiteNav } from "@/components/site-nav";
+import { PageContainer } from "@/components/page-container";
 import { MiniRender } from "@/components/mini-render";
 
 export default async function IdentitiesPage() {
@@ -11,7 +12,7 @@ export default async function IdentitiesPage() {
   return (
     <>
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-3 py-12">
+      <PageContainer width="wide" className="py-12">
         <h1 className="font-display text-4xl">Identities gallery</h1>
         <p className="mt-2 max-w-2xl text-muted-foreground">
           Live mini-renders — real components in each identity&apos;s tokens, never screenshots.
@@ -48,7 +49,7 @@ export default async function IdentitiesPage() {
             </div>
           </>
         ) : null}
-      </main>
+      </PageContainer>
     </>
   );
 }

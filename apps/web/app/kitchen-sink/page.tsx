@@ -7,6 +7,7 @@ import { Cta } from "@/components/blocks/cta";
 import { Pricing } from "@/components/blocks/pricing";
 import { IdentityFontLinks } from "@/components/identity-fonts";
 import { SiteNav } from "@/components/site-nav";
+import { PageContainer } from "@/components/page-container";
 
 function loadFonts() {
   const found = [process.cwd(), join(process.cwd(), "..", "..")];
@@ -30,7 +31,7 @@ export default function KitchenSinkPage() {
     <>
       <IdentityFontLinks fonts={loadFonts()} />
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-3 py-8">
+      <PageContainer width="wide" className="py-8">
         <p className="text-sm text-muted-foreground">
           <Link href="/" className="underline">Arche</Link> · kitchen sink
         </p>
@@ -60,7 +61,7 @@ export default function KitchenSinkPage() {
           />
           <Pricing headline="Brand on the featured tier only" />
         </div>
-      </main>
+      </PageContainer>
     </>
   );
 }

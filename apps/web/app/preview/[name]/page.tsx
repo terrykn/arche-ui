@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { getCatalogManifests } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
+import { PageContainer } from "@/components/page-container";
 import { IdentityFontLinks } from "@/components/identity-fonts";
 import { ComponentDetail } from "@/components/catalog-reference";
 import { PreviewShell } from "@/components/preview-shell";
@@ -73,7 +74,7 @@ export default async function PreviewPage({
     <>
       <IdentityFontLinks fonts={payload.fonts} />
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-3 py-12 pb-28">
+      <PageContainer width="wide" className="py-12 pb-28">
         <Link href="/components" className="text-sm text-muted-foreground underline">
           <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Catalog
         </Link>
@@ -95,7 +96,7 @@ export default async function PreviewPage({
         <div className="mx-auto mt-8 max-w-3xl">
           <ComponentDetail manifest={manifest} />
         </div>
-      </main>
+      </PageContainer>
     </>
   );
 }

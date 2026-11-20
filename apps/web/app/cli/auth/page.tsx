@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/page-container";
 import { authorizeCallback, denyCallback } from "./actions";
 import { isLoopbackCallback } from "./loopback";
 
@@ -12,13 +13,13 @@ export default async function CliAuth({
   const { callback = "", state = "" } = await searchParams;
   if (!isLoopbackCallback(callback) || !state) {
     return (
-      <main className="mx-auto max-w-md px-3 py-16">
+      <PageContainer width="form" className="py-16">
         <h1 className="font-display text-2xl">Invalid authorization request</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           The callback URL must be a loopback address (http://127.0.0.1:port/…). This page never
           redirects a token anywhere else.
         </p>
-      </main>
+      </PageContainer>
     );
   }
   const supabase = await createClient();
@@ -30,7 +31,7 @@ export default async function CliAuth({
     redirect(`/sign-in?next=${encodeURIComponent(next)}`);
   }
   return (
-    <main className="mx-auto max-w-md px-3 py-16">
+    <PageContainer width="form" className="py-16">
       <h1 className="font-display text-2xl">Authorize this machine?</h1>
       <p className="mt-3 text-sm leading-relaxed">
         The Arche CLI on this computer is asking to sign in as{" "}
@@ -55,6 +56,6 @@ export default async function CliAuth({
           </Button>
         </form>
       </div>
-    </main>
+    </PageContainer>
   );
 }

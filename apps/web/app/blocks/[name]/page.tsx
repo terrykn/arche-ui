@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlockManifests, getTokenContract } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
+import { PageContainer } from "@/components/page-container";
 import { ComponentDetail } from "@/components/catalog-reference";
 import { BlockPreview } from "@/components/block-preview";
 import { ArrowLeft } from "lucide-react";
@@ -26,7 +27,7 @@ export default async function BlockPage({
   return (
     <>
       <SiteNav />
-      <main className="mx-auto max-w-3xl px-3 py-12">
+      <PageContainer width="prose" className="py-12">
         <Link href="/blocks" className="text-sm text-muted-foreground underline">
           <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Blocks
         </Link>
@@ -80,7 +81,7 @@ export default async function BlockPage({
         <p className="mt-6 text-xs text-muted-foreground">
           Rendered from manifest v{manifest.manifestVersion}, token contract v{contract.contractVersion}.
         </p>
-      </main>
+      </PageContainer>
     </>
   );
 }

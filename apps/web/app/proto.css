@@ -776,7 +776,9 @@
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
   gap: 36px;
-  padding: 48px 0 70px;
+  /* Block-only: the horizontal gutter comes from the page wrapper, so a
+     shorthand here would wipe it out (it did, before PageContainer). */
+  padding-block: 48px 70px;
 }
 
 /* Sticky without its own scroll: the panel is compact enough to fit the
@@ -801,7 +803,7 @@
 
 /* The dashboard already supplies page padding — drop the public docs gutter. */
 .dash-docs .proto-docs {
-  padding: 0 0 40px;
+  padding-block: 0 40px;
 }
 
 .proto-docs-group {
@@ -1704,6 +1706,17 @@
     align-items: flex-start;
     flex-direction: column;
   }
+  /* Phones navigate with the pager arrows in the page header instead of a
+     sidebar stacked above every page. */
+  .proto-docs-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .proto-docs-pager > a,
+  .proto-docs-pager > button {
+    width: 40px;
+    height: 38px;
+  }
   .proto-search-trigger span,
   .proto-search-trigger kbd {
     display: none;
@@ -1723,13 +1736,7 @@
     padding: 16px;
   }
   .proto-docs-side {
-    position: static;
-    height: auto;
-    max-height: none;
-    overflow: visible;
-    background: none;
-    border: none;
-    padding: 0;
+    display: none;
   }
   .proto-app {
     grid-template-columns: 1fr;

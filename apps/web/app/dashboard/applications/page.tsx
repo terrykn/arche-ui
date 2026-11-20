@@ -3,6 +3,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { createApplication, renameApplication } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PageContainer } from "@/components/page-container";
 
 export default async function ApplicationsPage({
   searchParams,
@@ -29,7 +30,7 @@ export default async function ApplicationsPage({
   const libs = (libraries ?? []) as unknown as Array<{ id: string; name: string; application_id: string | null }>;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <PageContainer width="wide" className="py-8 sm:py-10">
       <h1 className="font-display text-3xl">Applications</h1>
       {error ? (
         <p role="alert" className="mt-3 text-sm text-destructive">
@@ -70,6 +71,6 @@ export default async function ApplicationsPage({
           </li>
         ))}
       </ul>
-    </main>
+    </PageContainer>
   );
 }

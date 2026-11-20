@@ -147,3 +147,96 @@ body::before {
       transparent 70%
     );
 }
+
+/* Mobile gradient background (components/gradient-bg-mobile.tsx).
+   Phone stand-in for the canvas gradient: every layer is painted once and
+   afterwards only animated with transforms, so it runs on the compositor.
+   Keep in sync with the "Raspberry dusk" palette in gradient-bg.tsx. */
+.arche-mg-root {
+  isolation: isolate;
+}
+
+.arche-mg-blob {
+  position: absolute;
+  inset: -25%;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.arche-mg-blob-raspberry {
+  background: radial-gradient(
+    55% 60% at 78% 82%,
+    rgba(255, 7, 78, 0.95) 0%,
+    rgba(255, 7, 78, 0.6) 32%,
+    rgba(214, 20, 120, 0.35) 58%,
+    rgba(109, 61, 245, 0.12) 78%,
+    rgba(11, 27, 91, 0) 92%
+  );
+  animation-name: arche-mg-drift-a;
+  animation-duration: var(--arche-mg-duration, 36s);
+}
+
+.arche-mg-blob-violet {
+  background: radial-gradient(
+    58% 62% at 22% 18%,
+    rgba(109, 61, 245, 0.95) 0%,
+    rgba(109, 61, 245, 0.5) 38%,
+    rgba(46, 63, 209, 0.22) 68%,
+    rgba(11, 27, 91, 0) 90%
+  );
+  animation-name: arche-mg-drift-b;
+  animation-duration: calc(var(--arche-mg-duration, 36s) * 1.35);
+}
+
+.arche-mg-blob-blue {
+  background: radial-gradient(
+    48% 52% at 52% 46%,
+    rgba(78, 107, 255, 0.72) 0%,
+    rgba(46, 63, 209, 0.34) 46%,
+    rgba(11, 27, 91, 0) 82%
+  );
+  animation-name: arche-mg-drift-c;
+  animation-duration: calc(var(--arche-mg-duration, 36s) * 1.75);
+}
+
+.arche-mg-root[data-paused="true"] .arche-mg-blob {
+  animation-play-state: paused;
+}
+
+@keyframes arche-mg-drift-a {
+  from {
+    transform: translate3d(-6%, 4%, 0) scale(1.02);
+  }
+  to {
+    transform: translate3d(9%, -7%, 0) scale(1.16);
+  }
+}
+
+@keyframes arche-mg-drift-b {
+  from {
+    transform: translate3d(4%, -3%, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(-8%, 8%, 0) scale(0.96);
+  }
+}
+
+@keyframes arche-mg-drift-c {
+  from {
+    transform: translate3d(-10%, 6%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(10%, -8%, 0) scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arche-mg-blob {
+    animation: none;
+  }
+}

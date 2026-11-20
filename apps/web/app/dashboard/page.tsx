@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { PageContainer } from "@/components/page-container";
 import { CreationDock } from "./creation-dock";
 import { IdentityCarousel, type IdentityRow } from "./identity-carousel";
-import GradientBg from "@/components/gradient-bg";
+import ResponsiveGradientBg from "@/components/gradient-bg-adaptive";
 
 /**
  * The creation server actions run a model call plus the deterministic
@@ -27,7 +28,7 @@ export default async function DashboardHome({
   const rows = (libraries ?? []) as unknown as IdentityRow[];
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 py-8 sm:px-6 sm:py-10">
+    <PageContainer width="wide" className="flex min-h-dvh flex-col py-8 sm:py-10">
       <div className="flex-1">
         {rows.length === 0 ? (
           <div className="flex min-h-[40dvh] items-center justify-center">
@@ -60,7 +61,7 @@ export default async function DashboardHome({
         className="pointer-events-none fixed inset-x-0 bottom-0 z-[-1] h-64 translate-y-[12%] overflow-hidden opacity-20 [mask-image:linear-gradient(to_bottom,transparent,black_35%)] md:left-60"
         style={{ filter: "brightness(0.8) saturate(1.3)" }}
       >
-        <GradientBg
+        <ResponsiveGradientBg
           className="dashboard-aurora"
           speed={10}
           style={{
@@ -80,6 +81,6 @@ export default async function DashboardHome({
           className="absolute inset-x-[-25%] top-[-40px] h-[85%] bg-background blur-2xl [border-radius:0_0_50%_50%/0_0_100%_100%]"
         />
       </div>
-    </main>
+    </PageContainer>
   );
 }

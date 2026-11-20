@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { applyPickerAction } from "../../actions";
 import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/page-container";
 import { Input } from "@/components/ui/input";
 import { PaletteOptionPreview } from "@/components/palette-option-preview";
 
@@ -75,7 +76,7 @@ export default async function StyleIdentity({
 
   if (!dna) {
     return (
-      <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+      <PageContainer width="wide" className="py-12 sm:py-16">
         <div className="max-w-md">
         <h1 className="font-display text-3xl">Style {row.name}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -85,7 +86,7 @@ export default async function StyleIdentity({
           <Link href={`/dashboard/identities/${id}/edit`}>Open in Studio</Link>
         </Button>
         </div>
-      </main>
+      </PageContainer>
     );
   }
 
@@ -100,7 +101,7 @@ export default async function StyleIdentity({
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <PageContainer width="wide" className="py-8 sm:py-10">
       <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label.n}</p>
       <div className="mt-1 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="font-display text-3xl">
@@ -239,6 +240,6 @@ export default async function StyleIdentity({
           ) : null}
         </section>
       </div>
-    </main>
+    </PageContainer>
   );
 }

@@ -13,9 +13,9 @@ export const DOC_SEARCH_GROUPS: Array<{
   {
     heading: "Getting Started",
     links: [
+      { path: "/configuration", label: "Configuration" },
       { path: "", label: "Installation" },
       { path: "/customization", label: "Customization" },
-      { path: "/configuration", label: "Configuration" },
     ],
   },
   {
@@ -36,7 +36,7 @@ export const DOC_SEARCH_GROUPS: Array<{
 
 // Reading order for the docs pager. Every docs page appears once, including
 // pages that are linked from other pages instead of the sidebar.
-export const DOC_ORDER = ["", "/customization", "/configuration", "/components", "/blocks", "/mcp"];
+export const DOC_ORDER = ["/configuration", "", "/customization", "/components", "/blocks", "/mcp"];
 
 // The sidebar renders every docs page — one shared list, so the tabs can
 // never drift out of sync with what actually exists.

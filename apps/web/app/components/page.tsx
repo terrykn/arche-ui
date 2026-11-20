@@ -1,12 +1,13 @@
 import { getManifests } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
+import { PageContainer } from "@/components/page-container";
 import { ComponentIndex } from "@/components/catalog-reference";
 
 export default function ComponentsPage() {
   return (
     <>
       <SiteNav />
-      <main className="mx-auto max-w-4xl px-3 py-12">
+      <PageContainer width="content" className="py-12">
         <h1 className="font-display text-4xl">Components</h1>
         <p className="mt-2 text-muted-foreground">
           Generated from the foundation manifests — a manifest change updates these pages with no page edits.
@@ -14,7 +15,7 @@ export default function ComponentsPage() {
         <div className="mt-8">
           <ComponentIndex manifests={getManifests()} />
         </div>
-      </main>
+      </PageContainer>
     </>
   );
 }

@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ProtoAurora, ProtoNav, ProtoFooter } from "@/components/proto-shell";
 // Demo screens live on /examples; this section re-skins the whole site instead.
-import GradientBg from "@/components/gradient-bg";
+import ResponsiveGradientBg from "@/components/gradient-bg-adaptive";
 
 import { ArrowUp } from "lucide-react";
 import {
@@ -94,7 +94,7 @@ export default function Home() {
           <div className="pt-6">
             <section className="relative overflow-hidden rounded-3xl px-4 py-14 sm:px-6 sm:py-20">
               <div aria-hidden="true" className="absolute inset-0">
-                <GradientBg
+                <ResponsiveGradientBg
                   className="hero-bg"
                   speed={28}
                   style={{
@@ -131,7 +131,7 @@ export default function Home() {
                   className={`absolute inset-0 opacity-60 ${GRID_OFFSETS[index]}`}
                   style={{ filter: "brightness(0.5) saturate(1.25)" }}
                 >
-                  <GradientBg
+                  <ResponsiveGradientBg
                     className="feature-bg"
                     speed={14}
                     style={{

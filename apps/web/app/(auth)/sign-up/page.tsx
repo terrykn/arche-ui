@@ -2,6 +2,7 @@ import Link from "next/link";
 import { signInWithGoogle, signUp } from "../actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PageContainer } from "@/components/page-container";
 
 export default async function SignUp({
   searchParams,
@@ -10,7 +11,7 @@ export default async function SignUp({
 }) {
   const { error } = await searchParams;
   return (
-    <main className="mx-auto max-w-sm px-3 py-16">
+    <PageContainer width="narrow" className="py-16">
       <h1 className="font-display text-3xl">Sign up</h1>
       <form action={signUp} className="mt-6 flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
@@ -36,6 +37,6 @@ export default async function SignUp({
       <p className="mt-4 text-sm text-muted-foreground">
         Have an account? <Link href="/sign-in" className="underline">Sign in</Link>
       </p>
-    </main>
+    </PageContainer>
   );
 }

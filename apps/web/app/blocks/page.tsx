@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getBlockManifests } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
+import { PageContainer } from "@/components/page-container";
 import { BlockPreview } from "@/components/block-preview";
 import { ArrowLeft } from "lucide-react";
 
@@ -13,7 +14,7 @@ export default function BlocksPage() {
   return (
     <>
       <SiteNav />
-      <main className="mx-auto max-w-6xl px-3 py-12">
+      <PageContainer width="wide" className="py-12">
         <Link href="/components" className="text-sm text-muted-foreground underline">
           <ArrowLeft size={14} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} /> Components
         </Link>
@@ -45,7 +46,7 @@ export default function BlocksPage() {
             </ul>
           </section>
         ))}
-      </main>
+      </PageContainer>
     </>
   );
 }

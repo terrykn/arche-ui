@@ -1,12 +1,13 @@
 import McpDocs from "@/app/docs/mcp/page";
+import { PageContainer } from "@/components/page-container";
 
 export default function DashboardMcp() {
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <PageContainer width="wide" className="py-8 sm:py-10">
       <h1 className="font-display text-3xl">MCP</h1>
       <div className="mt-4">
         <McpDocs />
       </div>
-    </main>
+    </PageContainer>
   );
 }

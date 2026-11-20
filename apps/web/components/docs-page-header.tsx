@@ -54,7 +54,7 @@ export function DocsPageHeader({ title, className }: { title: string; className?
           <span>{copied ? "Copied" : "Copy Page"}</span>
         </button>
         <div className="proto-docs-pager" role="group" aria-label="Docs navigation">
-          {prev ? (
+          {prev !== undefined ? (
             <Link href={`${base}${prev}`} aria-label="Previous page" title="Previous page">
               <ChevronLeft size={16} aria-hidden="true" />
             </Link>
@@ -63,7 +63,7 @@ export function DocsPageHeader({ title, className }: { title: string; className?
               <ChevronLeft size={16} aria-hidden="true" />
             </button>
           )}
-          {next ? (
+          {next !== undefined ? (
             <Link href={`${base}${next}`} aria-label="Next page" title="Next page">
               <ChevronRight size={16} aria-hidden="true" />
             </Link>

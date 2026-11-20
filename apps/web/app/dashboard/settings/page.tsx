@@ -6,6 +6,7 @@ import { UsernameForm } from "./username-form";
 import { TokenManager } from "./token-manager";
 import { McpTokenManager } from "./mcp-token-manager";
 import { ensureProfileExists } from "@/lib/profiles";
+import { PageContainer } from "@/components/page-container";
 
 export default async function SettingsPage({
   searchParams,
@@ -54,7 +55,7 @@ export default async function SettingsPage({
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <PageContainer width="wide" className="py-8 sm:py-10">
       <div className="max-w-2xl">
       <h1 className="font-display text-3xl">Settings</h1>
       {error ? (
@@ -81,6 +82,6 @@ export default async function SettingsPage({
         <McpTokenManager tokens={mcpTokens} />
       </section>
       </div>
-    </main>
+    </PageContainer>
   );
 }

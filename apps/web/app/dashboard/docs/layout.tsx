@@ -1,3 +1,4 @@
+import { PageContainer } from "@/components/page-container";
 import { DocsBaseProvider } from "@/components/docs-base";
 import { DocsNav } from "@/components/docs-nav";
 
@@ -7,12 +8,12 @@ import { DocsNav } from "@/components/docs-nav";
 export default function DashboardDocsLayout({ children }: { children: React.ReactNode }) {
   return (
     <DocsBaseProvider base="/dashboard/docs">
-      <div className="dash-docs mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6">
+      <PageContainer width="wide" className="dash-docs pb-10 pt-4">
         <div className="proto-docs">
           <DocsNav />
           <div className="proto-docs-main">{children}</div>
         </div>
-      </div>
+      </PageContainer>
     </DocsBaseProvider>
   );
 }

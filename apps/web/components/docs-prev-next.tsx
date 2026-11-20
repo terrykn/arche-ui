@@ -20,11 +20,12 @@ export function DocsPrevNext() {
   if (index < 0) return null;
   const prev = index > 0 ? DOC_ORDER[index - 1]! : undefined;
   const next = index >= 0 && index < DOC_ORDER.length - 1 ? DOC_ORDER[index + 1]! : undefined;
-  if (!prev && !next) return null;
+  // `!== undefined`, not truthiness: the first docs page is "" (the base URL).
+  if (prev === undefined && next === undefined) return null;
 
   return (
     <nav className="proto-docs-foot" data-docs-actions aria-label="Docs pages">
-      {prev ? (
+      {prev !== undefined ? (
         <Link className="proto-docs-foot-btn" href={`${base}${prev}`}>
           <ArrowLeft size={15} aria-hidden="true" />
           <span>{LABELS.get(prev) ?? "Previous"}</span>
@@ -32,7 +33,7 @@ export function DocsPrevNext() {
       ) : (
         <span aria-hidden="true" />
       )}
-      {next ? (
+      {next !== undefined ? (
         <Link className="proto-docs-foot-btn" href={`${base}${next}`}>
           <span>{LABELS.get(next) ?? "Next"}</span>
           <ArrowRight size={15} aria-hidden="true" />

@@ -1,9 +1,10 @@
 import { getManifests } from "@arche/registry-core";
+import { PageContainer } from "@/components/page-container";
 
 export default function DashboardStandards() {
   const manifests = getManifests();
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <PageContainer width="wide" className="py-8 sm:py-10">
       <h1 className="font-display text-3xl">Standards</h1>
       <p className="mt-2 text-muted-foreground">
         The usage laws from the manifests — purpose, fit, and checkable rules per component.
@@ -23,6 +24,6 @@ export default function DashboardStandards() {
           </section>
         ))}
       </div>
-    </main>
+    </PageContainer>
   );
 }

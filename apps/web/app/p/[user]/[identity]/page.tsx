@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/service";
 import { deriveTypeScale, nameColor, TYPE_ROLES } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
+import { PageContainer } from "@/components/page-container";
 import { IdentityFontLinks } from "@/components/identity-fonts";
 import { EnterpriseDemo } from "@/components/enterprise-demo";
 import { InstallBlock } from "@/components/install-block";
@@ -115,7 +116,7 @@ export default async function PublicIdentityPage({
     <>
       <IdentityFontLinks fonts={row.payload.fonts} />
       <SiteNav />
-      <main className="mx-auto max-w-4xl px-3 py-12">
+      <PageContainer width="content" className="py-12">
         <p className="text-sm text-muted-foreground">by {username}</p>
         <h1 className="font-display text-4xl">{row.name}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -195,7 +196,7 @@ export default async function PublicIdentityPage({
             })}
           </ol>
         </section>
-      </main>
+      </PageContainer>
     </>
   );
 }
