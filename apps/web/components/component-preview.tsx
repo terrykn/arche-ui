@@ -39,6 +39,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { Toolbar, ToolbarButton } from "@/components/ui/toolbar";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { PreviewPortalContext } from "@/components/preview-portal";
+import { RegistryExample, hasRegistryExample } from "@/components/registry-example";
 
 type Selection = Record<string, unknown>;
 
@@ -85,6 +86,7 @@ export function ComponentPreview({
   // Overlay content portals here (inside the themed tree) so library tokens
   // apply; null outside a host falls back to document.body.
   const portalContainer = React.useContext(PreviewPortalContext) ?? undefined;
+  if (hasRegistryExample(name)) return <RegistryExample name={name} />;
   switch (name) {
     case "accordion":
       return (

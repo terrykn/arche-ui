@@ -1004,6 +1004,8 @@ export function IdentityEditor({
     }),
   );
 
+  Object.assign(previewVars, componentTokenVars(manifests, doc.components));
+
   const valueOf = (name: string): unknown => doc.tokens[mode]?.[name]?.$value ?? "";
 
   const fmtShadowNum = (n: number): string => String(Math.round(n * 100) / 100);

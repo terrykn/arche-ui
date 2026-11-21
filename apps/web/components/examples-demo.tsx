@@ -13,18 +13,8 @@ import { Play, Pause, ArrowRight } from "lucide-react";
 
 const ROTATE_MS = 5000;
 
-const COMP_CHIPS = [
-  "Button",
-  "Card",
-  "Tabs",
-  "Checkbox",
-  "Badge",
-  "Progress",
-  "Input",
-  "Switch",
-  "Avatar",
-  "Table",
-];
+const COMP_CHIPS = ["Button", "Input", "Select", "Checkbox", "Switch", "Slider", "Dialog", "Popover", "Calendar", "Tooltip"];
+
 
 export interface ExampleIdentity {
   id: string;
