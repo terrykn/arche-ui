@@ -33,7 +33,7 @@ const {
 } = require("./dist/index.js");
 const { compileValidIdentity, isMonochromeDna } = require("./dist/compiler.js");
 
-const base = JSON.parse(readFileSync(join(root, "..", "..", "fixtures", "identity.arche.json"), "utf8"));
+const base = JSON.parse(readFileSync(join(root, "..", "..", "fixtures", "identity.default.json"), "utf8"));
 const GUARD = { minContrast: "AA", respectReducedMotion: true };
 
 const AXES = {

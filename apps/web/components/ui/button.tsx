@@ -1,4 +1,4 @@
-/** GENERATED from the Arche identity (fixtures/identity.arche.json).
+/** GENERATED from the Default identity (fixtures/identity.default.json).
  * Do not hand-edit — re-run: pnpm --filter web sync-components */
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";

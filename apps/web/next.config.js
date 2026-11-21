@@ -16,7 +16,7 @@ const nextConfig = {
   outputFileTracingIncludes: {
     "/**": [
       // Starter/demo fixture payloads live at the repo root; the generation
-      // path reads identity.arche.json and identity.default.json from disk.
+      // path reads identity.default.json from disk.
       "../../fixtures/*.json",
       "../../packages/registry-core/dist/**/*.json",
       "../../packages/foundation/src/manifests/*.json",

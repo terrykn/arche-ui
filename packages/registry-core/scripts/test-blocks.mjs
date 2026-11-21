@@ -30,7 +30,7 @@ function emitFor(fixture) {
 }
 
 test("20 blocks emit registry:block items", () => {
-  const items = emitFor("identity.arche.json");
+  const items = emitFor("identity.default.json");
   const { getBlockManifests } = require("./dist/index.js");
   const manifests = getBlockManifests();
   assert.equal(manifests.length, 20);
@@ -62,7 +62,7 @@ test("block items validate against the official shadcn registry-item schema", as
   delete schema.$schema;
   const ajv = new Ajv({ strict: false, allErrors: true });
   const validate = ajv.compile(schema);
-  const items = emitFor("identity.arche.json");
+  const items = emitFor("identity.default.json");
   const { getBlockManifests } = require("./dist/index.js");
   for (const manifest of getBlockManifests()) {
     const item = JSON.parse(items.get(manifest.name));

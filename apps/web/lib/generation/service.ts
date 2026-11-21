@@ -176,7 +176,7 @@ export function diffPayloads(before: unknown, after: unknown, limit = 200): Arra
 
 function auroraBase(): ArcheIdentity {
   return JSON.parse(
-    readFileSync(join(fixturesDir(), "identity.arche.json"), "utf8"),
+    readFileSync(join(fixturesDir(), "identity.default.json"), "utf8"),
   ) as ArcheIdentity;
 }
 

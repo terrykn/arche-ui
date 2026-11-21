@@ -13,9 +13,6 @@ export interface FixtureIdentity {
 }
 
 const FIXTURES: Array<{ key: string; prompt: string; file: string }> = [
-  { key: "arche", prompt: "ancient Greece", file: "identity.arche.json" },
-  { key: "arcade", prompt: "90s arcade", file: "identity.arcade.json" },
-  { key: "hospital", prompt: "calm hospital", file: "identity.hospital.json" },
   { key: "default", prompt: "Arche Default", file: "identity.default.json" },
 ];
 

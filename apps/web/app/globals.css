@@ -99,7 +99,7 @@
 
 /* Subtle identity gradient wash behind content only.
    Token vars only — no hardcoded colors. Changing the site's
-   look = editing fixtures/identity.arche.json. */
+   look = editing fixtures/identity.default.json. */
 body::before {
   content: "";
   position: fixed;

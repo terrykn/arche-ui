@@ -16,7 +16,7 @@ const repoRoot = join(root, "..", "..");
 const readFixture = (file) => JSON.parse(readFileSync(join(repoRoot, "fixtures", file), "utf8"));
 
 test("presentation is deterministic and synchronous (zero model calls)", () => {
-  const payload = readFixture("identity.arcade.json");
+  const payload = readFixture("identity.default.json");
   const a = buildPresentation(payload, {
     assetBaseUrl: "https://x.supabase.co/storage/v1/object/public/identity-assets",
     libraryId: "lib-1",
@@ -35,13 +35,14 @@ test("presentation is deterministic and synchronous (zero model calls)", () => {
   assert.equal(a.specimens.og, "https://x.supabase.co/storage/v1/object/public/identity-assets/lib-1/v2/og.png");
 });
 
-test("presentation differs between enterprise and expressive fixtures", () => {
-  const arcade = buildPresentation(readFixture("identity.arcade.json"));
-  const hospital = buildPresentation(readFixture("identity.hospital.json"));
-  const arcadeProfile = readFixture("identity.arcade.json").dna?.profile;
-  const hospitalProfile = readFixture("identity.hospital.json").dna?.profile;
-  assert.notEqual(arcadeProfile, hospitalProfile);
-  assert.notDeepEqual(arcade.antiSlop, hospital.antiSlop);
+test("presentation differs between enterprise and expressive profiles", () => {
+  const base = readFixture("identity.default.json");
+  const enterprise = { ...base, dna: { ...base.dna, profile: "enterprise" } };
+  const expressive = { ...base, dna: { ...base.dna, profile: "expressive" } };
+  assert.notDeepEqual(
+    buildPresentation(enterprise).antiSlop,
+    buildPresentation(expressive).antiSlop,
+  );
 });
 
 test("hand-authored payload (no DNA) defaults to standard guidance", () => {
@@ -54,7 +55,7 @@ test("hand-authored payload (no DNA) defaults to standard guidance", () => {
 });
 
 test("motion durations come from the payload tokens when present", () => {
-  const payload = readFixture("identity.arcade.json");
+  const payload = readFixture("identity.default.json");
   const p = buildPresentation(payload);
   const fast = payload.tokens?.light?.["--motion-fast"];
   const inner = fast?.$value ?? fast;

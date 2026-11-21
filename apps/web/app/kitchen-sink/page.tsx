@@ -13,12 +13,12 @@ function loadFonts() {
   const found = [process.cwd(), join(process.cwd(), "..", "..")];
   for (const base of found) {
     try {
-      return JSON.parse(readFileSync(join(base, "fixtures", "identity.arche.json"), "utf8")).fonts;
+      return JSON.parse(readFileSync(join(base, "fixtures", "identity.default.json"), "utf8")).fonts;
     } catch {
       continue;
     }
   }
-  throw new Error("fixture not found: identity.arche.json");
+  throw new Error("fixture not found: identity.default.json");
 }
 
 /**

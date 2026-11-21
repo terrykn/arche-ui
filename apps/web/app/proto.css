@@ -1,5 +1,5 @@
-/* Marketing + dashboard prototype surfaces resolve to the Arche identity
- * (fixtures/identity.arche.json → theme.css tokens) via the theme pipeline.
+/* Marketing + dashboard prototype surfaces resolve to the Default identity
+ * (fixtures/identity.default.json → theme.css tokens) via the theme pipeline.
  * No hardcoded colors here — every var below is a token ref or a color-mix
  * of tokens. Single exception: --grad, the hero headline gradient. */
 :root {

@@ -52,7 +52,7 @@ test("teach block is registry-built and byte-stable", () => {
 });
 
 test("compiled payloads pass every enforce-tier check post-repair", async () => {
-  const base = readFixture("identity.arche.json");
+  const base = readFixture("identity.default.json");
   const guardrails = { chroma: 1, minContrast: "AA", respectReducedMotion: true };
   const cases = [
     { name: "balanced", profile: "standard", axes: { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", ...guardrails }, palette: { primaryHue: 210, accentHue: 280, neutralHue: 220 } },
@@ -71,7 +71,7 @@ test("compiled payloads pass every enforce-tier check post-repair", async () => 
 });
 
 test("repair records rule ids in meta.adjustments", () => {
-  const base = readFixture("identity.arche.json");
+  const base = readFixture("identity.default.json");
   // Grayscale DNA (chroma 0, spread hues): all charts compile to the same
   // gray step → the separation repair spreads them by lightness, recorded.
   const compiled = compileIdentity({
@@ -102,7 +102,7 @@ test("repair records rule ids in meta.adjustments", () => {
 });
 
 test("chroma axis: 0 collapses the ladder, 1 keeps the voice, findings stay empty", async () => {
-  const base = readFixture("identity.arche.json");
+  const base = readFixture("identity.default.json");
   const axes = { warmth: 0.5, energy: 0.5, playfulness: 0.5, sharpness: 0.5, density: 0.5, ornament: 0.5, formality: 0.4, material: "metal", motionFeel: "smooth", texture: "grain", minContrast: "AA", respectReducedMotion: true };
   const palette = { primaryHue: 20, accentHue: 200, neutralHue: 40 };
   const chromaOf = (compiled, token) => {
@@ -226,7 +226,7 @@ test("type emission equals the derived steps; display cap holds", async () => {
     }
   }
   // End-to-end: theme item vars equal the derivation.
-  const base = readFixture("identity.arche.json");
+  const base = readFixture("identity.default.json");
   const compiled = compileIdentity({
     name: "t-emit", source: { type: "manual" },
     axes: base.dna.axes, palette: base.dna.palette, profile: "standard", base,

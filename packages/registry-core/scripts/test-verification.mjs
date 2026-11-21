@@ -16,7 +16,7 @@
  *     are computed and reported in both modes. Structural borders are
  *     intentionally subtle and are NOT gated at 3:1 — the report records the
  *     numbers instead of inventing a gate the design language cannot meet.
- *  5. Negative control: fixtures/identity.invalid.json must fail.
+ *  5. Negative control: broken contrast must fail.
  *
  * Usage: pnpm test:verification (builds first).
  */
@@ -45,14 +45,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = join(root, "..", "..");
 const readFixture = (file) => JSON.parse(readFileSync(join(repoRoot, "fixtures", file), "utf8"));
 
-const FIXTURES = [
-  "identity.arche.json",
-  "identity.arcade.json",
-  "identity.default.json",
-  "identity.fixture.json",
-  "identity.hospital.json",
-  "identity.border-2px.json",
-];
+const FIXTURES = ["identity.default.json"];
 
 const PAIRS = getTokenContract().contrastPairs;
 const BORDER_AUDIT = [
@@ -140,7 +133,7 @@ test("contract pairs meet AA on every fixture, both modes (ratios reported)", ()
 });
 
 test("10 random-DNA compilations: zero AA failures, zero enforce findings, clamps logged", async () => {
-  const base = readFixture("identity.arche.json");
+  const base = readFixture("identity.default.json");
   const minima = new Map();
   let totalAdjustments = 0;
   const clampRules = new Set();
@@ -229,7 +222,7 @@ test("border audit (advisory): structural border ratios reported, both modes", (
 });
 
 test("registry theme emission derives live vars from tokens", () => {
-  const theme = JSON.parse(buildRegistry(readFixture("identity.arche.json")).get("theme"));
+  const theme = JSON.parse(buildRegistry(readFixture("identity.default.json")).get("theme"));
   // Radius scale derives from the base token (shadcn convention, no radius-xs).
   assert.equal(theme.cssVars.theme["radius-lg"], "var(--radius)");
   assert.equal(theme.cssVars.theme["radius-md"], "calc(var(--radius) - 2px)");
@@ -289,7 +282,7 @@ test("taste system: surprise bands + evocative names are deterministic", () => {
 });
 
 test("taste system: every compilation stamps direction, names, placement, self-check", async () => {
-  const base = readFixture("identity.arche.json");
+  const base = readFixture("identity.default.json");
   for (let seed = 1; seed <= 10; seed++) {
     const { axes, palette, profile } = randomDna(seed);
     const compiled = await compileValidIdentity(
@@ -316,7 +309,7 @@ test("taste system: every compilation stamps direction, names, placement, self-c
 });
 
 test("taste self-check runs in fix order with page-only tells deferred", () => {
-  const identity = readFixture("identity.arche.json");
+  const identity = readFixture("identity.default.json");
   const check = runTasteSelfCheck({
     tokens: identity.tokens,
     axes: identity.dna.axes,
@@ -334,11 +327,14 @@ test("taste self-check runs in fix order with page-only tells deferred", () => {
   assert.ok(check.notes.length <= 500, "notes fit the model self-check schema");
 });
 
-test("negative control: the invalid fixture fails validation", () => {
-  const result = validateIdentity(readFixture("identity.invalid.json"));
-  assert.equal(result.ok, false, "identity.invalid.json must fail");
+test("negative control: broken contrast fails validation", () => {
+  const broken = JSON.parse(JSON.stringify(readFixture("identity.default.json")));
+  broken.tokens.light["--primary-foreground"] = broken.tokens.light["--primary"];
+  broken.tokens.dark["--primary-foreground"] = broken.tokens.dark["--primary"];
+  const result = validateIdentity(broken);
+  assert.equal(result.ok, false, "broken contrast must fail");
   assert.ok(
     result.issues.some((i) => /contrast/i.test(i.message)),
-    "the invalid fixture must fail on a contrast pair",
+    "the broken payload must fail on a contrast pair",
   );
 });

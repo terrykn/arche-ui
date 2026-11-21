@@ -41,7 +41,7 @@ const {
 } = require("./dist/index.js");
 const { compileValidIdentity } = require("./dist/compiler.js");
 
-const base = JSON.parse(readFileSync(join(repoRoot, "fixtures", "identity.arche.json"), "utf8"));
+const base = JSON.parse(readFileSync(join(repoRoot, "fixtures", "identity.default.json"), "utf8"));
 const GUARD = { minContrast: "AA", respectReducedMotion: true };
 
 const AXES = {

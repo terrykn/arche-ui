@@ -31,7 +31,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = join(root, "..", "..");
 const readFixture = (file) => JSON.parse(readFileSync(join(repoRoot, "fixtures", file), "utf8"));
 const readApp = (file) => readFileSync(join(repoRoot, "apps", "web", file), "utf8");
-const base = readFixture("identity.arche.json");
+const base = readFixture("identity.default.json");
 const guardrails = { chroma: 1, minContrast: "AA", respectReducedMotion: true };
 const byId = fontEntriesById();
 
@@ -353,7 +353,7 @@ test("registry items use the correct provider and stylesheet or next/font import
 });
 
 test("Arche application uses Cabinet Grotesk display + Satoshi body and loads Fontshare from the root layout", () => {
-  const app = readFixture("identity.arche.json");
+  const app = readFixture("identity.default.json");
   assert.deepEqual(app.fonts, { sans: "satoshi", display: "cabinet-grotesk", mono: "jetbrains-mono" });
   assert.equal(app.tokens.light["--font-display"].$value, expectedFontStack(byId.get("cabinet-grotesk"), "display"));
   assert.equal(app.tokens.light["--font-sans"].$value, expectedFontStack(byId.get("satoshi"), "sans"));

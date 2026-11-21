@@ -28,7 +28,7 @@ const stats = (values) => {
 };
 
 // --- in-repo fixtures -------------------------------------------------------
-const fixtureFiles = ["identity.arche.json", "identity.arcade.json", "identity.hospital.json", "identity.default.json"];
+const fixtureFiles = ["identity.default.json"];
 const BG = ["--background", "--card", "--popover", "--muted", "--secondary"];
 const TEXT = ["--foreground", "--card-foreground", "--popover-foreground", "--primary-foreground", "--secondary-foreground", "--accent-foreground", "--destructive-foreground", "--muted-foreground"];
 const BORDER = ["--border", "--input"];

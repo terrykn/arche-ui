@@ -1,7 +1,7 @@
 /**
- * Syncs the Arche identity payload into apps/web theme CSS.
+ * Syncs the Default identity payload into apps/web theme CSS.
  *
- * The payload (fixtures/identity.arche.json) is the source of truth.
+ * The payload (fixtures/identity.default.json) is the source of truth.
  * This script reuses the registry-core emission code path (buildRegistry)
  * and writes the theme item's cssVars into app/theme.css.
  * Never hand-edit theme.css — edit the payload, then re-run this script.
@@ -20,7 +20,7 @@ const repoRoot = join(webRoot, "..", "..");
 const require = createRequire(join(webRoot, "package.json"));
 const { buildRegistry } = require("@arche/registry-core");
 
-const identityPath = join(repoRoot, "fixtures", "identity.arche.json");
+const identityPath = join(repoRoot, "fixtures", "identity.default.json");
 const identity = JSON.parse(readFileSync(identityPath, "utf8"));
 
 // Closed font registry: resolves the identity's font ids to next/font/google
@@ -55,7 +55,7 @@ const block = (selector, vars) => {
 // (that broke the Turbopack build once: @import must lead the entry
 // stylesheet, and theme.css is inlined mid-bundle). The legacy font block is
 // removed from globals.css below if still present.
-const css = `/* GENERATED — do not hand-edit. Source: fixtures/identity.arche.json
+const css = `/* GENERATED — do not hand-edit. Source: fixtures/identity.default.json
  * Produced by apps/web/scripts/sync-theme.mjs via @arche/registry-core.
  * Edit the payload, then run: pnpm --filter web sync-theme */
 ${block(":root", light)}
@@ -146,7 +146,7 @@ for (const slot of ["sans", "display", "mono"]) {
     `export const ${slotNames[slot]} = ${entry.loading.import}({\n  subsets: ["latin"],${weightArg}\n  variable: "${slotVars[slot]}",\n});`
   );
 }
-const fontsGenerated = `/* GENERATED — do not hand-edit. Source: fixtures/identity.arche.json
+const fontsGenerated = `/* GENERATED — do not hand-edit. Source: fixtures/identity.default.json
  * Produced by apps/web/scripts/sync-theme.mjs. Edit the payload, then run:
  * pnpm --filter web sync-theme */
 ${fontImports.size > 0 ? `import { ${[...fontImports].sort().join(", ")} } from "next/font/google";\n\n` : ""}${fontExports.join("\n\n")}

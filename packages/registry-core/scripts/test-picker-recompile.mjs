@@ -25,7 +25,7 @@ globalThis.fetch = (...args) => {
 };
 
 function fixture() {
-  return JSON.parse(readFileSync(join(repoRoot, "fixtures", "identity.arche.json"), "utf8"));
+  return JSON.parse(readFileSync(join(repoRoot, "fixtures", "identity.default.json"), "utf8"));
 }
 
 async function recompile(current, selections, paletteOverride) {

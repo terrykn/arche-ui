@@ -26,7 +26,7 @@ const {
 const { compileValidIdentity, compileIdentity, isMonochromeDna } = require("./dist/compiler.js");
 const { readFileSync } = require("node:fs");
 
-const base = JSON.parse(readFileSync(join(root, "..", "..", "fixtures", "identity.arche.json"), "utf8"));
+const base = JSON.parse(readFileSync(join(root, "..", "..", "fixtures", "identity.default.json"), "utf8"));
 const GUARD = { minContrast: "AA", respectReducedMotion: true };
 
 const compile = (name, axes, palette, profile) =>

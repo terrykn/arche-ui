@@ -11,11 +11,7 @@ import { PreviewShell } from "@/components/preview-shell";
 import { ArrowLeft } from "lucide-react";
 
 const FIXTURE_FILES: Record<string, { file: string; label: string }> = {
-  arche: { file: "identity.arche.json", label: "Arche" },
-  arcade: { file: "identity.arcade.json", label: "90s Arcade" },
-  hospital: { file: "identity.hospital.json", label: "Hospital" },
   default: { file: "identity.default.json", label: "Arche Default" },
-  "border-2px": { file: "identity.border-2px.json", label: "Border 2px" },
 };
 
 function loadFixture(file: string): {
@@ -41,8 +37,7 @@ export function generateStaticParams() {
 /**
  * Preview route (Part 7): any catalog component or block, live, under any
  * fixture identity in either mode — with a floating edit/swap bar and an
- * in-preview remix drawer. /preview/hero?identity=arcade is the canonical
- * second-identity render used for block QA.
+ * in-preview remix drawer.
  */
 export default async function PreviewPage({
   params,
@@ -57,7 +52,7 @@ export default async function PreviewPage({
   if (!manifest) {
     notFound();
   }
-  const key = query.identity && query.identity in FIXTURE_FILES ? query.identity : "arche";
+  const key = query.identity && query.identity in FIXTURE_FILES ? query.identity : "default";
   const mode = query.mode === "dark" ? "dark" : "light";
   const payload = loadFixture(FIXTURE_FILES[key]!.file);
 
