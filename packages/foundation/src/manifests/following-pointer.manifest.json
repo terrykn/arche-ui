@@ -1,0 +1,59 @@
+{
+  "name": "following-pointer",
+  "title": "Following Pointer",
+  "description": "A name tag trailing the pointer.",
+  "category": "cursor",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--brand-foreground",
+    "--shadow-sm",
+    "--shadow-md"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "following-pointer",
+      "source": "src/templates/following-pointer.tsx",
+      "target": "components/ui/following-pointer.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A name tag trailing the pointer.",
+    "useWhen": [
+      "Presence indicators."
+    ],
+    "doNotUseWhen": [
+      "Default cursors."
+    ],
+    "rules": [
+      {
+        "id": "following-pointer-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

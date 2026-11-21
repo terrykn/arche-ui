@@ -1,0 +1,53 @@
+{
+  "name": "file-upload-04",
+  "title": "File Upload Drag & Drop",
+  "description": "A file upload drag & drop block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--input",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button",
+    "card",
+    "progress"
+  ],
+  "files": [
+    {
+      "name": "file-upload-04",
+      "source": "src/blocks/file-upload-04.tsx",
+      "target": "components/blocks/file-upload-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "progress"
+      }
+    ]
+  }
+}

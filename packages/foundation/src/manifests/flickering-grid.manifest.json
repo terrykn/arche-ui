@@ -1,0 +1,52 @@
+{
+  "name": "flickering-grid",
+  "title": "Flickering Grid",
+  "description": "Squares fading on staggered timers.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "flickering-grid",
+      "source": "src/templates/flickering-grid.tsx",
+      "target": "components/ui/flickering-grid.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Squares fading on staggered timers.",
+    "useWhen": [
+      "Ambient grids."
+    ],
+    "doNotUseWhen": [
+      "Static layouts."
+    ],
+    "rules": [
+      {
+        "id": "flickering-grid-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

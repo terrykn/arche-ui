@@ -1,0 +1,55 @@
+{
+  "name": "aurora-text",
+  "title": "Aurora Text",
+  "description": "An aurora gradient text effect.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--primary",
+    "--brand",
+    "--brand-foreground",
+    "--chart-3"
+  ],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "aurora-text",
+      "source": "src/templates/aurora-text.tsx",
+      "target": "components/ui/aurora-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An aurora gradient text effect.",
+    "useWhen": [
+      "Atmospheric headlines."
+    ],
+    "doNotUseWhen": [
+      "Small labels."
+    ],
+    "rules": [
+      {
+        "id": "aurora-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

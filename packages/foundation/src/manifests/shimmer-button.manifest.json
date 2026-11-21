@@ -1,0 +1,87 @@
+{
+  "name": "shimmer-button",
+  "title": "Shimmer Button",
+  "description": "A call to action with a light sweep.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "3rem",
+        "cssVar": "--shimmer-button-height"
+      },
+      "cornerShape": {
+        "type": "enum",
+        "values": [
+          "0px",
+          "0.375rem",
+          "0.625rem",
+          "1rem",
+          "9999px"
+        ],
+        "default": "9999px",
+        "cssVar": "--shimmer-button-corner-shape"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--primary",
+    "--primary-foreground",
+    "--ring",
+    "--shadow-lg",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "shimmer-button",
+      "source": "src/templates/shimmer-button.tsx",
+      "target": "components/ui/shimmer-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A call to action with a light sweep.",
+    "useWhen": [
+      "Highlighting a primary action."
+    ],
+    "doNotUseWhen": [
+      "Repeated list actions."
+    ],
+    "rules": [
+      {
+        "id": "shimmer-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

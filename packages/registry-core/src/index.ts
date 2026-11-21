@@ -16,6 +16,7 @@ import { validateIconSelection } from "@arche/foundation/icons";
 import { dnaSectionSchema, type DnaSection } from "@arche/foundation/dna";
 import tokenContract from "@arche/foundation/contract/token-contract.json" with { type: "json" };
 
+
 const contractData = tokenContract as unknown as {
   contractVersion: number;
 };
@@ -205,6 +206,8 @@ function validateRegistries(identity: ArcheIdentity, issues: ValidationIssue[]):
 
 import type { Manifest } from "./manifests.js";
 import { getManifests } from "./manifests.js";
+import { componentTokenVars, isTokenKnob, resolveKnobValue, componentTokenName } from "./component-tokens.js";
+export { componentTokenVars, isTokenKnob, resolveKnobValue, componentTokenName } from "./component-tokens.js";
 import { checkDesignRules } from "./design-rules.js";
 import {
   deriveTypeScale,
@@ -517,6 +520,10 @@ interface ThemeEmission {
   css: NonNullable<Record<string, unknown>>;
 }
 
+/** registry cssVars keys carry no leading dashes. */
+const unprefixed = (vars: Record<string, string>): Record<string, string> =>
+  Object.fromEntries(Object.entries(vars).map(([name, value]) => [name.slice(2), value]));
+
 function emitTheme(identity: ArcheIdentity): ThemeEmission {
   const cssVarsLight: Record<string, string> = {};
   const cssVarsDark: Record<string, string> = {};
@@ -545,6 +552,9 @@ function emitTheme(identity: ArcheIdentity): ThemeEmission {
       cssVars[varName] = String(token.$value);
     }
   }
+
+  // Component tokens are mode-independent: emitted once on :root.
+  Object.assign(cssVarsLight, unprefixed(componentTokenVars(MANIFESTS, identity.components)));
 
   // radius scale derived at emission (contract: only the base --radius is a token)
   // convention matches shadcn's default mapping exactly; no radius-xs (Tailwind v4's built-in xs is left untouched)
@@ -717,6 +727,8 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
     // workspace package compiles on its own.
     content = content.replace('from "./lib/utils.js"', 'from "@/lib/utils"');
     const selections = identity.components[manifest.name] ?? {};
+    // Token knobs ship as CSS variables; only the rest are cva defaults.
+    const stampable = Object.entries(selections).filter(([knob]) => !isTokenKnob(manifest, knob));
     const applied = new Set<string>();
     const cvas = [...content.matchAll(/const\s+(\w+)\s*=\s*cva\s*\(/g)];
     for (let index = cvas.length - 1; index >= 0; index--) {
@@ -726,7 +738,7 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
       const block = content.slice(start, end);
       const defaults = block.match(/defaultVariants\s*:\s*\{([^}]*)\}/)?.[1] ?? "";
       const overrides: Record<string, unknown> = {};
-      for (const [knob, value] of Object.entries(selections)) {
+      for (const [knob, value] of stampable) {
         const axis = KNOB_TO_AXIS[knob] ?? knob;
         if (new RegExp(`\\b${axis}\\s*:`).test(defaults)) {
           overrides[axis] = value;
@@ -735,10 +747,11 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
       }
       content = stampDefaultVariants(content, match[1]!, overrides);
     }
-    for (const name of Object.keys(selections)) {
+    for (const [name] of stampable) {
       if (!applied.has(name)) throw new Error(`${manifest.name}: selection '${name}' cannot be stamped`);
     }
-
+    // Also carried on the item, so `add @arche/button` brings its own values.
+    const tokenVars = unprefixed(componentTokenVars([manifest], identity.components));
     items.set(
       manifest.name,
       serializeStable({
@@ -749,6 +762,7 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
         dependencies: manifest.dependencies,
         // Spec 7.7c: canonical plain-name form, copied verbatim.
         registryDependencies: [...manifest.registryDependencies],
+        ...(Object.keys(tokenVars).length > 0 ? { cssVars: { light: tokenVars } } : {}),
         files: manifest.files.map((file) => ({
           path: file.source,
           target: file.target,
@@ -763,13 +777,14 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
   // compose catalog components, so their files land under components/blocks
   // and their component deps resolve from the same registry.
   for (const manifest of BLOCK_MANIFESTS) {
-    const templateFile = manifest.files[0]!.source.split("/").at(-1)!;
-    let content = readBlockTemplate(templateFile);
     // Same rewrites as components, plus catalog-component import relocation:
     // foundation cross-imports become the installed @/components/ui paths.
-    content = content
-      .replace('from "../templates/lib/utils.js"', 'from "@/lib/utils"')
-      .replace(/from "\.\.\/templates\/([a-z-]+)\.js"/g, 'from "@/components/ui/$1"');
+    // Each listed file is read from its own source (multi-file items carry
+    // their helpers, e.g. blocks/shared/icon-placeholder).
+    const readBlockFile = (source: string): string =>
+      readFileSync(join(foundationDir, source), "utf8")
+        .replace('from "../templates/lib/utils.js"', 'from "@/lib/utils"')
+        .replace(/from "\.\.\/templates\/([a-z-]+)\.js"/g, 'from "@/components/ui/$1"');
     items.set(
       manifest.name,
       serializeStable({
@@ -783,7 +798,7 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
           path: file.source,
           target: file.target,
           type: file.type,
-          content,
+          content: readBlockFile(file.source),
         })),
       }),
     );

@@ -1,0 +1,58 @@
+{
+  "name": "navbar-mega",
+  "title": "Mega menu navbar",
+  "description": "Top bar with a keyboard-accessible Product mega menu, search, sign-in and a slide-over mobile menu.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--font-mono",
+    "--foreground",
+    "--motion-normal",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-sm",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "accordion",
+    "button",
+    "dropdown-menu",
+    "sheet"
+  ],
+  "files": [
+    {
+      "name": "navbar-mega",
+      "source": "src/blocks/navbar-mega.tsx",
+      "target": "components/blocks/navbar-mega.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "accordion"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "dropdown-menu"
+      },
+      {
+        "name": "sheet"
+      }
+    ]
+  }
+}

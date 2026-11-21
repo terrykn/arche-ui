@@ -1,0 +1,75 @@
+{
+  "name": "pagination",
+  "title": "Pagination",
+  "description": "Numbered page controls.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "item",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "link",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "ellipsis",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "pagination",
+      "source": "src/templates/pagination.tsx",
+      "target": "components/ui/pagination.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Numbered page controls.",
+    "useWhen": [
+      "Splitting long lists."
+    ],
+    "doNotUseWhen": [
+      "Short lists on one page."
+    ],
+    "rules": [
+      {
+        "id": "pagination-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

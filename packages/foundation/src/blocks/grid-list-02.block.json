@@ -1,0 +1,43 @@
+{
+  "name": "grid-list-02",
+  "title": "Grid List with Links",
+  "description": "A grid list with links block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--foreground",
+    "--motion-fast",
+    "--muted-foreground",
+    "--ring",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "grid-list-02",
+      "source": "src/blocks/grid-list-02.tsx",
+      "target": "components/blocks/grid-list-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

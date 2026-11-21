@@ -1,0 +1,51 @@
+{
+  "name": "testimonials-marquee",
+  "title": "Testimonial marquee",
+  "description": "Two rows of review cards scrolling in opposite directions, with faded edges and pause on hover or focus.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--brand",
+    "--brand-foreground",
+    "--card",
+    "--card-foreground",
+    "--foreground",
+    "--muted-foreground",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "avatar",
+    "blur-fade",
+    "marquee"
+  ],
+  "files": [
+    {
+      "name": "testimonials-marquee",
+      "source": "src/blocks/testimonials-marquee.tsx",
+      "target": "components/blocks/testimonials-marquee.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "marquee"
+      }
+    ]
+  }
+}

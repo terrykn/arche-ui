@@ -1,0 +1,61 @@
+{
+  "name": "orbiting-circles",
+  "title": "Orbiting Circles",
+  "description": "Items on rotating orbital rings.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "orbiting-circle",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "orbiting-circles",
+      "source": "src/templates/orbiting-circles.tsx",
+      "target": "components/ui/orbiting-circles.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Items on rotating orbital rings.",
+    "useWhen": [
+      "Ecosystem visuals."
+    ],
+    "doNotUseWhen": [
+      "Linear lists."
+    ],
+    "rules": [
+      {
+        "id": "orbiting-circles-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

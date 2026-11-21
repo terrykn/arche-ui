@@ -1,0 +1,54 @@
+{
+  "name": "search-1",
+  "title": "Faceted Docs Search Panel",
+  "description": "Search panel with a query field, a sidebar of type facets with live counts that narrow the list, and results showing title, type badge, and snippet.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "checkbox",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "search-1",
+      "source": "src/blocks/search-1.tsx",
+      "target": "components/blocks/search-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "stats-13",
+  "title": "Stats with Segmented Progress",
+  "description": "A stats with segmented progress block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "stats-13",
+      "source": "src/blocks/stats-13.tsx",
+      "target": "components/blocks/stats-13.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

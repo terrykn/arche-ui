@@ -1,0 +1,75 @@
+{
+  "name": "magnetic-button",
+  "title": "Magnetic Button",
+  "description": "A button that leans toward the cursor.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.75rem",
+        "cssVar": "--magnetic-button-height"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--primary",
+    "--primary-foreground",
+    "--ring",
+    "--radius"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "magnetic-button",
+      "source": "src/templates/magnetic-button.tsx",
+      "target": "components/ui/magnetic-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button that leans toward the cursor.",
+    "useWhen": [
+      "Emphasizing one hero action."
+    ],
+    "doNotUseWhen": [
+      "Many buttons are adjacent."
+    ],
+    "rules": [
+      {
+        "id": "magnetic-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

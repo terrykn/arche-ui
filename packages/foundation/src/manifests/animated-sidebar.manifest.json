@@ -1,0 +1,75 @@
+{
+  "name": "animated-sidebar",
+  "title": "Animated Sidebar",
+  "description": "An icon rail that expands on hover and becomes a drawer on small screens.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "sidebar",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "sidebar-body",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--foreground",
+    "--card-foreground",
+    "--primary",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-sidebar",
+      "source": "src/templates/animated-sidebar.tsx",
+      "target": "components/ui/animated-sidebar.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An icon rail that expands on hover and becomes a drawer on small screens.",
+    "useWhen": [
+      "Collapsing app navigation."
+    ],
+    "doNotUseWhen": [
+      "Top level site links."
+    ],
+    "rules": [
+      {
+        "id": "animated-sidebar-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

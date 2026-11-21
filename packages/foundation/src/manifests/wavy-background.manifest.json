@@ -1,0 +1,52 @@
+{
+  "name": "wavy-background",
+  "title": "Wavy Background",
+  "description": "Flowing translucent brand ribbons.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "wavy-background",
+      "source": "src/templates/wavy-background.tsx",
+      "target": "components/ui/wavy-background.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Flowing translucent brand ribbons.",
+    "useWhen": [
+      "Fluid section breaks."
+    ],
+    "doNotUseWhen": [
+      "Sharp layouts."
+    ],
+    "rules": [
+      {
+        "id": "wavy-background-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

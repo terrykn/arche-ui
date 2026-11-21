@@ -1,0 +1,75 @@
+{
+  "name": "button-group",
+  "title": "Button Group",
+  "description": "Related buttons joined together.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-slot",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "separator",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "orientation": {
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted",
+    "--input",
+    "--radius",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "separator",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "button-group",
+      "source": "src/templates/button-group.tsx",
+      "target": "components/ui/button-group.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Related buttons joined together.",
+    "useWhen": [
+      "Actions share a context."
+    ],
+    "doNotUseWhen": [
+      "Actions are unrelated."
+    ],
+    "rules": [
+      {
+        "id": "button-group-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

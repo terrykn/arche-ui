@@ -1,0 +1,59 @@
+{
+  "name": "direction-aware-hover",
+  "title": "Direction Aware Hover",
+  "description": "An overlay entering from the crossed edge.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--brand-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "direction-aware-hover",
+      "source": "src/templates/direction-aware-hover.tsx",
+      "target": "components/ui/direction-aware-hover.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An overlay entering from the crossed edge.",
+    "useWhen": [
+      "Image grids."
+    ],
+    "doNotUseWhen": [
+      "Text links."
+    ],
+    "rules": [
+      {
+        "id": "direction-aware-hover-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

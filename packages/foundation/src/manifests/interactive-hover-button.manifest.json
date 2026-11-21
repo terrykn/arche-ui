@@ -1,0 +1,75 @@
+{
+  "name": "interactive-hover-button",
+  "title": "Interactive Hover Button",
+  "description": "A button with a sliding hover reveal.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "cornerShape": {
+        "type": "enum",
+        "values": [
+          "0px",
+          "0.375rem",
+          "0.625rem",
+          "1rem",
+          "9999px"
+        ],
+        "default": "9999px",
+        "cssVar": "--interactive-hover-button-corner-shape"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--primary",
+    "--primary-foreground",
+    "--border-width",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "interactive-hover-button",
+      "source": "src/templates/interactive-hover-button.tsx",
+      "target": "components/ui/interactive-hover-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button with a sliding hover reveal.",
+    "useWhen": [
+      "Highlighting a marketing action."
+    ],
+    "doNotUseWhen": [
+      "Dense application toolbars."
+    ],
+    "rules": [
+      {
+        "id": "interactive-hover-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

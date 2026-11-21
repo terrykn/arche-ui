@@ -1,0 +1,54 @@
+{
+  "name": "spinner",
+  "title": "Spinner",
+  "description": "A theme aware loading spinner.",
+  "category": "feedback",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "spinner",
+      "source": "src/templates/spinner.tsx",
+      "target": "components/ui/spinner.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A theme aware loading spinner.",
+    "useWhen": [
+      "Waiting states."
+    ],
+    "doNotUseWhen": [
+      "Progress with a known end."
+    ],
+    "rules": [
+      {
+        "id": "spinner-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

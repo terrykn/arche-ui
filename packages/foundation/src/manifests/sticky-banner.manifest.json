@@ -1,0 +1,55 @@
+{
+  "name": "sticky-banner",
+  "title": "Sticky Banner",
+  "description": "A dismissible announcement bar above the header.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "sticky-banner",
+      "source": "src/templates/sticky-banner.tsx",
+      "target": "components/ui/sticky-banner.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A dismissible announcement bar above the header.",
+    "useWhen": [
+      "Temporary announcements."
+    ],
+    "doNotUseWhen": [
+      "Permanent navigation."
+    ],
+    "rules": [
+      {
+        "id": "sticky-banner-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

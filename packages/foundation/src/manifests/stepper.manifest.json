@@ -1,0 +1,77 @@
+{
+  "name": "stepper",
+  "title": "Stepper",
+  "description": "Progress through ordered steps.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "markerSize": {
+        "type": "enum",
+        "values": [
+          "1.5rem",
+          "1.75rem",
+          "2rem",
+          "2.5rem"
+        ],
+        "default": "2rem",
+        "cssVar": "--stepper-marker-size"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--brand",
+    "--brand-foreground",
+    "--muted-foreground",
+    "--border",
+    "--ring",
+    "--border-width"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "stepper",
+      "source": "src/templates/stepper.tsx",
+      "target": "components/ui/stepper.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Progress through ordered steps.",
+    "useWhen": [
+      "A flow has distinct stages."
+    ],
+    "doNotUseWhen": [
+      "Sections can be visited in any order."
+    ],
+    "rules": [
+      {
+        "id": "stepper-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

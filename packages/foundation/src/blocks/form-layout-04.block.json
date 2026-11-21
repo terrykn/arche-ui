@@ -1,0 +1,60 @@
+{
+  "name": "form-layout-04",
+  "title": "Form with Package Selection",
+  "description": "A form with package selection block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--foreground",
+    "--input",
+    "--muted-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "field",
+    "input",
+    "radio-group",
+    "select",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "form-layout-04",
+      "source": "src/blocks/form-layout-04.tsx",
+      "target": "components/blocks/form-layout-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "radio-group"
+      },
+      {
+        "name": "select"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "grid-list-01",
+  "title": "Grid List with Dropdown",
+  "description": "A grid list with dropdown block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--destructive",
+    "--foreground",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "card",
+    "dropdown-menu"
+  ],
+  "files": [
+    {
+      "name": "grid-list-01",
+      "source": "src/blocks/grid-list-01.tsx",
+      "target": "components/blocks/grid-list-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "dropdown-menu"
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "command-palette-2",
+  "title": "Palette With Recent Items",
+  "description": "Command palette dialog with a Recent section of timestamped files and pages above categorized results, and a footer bar of keyboard hints.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "command",
+    "dialog",
+    "kbd"
+  ],
+  "files": [
+    {
+      "name": "command-palette-2",
+      "source": "src/blocks/command-palette-2.tsx",
+      "target": "components/blocks/command-palette-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "command"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "kbd"
+      }
+    ]
+  }
+}

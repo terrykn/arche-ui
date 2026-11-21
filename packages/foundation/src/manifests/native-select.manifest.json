@@ -1,0 +1,100 @@
+{
+  "name": "native-select",
+  "title": "Native Select",
+  "description": "A styled native select element.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "wrapper",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "icon",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "option",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "optgroup",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.25rem",
+        "cssVar": "--native-select-height"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--primary",
+    "--primary-foreground",
+    "--destructive",
+    "--muted-foreground",
+    "--input",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "native-select",
+      "source": "src/templates/native-select.tsx",
+      "target": "components/ui/native-select.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A styled native select element.",
+    "useWhen": [
+      "Platform pickers are preferred."
+    ],
+    "doNotUseWhen": [
+      "Options need rich content."
+    ],
+    "rules": [
+      {
+        "id": "native-select-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "stats-03",
+  "title": "Stats with Card Layout",
+  "description": "A stats with card layout block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "stats-03",
+      "source": "src/blocks/stats-03.tsx",
+      "target": "components/blocks/stats-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

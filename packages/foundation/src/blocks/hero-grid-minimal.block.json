@@ -1,0 +1,56 @@
+{
+  "name": "hero-grid-minimal",
+  "title": "Developer tool hero",
+  "description": "Minimal hero on a retro grid with a typed headline accent, an install terminal and two CTAs.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--font-mono",
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "blur-fade",
+    "retro-grid",
+    "terminal",
+    "typewriter"
+  ],
+  "files": [
+    {
+      "name": "hero-grid-minimal",
+      "source": "src/blocks/hero-grid-minimal.tsx",
+      "target": "components/blocks/hero-grid-minimal.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "retro-grid"
+      },
+      {
+        "name": "terminal"
+      },
+      {
+        "name": "typewriter"
+      }
+    ]
+  }
+}

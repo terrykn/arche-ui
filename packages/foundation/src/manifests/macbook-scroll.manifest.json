@@ -1,0 +1,57 @@
+{
+  "name": "macbook-scroll",
+  "title": "Macbook Scroll",
+  "description": "A laptop opening on scroll.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "macbook-scroll",
+      "source": "src/templates/macbook-scroll.tsx",
+      "target": "components/ui/macbook-scroll.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A laptop opening on scroll.",
+    "useWhen": [
+      "Device showcases."
+    ],
+    "doNotUseWhen": [
+      "Mobile first pages."
+    ],
+    "rules": [
+      {
+        "id": "macbook-scroll-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

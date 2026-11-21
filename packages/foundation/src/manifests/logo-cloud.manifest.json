@@ -1,0 +1,56 @@
+{
+  "name": "logo-cloud",
+  "title": "Logo Cloud",
+  "description": "Customer logos muted until hover.",
+  "category": "social",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "logo-cloud",
+      "source": "src/templates/logo-cloud.tsx",
+      "target": "components/ui/logo-cloud.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Customer logos muted until hover.",
+    "useWhen": [
+      "Trust sections."
+    ],
+    "doNotUseWhen": [
+      "Single logos."
+    ],
+    "rules": [
+      {
+        "id": "logo-cloud-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

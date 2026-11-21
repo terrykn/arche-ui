@@ -1,0 +1,40 @@
+{
+  "name": "stats-14",
+  "title": "Stats with Usage Breakdown",
+  "description": "A stats with usage breakdown block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "stats-14",
+      "source": "src/blocks/stats-14.tsx",
+      "target": "components/blocks/stats-14.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

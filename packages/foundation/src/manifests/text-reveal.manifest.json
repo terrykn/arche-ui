@@ -1,0 +1,54 @@
+{
+  "name": "text-reveal",
+  "title": "Text Reveal",
+  "description": "Word by word blur reveal on scroll.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "text-reveal",
+      "source": "src/templates/text-reveal.tsx",
+      "target": "components/ui/text-reveal.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Word by word blur reveal on scroll.",
+    "useWhen": [
+      "Scroll storytelling."
+    ],
+    "doNotUseWhen": [
+      "Short labels."
+    ],
+    "rules": [
+      {
+        "id": "text-reveal-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

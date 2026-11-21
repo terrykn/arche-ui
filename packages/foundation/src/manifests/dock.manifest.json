@@ -1,0 +1,62 @@
+{
+  "name": "dock",
+  "title": "Dock",
+  "description": "A magnifying app dock.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "dock",
+      "source": "src/templates/dock.tsx",
+      "target": "components/ui/dock.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A magnifying app dock.",
+    "useWhen": [
+      "Playful app launchers."
+    ],
+    "doNotUseWhen": [
+      "Dense toolbars."
+    ],
+    "rules": [
+      {
+        "id": "dock-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

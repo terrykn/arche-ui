@@ -1,0 +1,60 @@
+{
+  "name": "auth-1",
+  "title": "Centered Sign-In Card",
+  "description": "Sign-in card centered on the page with email and password fields, a remember-me checkbox, forgot-password link, and Google and GitHub login buttons.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [
+    "sonner",
+    "zod"
+  ],
+  "registryDependencies": [
+    "button",
+    "card",
+    "checkbox",
+    "field",
+    "input",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "auth-1",
+      "source": "src/blocks/auth-1.tsx",
+      "target": "components/blocks/auth-1.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

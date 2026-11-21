@@ -150,6 +150,7 @@ interface DialogContentProps
     VariantProps<typeof dialogContentVariants> {
   className?: string;
   container?: HTMLElement | null;
+  showCloseButton?: boolean;
 }
 
 function DialogContent({
@@ -164,6 +165,7 @@ function DialogContent({
   radius,
   motion,
   container,
+  showCloseButton = true,
   ...props
 }: DialogContentProps) {
   return (
@@ -182,6 +184,7 @@ function DialogContent({
         {...props}
       >
         {children}
+        {showCloseButton ? (
         <DialogPrimitive.Close
           data-slot="dialog-close"
           className="ring-offset-background focus:ring-ring/50 data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-50 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
@@ -204,6 +207,7 @@ function DialogContent({
           </svg>
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
+        ) : null}
       </DialogPrimitive.Content>
     </DialogPortal>
   );

@@ -1,0 +1,65 @@
+{
+  "name": "animated-tabs",
+  "title": "Animated Tabs",
+  "description": "Tabs with a gliding pill and stacked card panels.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--foreground",
+    "--card-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm",
+    "--shadow-lg"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-tabs",
+      "source": "src/templates/animated-tabs.tsx",
+      "target": "components/ui/animated-tabs.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Tabs with a gliding pill and stacked card panels.",
+    "useWhen": [
+      "Switching a few views in place."
+    ],
+    "doNotUseWhen": [
+      "Long scrolling content."
+    ],
+    "rules": [
+      {
+        "id": "animated-tabs-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

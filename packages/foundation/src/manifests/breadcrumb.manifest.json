@@ -1,0 +1,88 @@
+{
+  "name": "breadcrumb",
+  "title": "Breadcrumb",
+  "description": "A trail of links showing the current location.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-slot",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "list",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "item",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "link",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "page",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "separator",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "ellipsis",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "breadcrumb",
+      "source": "src/templates/breadcrumb.tsx",
+      "target": "components/ui/breadcrumb.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A trail of links showing the current location.",
+    "useWhen": [
+      "Deep page hierarchies."
+    ],
+    "doNotUseWhen": [
+      "Flat two level sites."
+    ],
+    "rules": [
+      {
+        "id": "breadcrumb-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

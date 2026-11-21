@@ -1,0 +1,54 @@
+{
+  "name": "dialog-11",
+  "title": "Dialog Multi-Step Wizard",
+  "description": "A dialog multi-step wizard block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "dialog",
+    "label",
+    "select",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "dialog-11",
+      "source": "src/blocks/dialog-11.tsx",
+      "target": "components/blocks/dialog-11.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "select"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

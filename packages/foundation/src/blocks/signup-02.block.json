@@ -1,0 +1,47 @@
+{
+  "name": "signup-02",
+  "title": "Signup 02",
+  "description": "A two column signup page with a cover image.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "field",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "signup-02",
+      "source": "src/blocks/signup-02.tsx",
+      "target": "components/blocks/signup-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

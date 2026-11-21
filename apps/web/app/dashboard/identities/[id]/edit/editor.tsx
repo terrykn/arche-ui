@@ -35,6 +35,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { componentTokenVars } from "@arche/registry-core/component-tokens";
 
 type PreviewTab = "components" | "blocks";
 
@@ -1260,7 +1261,7 @@ export function IdentityEditor({
                   key={`${slot}.${knob}`}
                   label={friendlyKnobLabel(knob)}
                   spec={spec}
-                  value={selection[knob]}
+                  value={selection[knob] ?? spec.default}
                   onChange={(next) => setKnob(knob, next)}
                 />
               ))}

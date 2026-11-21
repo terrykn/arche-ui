@@ -1,0 +1,59 @@
+{
+  "name": "form-layout-02",
+  "title": "Form with Side Labels",
+  "description": "A form with side labels block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "field",
+    "input",
+    "radio-group",
+    "select",
+    "separator",
+    "textarea"
+  ],
+  "files": [
+    {
+      "name": "form-layout-02",
+      "source": "src/blocks/form-layout-02.tsx",
+      "target": "components/blocks/form-layout-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "radio-group"
+      },
+      {
+        "name": "select"
+      },
+      {
+        "name": "separator"
+      },
+      {
+        "name": "textarea"
+      }
+    ]
+  }
+}

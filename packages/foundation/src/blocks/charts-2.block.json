@@ -1,0 +1,52 @@
+{
+  "name": "charts-2",
+  "title": "Active Users Area Trend",
+  "description": "Gradient area chart of monthly active users, topped by a three KPI row (total, peak month, peak users) and a year over year growth badge.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--font-mono",
+    "--foreground",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [
+    "recharts"
+  ],
+  "registryDependencies": [
+    "badge",
+    "card",
+    "chart"
+  ],
+  "files": [
+    {
+      "name": "charts-2",
+      "source": "src/blocks/charts-2.tsx",
+      "target": "components/blocks/charts-2.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "chart"
+      }
+    ]
+  }
+}

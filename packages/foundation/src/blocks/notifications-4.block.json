@@ -1,0 +1,44 @@
+{
+  "name": "notifications-4",
+  "title": "Notification Preferences Toggles",
+  "description": "Notification preferences panel with a row per activity type and separate email and push toggle switches for each.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "card",
+    "separator",
+    "switch"
+  ],
+  "files": [
+    {
+      "name": "notifications-4",
+      "source": "src/blocks/notifications-4.tsx",
+      "target": "components/blocks/notifications-4.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      },
+      {
+        "name": "separator"
+      },
+      {
+        "name": "switch"
+      }
+    ]
+  }
+}

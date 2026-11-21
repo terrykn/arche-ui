@@ -1,0 +1,54 @@
+{
+  "name": "tilt-card",
+  "title": "Tilt Card",
+  "description": "3D tilt tracking the cursor.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "tilt-card",
+      "source": "src/templates/tilt-card.tsx",
+      "target": "components/ui/tilt-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "3D tilt tracking the cursor.",
+    "useWhen": [
+      "Product cards."
+    ],
+    "doNotUseWhen": [
+      "Text heavy cards."
+    ],
+    "rules": [
+      {
+        "id": "tilt-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "hero-parallax",
+  "title": "Hero Parallax",
+  "description": "Card rows sliding apart on scroll.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--muted",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-lg",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "hero-parallax",
+      "source": "src/templates/hero-parallax.tsx",
+      "target": "components/ui/hero-parallax.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Card rows sliding apart on scroll.",
+    "useWhen": [
+      "Parallax heroes."
+    ],
+    "doNotUseWhen": [
+      "Simple headers."
+    ],
+    "rules": [
+      {
+        "id": "hero-parallax-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

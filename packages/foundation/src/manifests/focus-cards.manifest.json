@@ -1,0 +1,59 @@
+{
+  "name": "focus-cards",
+  "title": "Focus Cards",
+  "description": "A grid where hover sharpens one card.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--muted",
+    "--ring",
+    "--radius",
+    "--shadow-sm",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "focus-cards",
+      "source": "src/templates/focus-cards.tsx",
+      "target": "components/ui/focus-cards.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A grid where hover sharpens one card.",
+    "useWhen": [
+      "Image showcases."
+    ],
+    "doNotUseWhen": [
+      "Text grids."
+    ],
+    "rules": [
+      {
+        "id": "focus-cards-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "sidebar-13",
+  "title": "Sidebar 13",
+  "description": "A sidebar in a dialog.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "breadcrumb",
+    "button",
+    "dialog",
+    "sidebar"
+  ],
+  "files": [
+    {
+      "name": "sidebar-13",
+      "source": "src/blocks/sidebar-13.tsx",
+      "target": "components/blocks/sidebar-13.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "breadcrumb"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "sidebar"
+      }
+    ]
+  }
+}

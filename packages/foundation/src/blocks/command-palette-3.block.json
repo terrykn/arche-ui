@@ -1,0 +1,53 @@
+{
+  "name": "command-palette-3",
+  "title": "Cmd+K Searchable Palette",
+  "description": "Command palette wired to a global Cmd+K listener, opening a searchable dialog of grouped commands with Kbd shortcuts and a last-action readout.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "command",
+    "kbd"
+  ],
+  "files": [
+    {
+      "name": "command-palette-3",
+      "source": "src/blocks/command-palette-3.tsx",
+      "target": "components/blocks/command-palette-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "command"
+      },
+      {
+        "name": "kbd"
+      }
+    ]
+  }
+}

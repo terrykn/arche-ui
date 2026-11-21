@@ -1,0 +1,51 @@
+{
+  "name": "file-upload-2",
+  "title": "Inline File Field",
+  "description": "Compact inline file upload form field with a bordered Choose File row and one attachment showing the selected file name, size, and remove action.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "attachment",
+    "field"
+  ],
+  "files": [
+    {
+      "name": "file-upload-2",
+      "source": "src/blocks/file-upload-2.tsx",
+      "target": "components/blocks/file-upload-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "attachment"
+      },
+      {
+        "name": "field"
+      }
+    ]
+  }
+}

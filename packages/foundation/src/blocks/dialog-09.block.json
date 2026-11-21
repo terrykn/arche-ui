@@ -1,0 +1,60 @@
+{
+  "name": "dialog-09",
+  "title": "Dialog with Link Share and Toggles",
+  "description": "A dialog with link share and toggles block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--motion-normal",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "dialog",
+    "input",
+    "label",
+    "switch",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "name": "dialog-09",
+      "source": "src/blocks/dialog-09.tsx",
+      "target": "components/blocks/dialog-09.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "switch"
+      },
+      {
+        "name": "tooltip"
+      }
+    ]
+  }
+}

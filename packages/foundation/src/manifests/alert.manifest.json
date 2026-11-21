@@ -1,0 +1,79 @@
+{
+  "name": "alert",
+  "title": "Alert",
+  "description": "A notice with title and description.",
+  "category": "feedback",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "title",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "variant": {
+      "values": [
+        "default",
+        "destructive"
+      ],
+      "default": "default"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--card-foreground",
+    "--destructive",
+    "--muted-foreground",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "alert",
+      "source": "src/templates/alert.tsx",
+      "target": "components/ui/alert.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A notice with title and description.",
+    "useWhen": [
+      "Status messages."
+    ],
+    "doNotUseWhen": [
+      "Blocking confirmations."
+    ],
+    "rules": [
+      {
+        "id": "alert-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

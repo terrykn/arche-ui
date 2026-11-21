@@ -1,0 +1,51 @@
+{
+  "name": "logos-grid",
+  "title": "Logo grid",
+  "description": "Bordered grid of customer logos with a cursor spotlight per cell, beside a heading and stories link.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--brand",
+    "--card",
+    "--chart-3",
+    "--font-mono",
+    "--foreground",
+    "--motion-normal",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "blur-fade",
+    "spotlight-card"
+  ],
+  "files": [
+    {
+      "name": "logos-grid",
+      "source": "src/blocks/logos-grid.tsx",
+      "target": "components/blocks/logos-grid.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "spotlight-card"
+      }
+    ]
+  }
+}

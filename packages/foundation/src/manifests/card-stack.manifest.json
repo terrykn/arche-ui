@@ -1,0 +1,60 @@
+{
+  "name": "card-stack",
+  "title": "Card Stack",
+  "description": "A deck shuffling on a timer.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--foreground",
+    "--radius",
+    "--border-width",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "card-stack",
+      "source": "src/templates/card-stack.tsx",
+      "target": "components/ui/card-stack.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A deck shuffling on a timer.",
+    "useWhen": [
+      "Rotating testimonials."
+    ],
+    "doNotUseWhen": [
+      "Static lists."
+    ],
+    "rules": [
+      {
+        "id": "card-stack-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

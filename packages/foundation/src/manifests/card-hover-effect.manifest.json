@@ -1,0 +1,71 @@
+{
+  "name": "card-hover-effect",
+  "title": "Card Hover Effect",
+  "description": "A highlight gliding between link cards.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "hover-cards",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--foreground",
+    "--primary",
+    "--brand",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm",
+    "--shadow-lg"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "card-hover-effect",
+      "source": "src/templates/card-hover-effect.tsx",
+      "target": "components/ui/card-hover-effect.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A highlight gliding between link cards.",
+    "useWhen": [
+      "Card grids."
+    ],
+    "doNotUseWhen": [
+      "Single cards."
+    ],
+    "rules": [
+      {
+        "id": "card-hover-effect-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

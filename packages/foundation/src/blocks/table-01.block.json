@@ -1,0 +1,52 @@
+{
+  "name": "table-01",
+  "title": "Table with Accordion",
+  "description": "A table with accordion block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--card",
+    "--font-mono",
+    "--foreground",
+    "--motion-normal",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "collapsible",
+    "table"
+  ],
+  "files": [
+    {
+      "name": "table-01",
+      "source": "src/blocks/table-01.tsx",
+      "target": "components/blocks/table-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "collapsible"
+      },
+      {
+        "name": "table"
+      }
+    ]
+  }
+}

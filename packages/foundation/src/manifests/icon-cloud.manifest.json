@@ -1,0 +1,57 @@
+{
+  "name": "icon-cloud",
+  "title": "Icon Cloud",
+  "description": "An interactive 3D tag cloud.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--radius"
+  ],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "name": "icon-cloud",
+      "source": "src/templates/icon-cloud.tsx",
+      "target": "components/ui/icon-cloud.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An interactive 3D tag cloud.",
+    "useWhen": [
+      "Technology lists."
+    ],
+    "doNotUseWhen": [
+      "Plain link lists."
+    ],
+    "rules": [
+      {
+        "id": "icon-cloud-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

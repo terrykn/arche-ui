@@ -1,0 +1,50 @@
+{
+  "name": "onboarding-4",
+  "title": "First-Run Welcome Screen",
+  "description": "First-run onboarding empty state with a layered rocket illustration, welcome badge, create-project button, take-the-tour action, and reassurance hints.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "button"
+  ],
+  "files": [
+    {
+      "name": "onboarding-4",
+      "source": "src/blocks/onboarding-4.tsx",
+      "target": "components/blocks/onboarding-4.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      }
+    ]
+  }
+}

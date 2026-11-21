@@ -1,0 +1,57 @@
+{
+  "name": "testimonials-grid",
+  "title": "Testimonial grid",
+  "description": "Masonry wall of social posts and quote cards, led by a wide case-study quote with a headline metric.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--brand",
+    "--brand-foreground",
+    "--card",
+    "--card-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "button",
+    "blur-fade",
+    "text-highlighter",
+    "tweet-card"
+  ],
+  "files": [
+    {
+      "name": "testimonials-grid",
+      "source": "src/blocks/testimonials-grid.tsx",
+      "target": "components/blocks/testimonials-grid.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "text-highlighter"
+      },
+      {
+        "name": "tweet-card"
+      }
+    ]
+  }
+}

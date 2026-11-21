@@ -1,0 +1,57 @@
+{
+  "name": "shooting-stars",
+  "title": "Shooting Stars",
+  "description": "A star field with shooting streaks.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "stars-background",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "shooting-stars",
+      "source": "src/templates/shooting-stars.tsx",
+      "target": "components/ui/shooting-stars.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A star field with shooting streaks.",
+    "useWhen": [
+      "Night sky heroes."
+    ],
+    "doNotUseWhen": [
+      "Daylight themes."
+    ],
+    "rules": [
+      {
+        "id": "shooting-stars-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

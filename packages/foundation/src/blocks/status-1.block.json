@@ -1,0 +1,41 @@
+{
+  "name": "status-1",
+  "title": "All Systems Operational Summary",
+  "description": "Status page summary with an all systems operational banner and a service list showing 90-day uptime and colored status dots.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--destructive",
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "status-1",
+      "source": "src/blocks/status-1.tsx",
+      "target": "components/blocks/status-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": []
+  }
+}

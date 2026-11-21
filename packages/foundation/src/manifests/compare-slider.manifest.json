@@ -1,0 +1,56 @@
+{
+  "name": "compare-slider",
+  "title": "Compare Slider",
+  "description": "A before and after wipe with a divider.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "compare-slider",
+      "source": "src/templates/compare-slider.tsx",
+      "target": "components/ui/compare-slider.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A before and after wipe with a divider.",
+    "useWhen": [
+      "Visual comparisons."
+    ],
+    "doNotUseWhen": [
+      "Single images."
+    ],
+    "rules": [
+      {
+        "id": "compare-slider-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

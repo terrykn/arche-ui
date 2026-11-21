@@ -26,7 +26,7 @@ export function DemoApp() {
         <p className="font-display text-4xl">48,201</p>
         <p className="mt-1 text-sm text-muted-foreground">+12% vs last month</p>
       </div>
-      <ToggleGroup type="single" defaultValue="overview" variant="outline" aria-label="View">
+      <ToggleGroup type="single" defaultValue="overview" aria-label="View">
         <ToggleGroupItem value="overview">Overview</ToggleGroupItem>
         <ToggleGroupItem value="detail">Detail</ToggleGroupItem>
       </ToggleGroup>

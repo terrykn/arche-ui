@@ -1,0 +1,52 @@
+{
+  "name": "animated-shiny-text",
+  "title": "Animated Shiny Text",
+  "description": "A glare panning across text.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-shiny-text",
+      "source": "src/templates/animated-shiny-text.tsx",
+      "target": "components/ui/animated-shiny-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A glare panning across text.",
+    "useWhen": [
+      "Shimmering headlines."
+    ],
+    "doNotUseWhen": [
+      "Long paragraphs."
+    ],
+    "rules": [
+      {
+        "id": "animated-shiny-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

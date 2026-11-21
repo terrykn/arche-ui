@@ -1,0 +1,62 @@
+{
+  "name": "multi-step-loader",
+  "title": "Multi Step Loader",
+  "description": "A full screen overlay ticking through steps.",
+  "category": "feedback",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--brand",
+    "--brand-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--border-width",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "multi-step-loader",
+      "source": "src/templates/multi-step-loader.tsx",
+      "target": "components/ui/multi-step-loader.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A full screen overlay ticking through steps.",
+    "useWhen": [
+      "Long operations."
+    ],
+    "doNotUseWhen": [
+      "Instant actions."
+    ],
+    "rules": [
+      {
+        "id": "multi-step-loader-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

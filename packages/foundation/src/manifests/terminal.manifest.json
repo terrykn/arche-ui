@@ -1,0 +1,59 @@
+{
+  "name": "terminal",
+  "title": "Terminal",
+  "description": "A terminal typing its lines.",
+  "category": "media",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--radius",
+    "--border-width",
+    "--font-mono",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "terminal",
+      "source": "src/templates/terminal.tsx",
+      "target": "components/ui/terminal.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A terminal typing its lines.",
+    "useWhen": [
+      "CLI demos."
+    ],
+    "doNotUseWhen": [
+      "Static code."
+    ],
+    "rules": [
+      {
+        "id": "terminal-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

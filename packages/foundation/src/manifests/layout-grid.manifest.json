@@ -1,0 +1,66 @@
+{
+  "name": "layout-grid",
+  "title": "Layout Grid",
+  "description": "Image tiles expanding in place.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--foreground",
+    "--card-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--border-width",
+    "--shadow-sm",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "layout-grid",
+      "source": "src/templates/layout-grid.tsx",
+      "target": "components/ui/layout-grid.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Image tiles expanding in place.",
+    "useWhen": [
+      "Visual portfolios."
+    ],
+    "doNotUseWhen": [
+      "Dense data."
+    ],
+    "rules": [
+      {
+        "id": "layout-grid-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

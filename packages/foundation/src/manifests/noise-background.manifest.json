@@ -1,0 +1,54 @@
+{
+  "name": "noise-background",
+  "title": "Noise Background",
+  "description": "Gradient blobs under film grain.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "noise-background",
+      "source": "src/templates/noise-background.tsx",
+      "target": "components/ui/noise-background.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Gradient blobs under film grain.",
+    "useWhen": [
+      "Rich ambient wraps."
+    ],
+    "doNotUseWhen": [
+      "Flat minimal pages."
+    ],
+    "rules": [
+      {
+        "id": "noise-background-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "stats-02",
+  "title": "Stats with Borders",
+  "description": "A stats with borders block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "badge",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "stats-02",
+      "source": "src/blocks/stats-02.tsx",
+      "target": "components/blocks/stats-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

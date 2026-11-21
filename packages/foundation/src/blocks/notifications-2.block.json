@@ -1,0 +1,72 @@
+{
+  "name": "notifications-2",
+  "title": "Bell Popover With Badge",
+  "description": "Notification bell button carrying an unread count badge that opens a compact popover of avatar rows, mark all read, and a view all link.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-md",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button",
+    "popover",
+    "scroll-area",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "notifications-2",
+      "source": "src/blocks/notifications-2.tsx",
+      "target": "components/blocks/notifications-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "popover"
+      },
+      {
+        "name": "scroll-area"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

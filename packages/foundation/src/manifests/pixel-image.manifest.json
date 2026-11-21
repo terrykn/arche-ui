@@ -1,0 +1,52 @@
+{
+  "name": "pixel-image",
+  "title": "Pixel Image",
+  "description": "An image with a pixelated effect.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "pixel-image",
+      "source": "src/templates/pixel-image.tsx",
+      "target": "components/ui/pixel-image.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An image with a pixelated effect.",
+    "useWhen": [
+      "Retro reveals."
+    ],
+    "doNotUseWhen": [
+      "Crisp photography."
+    ],
+    "rules": [
+      {
+        "id": "pixel-image-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

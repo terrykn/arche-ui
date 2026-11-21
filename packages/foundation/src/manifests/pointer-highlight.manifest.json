@@ -1,0 +1,59 @@
+{
+  "name": "pointer-highlight",
+  "title": "Pointer Highlight",
+  "description": "An outline drawn around a phrase.",
+  "category": "cursor",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--primary",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "pointer-highlight",
+      "source": "src/templates/pointer-highlight.tsx",
+      "target": "components/ui/pointer-highlight.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An outline drawn around a phrase.",
+    "useWhen": [
+      "Guided emphasis."
+    ],
+    "doNotUseWhen": [
+      "Plain highlights."
+    ],
+    "rules": [
+      {
+        "id": "pointer-highlight-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

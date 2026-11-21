@@ -1,0 +1,61 @@
+{
+  "name": "text-hover-effect",
+  "title": "Text Hover Effect",
+  "description": "A giant outlined word glowing under the pointer.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--primary",
+    "--brand",
+    "--chart-3",
+    "--motion-fast",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "text-hover-effect",
+      "source": "src/templates/text-hover-effect.tsx",
+      "target": "components/ui/text-hover-effect.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A giant outlined word glowing under the pointer.",
+    "useWhen": [
+      "Statement sections."
+    ],
+    "doNotUseWhen": [
+      "Navigation."
+    ],
+    "rules": [
+      {
+        "id": "text-hover-effect-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

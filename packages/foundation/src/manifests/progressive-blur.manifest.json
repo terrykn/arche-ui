@@ -1,0 +1,52 @@
+{
+  "name": "progressive-blur",
+  "title": "Progressive Blur",
+  "description": "A blur gradient on scrollable edges.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "progressive-blur",
+      "source": "src/templates/progressive-blur.tsx",
+      "target": "components/ui/progressive-blur.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A blur gradient on scrollable edges.",
+    "useWhen": [
+      "Overflow hints."
+    ],
+    "doNotUseWhen": [
+      "Fully visible content."
+    ],
+    "rules": [
+      {
+        "id": "progressive-blur-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

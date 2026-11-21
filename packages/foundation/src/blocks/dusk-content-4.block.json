@@ -1,0 +1,30 @@
+{
+  "name": "dusk-content-4",
+  "title": "Content 4",
+  "description": "Tailark Dusk content variant 4 block",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "dusk-content-4",
+      "source": "src/blocks/dusk-content-4.tsx",
+      "target": "components/blocks/dusk-content-4.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": []
+  }
+}

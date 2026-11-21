@@ -1,0 +1,54 @@
+{
+  "name": "floating-3d-particles",
+  "title": "Floating 3D Particles",
+  "description": "A pseudo 3D particle field.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "floating-3d-particles",
+      "source": "src/templates/floating-3d-particles.tsx",
+      "target": "components/ui/floating-3d-particles.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A pseudo 3D particle field.",
+    "useWhen": [
+      "Depth backdrops."
+    ],
+    "doNotUseWhen": [
+      "Reduced motion needs."
+    ],
+    "rules": [
+      {
+        "id": "floating-3d-particles-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

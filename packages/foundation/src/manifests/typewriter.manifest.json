@@ -1,0 +1,54 @@
+{
+  "name": "typewriter",
+  "title": "Typewriter",
+  "description": "Words typing holding and deleting.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "typewriter",
+      "source": "src/templates/typewriter.tsx",
+      "target": "components/ui/typewriter.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Words typing holding and deleting.",
+    "useWhen": [
+      "Rotating roles."
+    ],
+    "doNotUseWhen": [
+      "Static copy."
+    ],
+    "rules": [
+      {
+        "id": "typewriter-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

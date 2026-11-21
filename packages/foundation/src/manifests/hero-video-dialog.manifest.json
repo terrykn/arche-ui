@@ -1,0 +1,84 @@
+{
+  "name": "hero-video-dialog",
+  "title": "Hero Video Dialog",
+  "description": "A thumbnail that opens a video overlay.",
+  "category": "overlay",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "width": {
+        "type": "enum",
+        "values": [
+          "16rem",
+          "18rem",
+          "20rem",
+          "24rem",
+          "28rem",
+          "32rem",
+          "36rem",
+          "42rem",
+          "56rem"
+        ],
+        "default": "56rem",
+        "cssVar": "--hero-video-dialog-width"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--border-width",
+    "--shadow-md",
+    "--shadow-lg",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "lucide-react",
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "hero-video-dialog",
+      "source": "src/templates/hero-video-dialog.tsx",
+      "target": "components/ui/hero-video-dialog.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A thumbnail that opens a video overlay.",
+    "useWhen": [
+      "Featuring a product video."
+    ],
+    "doNotUseWhen": [
+      "Video should play inline."
+    ],
+    "rules": [
+      {
+        "id": "hero-video-dialog-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

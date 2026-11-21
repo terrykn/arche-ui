@@ -1,0 +1,54 @@
+{
+  "name": "word-rotate",
+  "title": "Word Rotate",
+  "description": "A single word rolling vertically.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "word-rotate",
+      "source": "src/templates/word-rotate.tsx",
+      "target": "components/ui/word-rotate.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A single word rolling vertically.",
+    "useWhen": [
+      "Rotating keywords."
+    ],
+    "doNotUseWhen": [
+      "Sentences."
+    ],
+    "rules": [
+      {
+        "id": "word-rotate-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

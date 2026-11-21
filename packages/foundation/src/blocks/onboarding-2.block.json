@@ -1,0 +1,55 @@
+{
+  "name": "onboarding-2",
+  "title": "Three-Card Setup Steps",
+  "description": "Onboarding laid out as three numbered step cards for importing data, inviting teammates, and customizing the workspace, each toggling to complete.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "card",
+    "progress"
+  ],
+  "files": [
+    {
+      "name": "onboarding-2",
+      "source": "src/blocks/onboarding-2.tsx",
+      "target": "components/blocks/onboarding-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "progress"
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "name": "input-group",
+  "title": "Input Group",
+  "description": "An input with attached text, icons, or buttons.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "addon",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "control",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "align": {
+      "values": [
+        "inline-start",
+        "inline-end",
+        "block-start",
+        "block-end"
+      ],
+      "default": "inline-start"
+    },
+    "size": {
+      "values": [
+        "xs",
+        "sm",
+        "icon-xs",
+        "icon-sm"
+      ],
+      "default": "xs"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--destructive",
+    "--muted-foreground",
+    "--input",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "button",
+    "input",
+    "textarea",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "input-group",
+      "source": "src/templates/input-group.tsx",
+      "target": "components/ui/input-group.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An input with attached text, icons, or buttons.",
+    "useWhen": [
+      "Add-ons belong to one input."
+    ],
+    "doNotUseWhen": [
+      "Controls are unrelated."
+    ],
+    "rules": [
+      {
+        "id": "input-group-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

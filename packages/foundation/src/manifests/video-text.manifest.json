@@ -1,0 +1,52 @@
+{
+  "name": "video-text",
+  "title": "Video Text",
+  "description": "Text with video playing behind it.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "video-text",
+      "source": "src/templates/video-text.tsx",
+      "target": "components/ui/video-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Text with video playing behind it.",
+    "useWhen": [
+      "Cinematic headlines."
+    ],
+    "doNotUseWhen": [
+      "Readable body."
+    ],
+    "rules": [
+      {
+        "id": "video-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

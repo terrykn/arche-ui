@@ -1,0 +1,45 @@
+{
+  "name": "page-header-6",
+  "title": "Header With Metrics Strip",
+  "description": "Analytics page header with an eyebrow, title, export and settings actions, and an inline four-metric stats strip showing deltas.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "name": "page-header-6",
+      "source": "src/blocks/page-header-6.tsx",
+      "target": "components/blocks/page-header-6.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      }
+    ]
+  }
+}

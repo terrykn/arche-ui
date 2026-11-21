@@ -1,19 +1,63 @@
 {
   "components": {
+    "3d-card": {},
+    "3d-marquee": {},
+    "3d-pin": {},
     "accordion": {
       "spacing": "default"
+    },
+    "alert": {
+      "variant": "default"
     },
     "alert-dialog": {
       "radiusFrom": "md",
       "shadow": "none",
       "size": "default"
     },
+    "android": {},
+    "animated-beam": {},
+    "animated-circular-progress-bar": {},
+    "animated-gradient-text": {},
+    "animated-grid-pattern": {},
+    "animated-list": {},
+    "animated-modal": {
+      "width": "32rem"
+    },
+    "animated-shiny-text": {},
+    "animated-sidebar": {},
+    "animated-tabs": {},
+    "animated-testimonials": {},
+    "animated-tooltip": {
+      "avatarSize": "2.75rem"
+    },
+    "apple-cards-carousel": {},
     "aspect-ratio": {},
+    "attachment": {
+      "mediaWidth": "2.5rem",
+      "orientation": "horizontal",
+      "size": "default",
+      "verticalWidth": "6rem"
+    },
+    "aurora-background": {},
+    "aurora-text": {},
     "avatar": {
       "size": "default"
     },
+    "avatar-circles": {},
+    "background-beams": {},
+    "background-boxes": {},
+    "backlight": {},
     "badge": {
       "defaultVariant": "default",
+      "variant": "default"
+    },
+    "bento-grid": {},
+    "blur-fade": {},
+    "border-beam": {},
+    "breadcrumb": {},
+    "bubble": {
+      "align": "end",
+      "side": "bottom",
       "variant": "default"
     },
     "button": {
@@ -24,19 +68,52 @@
       "size": "default",
       "variant": "default"
     },
+    "button-group": {
+      "orientation": "horizontal"
+    },
+    "calendar": {
+      "cellSize": "2rem"
+    },
     "card": {
       "radiusFrom": "md",
       "shadow": "none"
     },
+    "card-hover-effect": {},
+    "card-stack": {},
+    "carousel": {},
+    "chart": {},
     "checkbox": {
       "radiusFrom": "md",
       "size": "default"
     },
+    "code-block": {
+      "variant": "default"
+    },
+    "code-comparison": {},
     "collapsible": {},
+    "combobox": {
+      "listMaxHeight": "24rem"
+    },
+    "comic-text": {},
+    "command": {
+      "listMaxHeight": "300px"
+    },
+    "compare-slider": {},
+    "confetti": {
+      "cornerShape": "9999px",
+      "height": "2.75rem"
+    },
+    "container-scroll": {},
     "context-menu": {
       "radiusFrom": "md",
       "shadow": "none"
     },
+    "cool-mode": {},
+    "data-grid": {},
+    "date-picker": {
+      "width": "18rem"
+    },
+    "dia-text-reveal": {},
     "dialog": {
       "backdropBlur": "sm",
       "border": "sm",
@@ -47,47 +124,193 @@
       "shadow": "none",
       "size": "default"
     },
+    "direction": {},
+    "direction-aware-hover": {},
+    "dither-field": {},
+    "dock": {},
+    "dot-pattern": {},
+    "dotted-glow-background": {},
+    "dotted-map": {},
+    "draggable-card": {},
+    "drawer": {
+      "handleWidth": "100px",
+      "overlayOpacity": "40%",
+      "sideWidth": "24rem"
+    },
     "dropdown-menu": {
       "radiusFrom": "md",
       "shadow": "none"
     },
+    "empty": {
+      "variant": "default"
+    },
+    "evervault-card": {},
+    "expandable-card": {},
+    "field": {
+      "groupGap": "1.75rem",
+      "orientation": "vertical"
+    },
+    "file-drop": {
+      "zonePadding": "2.5rem"
+    },
+    "file-tree": {},
+    "flickering-grid": {},
+    "flip-words": {},
+    "floating-3d-particles": {},
+    "floating-navbar": {},
+    "focus-cards": {},
+    "following-pointer": {},
     "form": {},
+    "glare-card": {},
+    "glare-hover": {},
+    "globe": {},
+    "glowing-effect": {},
+    "glyph-matrix": {},
+    "grid-pattern": {},
+    "hero-parallax": {},
+    "hero-video-dialog": {
+      "width": "56rem"
+    },
+    "hexagon-pattern": {},
     "hover-card": {
       "radiusFrom": "md",
       "shadow": "none"
     },
+    "hyper-text": {},
+    "icon-cloud": {},
+    "image-slider": {},
     "input": {
       "controlSize": "default",
       "radiusFrom": "md"
     },
+    "input-group": {
+      "align": "inline-start",
+      "size": "sm"
+    },
+    "input-otp": {
+      "slotSize": "2.25rem"
+    },
+    "interactive-grid-pattern": {},
+    "interactive-hover-button": {
+      "cornerShape": "9999px"
+    },
+    "iphone": {},
+    "item": {
+      "size": "default",
+      "variant": "default"
+    },
+    "kbd": {},
+    "kinetic-text": {},
     "label": {},
+    "lamp": {},
+    "layout-grid": {},
+    "lens": {},
+    "light-rays": {},
+    "line-shadow-text": {},
+    "loaders": {},
+    "logo-cloud": {},
+    "macbook-scroll": {},
+    "magic-card": {},
+    "magnetic-button": {
+      "height": "2.75rem"
+    },
+    "marker": {
+      "variant": "default"
+    },
+    "marquee": {},
     "menubar": {
       "radiusFrom": "md",
       "shadow": "none"
     },
+    "message": {},
+    "meteors": {},
+    "morphing-text": {},
+    "moving-border": {},
+    "multi-step-loader": {},
+    "native-select": {
+      "height": "2.25rem"
+    },
+    "navbar-menu": {},
     "navigation-menu": {},
+    "neon-gradient-card": {},
+    "noise-background": {},
+    "noise-texture": {},
+    "number-ticker": {},
     "one-time-password-field": {
       "radiusFrom": "md"
     },
+    "orbiting-circles": {},
+    "pagination": {},
+    "parallax-grid": {},
+    "particles": {},
     "password-toggle-field": {
       "radiusFrom": "md"
     },
+    "pixel-image": {},
+    "pointer": {},
+    "pointer-highlight": {},
     "popover": {
       "radiusFrom": "md",
       "shadow": "none"
     },
     "progress": {},
+    "progressive-blur": {},
+    "pulsating-button": {},
     "radio-group": {},
+    "rainbow-button": {
+      "height": "2.75rem"
+    },
+    "resizable": {},
+    "resizable-navbar": {},
+    "retro-grid": {},
+    "ripple": {},
+    "ripple-button": {
+      "height": "2.75rem"
+    },
+    "safari": {},
     "scroll-area": {},
+    "scroll-based-velocity": {},
+    "scroll-progress": {},
+    "scroll-velocity": {},
     "select": {
       "radiusFrom": "md",
       "shadow": "none"
     },
     "separator": {},
+    "sheet": {
+      "overlayOpacity": "40%",
+      "width": "24rem"
+    },
+    "shimmer-button": {
+      "cornerShape": "9999px",
+      "height": "3rem"
+    },
+    "shine-border": {},
+    "shiny-button": {},
+    "shooting-stars": {},
+    "sidebar": {
+      "size": "default",
+      "variant": "default"
+    },
     "skeleton": {
       "radiusFrom": "md"
     },
     "slider": {},
+    "smooth-cursor": {},
+    "sparkles-text": {},
+    "spinner": {},
+    "spinning-text": {},
+    "spotlight-card": {},
+    "stateful-button": {
+      "cornerShape": "9999px",
+      "height": "2.5rem"
+    },
+    "stepper": {
+      "markerSize": "2rem"
+    },
+    "sticky-banner": {},
+    "sticky-scroll": {},
+    "striped-pattern": {},
     "switch": {},
     "table": {
       "density": "default"
@@ -96,9 +319,21 @@
       "defaultVariant": "default",
       "variant": "default"
     },
+    "terminal": {},
+    "text-3d-flip": {},
+    "text-animate": {},
+    "text-highlighter": {},
+    "text-hover-effect": {},
+    "text-reveal": {},
+    "text-shimmer": {},
     "textarea": {
       "radiusFrom": "md"
     },
+    "theme-toggler": {
+      "buttonSize": "2.25rem"
+    },
+    "tilt-card": {},
+    "timeline": {},
     "toast": {
       "radiusFrom": "md",
       "shadow": "none"
@@ -113,7 +348,23 @@
     "toolbar": {},
     "tooltip": {
       "radiusFrom": "md"
-    }
+    },
+    "trace": {},
+    "tracing-beam": {},
+    "tweet-card": {},
+    "typewriter": {},
+    "typing-animation": {},
+    "vanish-input": {
+      "cornerShape": "9999px",
+      "height": "3rem"
+    },
+    "video-text": {},
+    "vortex": {},
+    "warp-background": {},
+    "wavy-background": {},
+    "wobble-card": {},
+    "word-rotate": {},
+    "world-map": {}
   },
   "dna": {
     "axes": {

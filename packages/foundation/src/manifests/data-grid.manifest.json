@@ -1,0 +1,69 @@
+{
+  "name": "data-grid",
+  "title": "Data Grid",
+  "description": "A sortable filterable table with selection and pagination.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--primary",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "@tanstack/react-table",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "dropdown-menu",
+    "input",
+    "select",
+    "skeleton",
+    "table",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "data-grid",
+      "source": "src/templates/data-grid.tsx",
+      "target": "components/ui/data-grid.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A sortable filterable table with selection and pagination.",
+    "useWhen": [
+      "Managing rows of records."
+    ],
+    "doNotUseWhen": [
+      "Simple read only tables."
+    ],
+    "rules": [
+      {
+        "id": "data-grid-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

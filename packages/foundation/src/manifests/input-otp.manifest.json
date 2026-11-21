@@ -1,0 +1,94 @@
+{
+  "name": "input-otp",
+  "title": "Input OTP",
+  "description": "Segmented entry for one-time codes.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "input-otp",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "slot",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "separator",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "slotSize": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.25rem",
+        "cssVar": "--input-otp-slot-size"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--foreground",
+    "--destructive",
+    "--input",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "input-otp",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "input-otp",
+      "source": "src/templates/input-otp.tsx",
+      "target": "components/ui/input-otp.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Segmented entry for one-time codes.",
+    "useWhen": [
+      "Entering a fixed length code."
+    ],
+    "doNotUseWhen": [
+      "Length is variable."
+    ],
+    "rules": [
+      {
+        "id": "input-otp-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

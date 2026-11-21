@@ -1,0 +1,59 @@
+{
+  "name": "profile-3",
+  "title": "Organization Profile Card",
+  "description": "Company profile card with a logo mark, verified badge, stat strip, member avatar stack, and website and contact links.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "profile-3",
+      "source": "src/blocks/profile-3.tsx",
+      "target": "components/blocks/profile-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

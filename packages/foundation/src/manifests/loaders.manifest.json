@@ -1,0 +1,54 @@
+{
+  "name": "loaders",
+  "title": "Loaders",
+  "description": "Tiny CSS loading indicators.",
+  "category": "feedback",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "loaders",
+      "source": "src/templates/loaders.tsx",
+      "target": "components/ui/loaders.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Tiny CSS loading indicators.",
+    "useWhen": [
+      "Inline waiting states."
+    ],
+    "doNotUseWhen": [
+      "Full page loads."
+    ],
+    "rules": [
+      {
+        "id": "loaders-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

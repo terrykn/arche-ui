@@ -1,0 +1,69 @@
+{
+  "name": "empty-states-2",
+  "title": "Illustrated Inbox Panel",
+  "description": "Empty inbox panel with a framed inbox illustration, a create-workspace dialog with a name field, a Learn More link, and a support footer.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button",
+    "dialog",
+    "empty",
+    "field",
+    "input",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "empty-states-2",
+      "source": "src/blocks/empty-states-2.tsx",
+      "target": "components/blocks/empty-states-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "empty"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

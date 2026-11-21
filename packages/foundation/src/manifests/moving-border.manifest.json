@@ -1,0 +1,58 @@
+{
+  "name": "moving-border",
+  "title": "Moving Border",
+  "description": "Light lapping a border via offset path.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--primary",
+    "--brand",
+    "--ring",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "moving-border",
+      "source": "src/templates/moving-border.tsx",
+      "target": "components/ui/moving-border.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Light lapping a border via offset path.",
+    "useWhen": [
+      "Call to action borders."
+    ],
+    "doNotUseWhen": [
+      "Quiet buttons."
+    ],
+    "rules": [
+      {
+        "id": "moving-border-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

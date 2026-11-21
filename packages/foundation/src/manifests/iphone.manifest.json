@@ -1,0 +1,54 @@
+{
+  "name": "iphone",
+  "title": "iPhone",
+  "description": "An iPhone mockup.",
+  "category": "media",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--muted"
+  ],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "iphone",
+      "source": "src/templates/iphone.tsx",
+      "target": "components/ui/iphone.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An iPhone mockup.",
+    "useWhen": [
+      "Mobile showcases."
+    ],
+    "doNotUseWhen": [
+      "Responsive pages."
+    ],
+    "rules": [
+      {
+        "id": "iphone-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

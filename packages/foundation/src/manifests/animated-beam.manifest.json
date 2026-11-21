@@ -1,0 +1,58 @@
+{
+  "name": "animated-beam",
+  "title": "Animated Beam",
+  "description": "An animated connection between elements.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--brand-foreground",
+    "--border"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-beam",
+      "source": "src/templates/animated-beam.tsx",
+      "target": "components/ui/animated-beam.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An animated connection between elements.",
+    "useWhen": [
+      "Architecture diagrams."
+    ],
+    "doNotUseWhen": [
+      "Unrelated items."
+    ],
+    "rules": [
+      {
+        "id": "animated-beam-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

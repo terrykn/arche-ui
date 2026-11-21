@@ -1,0 +1,54 @@
+{
+  "name": "parallax-grid",
+  "title": "Parallax Grid",
+  "description": "Gallery columns drifting at rates.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "parallax-grid",
+      "source": "src/templates/parallax-grid.tsx",
+      "target": "components/ui/parallax-grid.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Gallery columns drifting at rates.",
+    "useWhen": [
+      "Depth galleries."
+    ],
+    "doNotUseWhen": [
+      "Uniform grids."
+    ],
+    "rules": [
+      {
+        "id": "parallax-grid-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "features-tabs",
+  "title": "Tabbed product tour",
+  "description": "Product tour with animated tabs; each tab pairs short copy and a checklist with a Tailwind-built app mock.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--brand",
+    "--brand-foreground",
+    "--card",
+    "--font-mono",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-md",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "animated-tabs",
+    "blur-fade"
+  ],
+  "files": [
+    {
+      "name": "features-tabs",
+      "source": "src/blocks/features-tabs.tsx",
+      "target": "components/blocks/features-tabs.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "animated-tabs"
+      },
+      {
+        "name": "blur-fade"
+      }
+    ]
+  }
+}

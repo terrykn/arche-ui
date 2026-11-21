@@ -28,7 +28,7 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar, ScrollAreaThumb } from "@/co
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -86,7 +86,7 @@ export function ComponentPreview({
   // Overlay content portals here (inside the themed tree) so library tokens
   // apply; null outside a host falls back to document.body.
   const portalContainer = React.useContext(PreviewPortalContext) ?? undefined;
-  if (hasRegistryExample(name)) return <RegistryExample name={name} />;
+  if (hasRegistryExample(name)) return <RegistryExample name={name} selection={selection} />;
   switch (name) {
     case "accordion":
       return (
@@ -105,8 +105,6 @@ export function ComponentPreview({
           </AlertDialogTrigger>
           <AlertDialogContent
             container={portalContainer}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof AlertDialogContent>["radius"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof AlertDialogContent>["shadow"]}
           >
             <AlertDialogTitle>Delete this board?</AlertDialogTitle>
             <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
@@ -161,7 +159,6 @@ export function ComponentPreview({
             <Button
               key={v}
               variant={v as React.ComponentProps<typeof Button>["variant"]}
-              shadow={pick(selection, "shadow") as React.ComponentProps<typeof Button>["shadow"]}
               fontWeight={pick(selection, "fontWeight") as React.ComponentProps<typeof Button>["fontWeight"]}
             >
               {cap(v)}
@@ -179,8 +176,6 @@ export function ComponentPreview({
             <Card
               key={v}
               variant={v as React.ComponentProps<typeof Card>["variant"]}
-              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Card>["radius"]}
-              shadow={pick(selection, "shadow") as React.ComponentProps<typeof Card>["shadow"]}
             >
               <CardHeader>
                 <CardTitle>Order #4821</CardTitle>
@@ -201,8 +196,6 @@ export function ComponentPreview({
               key={s}
               aria-label={`Demo checkbox ${s}`}
               defaultChecked
-              size={s as React.ComponentProps<typeof Checkbox>["size"]}
-              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Checkbox>["radius"]}
             />
           ))}
         </div>
@@ -223,8 +216,6 @@ export function ComponentPreview({
           </ContextMenuTrigger>
           <ContextMenuContent
             container={portalContainer}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof ContextMenuContent>["radius"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof ContextMenuContent>["shadow"]}
           >
             <ContextMenuItem>Assign to Jonas</ContextMenuItem>
           </ContextMenuContent>
@@ -238,13 +229,6 @@ export function ComponentPreview({
           </DialogTrigger>
           <DialogContent
             container={portalContainer}
-            overlayBackground={pick(selection, "overlayBackground") as React.ComponentProps<typeof DialogContent>["overlayBackground"]}
-            overlayOpacity={pick(selection, "overlayOpacity") as React.ComponentProps<typeof DialogContent>["overlayOpacity"]}
-            backdropBlur={pick(selection, "backdropBlur") as React.ComponentProps<typeof DialogContent>["backdropBlur"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof DialogContent>["shadow"]}
-            border={pick(selection, "border") as React.ComponentProps<typeof DialogContent>["border"]}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof DialogContent>["radius"]}
-            motion={pick(selection, "motion") as React.ComponentProps<typeof DialogContent>["motion"]}
           >
             <DialogTitle>Archive project?</DialogTitle>
             <DialogDescription>Archived projects leave the active board but stay searchable.</DialogDescription>
@@ -260,8 +244,6 @@ export function ComponentPreview({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             container={portalContainer}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof DropdownMenuContent>["radius"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof DropdownMenuContent>["shadow"]}
           >
             <DropdownMenuItem>Assign to Maya</DropdownMenuItem>
           </DropdownMenuContent>
@@ -286,8 +268,6 @@ export function ComponentPreview({
           </HoverCardTrigger>
           <HoverCardContent
             container={portalContainer}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof HoverCardContent>["radius"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof HoverCardContent>["shadow"]}
           >
             Warehouse lead · 14 open tasks
           </HoverCardContent>
@@ -304,7 +284,6 @@ export function ComponentPreview({
               placeholder="Search tasks…"
               aria-label={`Demo input ${s}`}
               controlSize={s as React.ComponentProps<typeof Input>["controlSize"]}
-              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Input>["radius"]}
             />
           ))}
         </div>
@@ -324,8 +303,6 @@ export function ComponentPreview({
             <MenubarTrigger>File</MenubarTrigger>
             <MenubarContent
               container={portalContainer}
-              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof MenubarContent>["radius"]}
-              shadow={pick(selection, "shadow") as React.ComponentProps<typeof MenubarContent>["shadow"]}
             >
               <MenubarItem>New board</MenubarItem>
             </MenubarContent>
@@ -359,7 +336,6 @@ export function ComponentPreview({
         <PasswordToggleField>
           <PasswordToggleFieldInput
             aria-label="Password"
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof PasswordToggleFieldInput>["radius"]}
           />
           <PasswordToggleFieldToggle>Show password</PasswordToggleFieldToggle>
         </PasswordToggleField>
@@ -372,8 +348,6 @@ export function ComponentPreview({
           </PopoverTrigger>
           <PopoverContent
             container={portalContainer}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof PopoverContent>["radius"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof PopoverContent>["shadow"]}
           >
             Keyboard shortcuts: ⌘K search, ⌘⏎ submit.
           </PopoverContent>
@@ -415,8 +389,6 @@ export function ComponentPreview({
           </SelectTrigger>
           <SelectContent
             container={portalContainer}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof SelectContent>["radius"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof SelectContent>["shadow"]}
           >
             <SelectItem value="one">In progress</SelectItem>
           </SelectContent>
@@ -428,17 +400,11 @@ export function ComponentPreview({
       return (
         <Skeleton
           className="h-8 w-40"
-          radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Skeleton>["radius"]}
         />
       );
     case "slider":
       return (
-        <Slider defaultValue={[40]} max={100} step={1} className="w-48">
-          <SliderTrack>
-            <SliderRange />
-          </SliderTrack>
-          <SliderThumb aria-label="Demo slider" />
-        </Slider>
+<Slider defaultValue={[40]} max={100} step={1} aria-label="Demo slider" className="w-48" />
       );
     case "switch":
       return <Switch aria-label="Demo switch" defaultChecked />;
@@ -479,7 +445,6 @@ export function ComponentPreview({
         <Textarea
           aria-label="Demo notes"
           placeholder="Release notes…"
-          radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Textarea>["radius"]}
         />
       );
     case "toast":
@@ -490,8 +455,6 @@ export function ComponentPreview({
             open={toastOpen}
             onOpenChange={setToastOpen}
             duration={5000}
-            radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof Toast>["radius"]}
-            shadow={pick(selection, "shadow") as React.ComponentProps<typeof Toast>["shadow"]}
           >
             <ToastTitle>Order shipped</ToastTitle>
             <ToastDescription>Order #4821 left the warehouse.</ToastDescription>
@@ -546,7 +509,6 @@ export function ComponentPreview({
             </TooltipTrigger>
             <TooltipContent
               container={portalContainer}
-              radius={pick(selection, "radiusFrom") as React.ComponentProps<typeof TooltipContent>["radius"]}
             >
               Ships Friday
             </TooltipContent>

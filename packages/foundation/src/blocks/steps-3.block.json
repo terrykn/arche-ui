@@ -1,0 +1,46 @@
+{
+  "name": "steps-3",
+  "title": "Wizard Progress Bar Header",
+  "description": "Interactive step wizard header with a step counter, percentage, progress bar, the active step title and description, and back and continue buttons.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "progress"
+  ],
+  "files": [
+    {
+      "name": "steps-3",
+      "source": "src/blocks/steps-3.tsx",
+      "target": "components/blocks/steps-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "progress"
+      }
+    ]
+  }
+}

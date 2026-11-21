@@ -6,28 +6,88 @@
   "manifestVersion": 1,
   "native": {
     "element": "button",
-    "parts": ["button"],
+    "parts": [
+      "button"
+    ],
     "propsInherited": true
   },
   "slots": [
-    { "name": "button", "part": "button", "required": true }
+    {
+      "name": "button",
+      "part": "button",
+      "required": true
+    }
   ],
   "axes": {
     "variant": {
-      "values": ["default", "secondary", "destructive", "outline", "ghost", "link", "brand"],
+      "values": [
+        "default",
+        "secondary",
+        "destructive",
+        "outline",
+        "ghost",
+        "link",
+        "brand"
+      ],
       "default": "default"
     },
     "size": {
-      "values": ["default", "sm", "lg", "icon"],
+      "values": [
+        "default",
+        "xs",
+        "sm",
+        "lg",
+        "icon",
+        "icon-xs",
+        "icon-sm",
+        "icon-lg"
+      ],
       "default": "default"
     }
   },
   "styleSurface": {
     "button": {
-      "defaultVariant": { "type": "enum", "values": ["default", "secondary", "destructive", "outline", "ghost", "brand"], "default": "default" },
-      "defaultSize": { "type": "enum", "values": ["default", "sm", "lg", "icon"], "default": "default" },
-      "shadow": { "type": "enum", "values": ["none", "sm"], "default": "none" },
-      "fontWeight": { "type": "enum", "values": ["normal", "medium", "semibold"], "default": "medium" }
+      "defaultVariant": {
+        "type": "enum",
+        "values": [
+          "default",
+          "secondary",
+          "destructive",
+          "outline",
+          "ghost",
+          "brand"
+        ],
+        "default": "default"
+      },
+      "defaultSize": {
+        "type": "enum",
+        "values": [
+          "default",
+          "sm",
+          "lg",
+          "icon",
+          "icon-xs",
+          "icon-sm"
+        ],
+        "default": "default"
+      },
+      "shadow": {
+        "type": "enum",
+        "values": [
+          "none",
+          "sm"
+        ],
+        "default": "none"
+      },
+      "fontWeight": {
+        "type": "enum",
+        "values": [
+          "normal",
+          "medium",
+          "semibold"
+        ],
+        "default": "medium"
+      }
     }
   },
   "tokensUsed": [
@@ -52,7 +112,9 @@
     "@radix-ui/react-slot",
     "class-variance-authority"
   ],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [
+    "utils"
+  ],
   "files": [
     {
       "name": "button",
@@ -74,9 +136,21 @@
       "The action leads away from the current context entirely"
     ],
     "rules": [
-      { "id": "button-no-navigation", "severity": "error", "check": "Buttons must not be used for navigation; a location change requires a link." },
-      { "id": "button-one-primary", "severity": "error", "check": "Exactly one button with the default variant may appear per view region." },
-      { "id": "button-destructive-confirm", "severity": "error", "check": "The destructive variant requires a confirmation pattern before its action runs." }
+      {
+        "id": "button-no-navigation",
+        "severity": "error",
+        "check": "Buttons must not be used for navigation; a location change requires a link."
+      },
+      {
+        "id": "button-one-primary",
+        "severity": "error",
+        "check": "Exactly one button with the default variant may appear per view region."
+      },
+      {
+        "id": "button-destructive-confirm",
+        "severity": "error",
+        "check": "The destructive variant requires a confirmation pattern before its action runs."
+      }
     ]
   }
 }

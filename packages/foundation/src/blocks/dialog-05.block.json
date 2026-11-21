@@ -1,0 +1,46 @@
+{
+  "name": "dialog-05",
+  "title": "Dialog with Password Confirmation",
+  "description": "A dialog with password confirmation block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "alert-dialog",
+    "button",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "name": "dialog-05",
+      "source": "src/blocks/dialog-05.tsx",
+      "target": "components/blocks/dialog-05.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "alert-dialog"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      }
+    ]
+  }
+}

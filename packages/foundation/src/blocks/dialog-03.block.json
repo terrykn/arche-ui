@@ -1,0 +1,36 @@
+{
+  "name": "dialog-03",
+  "title": "Dialog with Input Field",
+  "description": "A dialog with input field block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "dialog"
+  ],
+  "files": [
+    {
+      "name": "dialog-03",
+      "source": "src/blocks/dialog-03.tsx",
+      "target": "components/blocks/dialog-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      }
+    ]
+  }
+}

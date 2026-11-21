@@ -1,0 +1,66 @@
+{
+  "name": "pricing-single-plan",
+  "title": "Single plan pricing",
+  "description": "One all-inclusive plan card beside a benefit list and short reassurance answers.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-sm",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "avatar-circles",
+    "blur-fade",
+    "glowing-effect",
+    "grid-pattern",
+    "spotlight-card"
+  ],
+  "files": [
+    {
+      "name": "pricing-single-plan",
+      "source": "src/blocks/pricing-single-plan.tsx",
+      "target": "components/blocks/pricing-single-plan.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "avatar-circles"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "glowing-effect"
+      },
+      {
+        "name": "grid-pattern"
+      },
+      {
+        "name": "spotlight-card"
+      }
+    ]
+  }
+}

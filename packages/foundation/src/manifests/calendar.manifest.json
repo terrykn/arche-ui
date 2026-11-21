@@ -1,0 +1,83 @@
+{
+  "name": "calendar",
+  "title": "Calendar",
+  "description": "A date grid for single, multiple, or range selection.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react-day-picker",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "cellSize": {
+        "type": "enum",
+        "values": [
+          "1.75rem",
+          "2rem",
+          "2.25rem",
+          "2.5rem"
+        ],
+        "default": "2rem",
+        "cssVar": "--calendar-cell-size"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--popover",
+    "--primary",
+    "--primary-foreground",
+    "--accent",
+    "--accent-foreground",
+    "--muted-foreground",
+    "--input",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "lucide-react",
+    "react-day-picker"
+  ],
+  "registryDependencies": [
+    "button",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "calendar",
+      "source": "src/templates/calendar.tsx",
+      "target": "components/ui/calendar.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A date grid for single, multiple, or range selection.",
+    "useWhen": [
+      "Surrounding dates give useful context."
+    ],
+    "doNotUseWhen": [
+      "A known date is faster to type."
+    ],
+    "rules": [
+      {
+        "id": "calendar-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

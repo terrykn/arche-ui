@@ -1,0 +1,103 @@
+{
+  "name": "trace",
+  "title": "Trace",
+  "description": "An expandable execution trace.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "line",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "icon",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "title",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "collapsible",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "collapsible-trigger",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "collapsible-content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "collapsible-content-inner",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--destructive",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "collapsible",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "trace",
+      "source": "src/templates/trace.tsx",
+      "target": "components/ui/trace.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An expandable execution trace.",
+    "useWhen": [
+      "Showing agent or build steps."
+    ],
+    "doNotUseWhen": [
+      "Simple logs."
+    ],
+    "rules": [
+      {
+        "id": "trace-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

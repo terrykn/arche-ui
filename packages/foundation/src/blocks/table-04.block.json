@@ -1,0 +1,47 @@
+{
+  "name": "table-04",
+  "title": "Table with Grouped Rows",
+  "description": "A table with grouped rows block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "avatar",
+    "badge",
+    "table"
+  ],
+  "files": [
+    {
+      "name": "table-04",
+      "source": "src/blocks/table-04.tsx",
+      "target": "components/blocks/table-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "table"
+      }
+    ]
+  }
+}

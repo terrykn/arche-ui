@@ -1,0 +1,54 @@
+{
+  "name": "glyph-matrix",
+  "title": "Glyph Matrix",
+  "description": "An animated grid of shifting glyphs.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "glyph-matrix",
+      "source": "src/templates/glyph-matrix.tsx",
+      "target": "components/ui/glyph-matrix.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An animated grid of shifting glyphs.",
+    "useWhen": [
+      "Decorative code texture."
+    ],
+    "doNotUseWhen": [
+      "Readable text."
+    ],
+    "rules": [
+      {
+        "id": "glyph-matrix-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

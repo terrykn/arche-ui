@@ -1,0 +1,52 @@
+{
+  "name": "animated-circular-progress-bar",
+  "title": "Animated Circular Progress Bar",
+  "description": "A circular gauge with a percentage.",
+  "category": "feedback",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-circular-progress-bar",
+      "source": "src/templates/animated-circular-progress-bar.tsx",
+      "target": "components/ui/animated-circular-progress-bar.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A circular gauge with a percentage.",
+    "useWhen": [
+      "Single progress values."
+    ],
+    "doNotUseWhen": [
+      "Multiple parallel tasks."
+    ],
+    "rules": [
+      {
+        "id": "animated-circular-progress-bar-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

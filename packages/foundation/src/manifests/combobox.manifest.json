@@ -1,0 +1,210 @@
+{
+  "name": "combobox",
+  "title": "Combobox",
+  "description": "A searchable list of selectable options.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@base-ui/react",
+    "parts": [
+      "Root",
+      "Valu",
+      "Value",
+      "Trigge",
+      "Trigger",
+      "Clea",
+      "Clear",
+      "Inpu",
+      "Input",
+      "Popu",
+      "Positione",
+      "Portal",
+      "Positioner",
+      "Popup",
+      "Lis",
+      "List",
+      "Ite",
+      "Item",
+      "ItemIndicator",
+      "Grou",
+      "Group",
+      "GroupLabe",
+      "GroupLabel",
+      "Collectio",
+      "Collection",
+      "Empt",
+      "Empty",
+      "Separato",
+      "Separator",
+      "Chips",
+      "Chip",
+      "Chi",
+      "ChipRemove"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "value",
+      "part": "Value",
+      "required": false
+    },
+    {
+      "name": "trigger",
+      "part": "Trigger",
+      "required": false
+    },
+    {
+      "name": "trigger-icon",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "clear",
+      "part": "Clear",
+      "required": false
+    },
+    {
+      "name": "input-group-button",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "list",
+      "part": "List",
+      "required": false
+    },
+    {
+      "name": "item",
+      "part": "Item",
+      "required": false
+    },
+    {
+      "name": "item-indicator",
+      "part": "ItemIndicator",
+      "required": false
+    },
+    {
+      "name": "group",
+      "part": "Group",
+      "required": false
+    },
+    {
+      "name": "label",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "collection",
+      "part": "Collection",
+      "required": false
+    },
+    {
+      "name": "empty",
+      "part": "Empty",
+      "required": false
+    },
+    {
+      "name": "separator",
+      "part": "Separator",
+      "required": false
+    },
+    {
+      "name": "chips",
+      "part": "Chips",
+      "required": false
+    },
+    {
+      "name": "chip",
+      "part": "Chip",
+      "required": false
+    },
+    {
+      "name": "chip-remove",
+      "part": "ChipRemove",
+      "required": false
+    },
+    {
+      "name": "chip-input",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "listMaxHeight": {
+        "type": "enum",
+        "values": [
+          "16rem",
+          "20rem",
+          "24rem",
+          "28rem"
+        ],
+        "default": "24rem",
+        "cssVar": "--combobox-list-max-height"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--popover",
+    "--foreground",
+    "--popover-foreground",
+    "--accent",
+    "--accent-foreground",
+    "--destructive",
+    "--muted",
+    "--muted-foreground",
+    "--border",
+    "--input",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm",
+    "--shadow-md",
+    "--motion-fast"
+  ],
+  "dependencies": [
+    "@base-ui/react",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "input-group",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "combobox",
+      "source": "src/templates/combobox.tsx",
+      "target": "components/ui/combobox.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A searchable list of selectable options.",
+    "useWhen": [
+      "The option list is long."
+    ],
+    "doNotUseWhen": [
+      "There are only a few options."
+    ],
+    "rules": [
+      {
+        "id": "combobox-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

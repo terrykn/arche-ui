@@ -1,0 +1,52 @@
+{
+  "name": "noise-texture",
+  "title": "Noise Texture",
+  "description": "An SVG noise overlay.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "noise-texture",
+      "source": "src/templates/noise-texture.tsx",
+      "target": "components/ui/noise-texture.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An SVG noise overlay.",
+    "useWhen": [
+      "Film grain texture."
+    ],
+    "doNotUseWhen": [
+      "Clean vector looks."
+    ],
+    "rules": [
+      {
+        "id": "noise-texture-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -34,7 +34,12 @@ for (const [name, json] of items) {
     const header =
       `/** GENERATED from the Default identity (fixtures/identity.default.json).\n` +
       ` * Do not hand-edit — re-run: pnpm --filter web sync-components */\n`;
-    writeFileSync(target, header + file.content.replace(/^"use client"\n/, '"use client"\n'));
+    // Turbopack does not resolve TS-style "./x.js" sibling imports the way
+    // tsc does: strip the extension so Next can find the .tsx source.
+    const body = file.content
+      .replace(/^"use client"\n/, '"use client"\n')
+      .replace(/from "(\.[^"]*)\.js"/g, 'from "$1"');
+    writeFileSync(target, header + body);
     count++;
   }
 }

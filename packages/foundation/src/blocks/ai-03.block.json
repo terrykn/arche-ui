@@ -1,0 +1,53 @@
+{
+  "name": "ai-03",
+  "title": "AI Chat Compact Interface",
+  "description": "A ai chat compact interface block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--accent",
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted-foreground",
+    "--popover",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "dropdown-menu",
+    "textarea"
+  ],
+  "files": [
+    {
+      "name": "ai-03",
+      "source": "src/blocks/ai-03.tsx",
+      "target": "components/blocks/ai-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dropdown-menu"
+      },
+      {
+        "name": "textarea"
+      }
+    ]
+  }
+}

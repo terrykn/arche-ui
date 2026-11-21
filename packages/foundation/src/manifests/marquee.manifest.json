@@ -1,0 +1,52 @@
+{
+  "name": "marquee",
+  "title": "Marquee",
+  "description": "A seamless scrolling loop.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "marquee",
+      "source": "src/templates/marquee.tsx",
+      "target": "components/ui/marquee.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A seamless scrolling loop.",
+    "useWhen": [
+      "Logo and image tickers."
+    ],
+    "doNotUseWhen": [
+      "Critical announcements."
+    ],
+    "rules": [
+      {
+        "id": "marquee-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

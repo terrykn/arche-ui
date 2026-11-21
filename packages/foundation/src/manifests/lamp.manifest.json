@@ -1,0 +1,57 @@
+{
+  "name": "lamp",
+  "title": "Lamp",
+  "description": "A glowing lamp line header.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--brand"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "lamp",
+      "source": "src/templates/lamp.tsx",
+      "target": "components/ui/lamp.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A glowing lamp line header.",
+    "useWhen": [
+      "Dramatic section openers."
+    ],
+    "doNotUseWhen": [
+      "Small sections."
+    ],
+    "rules": [
+      {
+        "id": "lamp-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

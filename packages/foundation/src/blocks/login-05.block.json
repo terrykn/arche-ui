@@ -1,0 +1,52 @@
+{
+  "name": "login-05",
+  "title": "Login Card Signup Form",
+  "description": "A login card signup form block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "card",
+    "checkbox",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "name": "login-05",
+      "source": "src/blocks/login-05.tsx",
+      "target": "components/blocks/login-05.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      }
+    ]
+  }
+}

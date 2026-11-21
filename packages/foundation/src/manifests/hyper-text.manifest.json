@@ -1,0 +1,54 @@
+{
+  "name": "hyper-text",
+  "title": "Hyper Text",
+  "description": "Text resolving from scrambled letters.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--font-mono"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "hyper-text",
+      "source": "src/templates/hyper-text.tsx",
+      "target": "components/ui/hyper-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Text resolving from scrambled letters.",
+    "useWhen": [
+      "Hero reveals."
+    ],
+    "doNotUseWhen": [
+      "Long content."
+    ],
+    "rules": [
+      {
+        "id": "hyper-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

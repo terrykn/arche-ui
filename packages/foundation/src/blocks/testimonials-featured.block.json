@@ -1,0 +1,57 @@
+{
+  "name": "testimonials-featured",
+  "title": "Featured testimonial",
+  "description": "One rotating quote with crossfading portraits, framed by a beam card over a row of counting stats.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--brand-foreground",
+    "--card",
+    "--muted-foreground",
+    "--shadow-lg",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "animated-testimonials",
+    "blur-fade",
+    "border-beam",
+    "grid-pattern",
+    "number-ticker"
+  ],
+  "files": [
+    {
+      "name": "testimonials-featured",
+      "source": "src/blocks/testimonials-featured.tsx",
+      "target": "components/blocks/testimonials-featured.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "animated-testimonials"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "border-beam"
+      },
+      {
+        "name": "grid-pattern"
+      },
+      {
+        "name": "number-ticker"
+      }
+    ]
+  }
+}

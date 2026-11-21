@@ -1,0 +1,50 @@
+{
+  "name": "search-2",
+  "title": "Search Results Page",
+  "description": "Search results page with a query field, live result count, empty state, and result cards carrying a type badge, snippet, and last updated date.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "search-2",
+      "source": "src/blocks/search-2.tsx",
+      "target": "components/blocks/search-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

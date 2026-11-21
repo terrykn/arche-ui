@@ -1,0 +1,55 @@
+{
+  "name": "background-boxes",
+  "title": "Background Boxes",
+  "description": "An isometric grid lighting under the pointer.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "background-boxes",
+      "source": "src/templates/background-boxes.tsx",
+      "target": "components/ui/background-boxes.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An isometric grid lighting under the pointer.",
+    "useWhen": [
+      "Playful heroes."
+    ],
+    "doNotUseWhen": [
+      "Calm layouts."
+    ],
+    "rules": [
+      {
+        "id": "background-boxes-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

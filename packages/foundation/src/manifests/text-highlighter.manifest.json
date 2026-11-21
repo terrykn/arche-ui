@@ -1,0 +1,57 @@
+{
+  "name": "text-highlighter",
+  "title": "Text Highlighter",
+  "description": "A marker sweep drawing in on scroll.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--radius"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "text-highlighter",
+      "source": "src/templates/text-highlighter.tsx",
+      "target": "components/ui/text-highlighter.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A marker sweep drawing in on scroll.",
+    "useWhen": [
+      "Emphasized phrases."
+    ],
+    "doNotUseWhen": [
+      "Whole paragraphs."
+    ],
+    "rules": [
+      {
+        "id": "text-highlighter-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

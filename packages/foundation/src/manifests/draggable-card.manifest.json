@@ -1,0 +1,67 @@
+{
+  "name": "draggable-card",
+  "title": "Draggable Card",
+  "description": "Photo cards flung with inertia.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "container",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--card-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "draggable-card",
+      "source": "src/templates/draggable-card.tsx",
+      "target": "components/ui/draggable-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Photo cards flung with inertia.",
+    "useWhen": [
+      "Playful boards."
+    ],
+    "doNotUseWhen": [
+      "Ordered content."
+    ],
+    "rules": [
+      {
+        "id": "draggable-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

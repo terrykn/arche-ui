@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { getCatalogManifests } from "@arche/registry-core";
+import { componentTokenVars, getManifests, getCatalogManifests } from "@arche/registry-core";
 import { SiteNav } from "@/components/site-nav";
 import { PageContainer } from "@/components/page-container";
 import { IdentityFontLinks } from "@/components/identity-fonts";
@@ -17,6 +17,7 @@ const FIXTURE_FILES: Record<string, { file: string; label: string }> = {
 function loadFixture(file: string): {
   fonts: { sans: string; display: string; mono: string };
   tokens: Record<string, Record<string, { $value: unknown }>>;
+  components: Record<string, Record<string, unknown>>;
 } {
   // Fixtures live at the repo root; the dev server cwd is apps/web.
   const found = [process.cwd(), join(process.cwd(), "..", "..")];
@@ -62,6 +63,7 @@ export default async function PreviewPage({
       vars[token] = entry.$value;
     }
   }
+  Object.assign(vars, componentTokenVars(getManifests(), payload.components));
   const category = (manifest as { category?: string }).category;
   const isBlock = category === "marketing" || category === "application";
 

@@ -1,0 +1,76 @@
+{
+  "name": "carousel",
+  "title": "Carousel",
+  "description": "A snap carousel with controls.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "item",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "previous",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "next",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "embla-carousel-react",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "carousel",
+      "source": "src/templates/carousel.tsx",
+      "target": "components/ui/carousel.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A snap carousel with controls.",
+    "useWhen": [
+      "Grouped content browsing."
+    ],
+    "doNotUseWhen": [
+      "Single hero messages."
+    ],
+    "rules": [
+      {
+        "id": "carousel-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

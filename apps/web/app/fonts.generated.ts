@@ -1,13 +1,13 @@
 /* GENERATED — do not hand-edit. Source: fixtures/identity.default.json
  * Produced by apps/web/scripts/sync-theme.mjs. Edit the payload, then run:
  * pnpm --filter web sync-theme */
-import { Geist_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 
 export const fontSans = { variable: "--font-sans" } as const;
 
-export const fontDisplay = fontSans;
+export const fontDisplay = { variable: "--font-display" } as const;
 
-export const fontMono = Geist_Mono({
+export const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 });

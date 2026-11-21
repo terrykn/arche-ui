@@ -1,0 +1,57 @@
+{
+  "name": "image-slider",
+  "title": "Image Slider",
+  "description": "A full bleed slider with autoplay and swipe.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--muted"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "image-slider",
+      "source": "src/templates/image-slider.tsx",
+      "target": "components/ui/image-slider.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A full bleed slider with autoplay and swipe.",
+    "useWhen": [
+      "Photo stories."
+    ],
+    "doNotUseWhen": [
+      "Single images."
+    ],
+    "rules": [
+      {
+        "id": "image-slider-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

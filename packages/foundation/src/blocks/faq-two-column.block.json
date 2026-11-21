@@ -1,0 +1,50 @@
+{
+  "name": "faq-two-column",
+  "title": "Two-column FAQ",
+  "description": "Sticky intro and contact card on the left, an accordion of questions on the right.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--font-mono",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "accordion",
+    "blur-fade",
+    "spotlight-card"
+  ],
+  "files": [
+    {
+      "name": "faq-two-column",
+      "source": "src/blocks/faq-two-column.tsx",
+      "target": "components/blocks/faq-two-column.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "accordion"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "spotlight-card"
+      }
+    ]
+  }
+}

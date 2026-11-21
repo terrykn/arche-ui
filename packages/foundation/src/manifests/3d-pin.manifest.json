@@ -1,0 +1,65 @@
+{
+  "name": "3d-pin",
+  "title": "3D Pin",
+  "description": "A card tilting as a pin rises.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--foreground",
+    "--card-foreground",
+    "--brand",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-sm",
+    "--shadow-lg",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "3d-pin",
+      "source": "src/templates/3d-pin.tsx",
+      "target": "components/ui/3d-pin.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A card tilting as a pin rises.",
+    "useWhen": [
+      "Map style pins."
+    ],
+    "doNotUseWhen": [
+      "Plain links."
+    ],
+    "rules": [
+      {
+        "id": "3d-pin-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "login-07",
+  "title": "Login Full Page with Icons",
+  "description": "A login full page with icons block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "checkbox",
+    "input",
+    "label",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "login-07",
+      "source": "src/blocks/login-07.tsx",
+      "target": "components/blocks/login-07.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

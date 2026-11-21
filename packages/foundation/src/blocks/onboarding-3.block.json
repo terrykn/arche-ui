@@ -1,0 +1,85 @@
+{
+  "name": "onboarding-3",
+  "title": "Multi-Step Setup Wizard",
+  "description": "Onboarding wizard card stepping through profile, workspace, invites, and a summary, with a progress bar, step indicator, and preference switches.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "utils",
+    "badge",
+    "button",
+    "card",
+    "field",
+    "input",
+    "label",
+    "progress",
+    "separator",
+    "switch"
+  ],
+  "files": [
+    {
+      "name": "onboarding-3",
+      "source": "src/blocks/onboarding-3.tsx",
+      "target": "components/blocks/onboarding-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "progress"
+      },
+      {
+        "name": "separator"
+      },
+      {
+        "name": "switch"
+      }
+    ]
+  }
+}

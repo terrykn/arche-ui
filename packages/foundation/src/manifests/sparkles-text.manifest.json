@@ -1,0 +1,58 @@
+{
+  "name": "sparkles-text",
+  "title": "Sparkles Text",
+  "description": "Twinkling stars orbiting a headline.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--primary",
+    "--brand",
+    "--chart-3"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "sparkles-text",
+      "source": "src/templates/sparkles-text.tsx",
+      "target": "components/ui/sparkles-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Twinkling stars orbiting a headline.",
+    "useWhen": [
+      "Celebratory headings."
+    ],
+    "doNotUseWhen": [
+      "Form labels."
+    ],
+    "rules": [
+      {
+        "id": "sparkles-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

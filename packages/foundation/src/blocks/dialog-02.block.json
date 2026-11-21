@@ -1,0 +1,36 @@
+{
+  "name": "dialog-02",
+  "title": "Dialog with Warning Icon",
+  "description": "A dialog with warning icon block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "dialog"
+  ],
+  "files": [
+    {
+      "name": "dialog-02",
+      "source": "src/blocks/dialog-02.tsx",
+      "target": "components/blocks/dialog-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      }
+    ]
+  }
+}

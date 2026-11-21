@@ -1,0 +1,50 @@
+{
+  "name": "login-04",
+  "title": "Login with Social Buttons",
+  "description": "A login with social buttons block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "input",
+    "label",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "login-04",
+      "source": "src/blocks/login-04.tsx",
+      "target": "components/blocks/login-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

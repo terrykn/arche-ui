@@ -1,0 +1,54 @@
+{
+  "name": "line-shadow-text",
+  "title": "Line Shadow Text",
+  "description": "Text with a moving line shadow.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "line-shadow-text",
+      "source": "src/templates/line-shadow-text.tsx",
+      "target": "components/ui/line-shadow-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Text with a moving line shadow.",
+    "useWhen": [
+      "Stylized headings."
+    ],
+    "doNotUseWhen": [
+      "Body copy."
+    ],
+    "rules": [
+      {
+        "id": "line-shadow-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

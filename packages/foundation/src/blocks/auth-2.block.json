@@ -1,0 +1,61 @@
+{
+  "name": "auth-2",
+  "title": "Split Sign-In With Brand Panel",
+  "description": "Two-column sign-in pairing a dark brand panel that lists product features with a plain email and password form, no social login buttons.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [
+    "sonner",
+    "zod"
+  ],
+  "registryDependencies": [
+    "button",
+    "checkbox",
+    "field",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "auth-2",
+      "source": "src/blocks/auth-2.tsx",
+      "target": "components/blocks/auth-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

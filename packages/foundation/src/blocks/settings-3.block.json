@@ -1,0 +1,84 @@
+{
+  "name": "settings-3",
+  "title": "Tabbed Account Billing Team",
+  "description": "Tabbed settings page splitting Account profile fields, a Billing plan and payment method card, and a Team members table with roles.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button",
+    "card",
+    "field",
+    "input",
+    "separator",
+    "switch",
+    "table",
+    "tabs"
+  ],
+  "files": [
+    {
+      "name": "settings-3",
+      "source": "src/blocks/settings-3.tsx",
+      "target": "components/blocks/settings-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "separator"
+      },
+      {
+        "name": "switch"
+      },
+      {
+        "name": "table"
+      },
+      {
+        "name": "tabs"
+      }
+    ]
+  }
+}

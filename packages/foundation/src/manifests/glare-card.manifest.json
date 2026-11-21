@@ -1,0 +1,58 @@
+{
+  "name": "glare-card",
+  "title": "Glare Card",
+  "description": "Cursor tracked foil glare.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--brand",
+    "--radius",
+    "--border-width",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "glare-card",
+      "source": "src/templates/glare-card.tsx",
+      "target": "components/ui/glare-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Cursor tracked foil glare.",
+    "useWhen": [
+      "Premium cards."
+    ],
+    "doNotUseWhen": [
+      "Subtle interfaces."
+    ],
+    "rules": [
+      {
+        "id": "glare-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

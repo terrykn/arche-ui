@@ -28,9 +28,13 @@ const buttonVariants = cva(
       },
       size: {
         default: "px-4 py-2 has-[>svg]:px-4",
+        xs: "px-2 py-1 text-xs has-[>svg]:px-2",
         sm: "px-3 py-1.5 has-[>svg]:px-3",
         lg: "px-6 py-2.5 has-[>svg]:px-6",
         icon: "size-9",
+        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
       },
       // style-surface knob: [none, sm] per manifest
       shadow: {

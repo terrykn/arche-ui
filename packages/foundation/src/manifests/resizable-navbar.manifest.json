@@ -1,0 +1,68 @@
+{
+  "name": "resizable-navbar",
+  "title": "Resizable Navbar",
+  "description": "A full width navbar that shrinks into a floating pill on scroll.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--popover",
+    "--foreground",
+    "--popover-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--border",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-lg",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "resizable-navbar",
+      "source": "src/templates/resizable-navbar.tsx",
+      "target": "components/ui/resizable-navbar.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A full width navbar that shrinks into a floating pill on scroll.",
+    "useWhen": [
+      "Marketing headers."
+    ],
+    "doNotUseWhen": [
+      "App toolbars."
+    ],
+    "rules": [
+      {
+        "id": "resizable-navbar-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

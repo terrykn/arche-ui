@@ -1,0 +1,64 @@
+{
+  "name": "pricing-three-tiers",
+  "title": "Three-tier pricing",
+  "description": "Three plan cards with a monthly/yearly switch, a savings badge and a highlighted middle plan.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--ring",
+    "--shadow-sm",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "badge",
+    "button",
+    "blur-fade",
+    "border-beam",
+    "grid-pattern",
+    "number-ticker"
+  ],
+  "files": [
+    {
+      "name": "pricing-three-tiers",
+      "source": "src/blocks/pricing-three-tiers.tsx",
+      "target": "components/blocks/pricing-three-tiers.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "border-beam"
+      },
+      {
+        "name": "grid-pattern"
+      },
+      {
+        "name": "number-ticker"
+      }
+    ]
+  }
+}

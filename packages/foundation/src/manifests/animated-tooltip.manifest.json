@@ -1,0 +1,90 @@
+{
+  "name": "animated-tooltip",
+  "title": "Animated Tooltip",
+  "description": "An avatar row with name tooltips.",
+  "category": "overlay",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "avatarSize": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.75rem",
+        "cssVar": "--animated-tooltip-avatar-size"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--popover",
+    "--foreground",
+    "--popover-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--secondary",
+    "--secondary-foreground",
+    "--accent",
+    "--accent-foreground",
+    "--brand",
+    "--brand-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-tooltip",
+      "source": "src/templates/animated-tooltip.tsx",
+      "target": "components/ui/animated-tooltip.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An avatar row with name tooltips.",
+    "useWhen": [
+      "Showing a small group of people."
+    ],
+    "doNotUseWhen": [
+      "Showing large member lists."
+    ],
+    "rules": [
+      {
+        "id": "animated-tooltip-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

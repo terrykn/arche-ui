@@ -1,0 +1,52 @@
+{
+  "name": "direction",
+  "title": "Direction",
+  "description": "A text direction provider.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-direction",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "@radix-ui/react-direction"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "direction",
+      "source": "src/templates/direction.tsx",
+      "target": "components/ui/direction.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A text direction provider.",
+    "useWhen": [
+      "Mixed language layouts."
+    ],
+    "doNotUseWhen": [
+      "Single direction pages."
+    ],
+    "rules": [
+      {
+        "id": "direction-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

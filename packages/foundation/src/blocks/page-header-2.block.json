@@ -1,0 +1,53 @@
+{
+  "name": "page-header-2",
+  "title": "Breadcrumb Header With Status",
+  "description": "Page header with a breadcrumb trail, a title paired with an Active status badge, and Export and Save Changes actions.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "breadcrumb",
+    "button"
+  ],
+  "files": [
+    {
+      "name": "page-header-2",
+      "source": "src/blocks/page-header-2.tsx",
+      "target": "components/blocks/page-header-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "breadcrumb"
+      },
+      {
+        "name": "button"
+      }
+    ]
+  }
+}

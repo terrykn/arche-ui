@@ -1,0 +1,54 @@
+{
+  "name": "command-palette-1",
+  "title": "Command Dialog With Shortcuts",
+  "description": "Command palette dialog opened from a Ctrl+K trigger button, listing grouped navigation and action commands with keyboard shortcut hints.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "command",
+    "dialog",
+    "kbd"
+  ],
+  "files": [
+    {
+      "name": "command-palette-1",
+      "source": "src/blocks/command-palette-1.tsx",
+      "target": "components/blocks/command-palette-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "command"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "kbd"
+      }
+    ]
+  }
+}

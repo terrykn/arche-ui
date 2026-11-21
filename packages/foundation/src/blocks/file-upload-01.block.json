@@ -1,0 +1,63 @@
+{
+  "name": "file-upload-01",
+  "title": "File Upload with Preview",
+  "description": "A file upload with preview block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-md"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "card",
+    "input",
+    "label",
+    "select",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "name": "file-upload-01",
+      "source": "src/blocks/file-upload-01.tsx",
+      "target": "components/blocks/file-upload-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "select"
+      },
+      {
+        "name": "tooltip"
+      }
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "name": "auth-login-split",
+  "title": "Split login page",
+  "description": "Login form with password reveal, remember-me and social sign-in beside an aurora testimonial panel.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-lg"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "input",
+    "label",
+    "aurora-background",
+    "grid-pattern"
+  ],
+  "files": [
+    {
+      "name": "auth-login-split",
+      "source": "src/blocks/auth-login-split.tsx",
+      "target": "components/blocks/auth-login-split.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "aurora-background"
+      },
+      {
+        "name": "grid-pattern"
+      }
+    ]
+  }
+}

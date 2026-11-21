@@ -1,0 +1,55 @@
+{
+  "name": "search-3",
+  "title": "Grouped Command Palette",
+  "description": "Command style search panel grouping results into Pages, People, and Files with icons, avatars, and meta, plus keyboard hints in the footer.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "avatar",
+    "input",
+    "kbd"
+  ],
+  "files": [
+    {
+      "name": "search-3",
+      "source": "src/blocks/search-3.tsx",
+      "target": "components/blocks/search-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "kbd"
+      }
+    ]
+  }
+}

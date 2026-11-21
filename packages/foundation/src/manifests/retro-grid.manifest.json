@@ -1,0 +1,55 @@
+{
+  "name": "retro-grid",
+  "title": "Retro Grid",
+  "description": "A perspective grid scrolling to the horizon.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "retro-grid",
+      "source": "src/templates/retro-grid.tsx",
+      "target": "components/ui/retro-grid.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A perspective grid scrolling to the horizon.",
+    "useWhen": [
+      "Retro heroes."
+    ],
+    "doNotUseWhen": [
+      "Corporate pages."
+    ],
+    "rules": [
+      {
+        "id": "retro-grid-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

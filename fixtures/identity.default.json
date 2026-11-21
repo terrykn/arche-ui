@@ -5,8 +5,8 @@
   },
   "fonts": {
     "sans": "satoshi",
-    "display": "satoshi",
-    "mono": "geist-mono"
+    "display": "cabinet-grotesk",
+    "mono": "jetbrains-mono"
   },
   "icons": "lucide",
   "typeScale": "standard-1.25",
@@ -151,11 +151,11 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+        "$value": "Cabinet Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",
@@ -307,11 +307,11 @@
       },
       "--font-display": {
         "$type": "fontFamily",
-        "$value": "Satoshi, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
+        "$value": "Cabinet Grotesk, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
       },
       "--font-mono": {
         "$type": "fontFamily",
-        "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        "$value": "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
       },
       "--shadow-sm": {
         "$type": "shadow",
@@ -467,6 +467,257 @@
     "toolbar": {},
     "tooltip": {
       "radiusFrom": "md"
-    }
+    },
+    "animated-modal": {
+      "width": "32rem"
+    },
+    "animated-tooltip": {
+      "avatarSize": "2.75rem"
+    },
+    "attachment": {
+      "size": "default",
+      "orientation": "horizontal",
+      "verticalWidth": "6rem",
+      "mediaWidth": "2.5rem"
+    },
+    "button-group": {
+      "orientation": "horizontal"
+    },
+    "calendar": {
+      "cellSize": "2rem"
+    },
+    "combobox": {
+      "listMaxHeight": "24rem"
+    },
+    "command": {
+      "listMaxHeight": "300px"
+    },
+    "confetti": {
+      "height": "2.75rem",
+      "cornerShape": "9999px"
+    },
+    "cool-mode": {},
+    "date-picker": {
+      "width": "18rem"
+    },
+    "drawer": {
+      "handleWidth": "100px",
+      "sideWidth": "24rem",
+      "overlayOpacity": "40%"
+    },
+    "field": {
+      "orientation": "vertical",
+      "groupGap": "1.75rem"
+    },
+    "file-drop": {
+      "zonePadding": "2.5rem"
+    },
+    "hero-video-dialog": {
+      "width": "56rem"
+    },
+    "input-group": {
+      "align": "inline-start",
+      "size": "xs"
+    },
+    "input-otp": {
+      "slotSize": "2.25rem"
+    },
+    "interactive-hover-button": {
+      "cornerShape": "9999px"
+    },
+    "magnetic-button": {
+      "height": "2.75rem"
+    },
+    "native-select": {
+      "height": "2.25rem"
+    },
+    "pulsating-button": {},
+    "rainbow-button": {
+      "height": "2.75rem"
+    },
+    "ripple-button": {
+      "height": "2.75rem"
+    },
+    "sheet": {
+      "width": "24rem",
+      "overlayOpacity": "40%"
+    },
+    "shimmer-button": {
+      "height": "3rem",
+      "cornerShape": "9999px"
+    },
+    "shiny-button": {},
+    "stateful-button": {
+      "height": "2.5rem",
+      "cornerShape": "9999px"
+    },
+    "stepper": {
+      "markerSize": "2rem"
+    },
+    "theme-toggler": {
+      "buttonSize": "2.25rem"
+    },
+    "vanish-input": {
+      "height": "3rem",
+      "cornerShape": "9999px"
+    },
+    "animated-sidebar": {},
+    "animated-tabs": {},
+    "breadcrumb": {},
+    "dock": {},
+    "floating-navbar": {},
+    "navbar-menu": {},
+    "pagination": {},
+    "resizable-navbar": {},
+    "sidebar": {
+      "variant": "default",
+      "size": "default"
+    },
+    "sticky-banner": {},
+    "animated-list": {},
+    "bubble": {
+      "variant": "default",
+      "side": "bottom",
+      "align": "end"
+    },
+    "chart": {},
+    "data-grid": {},
+    "dotted-map": {},
+    "file-tree": {},
+    "globe": {},
+    "icon-cloud": {},
+    "item": {
+      "variant": "default",
+      "size": "default"
+    },
+    "kbd": {},
+    "marker": {
+      "variant": "default"
+    },
+    "message": {},
+    "trace": {},
+    "world-map": {},
+    "alert": {
+      "variant": "default"
+    },
+    "animated-circular-progress-bar": {},
+    "empty": {
+      "variant": "default"
+    },
+    "loaders": {},
+    "multi-step-loader": {},
+    "number-ticker": {},
+    "spinner": {},
+    "apple-cards-carousel": {},
+    "bento-grid": {},
+    "carousel": {},
+    "compare-slider": {},
+    "direction": {},
+    "image-slider": {},
+    "layout-grid": {},
+    "resizable": {},
+    "timeline": {},
+    "animated-gradient-text": {},
+    "animated-shiny-text": {},
+    "aurora-text": {},
+    "comic-text": {},
+    "dia-text-reveal": {},
+    "flip-words": {},
+    "glyph-matrix": {},
+    "hyper-text": {},
+    "kinetic-text": {},
+    "line-shadow-text": {},
+    "morphing-text": {},
+    "sparkles-text": {},
+    "spinning-text": {},
+    "text-3d-flip": {},
+    "text-animate": {},
+    "text-highlighter": {},
+    "text-hover-effect": {},
+    "text-reveal": {},
+    "text-shimmer": {},
+    "typewriter": {},
+    "typing-animation": {},
+    "video-text": {},
+    "word-rotate": {},
+    "animated-grid-pattern": {},
+    "aurora-background": {},
+    "background-beams": {},
+    "background-boxes": {},
+    "backlight": {},
+    "dither-field": {},
+    "dot-pattern": {},
+    "dotted-glow-background": {},
+    "flickering-grid": {},
+    "floating-3d-particles": {},
+    "grid-pattern": {},
+    "hexagon-pattern": {},
+    "interactive-grid-pattern": {},
+    "lamp": {},
+    "light-rays": {},
+    "meteors": {},
+    "noise-background": {},
+    "noise-texture": {},
+    "particles": {},
+    "retro-grid": {},
+    "ripple": {},
+    "shooting-stars": {},
+    "striped-pattern": {},
+    "vortex": {},
+    "warp-background": {},
+    "wavy-background": {},
+    "3d-card": {},
+    "3d-pin": {},
+    "border-beam": {},
+    "card-hover-effect": {},
+    "card-stack": {},
+    "direction-aware-hover": {},
+    "draggable-card": {},
+    "evervault-card": {},
+    "expandable-card": {},
+    "focus-cards": {},
+    "glare-card": {},
+    "glare-hover": {},
+    "glowing-effect": {},
+    "magic-card": {},
+    "moving-border": {},
+    "neon-gradient-card": {},
+    "shine-border": {},
+    "spotlight-card": {},
+    "tilt-card": {},
+    "wobble-card": {},
+    "3d-marquee": {},
+    "animated-beam": {},
+    "blur-fade": {},
+    "container-scroll": {},
+    "hero-parallax": {},
+    "macbook-scroll": {},
+    "marquee": {},
+    "orbiting-circles": {},
+    "parallax-grid": {},
+    "pixel-image": {},
+    "progressive-blur": {},
+    "scroll-based-velocity": {},
+    "scroll-progress": {},
+    "scroll-velocity": {},
+    "sticky-scroll": {},
+    "tracing-beam": {},
+    "android": {},
+    "code-block": {
+      "variant": "default"
+    },
+    "code-comparison": {},
+    "iphone": {},
+    "safari": {},
+    "terminal": {},
+    "following-pointer": {},
+    "lens": {},
+    "pointer": {},
+    "pointer-highlight": {},
+    "smooth-cursor": {},
+    "animated-testimonials": {},
+    "avatar-circles": {},
+    "logo-cloud": {},
+    "tweet-card": {}
   }
 }

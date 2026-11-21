@@ -1,0 +1,54 @@
+{
+  "name": "animated-list",
+  "title": "Animated List",
+  "description": "A looping feed that springs items in newest first.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-list",
+      "source": "src/templates/animated-list.tsx",
+      "target": "components/ui/animated-list.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A looping feed that springs items in newest first.",
+    "useWhen": [
+      "Live activity previews."
+    ],
+    "doNotUseWhen": [
+      "Static lists."
+    ],
+    "rules": [
+      {
+        "id": "animated-list-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "search-4",
+  "title": "Autocomplete Search Input",
+  "description": "Search input with an autocomplete dropdown of recent searches and keyboard navigable suggestions, an empty state, and a slash to focus hint.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--popover",
+    "--radius",
+    "--ring",
+    "--shadow-md"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "kbd"
+  ],
+  "files": [
+    {
+      "name": "search-4",
+      "source": "src/blocks/search-4.tsx",
+      "target": "components/blocks/search-4.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "kbd"
+      }
+    ]
+  }
+}

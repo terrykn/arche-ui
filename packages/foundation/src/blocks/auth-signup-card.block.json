@@ -1,0 +1,63 @@
+{
+  "name": "auth-signup-card",
+  "title": "Sign-up card",
+  "description": "Centered sign-up card over a grid and light beams, with live password rules, terms and social sign-up.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--brand",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "input",
+    "label",
+    "background-beams",
+    "grid-pattern"
+  ],
+  "files": [
+    {
+      "name": "auth-signup-card",
+      "source": "src/blocks/auth-signup-card.tsx",
+      "target": "components/blocks/auth-signup-card.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "background-beams"
+      },
+      {
+        "name": "grid-pattern"
+      }
+    ]
+  }
+}

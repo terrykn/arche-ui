@@ -1,0 +1,55 @@
+{
+  "name": "pricing-comparison",
+  "title": "Pricing comparison table",
+  "description": "Grouped feature comparison table with a sticky plan header, and per-plan tabs on mobile.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-lg"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "badge",
+    "button",
+    "tabs",
+    "blur-fade"
+  ],
+  "files": [
+    {
+      "name": "pricing-comparison",
+      "source": "src/blocks/pricing-comparison.tsx",
+      "target": "components/blocks/pricing-comparison.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "tabs"
+      },
+      {
+        "name": "blur-fade"
+      }
+    ]
+  }
+}

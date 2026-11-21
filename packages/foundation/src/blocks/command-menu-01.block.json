@@ -1,0 +1,46 @@
+{
+  "name": "command-menu-01",
+  "title": "Command Menu with Groups",
+  "description": "A command menu with groups block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "command",
+    "kbd"
+  ],
+  "files": [
+    {
+      "name": "command-menu-01",
+      "source": "src/blocks/command-menu-01.tsx",
+      "target": "components/blocks/command-menu-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "command"
+      },
+      {
+        "name": "kbd"
+      }
+    ]
+  }
+}

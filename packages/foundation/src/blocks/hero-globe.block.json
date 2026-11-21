@@ -1,0 +1,50 @@
+{
+  "name": "hero-globe",
+  "title": "Globe split hero",
+  "description": "Split hero with copy, CTAs and live stats beside an interactive dotted globe with arcs.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "blur-fade",
+    "globe",
+    "number-ticker"
+  ],
+  "files": [
+    {
+      "name": "hero-globe",
+      "source": "src/blocks/hero-globe.tsx",
+      "target": "components/blocks/hero-globe.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "globe"
+      },
+      {
+        "name": "number-ticker"
+      }
+    ]
+  }
+}

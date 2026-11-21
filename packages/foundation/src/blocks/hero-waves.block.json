@@ -1,0 +1,57 @@
+{
+  "name": "hero-waves",
+  "title": "Wavy hero",
+  "description": "Bold centered hero over flowing waves, with a rotating headline word and avatar social proof.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "avatar-circles",
+    "blur-fade",
+    "flip-words",
+    "shimmer-button",
+    "wavy-background"
+  ],
+  "files": [
+    {
+      "name": "hero-waves",
+      "source": "src/blocks/hero-waves.tsx",
+      "target": "components/blocks/hero-waves.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "avatar-circles"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "flip-words"
+      },
+      {
+        "name": "shimmer-button"
+      },
+      {
+        "name": "wavy-background"
+      }
+    ]
+  }
+}

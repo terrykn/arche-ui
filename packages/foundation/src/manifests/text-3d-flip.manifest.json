@@ -1,0 +1,54 @@
+{
+  "name": "text-3d-flip",
+  "title": "Text 3D Flip",
+  "description": "Letters flipping in 3D on hover.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "text-3d-flip",
+      "source": "src/templates/text-3d-flip.tsx",
+      "target": "components/ui/text-3d-flip.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Letters flipping in 3D on hover.",
+    "useWhen": [
+      "Interactive headings."
+    ],
+    "doNotUseWhen": [
+      "Touch interfaces."
+    ],
+    "rules": [
+      {
+        "id": "text-3d-flip-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

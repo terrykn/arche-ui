@@ -1,0 +1,37 @@
+{
+  "name": "status-3",
+  "title": "90 Day Uptime Bars",
+  "description": "Uptime history with per-service daily status bars for the last 90 days, colored by health, with uptime percentages and a legend.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--destructive",
+    "--foreground",
+    "--muted-foreground",
+    "--popover",
+    "--popover-foreground",
+    "--radius",
+    "--shadow-md"
+  ],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "status-3",
+      "source": "src/blocks/status-3.tsx",
+      "target": "components/blocks/status-3.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": []
+  }
+}

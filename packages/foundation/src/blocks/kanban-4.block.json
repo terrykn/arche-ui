@@ -1,0 +1,52 @@
+{
+  "name": "kanban-4",
+  "title": "Personal Task Lanes",
+  "description": "Personal my-tasks kanban with Today, This Week, and Later lanes of compact rows you drag and drop to reprioritize.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--destructive",
+    "--foreground",
+    "--motion-fast",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring",
+    "--shadow-lg"
+  ],
+  "dependencies": [
+    "@dnd-kit/core",
+    "@dnd-kit/sortable",
+    "@dnd-kit/utilities"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "kanban-4",
+      "source": "src/blocks/kanban-4.tsx",
+      "target": "components/blocks/kanban-4.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": []
+  }
+}

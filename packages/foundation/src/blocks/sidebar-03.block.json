@@ -1,0 +1,44 @@
+{
+  "name": "sidebar-03",
+  "title": "Sidebar 03",
+  "description": "A sidebar with submenus.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "sidebar",
+    "breadcrumb",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "sidebar-03",
+      "source": "src/blocks/sidebar-03.tsx",
+      "target": "components/blocks/sidebar-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "sidebar"
+      },
+      {
+        "name": "breadcrumb"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

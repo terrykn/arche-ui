@@ -1,0 +1,86 @@
+{
+  "name": "stateful-button",
+  "title": "Stateful Button",
+  "description": "A button showing loading and result states.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.5rem",
+        "cssVar": "--stateful-button-height"
+      },
+      "cornerShape": {
+        "type": "enum",
+        "values": [
+          "0px",
+          "0.375rem",
+          "0.625rem",
+          "1rem",
+          "9999px"
+        ],
+        "default": "9999px",
+        "cssVar": "--stateful-button-corner-shape"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--primary-foreground",
+    "--destructive-foreground",
+    "--ring",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "stateful-button",
+      "source": "src/templates/stateful-button.tsx",
+      "target": "components/ui/stateful-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button showing loading and result states.",
+    "useWhen": [
+      "Actions are asynchronous."
+    ],
+    "doNotUseWhen": [
+      "Actions finish instantly."
+    ],
+    "rules": [
+      {
+        "id": "stateful-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

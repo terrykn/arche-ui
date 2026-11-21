@@ -1,0 +1,129 @@
+{
+  "name": "item",
+  "title": "Item",
+  "description": "A list row with media and actions.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-slot",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "separator",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "media",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "title",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "actions",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "header",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "footer",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "variant": {
+      "values": [
+        "default",
+        "outline",
+        "muted",
+        "icon",
+        "image"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "values": [
+        "default",
+        "sm"
+      ],
+      "default": "default"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--primary",
+    "--accent",
+    "--muted",
+    "--muted-foreground",
+    "--border",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--motion-fast"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "separator",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "item",
+      "source": "src/templates/item.tsx",
+      "target": "components/ui/item.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A list row with media and actions.",
+    "useWhen": [
+      "Settings and inbox rows."
+    ],
+    "doNotUseWhen": [
+      "Freeform article text."
+    ],
+    "rules": [
+      {
+        "id": "item-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

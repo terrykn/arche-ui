@@ -1,0 +1,40 @@
+{
+  "name": "stats-04",
+  "title": "Stats with Badges",
+  "description": "A stats with badges block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "badge",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "stats-04",
+      "source": "src/blocks/stats-04.tsx",
+      "target": "components/blocks/stats-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

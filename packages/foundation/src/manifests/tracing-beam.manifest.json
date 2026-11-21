@@ -1,0 +1,56 @@
+{
+  "name": "tracing-beam",
+  "title": "Tracing Beam",
+  "description": "A gradient line drawing down content.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "tracing-beam",
+      "source": "src/templates/tracing-beam.tsx",
+      "target": "components/ui/tracing-beam.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A gradient line drawing down content.",
+    "useWhen": [
+      "Long form guides."
+    ],
+    "doNotUseWhen": [
+      "Short posts."
+    ],
+    "rules": [
+      {
+        "id": "tracing-beam-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

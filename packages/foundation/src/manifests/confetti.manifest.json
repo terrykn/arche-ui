@@ -1,0 +1,94 @@
+{
+  "name": "confetti",
+  "title": "Confetti",
+  "description": "A button that fires a confetti burst.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "button",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.75rem",
+        "cssVar": "--confetti-height"
+      },
+      "cornerShape": {
+        "type": "enum",
+        "values": [
+          "0px",
+          "0.375rem",
+          "0.625rem",
+          "1rem",
+          "9999px"
+        ],
+        "default": "9999px",
+        "cssVar": "--confetti-corner-shape"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--card",
+    "--primary",
+    "--accent",
+    "--brand",
+    "--ring",
+    "--chart-1",
+    "--chart-2",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "confetti",
+      "source": "src/templates/confetti.tsx",
+      "target": "components/ui/confetti.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button that fires a confetti burst.",
+    "useWhen": [
+      "Celebrating a milestone."
+    ],
+    "doNotUseWhen": [
+      "Routine or destructive actions."
+    ],
+    "rules": [
+      {
+        "id": "confetti-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

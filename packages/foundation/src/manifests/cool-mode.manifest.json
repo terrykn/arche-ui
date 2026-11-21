@@ -1,0 +1,50 @@
+{
+  "name": "cool-mode",
+  "title": "Cool Mode",
+  "description": "A particle effect around an interactive child.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "cool-mode",
+      "source": "src/templates/cool-mode.tsx",
+      "target": "components/ui/cool-mode.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A particle effect around an interactive child.",
+    "useWhen": [
+      "Adding playful feedback."
+    ],
+    "doNotUseWhen": [
+      "The interface is task critical."
+    ],
+    "rules": [
+      {
+        "id": "cool-mode-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

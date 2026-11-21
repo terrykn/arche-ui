@@ -1,0 +1,56 @@
+{
+  "name": "onboarding-01",
+  "title": "Onboarding",
+  "description": "A onboarding block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--card-foreground",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "collapsible",
+    "dropdown-menu"
+  ],
+  "files": [
+    {
+      "name": "onboarding-01",
+      "source": "src/blocks/onboarding-01.tsx",
+      "target": "components/blocks/onboarding-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "collapsible"
+      },
+      {
+        "name": "dropdown-menu"
+      }
+    ]
+  }
+}

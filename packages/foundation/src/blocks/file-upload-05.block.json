@@ -1,0 +1,48 @@
+{
+  "name": "file-upload-05",
+  "title": "File Upload with Progress",
+  "description": "A file upload with progress block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--accent",
+    "--background",
+    "--border-width",
+    "--foreground",
+    "--input",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "label"
+  ],
+  "files": [
+    {
+      "name": "file-upload-05",
+      "source": "src/blocks/file-upload-05.tsx",
+      "target": "components/blocks/file-upload-05.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "label"
+      }
+    ]
+  }
+}

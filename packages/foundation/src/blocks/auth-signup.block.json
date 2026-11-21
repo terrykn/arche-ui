@@ -25,8 +25,10 @@
   "tokensUsed": [
     "--border",
     "--border-width",
+    "--card",
     "--destructive",
     "--muted-foreground",
+    "--primary",
     "--radius"
   ],
   "dependencies": [
@@ -95,7 +97,7 @@
       "An app offers email signup."
     ],
     "doNotUseWhen": [
-      "Terms acceptance is optional \u00e2\u20ac\u201d it isn't; keep the checkbox."
+      "Terms acceptance is optional â€” it isn't; keep the checkbox."
     ],
     "rules": [
       {

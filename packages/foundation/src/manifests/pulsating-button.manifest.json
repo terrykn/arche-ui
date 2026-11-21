@@ -1,0 +1,56 @@
+{
+  "name": "pulsating-button",
+  "title": "Pulsating Button",
+  "description": "A button with an attention pulse.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--primary",
+    "--primary-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "pulsating-button",
+      "source": "src/templates/pulsating-button.tsx",
+      "target": "components/ui/pulsating-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button with an attention pulse.",
+    "useWhen": [
+      "One action needs attention."
+    ],
+    "doNotUseWhen": [
+      "Several actions compete."
+    ],
+    "rules": [
+      {
+        "id": "pulsating-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

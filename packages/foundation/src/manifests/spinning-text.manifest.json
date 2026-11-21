@@ -1,0 +1,56 @@
+{
+  "name": "spinning-text",
+  "title": "Spinning Text",
+  "description": "Text animating in a circle.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--radius"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "spinning-text",
+      "source": "src/templates/spinning-text.tsx",
+      "target": "components/ui/spinning-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Text animating in a circle.",
+    "useWhen": [
+      "Circular badges."
+    ],
+    "doNotUseWhen": [
+      "Sentences."
+    ],
+    "rules": [
+      {
+        "id": "spinning-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

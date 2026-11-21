@@ -1,0 +1,47 @@
+{
+  "name": "form-layout-01",
+  "title": "Form with Workspace Fields",
+  "description": "A form with workspace fields block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "field",
+    "input",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "form-layout-01",
+      "source": "src/blocks/form-layout-01.tsx",
+      "target": "components/blocks/form-layout-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

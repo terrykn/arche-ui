@@ -1,0 +1,45 @@
+{
+  "name": "empty-states-1",
+  "title": "Inbox Zero Notifications",
+  "description": "Empty state for a cleared notifications list, with an inbox icon, an all-caught-up message, and a View All Notifications link.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "empty"
+  ],
+  "files": [
+    {
+      "name": "empty-states-1",
+      "source": "src/blocks/empty-states-1.tsx",
+      "target": "components/blocks/empty-states-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "empty"
+      }
+    ]
+  }
+}

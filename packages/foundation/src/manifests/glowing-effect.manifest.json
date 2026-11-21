@@ -1,0 +1,57 @@
+{
+  "name": "glowing-effect",
+  "title": "Glowing Effect",
+  "description": "Border glow following the pointer.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--primary",
+    "--brand",
+    "--chart-3",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "glowing-effect",
+      "source": "src/templates/glowing-effect.tsx",
+      "target": "components/ui/glowing-effect.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Border glow following the pointer.",
+    "useWhen": [
+      "Nearby card glow."
+    ],
+    "doNotUseWhen": [
+      "Static borders."
+    ],
+    "rules": [
+      {
+        "id": "glowing-effect-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

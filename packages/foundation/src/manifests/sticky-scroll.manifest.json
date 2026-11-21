@@ -1,0 +1,58 @@
+{
+  "name": "sticky-scroll",
+  "title": "Sticky Scroll",
+  "description": "Copy scrolling past a swapping panel.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted-foreground",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "sticky-scroll",
+      "source": "src/templates/sticky-scroll.tsx",
+      "target": "components/ui/sticky-scroll.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Copy scrolling past a swapping panel.",
+    "useWhen": [
+      "Feature stories."
+    ],
+    "doNotUseWhen": [
+      "Short sections."
+    ],
+    "rules": [
+      {
+        "id": "sticky-scroll-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "name": "command",
+  "title": "Command",
+  "description": "A searchable command menu.",
+  "category": "overlay",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "cmdk",
+    "parts": [
+      "Input",
+      "List",
+      "Empty",
+      "Group",
+      "Separator",
+      "Item"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Input",
+      "required": true
+    },
+    {
+      "name": "input-wrapper",
+      "part": "Input",
+      "required": false
+    },
+    {
+      "name": "input",
+      "part": "Input",
+      "required": false
+    },
+    {
+      "name": "list",
+      "part": "List",
+      "required": false
+    },
+    {
+      "name": "empty",
+      "part": "Empty",
+      "required": false
+    },
+    {
+      "name": "group",
+      "part": "Group",
+      "required": false
+    },
+    {
+      "name": "separator",
+      "part": "Separator",
+      "required": false
+    },
+    {
+      "name": "item",
+      "part": "Item",
+      "required": false
+    },
+    {
+      "name": "shortcut",
+      "part": "Input",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "listMaxHeight": {
+        "type": "enum",
+        "values": [
+          "200px",
+          "300px",
+          "400px",
+          "500px"
+        ],
+        "default": "300px",
+        "cssVar": "--command-list-max-height"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--popover",
+    "--foreground",
+    "--popover-foreground",
+    "--accent",
+    "--accent-foreground",
+    "--muted-foreground",
+    "--border",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "cmdk",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "dialog",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "command",
+      "source": "src/templates/command.tsx",
+      "target": "components/ui/command.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A searchable command menu.",
+    "useWhen": [
+      "Users search many actions."
+    ],
+    "doNotUseWhen": [
+      "There are only a few actions."
+    ],
+    "rules": [
+      {
+        "id": "command-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "dia-text-reveal",
+  "title": "Dia Text Reveal",
+  "description": "A color band sweeping across text into a shine.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--primary",
+    "--brand",
+    "--chart-3"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "dia-text-reveal",
+      "source": "src/templates/dia-text-reveal.tsx",
+      "target": "components/ui/dia-text-reveal.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A color band sweeping across text into a shine.",
+    "useWhen": [
+      "Dramatic reveals."
+    ],
+    "doNotUseWhen": [
+      "Body text."
+    ],
+    "rules": [
+      {
+        "id": "dia-text-reveal-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

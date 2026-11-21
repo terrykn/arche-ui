@@ -1,0 +1,45 @@
+{
+  "name": "status-2",
+  "title": "Incident History Feed",
+  "description": "Incident history feed grouping past incidents by date, each with an impact badge and a timeline of investigating to resolved status updates.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--destructive",
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "marker"
+  ],
+  "files": [
+    {
+      "name": "status-2",
+      "source": "src/blocks/status-2.tsx",
+      "target": "components/blocks/status-2.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "marker"
+      }
+    ]
+  }
+}

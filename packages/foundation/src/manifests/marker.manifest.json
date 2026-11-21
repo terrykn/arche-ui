@@ -1,0 +1,79 @@
+{
+  "name": "marker",
+  "title": "Marker",
+  "description": "A labeled divider row.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-slot",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "icon",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "variant": {
+      "values": [
+        "default",
+        "separator",
+        "border"
+      ],
+      "default": "default"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground",
+    "--border",
+    "--border-width"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "marker",
+      "source": "src/templates/marker.tsx",
+      "target": "components/ui/marker.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A labeled divider row.",
+    "useWhen": [
+      "Separating timeline entries."
+    ],
+    "doNotUseWhen": [
+      "Page section headings."
+    ],
+    "rules": [
+      {
+        "id": "marker-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -36,7 +36,7 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar, ScrollAreaThumb } from "@/co
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -131,7 +131,7 @@ export function EnterpriseDemo({
                 <DialogTrigger asChild>
                   <Button variant="outline" data-size="sm">Quick note (sm)</Button>
                 </DialogTrigger>
-                <DialogContent size="sm">
+                <DialogContent>
                   <DialogTitle>Dock note</DialogTitle>
                   <DialogDescription>Pin a note to bay 3 for the morning crew.</DialogDescription>
                   <DialogClose>Done</DialogClose>
@@ -141,7 +141,7 @@ export function EnterpriseDemo({
                 <DialogTrigger asChild>
                   <Button variant="outline" data-size="default">Book a tour (default)</Button>
                 </DialogTrigger>
-                <DialogContent size="default">
+                <DialogContent>
                   <DialogTitle>Tour the Oakland warehouse</DialogTitle>
                   <DialogDescription>Thirty minutes, packing lines 1–3, carrier cutoff at 17:30.</DialogDescription>
                   <DialogClose>Done</DialogClose>
@@ -151,7 +151,7 @@ export function EnterpriseDemo({
                 <DialogTrigger asChild>
                   <Button variant="outline" data-size="lg">Capacity plan (lg)</Button>
                 </DialogTrigger>
-                <DialogContent size="lg">
+                <DialogContent>
                   <DialogTitle>Q1 capacity plan</DialogTitle>
                   <DialogDescription>Reno absorbs Oakland overflow; hiring opens in March for two packers.</DialogDescription>
                   <DialogClose>Done</DialogClose>
@@ -161,7 +161,7 @@ export function EnterpriseDemo({
                 <DialogTrigger asChild>
                   <Button variant="outline" data-size="full">Network map (full)</Button>
                 </DialogTrigger>
-                <DialogContent size="full">
+                <DialogContent>
                   <DialogTitle>Warehouse network</DialogTitle>
                   <DialogDescription>Every bay, every carrier lane, live on the wall display.</DialogDescription>
                   <DialogClose>Done</DialogClose>
@@ -283,10 +283,7 @@ export function EnterpriseDemo({
                   <Section name="slider">
                     <div className="grid gap-2">
                       <p className="text-sm">Average parcel weight — 4 lb</p>
-                      <Slider defaultValue={[4]} max={70} step={1}>
-                        <SliderTrack><SliderRange /></SliderTrack>
-                        <SliderThumb aria-label="Average parcel weight" />
-                      </Slider>
+                      <Slider defaultValue={[4]} max={70} step={1} aria-label="Average parcel weight" />
                     </div>
                   </Section>
                   <Section name="textarea">
@@ -533,7 +530,7 @@ export function EnterpriseDemo({
                 </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild><Button variant="destructive" data-size="lg">Close warehouse (lg)</Button></AlertDialogTrigger>
-                  <AlertDialogContent size="lg">
+                  <AlertDialogContent>
                     <AlertDialogTitle>Close the Oakland warehouse?</AlertDialogTitle>
                     <AlertDialogDescription>Open orders reroute to Reno. Staff are reassigned, never released, per the ops agreement.</AlertDialogDescription>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -585,9 +582,9 @@ export function EnterpriseDemo({
                 </Section>
                 <Section name="checkbox">
                   <div className="flex flex-col gap-2 text-sm">
-                    <label className="flex items-center gap-2"><Checkbox size="sm" data-size="sm" aria-label="Recycled mailer" defaultChecked /> Recycled mailer (sm)</label>
-                    <label className="flex items-center gap-2"><Checkbox size="default" data-size="default" aria-label="Double-boxed" /> Double-boxed (default)</label>
-                    <label className="flex items-center gap-2"><Checkbox size="lg" data-size="lg" aria-label="Gift wrap" /> Gift wrap (lg)</label>
+                    <label className="flex items-center gap-2"><Checkbox data-size="sm" aria-label="Recycled mailer" defaultChecked /> Recycled mailer (sm)</label>
+                    <label className="flex items-center gap-2"><Checkbox data-size="default" aria-label="Double-boxed" /> Double-boxed (default)</label>
+                    <label className="flex items-center gap-2"><Checkbox data-size="lg" aria-label="Gift wrap" /> Gift wrap (lg)</label>
                     <label className="flex items-center gap-2 text-muted-foreground"><Checkbox aria-label="Locked option" disabled /> Locked by plan</label>
                   </div>
                 </Section>

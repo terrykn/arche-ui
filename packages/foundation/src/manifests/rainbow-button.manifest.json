@@ -1,0 +1,74 @@
+{
+  "name": "rainbow-button",
+  "title": "Rainbow Button",
+  "description": "A call to action with a brand gradient.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.75rem",
+        "cssVar": "--rainbow-button-height"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--primary",
+    "--brand",
+    "--brand-foreground",
+    "--chart-3",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "rainbow-button",
+      "source": "src/templates/rainbow-button.tsx",
+      "target": "components/ui/rainbow-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A call to action with a brand gradient.",
+    "useWhen": [
+      "A single brand moment."
+    ],
+    "doNotUseWhen": [
+      "Secondary actions."
+    ],
+    "rules": [
+      {
+        "id": "rainbow-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

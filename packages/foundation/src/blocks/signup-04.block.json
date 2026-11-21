@@ -1,0 +1,49 @@
+{
+  "name": "signup-04",
+  "title": "Signup 04",
+  "description": "A signup page with form and image.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--muted",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "card",
+    "field",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "signup-04",
+      "source": "src/blocks/signup-04.tsx",
+      "target": "components/blocks/signup-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

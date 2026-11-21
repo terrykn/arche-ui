@@ -30,8 +30,10 @@
   "tokensUsed": [
     "--border",
     "--border-width",
+    "--card",
     "--destructive",
     "--muted-foreground",
+    "--primary",
     "--radius"
   ],
   "dependencies": [
@@ -100,7 +102,7 @@
       "An app needs email sign-in."
     ],
     "doNotUseWhen": [
-      "SSO is the only path \u00e2\u20ac\u201d don't show a password field that can't work."
+      "SSO is the only path â€” don't show a password field that can't work."
     ],
     "rules": [
       {

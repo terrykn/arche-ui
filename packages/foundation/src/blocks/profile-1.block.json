@@ -1,0 +1,62 @@
+{
+  "name": "profile-1",
+  "title": "Public Profile With Tabs",
+  "description": "Public user profile with a cover banner, overlapping avatar, follower stats, Follow and Message actions, and tabs for posts and about.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button",
+    "separator",
+    "tabs"
+  ],
+  "files": [
+    {
+      "name": "profile-1",
+      "source": "src/blocks/profile-1.tsx",
+      "target": "components/blocks/profile-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "separator"
+      },
+      {
+        "name": "tabs"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "3d-card",
+  "title": "3D Card",
+  "description": "A card turning toward the pointer.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "item",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "3d-card",
+      "source": "src/templates/3d-card.tsx",
+      "target": "components/ui/3d-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A card turning toward the pointer.",
+    "useWhen": [
+      "Product spotlights."
+    ],
+    "doNotUseWhen": [
+      "Dense grids."
+    ],
+    "rules": [
+      {
+        "id": "3d-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

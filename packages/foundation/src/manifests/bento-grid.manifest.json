@@ -1,0 +1,69 @@
+{
+  "name": "bento-grid",
+  "title": "Bento Grid",
+  "description": "A feature grid with hover CTAs.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "bento-card",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--card-foreground",
+    "--primary",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "bento-grid",
+      "source": "src/templates/bento-grid.tsx",
+      "target": "components/ui/bento-grid.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A feature grid with hover CTAs.",
+    "useWhen": [
+      "Feature overviews."
+    ],
+    "doNotUseWhen": [
+      "Linear narratives."
+    ],
+    "rules": [
+      {
+        "id": "bento-grid-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

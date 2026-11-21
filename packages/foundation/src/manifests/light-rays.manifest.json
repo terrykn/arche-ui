@@ -1,0 +1,55 @@
+{
+  "name": "light-rays",
+  "title": "Light Rays",
+  "description": "God rays fanning from the top.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--primary",
+    "--brand"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "light-rays",
+      "source": "src/templates/light-rays.tsx",
+      "target": "components/ui/light-rays.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "God rays fanning from the top.",
+    "useWhen": [
+      "Hero atmosphere."
+    ],
+    "doNotUseWhen": [
+      "Bright themes."
+    ],
+    "rules": [
+      {
+        "id": "light-rays-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

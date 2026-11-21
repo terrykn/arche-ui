@@ -1,0 +1,45 @@
+{
+  "name": "features-icon-grid",
+  "title": "Icon feature grid",
+  "description": "Heading and six icon feature cards in a three-column grid, each border lit by a cursor-following glow.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--brand",
+    "--card",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "blur-fade",
+    "glowing-effect"
+  ],
+  "files": [
+    {
+      "name": "features-icon-grid",
+      "source": "src/blocks/features-icon-grid.tsx",
+      "target": "components/blocks/features-icon-grid.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "glowing-effect"
+      }
+    ]
+  }
+}

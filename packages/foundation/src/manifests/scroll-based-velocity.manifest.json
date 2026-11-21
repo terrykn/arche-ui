@@ -1,0 +1,54 @@
+{
+  "name": "scroll-based-velocity",
+  "title": "Scroll Based Velocity",
+  "description": "Text speed following scroll.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "scroll-based-velocity",
+      "source": "src/templates/scroll-based-velocity.tsx",
+      "target": "components/ui/scroll-based-velocity.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Text speed following scroll.",
+    "useWhen": [
+      "Energetic tickers."
+    ],
+    "doNotUseWhen": [
+      "Calm pages."
+    ],
+    "rules": [
+      {
+        "id": "scroll-based-velocity-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

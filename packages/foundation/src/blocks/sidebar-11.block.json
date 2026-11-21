@@ -1,0 +1,48 @@
+{
+  "name": "sidebar-11",
+  "title": "Sidebar 11",
+  "description": "A sidebar with a collapsible file tree.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "collapsible",
+    "sidebar",
+    "breadcrumb",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "sidebar-11",
+      "source": "src/blocks/sidebar-11.tsx",
+      "target": "components/blocks/sidebar-11.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "collapsible"
+      },
+      {
+        "name": "sidebar"
+      },
+      {
+        "name": "breadcrumb"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

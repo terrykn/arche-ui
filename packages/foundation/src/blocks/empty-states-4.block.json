@@ -1,0 +1,52 @@
+{
+  "name": "empty-states-4",
+  "title": "Failed Load Error",
+  "description": "Error empty state for data that failed to load, with a destructive alert icon plus Try Again and contact support actions.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--card",
+    "--destructive",
+    "--foreground",
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button",
+    "empty"
+  ],
+  "files": [
+    {
+      "name": "empty-states-4",
+      "source": "src/blocks/empty-states-4.tsx",
+      "target": "components/blocks/empty-states-4.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "empty"
+      }
+    ]
+  }
+}

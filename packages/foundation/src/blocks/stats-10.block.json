@@ -1,0 +1,42 @@
+{
+  "name": "stats-10",
+  "title": "Stats with Area Chart",
+  "description": "A stats with area chart block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "recharts"
+  ],
+  "registryDependencies": [
+    "utils",
+    "card",
+    "chart"
+  ],
+  "files": [
+    {
+      "name": "stats-10",
+      "source": "src/blocks/stats-10.tsx",
+      "target": "components/blocks/stats-10.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      },
+      {
+        "name": "chart"
+      }
+    ]
+  }
+}

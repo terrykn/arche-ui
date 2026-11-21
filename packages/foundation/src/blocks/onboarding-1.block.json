@@ -1,0 +1,63 @@
+{
+  "name": "onboarding-1",
+  "title": "Welcome Checklist Card",
+  "description": "Onboarding welcome card with a setup progress bar and three checkbox steps for reading docs, inviting the team, and configuring the workspace.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "card",
+    "checkbox",
+    "progress",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "onboarding-1",
+      "source": "src/blocks/onboarding-1.tsx",
+      "target": "components/blocks/onboarding-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "progress"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

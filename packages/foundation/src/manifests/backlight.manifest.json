@@ -1,0 +1,50 @@
+{
+  "name": "backlight",
+  "title": "Backlight",
+  "description": "A glow behind media.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "backlight",
+      "source": "src/templates/backlight.tsx",
+      "target": "components/ui/backlight.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A glow behind media.",
+    "useWhen": [
+      "Spotlighting visuals."
+    ],
+    "doNotUseWhen": [
+      "Flat illustrations."
+    ],
+    "rules": [
+      {
+        "id": "backlight-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

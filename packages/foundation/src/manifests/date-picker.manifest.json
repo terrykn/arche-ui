@@ -1,0 +1,78 @@
+{
+  "name": "date-picker",
+  "title": "Date Picker",
+  "description": "A button that opens a calendar to choose a date.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "width": {
+        "type": "enum",
+        "values": [
+          "16rem",
+          "18rem",
+          "20rem",
+          "24rem",
+          "28rem",
+          "32rem",
+          "36rem",
+          "42rem",
+          "56rem"
+        ],
+        "default": "18rem",
+        "cssVar": "--date-picker-width"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "calendar",
+    "popover",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "date-picker",
+      "source": "src/templates/date-picker.tsx",
+      "target": "components/ui/date-picker.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button that opens a calendar to choose a date.",
+    "useWhen": [
+      "Form space is limited."
+    ],
+    "doNotUseWhen": [
+      "The calendar must stay visible."
+    ],
+    "rules": [
+      {
+        "id": "date-picker-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

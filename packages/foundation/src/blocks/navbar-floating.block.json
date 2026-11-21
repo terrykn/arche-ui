@@ -1,0 +1,50 @@
+{
+  "name": "navbar-floating",
+  "title": "Floating pill navbar",
+  "description": "Full-width navbar that shrinks into a blurred floating pill on scroll, with a CTA and mobile menu.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--brand",
+    "--brand-foreground",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--primary",
+    "--radius",
+    "--ring",
+    "--shadow-sm",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "resizable-navbar"
+  ],
+  "files": [
+    {
+      "name": "navbar-floating",
+      "source": "src/blocks/navbar-floating.tsx",
+      "target": "components/blocks/navbar-floating.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "resizable-navbar"
+      }
+    ]
+  }
+}

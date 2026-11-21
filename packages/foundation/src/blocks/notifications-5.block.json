@@ -1,0 +1,44 @@
+{
+  "name": "notifications-5",
+  "title": "Dismissible Alert Stack",
+  "description": "Stack of dismissible inline notification alerts in success, info, warning, and error variants, resolving to an all caught up empty state.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--destructive",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "notifications-5",
+      "source": "src/blocks/notifications-5.tsx",
+      "target": "components/blocks/notifications-5.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "stats-01",
+  "title": "Stats with Trending",
+  "description": "A stats with trending block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "stats-01",
+      "source": "src/blocks/stats-01.tsx",
+      "target": "components/blocks/stats-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

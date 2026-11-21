@@ -1,0 +1,43 @@
+{
+  "name": "error-1",
+  "title": "404 Not Found With Actions",
+  "description": "Centered 404 not found page led by a monospace numeral, with a short explanation and Go Home plus Go Back buttons.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--font-mono",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "name": "error-1",
+      "source": "src/blocks/error-1.tsx",
+      "target": "components/blocks/error-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      }
+    ]
+  }
+}

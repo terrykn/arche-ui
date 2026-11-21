@@ -1,0 +1,63 @@
+{
+  "name": "kbd",
+  "title": "Kbd",
+  "description": "A keyboard key label.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--font-sans"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "kbd",
+      "source": "src/templates/kbd.tsx",
+      "target": "components/ui/kbd.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A keyboard key label.",
+    "useWhen": [
+      "Documenting shortcuts."
+    ],
+    "doNotUseWhen": [
+      "General emphasis."
+    ],
+    "rules": [
+      {
+        "id": "kbd-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

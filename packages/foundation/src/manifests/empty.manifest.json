@@ -1,0 +1,93 @@
+{
+  "name": "empty",
+  "title": "Empty",
+  "description": "An illustrated empty state with action.",
+  "category": "feedback",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "header",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "icon",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "title",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "variant": {
+      "values": [
+        "default",
+        "icon"
+      ],
+      "default": "default"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--primary",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "empty",
+      "source": "src/templates/empty.tsx",
+      "target": "components/ui/empty.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An illustrated empty state with action.",
+    "useWhen": [
+      "No results or first run."
+    ],
+    "doNotUseWhen": [
+      "Error states."
+    ],
+    "rules": [
+      {
+        "id": "empty-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

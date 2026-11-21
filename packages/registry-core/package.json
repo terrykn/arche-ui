@@ -13,6 +13,10 @@
       "types": "./src/compiler.ts",
       "default": "./dist/compiler.js"
     },
+    "./component-tokens": {
+      "types": "./src/component-tokens.ts",
+      "default": "./dist/component-tokens.js"
+    },
     "./selector": {
       "types": "./src/selector.ts",
       "default": "./dist/selector.js"

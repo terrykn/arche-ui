@@ -1,0 +1,60 @@
+{
+  "name": "cta-newsletter",
+  "title": "Newsletter sign-up",
+  "description": "Newsletter card over a glowing dot grid with a labelled email field, subscriber avatars and a privacy note.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--card",
+    "--foreground",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring",
+    "--shadow-lg",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "input",
+    "label",
+    "avatar-circles",
+    "dotted-glow-background"
+  ],
+  "files": [
+    {
+      "name": "cta-newsletter",
+      "source": "src/blocks/cta-newsletter.tsx",
+      "target": "components/blocks/cta-newsletter.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "avatar-circles"
+      },
+      {
+        "name": "dotted-glow-background"
+      }
+    ]
+  }
+}

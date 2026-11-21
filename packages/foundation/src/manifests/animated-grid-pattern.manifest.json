@@ -1,0 +1,54 @@
+{
+  "name": "animated-grid-pattern",
+  "title": "Animated Grid Pattern",
+  "description": "An animated SVG grid backdrop.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-grid-pattern",
+      "source": "src/templates/animated-grid-pattern.tsx",
+      "target": "components/ui/animated-grid-pattern.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An animated SVG grid backdrop.",
+    "useWhen": [
+      "Technical section texture."
+    ],
+    "doNotUseWhen": [
+      "Plain cards."
+    ],
+    "rules": [
+      {
+        "id": "animated-grid-pattern-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "footer-wordmark",
+  "title": "Giant wordmark footer",
+  "description": "Minimal footer that ends in an oversized outlined wordmark lighting up in brand colours under the pointer.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "text-hover-effect"
+  ],
+  "files": [
+    {
+      "name": "footer-wordmark",
+      "source": "src/blocks/footer-wordmark.tsx",
+      "target": "components/blocks/footer-wordmark.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "text-hover-effect"
+      }
+    ]
+  }
+}

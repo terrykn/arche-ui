@@ -1,0 +1,44 @@
+{
+  "name": "login-03",
+  "title": "Login with Email and Password",
+  "description": "A login with email and password block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "name": "login-03",
+      "source": "src/blocks/login-03.tsx",
+      "target": "components/blocks/login-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      }
+    ]
+  }
+}

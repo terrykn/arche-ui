@@ -1,0 +1,49 @@
+{
+  "name": "charts-5",
+  "title": "Traffic Source Donut",
+  "description": "Donut chart splitting traffic by source, with a centered visitor total and a ranked, color coded legend list underneath.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--chart-1",
+    "--chart-2",
+    "--chart-3",
+    "--chart-4",
+    "--chart-5",
+    "--foreground",
+    "--muted-foreground",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [
+    "recharts"
+  ],
+  "registryDependencies": [
+    "card",
+    "chart"
+  ],
+  "files": [
+    {
+      "name": "charts-5",
+      "source": "src/blocks/charts-5.tsx",
+      "target": "components/blocks/charts-5.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      },
+      {
+        "name": "chart"
+      }
+    ]
+  }
+}

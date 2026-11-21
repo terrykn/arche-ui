@@ -1,0 +1,62 @@
+{
+  "name": "world-map",
+  "title": "World Map",
+  "description": "A dotted SVG world map with markers and arcs.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--foreground",
+    "--primary",
+    "--brand",
+    "--muted-foreground",
+    "--chart-3",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "world-map",
+      "source": "src/templates/world-map.tsx",
+      "target": "components/ui/world-map.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A dotted SVG world map with markers and arcs.",
+    "useWhen": [
+      "Coverage visuals."
+    ],
+    "doNotUseWhen": [
+      "Navigation maps."
+    ],
+    "rules": [
+      {
+        "id": "world-map-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

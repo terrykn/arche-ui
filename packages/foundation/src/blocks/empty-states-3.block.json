@@ -1,0 +1,51 @@
+{
+  "name": "empty-states-3",
+  "title": "No Search Results",
+  "description": "No results found empty state for a filtered search, with a magnifier icon, guidance copy, and a Clear Filters action in a bordered card.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button",
+    "empty"
+  ],
+  "files": [
+    {
+      "name": "empty-states-3",
+      "source": "src/blocks/empty-states-3.tsx",
+      "target": "components/blocks/empty-states-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "empty"
+      }
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "dialog-07",
+  "title": "Dialog with Member List",
+  "description": "A dialog with member list block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "alert-dialog",
+    "button",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "name": "dialog-07",
+      "source": "src/blocks/dialog-07.tsx",
+      "target": "components/blocks/dialog-07.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "alert-dialog"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      }
+    ]
+  }
+}

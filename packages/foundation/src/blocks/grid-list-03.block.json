@@ -1,0 +1,41 @@
+{
+  "name": "grid-list-03",
+  "title": "Grid List with Icons",
+  "description": "A grid list with icons block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "grid-list-03",
+      "source": "src/blocks/grid-list-03.tsx",
+      "target": "components/blocks/grid-list-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

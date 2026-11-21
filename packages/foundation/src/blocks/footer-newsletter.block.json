@@ -1,0 +1,51 @@
+{
+  "name": "footer-newsletter",
+  "title": "Newsletter footer",
+  "description": "Footer with a newsletter sign-up row, link columns and a live “All systems normal” status badge.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "input",
+    "label",
+    "stateful-button"
+  ],
+  "files": [
+    {
+      "name": "footer-newsletter",
+      "source": "src/blocks/footer-newsletter.tsx",
+      "target": "components/blocks/footer-newsletter.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "stateful-button"
+      }
+    ]
+  }
+}

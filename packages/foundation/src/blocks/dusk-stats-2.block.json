@@ -1,0 +1,30 @@
+{
+  "name": "dusk-stats-2",
+  "title": "Stats 2",
+  "description": "Tailark Dusk stats variant 2 block",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "dusk-stats-2",
+      "source": "src/blocks/dusk-stats-2.tsx",
+      "target": "components/blocks/dusk-stats-2.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": []
+  }
+}

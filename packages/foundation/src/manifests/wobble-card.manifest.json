@@ -1,0 +1,60 @@
+{
+  "name": "wobble-card",
+  "title": "Wobble Card",
+  "description": "A card drifting toward the pointer.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--brand-foreground",
+    "--shadow-sm",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "wobble-card",
+      "source": "src/templates/wobble-card.tsx",
+      "target": "components/ui/wobble-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A card drifting toward the pointer.",
+    "useWhen": [
+      "Playful promos."
+    ],
+    "doNotUseWhen": [
+      "Formal layouts."
+    ],
+    "rules": [
+      {
+        "id": "wobble-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

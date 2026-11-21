@@ -1,0 +1,56 @@
+{
+  "name": "dialog-12",
+  "title": "Dialog with Avatar Upload",
+  "description": "A dialog with avatar upload block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--accent",
+    "--background",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "button",
+    "dialog",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "name": "dialog-12",
+      "source": "src/blocks/dialog-12.tsx",
+      "target": "components/blocks/dialog-12.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      }
+    ]
+  }
+}

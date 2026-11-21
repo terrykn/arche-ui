@@ -1,0 +1,54 @@
+{
+  "name": "page-header-4",
+  "title": "Detail Header With Back Link",
+  "description": "Detail view page header with a back link, status badge, owner avatar and created date metadata, a contributor avatar stack, and share and edit actions.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button"
+  ],
+  "files": [
+    {
+      "name": "page-header-4",
+      "source": "src/blocks/page-header-4.tsx",
+      "target": "components/blocks/page-header-4.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "timeline",
+  "title": "Timeline",
+  "description": "A vertical timeline with a scroll fill beam.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "timeline",
+      "source": "src/templates/timeline.tsx",
+      "target": "components/ui/timeline.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A vertical timeline with a scroll fill beam.",
+    "useWhen": [
+      "Histories and roadmaps."
+    ],
+    "doNotUseWhen": [
+      "Unordered content."
+    ],
+    "rules": [
+      {
+        "id": "timeline-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

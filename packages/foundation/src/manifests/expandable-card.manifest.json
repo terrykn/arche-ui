@@ -1,0 +1,63 @@
+{
+  "name": "expandable-card",
+  "title": "Expandable Card",
+  "description": "A card expanding into a panel.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "expandable-card",
+      "source": "src/templates/expandable-card.tsx",
+      "target": "components/ui/expandable-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A card expanding into a panel.",
+    "useWhen": [
+      "Preview to detail."
+    ],
+    "doNotUseWhen": [
+      "Separate pages."
+    ],
+    "rules": [
+      {
+        "id": "expandable-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

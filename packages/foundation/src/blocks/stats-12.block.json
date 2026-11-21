@@ -1,0 +1,49 @@
+{
+  "name": "stats-12",
+  "title": "Stats Usage Dashboard",
+  "description": "A stats usage dashboard block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--chart-1",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [
+    "recharts"
+  ],
+  "registryDependencies": [
+    "button",
+    "card",
+    "chart"
+  ],
+  "files": [
+    {
+      "name": "stats-12",
+      "source": "src/blocks/stats-12.tsx",
+      "target": "components/blocks/stats-12.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "chart"
+      }
+    ]
+  }
+}

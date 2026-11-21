@@ -1,0 +1,54 @@
+{
+  "name": "flip-words",
+  "title": "Flip Words",
+  "description": "Words cycling with a blur flip.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "flip-words",
+      "source": "src/templates/flip-words.tsx",
+      "target": "components/ui/flip-words.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Words cycling with a blur flip.",
+    "useWhen": [
+      "Rotating value props."
+    ],
+    "doNotUseWhen": [
+      "Static headings."
+    ],
+    "rules": [
+      {
+        "id": "flip-words-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

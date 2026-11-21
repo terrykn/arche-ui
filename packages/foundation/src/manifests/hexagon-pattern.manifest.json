@@ -1,0 +1,52 @@
+{
+  "name": "hexagon-pattern",
+  "title": "Hexagon Pattern",
+  "description": "An SVG hexagon backdrop.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "hexagon-pattern",
+      "source": "src/templates/hexagon-pattern.tsx",
+      "target": "components/ui/hexagon-pattern.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An SVG hexagon backdrop.",
+    "useWhen": [
+      "Geometric texture."
+    ],
+    "doNotUseWhen": [
+      "Minimal layouts."
+    ],
+    "rules": [
+      {
+        "id": "hexagon-pattern-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

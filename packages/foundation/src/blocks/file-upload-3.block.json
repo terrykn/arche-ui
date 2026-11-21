@@ -1,0 +1,63 @@
+{
+  "name": "file-upload-3",
+  "title": "Uploader With Validation Toasts",
+  "description": "Drag-and-drop file uploader enforcing size and type validation, with uploading, done, and error attachment states, toasts, and per-file remove.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "utils",
+    "attachment",
+    "button",
+    "card",
+    "spinner"
+  ],
+  "files": [
+    {
+      "name": "file-upload-3",
+      "source": "src/blocks/file-upload-3.tsx",
+      "target": "components/blocks/file-upload-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "attachment"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "spinner"
+      }
+    ]
+  }
+}

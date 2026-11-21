@@ -1,0 +1,55 @@
+{
+  "name": "interactive-grid-pattern",
+  "title": "Interactive Grid Pattern",
+  "description": "A grid reacting to the pointer.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--motion-fast"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "interactive-grid-pattern",
+      "source": "src/templates/interactive-grid-pattern.tsx",
+      "target": "components/ui/interactive-grid-pattern.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A grid reacting to the pointer.",
+    "useWhen": [
+      "Interactive heroes."
+    ],
+    "doNotUseWhen": [
+      "Static pages."
+    ],
+    "rules": [
+      {
+        "id": "interactive-grid-pattern-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

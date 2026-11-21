@@ -1,0 +1,80 @@
+{
+  "name": "resizable",
+  "title": "Resizable",
+  "description": "Resizable split panels.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "GroupProps",
+      "Group",
+      "PanelProps",
+      "Panel",
+      "SeparatorProps",
+      "Separator"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "GroupProps",
+      "required": true
+    },
+    {
+      "name": "panel-group",
+      "part": "GroupProps",
+      "required": false
+    },
+    {
+      "name": "panel",
+      "part": "Panel",
+      "required": false
+    },
+    {
+      "name": "handle",
+      "part": "GroupProps",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "lucide-react",
+    "react-resizable-panels"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "resizable",
+      "source": "src/templates/resizable.tsx",
+      "target": "components/ui/resizable.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Resizable split panels.",
+    "useWhen": [
+      "Adjustable layouts."
+    ],
+    "doNotUseWhen": [
+      "Fixed layouts."
+    ],
+    "rules": [
+      {
+        "id": "resizable-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

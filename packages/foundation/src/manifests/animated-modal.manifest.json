@@ -1,0 +1,96 @@
+{
+  "name": "animated-modal",
+  "title": "Animated Modal",
+  "description": "A modal with spring animation.",
+  "category": "overlay",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "modal-content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "modal-footer",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "width": {
+        "type": "enum",
+        "values": [
+          "16rem",
+          "18rem",
+          "20rem",
+          "24rem",
+          "28rem",
+          "32rem",
+          "36rem",
+          "42rem",
+          "56rem"
+        ],
+        "default": "32rem",
+        "cssVar": "--animated-modal-width"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--foreground",
+    "--card-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-modal",
+      "source": "src/templates/animated-modal.tsx",
+      "target": "components/ui/animated-modal.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A modal with spring animation.",
+    "useWhen": [
+      "A focused task deserves emphasis."
+    ],
+    "doNotUseWhen": [
+      "Dialogs open frequently."
+    ],
+    "rules": [
+      {
+        "id": "animated-modal-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

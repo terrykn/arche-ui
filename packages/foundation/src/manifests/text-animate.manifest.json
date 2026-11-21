@@ -1,0 +1,54 @@
+{
+  "name": "text-animate",
+  "title": "Text Animate",
+  "description": "Text animating in with preset effects.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "text-animate",
+      "source": "src/templates/text-animate.tsx",
+      "target": "components/ui/text-animate.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Text animating in with preset effects.",
+    "useWhen": [
+      "Entrance headlines."
+    ],
+    "doNotUseWhen": [
+      "Long articles."
+    ],
+    "rules": [
+      {
+        "id": "text-animate-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

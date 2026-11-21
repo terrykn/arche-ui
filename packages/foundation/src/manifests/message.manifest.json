@@ -1,0 +1,80 @@
+{
+  "name": "message",
+  "title": "Message",
+  "description": "A chat message bubble.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "avatar",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "header",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "footer",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "message",
+      "source": "src/templates/message.tsx",
+      "target": "components/ui/message.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A chat message bubble.",
+    "useWhen": [
+      "Conversations."
+    ],
+    "doNotUseWhen": [
+      "Email threads."
+    ],
+    "rules": [
+      {
+        "id": "message-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

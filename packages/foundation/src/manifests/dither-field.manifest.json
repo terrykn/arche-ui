@@ -1,0 +1,52 @@
+{
+  "name": "dither-field",
+  "title": "Dither Field",
+  "description": "An animated dithered dot WebGL field.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "dither-field",
+      "source": "src/templates/dither-field.tsx",
+      "target": "components/ui/dither-field.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An animated dithered dot WebGL field.",
+    "useWhen": [
+      "Ambient motion."
+    ],
+    "doNotUseWhen": [
+      "Low power devices."
+    ],
+    "rules": [
+      {
+        "id": "dither-field-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

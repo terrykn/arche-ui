@@ -1,0 +1,43 @@
+{
+  "name": "sidebar-04",
+  "title": "Sidebar 04",
+  "description": "A floating sidebar with submenus.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "sidebar",
+    "breadcrumb",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "sidebar-04",
+      "source": "src/blocks/sidebar-04.tsx",
+      "target": "components/blocks/sidebar-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "sidebar"
+      },
+      {
+        "name": "breadcrumb"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "onboarding-6",
+  "title": "Dismissible Getting Started Widget",
+  "description": "Compact getting-started widget with a dismiss button, progress bar, and a five-step checklist showing completed steps struck through.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "progress"
+  ],
+  "files": [
+    {
+      "name": "onboarding-6",
+      "source": "src/blocks/onboarding-6.tsx",
+      "target": "components/blocks/onboarding-6.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "progress"
+      }
+    ]
+  }
+}

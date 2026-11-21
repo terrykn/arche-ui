@@ -1,0 +1,58 @@
+{
+  "name": "spotlight-card",
+  "title": "Spotlight Card",
+  "description": "A radial glow following the cursor.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--brand",
+    "--radius",
+    "--border-width",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "spotlight-card",
+      "source": "src/templates/spotlight-card.tsx",
+      "target": "components/ui/spotlight-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A radial glow following the cursor.",
+    "useWhen": [
+      "Interactive cards."
+    ],
+    "doNotUseWhen": [
+      "Static content."
+    ],
+    "rules": [
+      {
+        "id": "spotlight-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "name": "kinetic-text",
+  "title": "Kinetic Text",
+  "description": "Weight animating characters on hover.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "kinetic-text",
+      "source": "src/templates/kinetic-text.tsx",
+      "target": "components/ui/kinetic-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Weight animating characters on hover.",
+    "useWhen": [
+      "Interactive headlines."
+    ],
+    "doNotUseWhen": [
+      "Paragraphs."
+    ],
+    "rules": [
+      {
+        "id": "kinetic-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

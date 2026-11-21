@@ -1,0 +1,68 @@
+{
+  "name": "auth-5",
+  "title": "Tabbed Sign-In And Sign-Up",
+  "description": "Auth card with tabs that swap between sign-in and sign-up forms, validated per tab, plus Google, GitHub, and Apple social buttons.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [
+    "sonner",
+    "zod"
+  ],
+  "registryDependencies": [
+    "button",
+    "card",
+    "field",
+    "input",
+    "separator",
+    "tabs"
+  ],
+  "files": [
+    {
+      "name": "auth-5",
+      "source": "src/blocks/auth-5.tsx",
+      "target": "components/blocks/auth-5.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "separator"
+      },
+      {
+        "name": "tabs"
+      }
+    ]
+  }
+}

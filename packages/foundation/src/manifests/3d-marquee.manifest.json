@@ -1,0 +1,62 @@
+{
+  "name": "3d-marquee",
+  "title": "3D Marquee",
+  "description": "A tilted image grid scrolling endlessly.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "marquee-3d",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted",
+    "--border",
+    "--radius",
+    "--shadow-lg"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "3d-marquee",
+      "source": "src/templates/3d-marquee.tsx",
+      "target": "components/ui/3d-marquee.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A tilted image grid scrolling endlessly.",
+    "useWhen": [
+      "Visual walls."
+    ],
+    "doNotUseWhen": [
+      "Text tickers."
+    ],
+    "rules": [
+      {
+        "id": "3d-marquee-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

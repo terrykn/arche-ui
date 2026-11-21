@@ -1,0 +1,33 @@
+{
+  "name": "stats-15",
+  "title": "Stats with Value Breakdown",
+  "description": "A stats with value breakdown block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "stats-15",
+      "source": "src/blocks/stats-15.tsx",
+      "target": "components/blocks/stats-15.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": []
+  }
+}

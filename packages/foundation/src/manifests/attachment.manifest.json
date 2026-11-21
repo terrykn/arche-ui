@@ -1,0 +1,147 @@
+{
+  "name": "attachment",
+  "title": "Attachment",
+  "description": "A file or media attachment with status and actions.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-slot",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "media",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "title",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "actions",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "action",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "trigger",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "size": {
+      "values": [
+        "default",
+        "sm",
+        "xs"
+      ],
+      "default": "default"
+    },
+    "orientation": {
+      "values": [
+        "horizontal",
+        "vertical"
+      ],
+      "default": "horizontal"
+    }
+  },
+  "styleSurface": {
+    "root": {
+      "verticalWidth": {
+        "type": "enum",
+        "values": [
+          "5rem",
+          "6rem",
+          "7rem",
+          "8rem"
+        ],
+        "default": "6rem",
+        "cssVar": "--attachment-vertical-width"
+      },
+      "mediaWidth": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.5rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.5rem",
+        "cssVar": "--attachment-media-width"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--card",
+    "--foreground",
+    "--card-foreground",
+    "--destructive",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "button",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "attachment",
+      "source": "src/templates/attachment.tsx",
+      "target": "components/ui/attachment.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A file or media attachment with status and actions.",
+    "useWhen": [
+      "Users review attached files."
+    ],
+    "doNotUseWhen": [
+      "Users need to select files."
+    ],
+    "rules": [
+      {
+        "id": "attachment-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

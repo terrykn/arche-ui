@@ -1,0 +1,55 @@
+{
+  "name": "features-steps",
+  "title": "Numbered steps",
+  "description": "How-it-works section with four numbered steps on a gradient connector line, each with a small UI visual.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--card",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "avatar-circles",
+    "blur-fade",
+    "border-beam",
+    "number-ticker"
+  ],
+  "files": [
+    {
+      "name": "features-steps",
+      "source": "src/blocks/features-steps.tsx",
+      "target": "components/blocks/features-steps.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar-circles"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "border-beam"
+      },
+      {
+        "name": "number-ticker"
+      }
+    ]
+  }
+}

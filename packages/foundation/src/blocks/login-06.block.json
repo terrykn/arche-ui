@@ -1,0 +1,48 @@
+{
+  "name": "login-06",
+  "title": "Login with Magic Link and SSO",
+  "description": "A login with magic link and sso block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "card",
+    "input",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "login-06",
+      "source": "src/blocks/login-06.tsx",
+      "target": "components/blocks/login-06.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

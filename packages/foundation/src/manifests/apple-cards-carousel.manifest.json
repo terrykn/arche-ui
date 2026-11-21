@@ -1,0 +1,75 @@
+{
+  "name": "apple-cards-carousel",
+  "title": "Apple Cards Carousel",
+  "description": "Snap scrolling image cards opening into story modals.",
+  "category": "layout",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "cards-carousel",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "carousel-card",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--border-width",
+    "--shadow-sm",
+    "--shadow-md",
+    "--shadow-lg",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "apple-cards-carousel",
+      "source": "src/templates/apple-cards-carousel.tsx",
+      "target": "components/ui/apple-cards-carousel.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Snap scrolling image cards opening into story modals.",
+    "useWhen": [
+      "Visual showcases."
+    ],
+    "doNotUseWhen": [
+      "Text articles."
+    ],
+    "rules": [
+      {
+        "id": "apple-cards-carousel-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

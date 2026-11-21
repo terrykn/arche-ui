@@ -1,0 +1,44 @@
+{
+  "name": "signup-05",
+  "title": "Signup 05",
+  "description": "A simple signup form with social providers.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "field",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "signup-05",
+      "source": "src/blocks/signup-05.tsx",
+      "target": "components/blocks/signup-05.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

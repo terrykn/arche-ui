@@ -1,0 +1,209 @@
+{
+  "name": "sidebar",
+  "title": "Sidebar",
+  "description": "A collapsible app sidebar.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-slot",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "wrapper",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "gap",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "container",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "inner",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "trigger",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "rail",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "inset",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "input",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "header",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "footer",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "separator",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "group-label",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "group-action",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "group-content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-item",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-button",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-action",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-badge",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-skeleton",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-sub",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-sub-item",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "menu-sub-button",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "variant": {
+      "values": [
+        "default",
+        "outline"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "values": [
+        "default",
+        "sm",
+        "lg"
+      ],
+      "default": "default"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--radius",
+    "--border-width",
+    "--shadow-sm",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "input",
+    "separator",
+    "sheet",
+    "skeleton",
+    "tooltip",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "sidebar",
+      "source": "src/templates/sidebar.tsx",
+      "target": "components/ui/sidebar.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A collapsible app sidebar.",
+    "useWhen": [
+      "App navigation with sections."
+    ],
+    "doNotUseWhen": [
+      "Marketing pages."
+    ],
+    "rules": [
+      {
+        "id": "sidebar-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "dotted-glow-background",
+  "title": "Dotted Glow Background",
+  "description": "A canvas dot grid brightened by glows.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "dotted-glow-background",
+      "source": "src/templates/dotted-glow-background.tsx",
+      "target": "components/ui/dotted-glow-background.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A canvas dot grid brightened by glows.",
+    "useWhen": [
+      "Ambient heroes."
+    ],
+    "doNotUseWhen": [
+      "Data dense screens."
+    ],
+    "rules": [
+      {
+        "id": "dotted-glow-background-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

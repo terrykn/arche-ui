@@ -1,0 +1,58 @@
+{
+  "name": "cta-split-image",
+  "title": "Split CTA with product visual",
+  "description": "Two-column CTA card with a benefit list and a dashboard mock-up, traced by an animated border beam.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--primary-foreground",
+    "--radius",
+    "--shadow-lg",
+    "--shadow-sm",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "border-beam",
+    "grid-pattern",
+    "meteors"
+  ],
+  "files": [
+    {
+      "name": "cta-split-image",
+      "source": "src/blocks/cta-split-image.tsx",
+      "target": "components/blocks/cta-split-image.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "border-beam"
+      },
+      {
+        "name": "grid-pattern"
+      },
+      {
+        "name": "meteors"
+      }
+    ]
+  }
+}

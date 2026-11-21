@@ -1,0 +1,44 @@
+{
+  "name": "cta-vortex",
+  "title": "Vortex CTA band",
+  "description": "Dark rounded call-to-action band over a brand-tinted particle vortex, with two actions and fine print.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand",
+    "--card",
+    "--foreground",
+    "--muted-foreground",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "vortex"
+  ],
+  "files": [
+    {
+      "name": "cta-vortex",
+      "source": "src/blocks/cta-vortex.tsx",
+      "target": "components/blocks/cta-vortex.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "vortex"
+      }
+    ]
+  }
+}

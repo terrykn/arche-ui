@@ -1,0 +1,40 @@
+{
+  "name": "sidebar-14",
+  "title": "Sidebar 14",
+  "description": "A sidebar on the right.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--muted",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "sidebar",
+    "breadcrumb"
+  ],
+  "files": [
+    {
+      "name": "sidebar-14",
+      "source": "src/blocks/sidebar-14.tsx",
+      "target": "components/blocks/sidebar-14.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "sidebar"
+      },
+      {
+        "name": "breadcrumb"
+      }
+    ]
+  }
+}

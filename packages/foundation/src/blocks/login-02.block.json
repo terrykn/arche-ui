@@ -1,0 +1,49 @@
+{
+  "name": "login-02",
+  "title": "Login with Email, Password and Google",
+  "description": "A login with email, password and google block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "input",
+    "label",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "login-02",
+      "source": "src/blocks/login-02.tsx",
+      "target": "components/blocks/login-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

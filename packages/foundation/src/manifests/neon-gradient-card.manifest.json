@@ -1,0 +1,55 @@
+{
+  "name": "neon-gradient-card",
+  "title": "Neon Gradient Card",
+  "description": "A neon gradient card.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--brand-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "neon-gradient-card",
+      "source": "src/templates/neon-gradient-card.tsx",
+      "target": "components/ui/neon-gradient-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A neon gradient card.",
+    "useWhen": [
+      "Vibrant promos."
+    ],
+    "doNotUseWhen": [
+      "Muted themes."
+    ],
+    "rules": [
+      {
+        "id": "neon-gradient-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

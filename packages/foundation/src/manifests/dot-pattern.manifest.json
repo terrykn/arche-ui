@@ -1,0 +1,54 @@
+{
+  "name": "dot-pattern",
+  "title": "Dot Pattern",
+  "description": "An SVG dot pattern backdrop.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "dot-pattern",
+      "source": "src/templates/dot-pattern.tsx",
+      "target": "components/ui/dot-pattern.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An SVG dot pattern backdrop.",
+    "useWhen": [
+      "Subtle section texture."
+    ],
+    "doNotUseWhen": [
+      "Busy content."
+    ],
+    "rules": [
+      {
+        "id": "dot-pattern-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

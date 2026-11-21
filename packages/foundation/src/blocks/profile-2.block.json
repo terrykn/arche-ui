@@ -1,0 +1,56 @@
+{
+  "name": "profile-2",
+  "title": "Compact Profile Card",
+  "description": "Compact centered profile card with avatar, role, location, a three column stat strip, and Follow and Message buttons for sidebars or directories.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button",
+    "card"
+  ],
+  "files": [
+    {
+      "name": "profile-2",
+      "source": "src/blocks/profile-2.tsx",
+      "target": "components/blocks/profile-2.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

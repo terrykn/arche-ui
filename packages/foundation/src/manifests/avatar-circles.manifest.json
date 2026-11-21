@@ -1,0 +1,55 @@
+{
+  "name": "avatar-circles",
+  "title": "Avatar Circles",
+  "description": "Stacked initial avatars with a count.",
+  "category": "social",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--muted"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "avatar-circles",
+      "source": "src/templates/avatar-circles.tsx",
+      "target": "components/ui/avatar-circles.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Stacked initial avatars with a count.",
+    "useWhen": [
+      "Team presence."
+    ],
+    "doNotUseWhen": [
+      "Single authors."
+    ],
+    "rules": [
+      {
+        "id": "avatar-circles-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

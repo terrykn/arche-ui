@@ -1,0 +1,58 @@
+{
+  "name": "lens",
+  "title": "Lens",
+  "description": "A magnifier zooming into images.",
+  "category": "cursor",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--motion-fast"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "lens",
+      "source": "src/templates/lens.tsx",
+      "target": "components/ui/lens.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A magnifier zooming into images.",
+    "useWhen": [
+      "Product inspection."
+    ],
+    "doNotUseWhen": [
+      "Small thumbnails."
+    ],
+    "rules": [
+      {
+        "id": "lens-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

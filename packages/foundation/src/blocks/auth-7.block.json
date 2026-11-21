@@ -1,0 +1,55 @@
+{
+  "name": "auth-7",
+  "title": "Set New Password With Rules",
+  "description": "Reset-password card with new and confirm fields plus live requirement checks for length, uppercase, number, and match, ending in a success state.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "card",
+    "field",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "auth-7",
+      "source": "src/blocks/auth-7.tsx",
+      "target": "components/blocks/auth-7.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

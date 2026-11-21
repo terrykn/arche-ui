@@ -1,0 +1,54 @@
+{
+  "name": "android",
+  "title": "Android",
+  "description": "An Android device mockup.",
+  "category": "media",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--muted"
+  ],
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "name": "android",
+      "source": "src/templates/android.tsx",
+      "target": "components/ui/android.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "An Android device mockup.",
+    "useWhen": [
+      "Mobile showcases."
+    ],
+    "doNotUseWhen": [
+      "Desktop content."
+    ],
+    "rules": [
+      {
+        "id": "android-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

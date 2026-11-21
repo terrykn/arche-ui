@@ -1,0 +1,42 @@
+{
+  "name": "footer-columns",
+  "title": "Link columns footer",
+  "description": "Footer with logo, tagline and social links, four link columns and a copyright bar with legal links.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--brand-foreground",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "name": "footer-columns",
+      "source": "src/blocks/footer-columns.tsx",
+      "target": "components/blocks/footer-columns.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      }
+    ]
+  }
+}

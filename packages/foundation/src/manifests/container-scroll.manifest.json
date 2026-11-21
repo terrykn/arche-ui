@@ -1,0 +1,61 @@
+{
+  "name": "container-scroll",
+  "title": "Container Scroll",
+  "description": "A panel rotating flat on scroll.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--brand",
+    "--muted",
+    "--radius",
+    "--border-width",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "container-scroll",
+      "source": "src/templates/container-scroll.tsx",
+      "target": "components/ui/container-scroll.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A panel rotating flat on scroll.",
+    "useWhen": [
+      "Product reveals."
+    ],
+    "doNotUseWhen": [
+      "Static screenshots."
+    ],
+    "rules": [
+      {
+        "id": "container-scroll-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

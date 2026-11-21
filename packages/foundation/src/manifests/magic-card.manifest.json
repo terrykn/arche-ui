@@ -1,0 +1,61 @@
+{
+  "name": "magic-card",
+  "title": "Magic Card",
+  "description": "A cursor spotlight on borders.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--primary",
+    "--brand",
+    "--chart-3",
+    "--border-width",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "magic-card",
+      "source": "src/templates/magic-card.tsx",
+      "target": "components/ui/magic-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A cursor spotlight on borders.",
+    "useWhen": [
+      "Feature cards."
+    ],
+    "doNotUseWhen": [
+      "Plain panels."
+    ],
+    "rules": [
+      {
+        "id": "magic-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

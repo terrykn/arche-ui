@@ -1,0 +1,52 @@
+"use client";
+
+'use client';
+
+import { Check } from 'lucide-react';
+import { Button } from "../templates/button.js";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../templates/dialog.js";
+
+export default function Dialog04() {
+  return (
+    <Dialog defaultOpen>
+      <DialogTrigger asChild><Button  variant="outline">
+        Show Dialog
+      </Button></DialogTrigger>
+
+      <DialogContent className="sm:max-w-sm">
+        <div className="flex justify-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+            <Check className="h-6 w-6 text-green-600" />
+          </div>
+        </div>
+
+        <DialogHeader className="gap-0 text-center">
+          <DialogTitle className="text-balance text-center">
+            Payment successful
+          </DialogTitle>
+          <DialogDescription className="mx-auto mt-2 text-pretty text-center sm:max-w-[90%]">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
+            amet labore.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex-col gap-2 sm:flex-row sm:gap-3">
+          <DialogClose asChild><Button  className="w-full sm:flex-1" variant="default">
+            Deactivate
+          </Button></DialogClose>
+          <DialogClose asChild><Button  className="w-full sm:flex-1" variant="outline">
+            Cancel
+          </Button></DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -1,0 +1,57 @@
+{
+  "name": "faq-accordion",
+  "title": "Centered FAQ accordion",
+  "description": "Centered heading over an accordion of eight questions, closed by a contact row.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "accordion",
+    "button",
+    "avatar-circles",
+    "blur-fade",
+    "grid-pattern"
+  ],
+  "files": [
+    {
+      "name": "faq-accordion",
+      "source": "src/blocks/faq-accordion.tsx",
+      "target": "components/blocks/faq-accordion.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "accordion"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "avatar-circles"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "grid-pattern"
+      }
+    ]
+  }
+}

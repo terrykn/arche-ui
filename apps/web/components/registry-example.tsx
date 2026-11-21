@@ -71,7 +71,8 @@ function ThemeExample() {
     return <ThemeToggler isDark={dark} onToggle={() => setDark((value) => !value)} />;
 }
 
-const EXAMPLES: Record<string, () => React.ReactNode> = {
+type Selection = Record<string, unknown>;
+const EXAMPLES: Record<string, (selection: Selection) => React.ReactNode> = {
     attachment: () => (
         <Attachment>
             <AttachmentMedia><FileIcon /></AttachmentMedia>
@@ -117,12 +118,19 @@ const EXAMPLES: Record<string, () => React.ReactNode> = {
     switch: () => <Switch aria-label="Notifications" defaultChecked />,
     textarea: () => <Textarea aria-label="Message" placeholder="Message" />,
     "vanish-input": () => <VanishInput placeholders={["Search orders", "Search people"]} />,
-    button: () => (
-        <div className="flex flex-wrap gap-2">
-            {(["default", "secondary", "destructive", "outline", "ghost", "link"] as const).map((v) => <Button key={v} variant={v}>{v}</Button>)}
-            {(["xs", "sm", "default", "lg"] as const).map((s) => <Button key={s} size={s}>{s}</Button>)}
-        </div>
-    ),
+    button: (selection) => {
+        const look = selection as Pick<React.ComponentProps<typeof Button>, "shadow" | "fontWeight">;
+        return (
+            <div className="flex flex-wrap gap-2">
+                {(["default", "secondary", "destructive", "outline", "ghost", "link", "brand"] as const).map((v) => (
+                    <Button key={v} variant={v} shadow={look.shadow} fontWeight={look.fontWeight}>{v}</Button>
+                ))}
+                {(["xs", "sm", "default", "lg"] as const).map((s) => (
+                    <Button key={s} size={s} shadow={look.shadow} fontWeight={look.fontWeight}>{s}</Button>
+                ))}
+            </div>
+        );
+    },
     "button-group": () => <ButtonGroup><Button variant="secondary">Copy</Button><ButtonGroupSeparator /><Button variant="secondary">Paste</Button></ButtonGroup>,
     confetti: () => <ConfettiButton>Celebrate</ConfettiButton>,
     "cool-mode": () => <CoolMode><Button>Hold me</Button></CoolMode>,
@@ -137,7 +145,7 @@ const EXAMPLES: Record<string, () => React.ReactNode> = {
     "theme-toggler": () => <ThemeExample />,
     toggle: () => <Toggle variant="outline">Bold</Toggle>,
     "toggle-group": () => (
-        <ToggleGroup type="single" variant="outline" aria-label="Alignment"><ToggleGroupItem value="left">Left</ToggleGroupItem><ToggleGroupItem value="right">Right</ToggleGroupItem></ToggleGroup>
+        <ToggleGroup type="single" aria-label="Alignment"><ToggleGroupItem value="left">Left</ToggleGroupItem><ToggleGroupItem value="right">Right</ToggleGroupItem></ToggleGroup>
     ),
     "alert-dialog": () => (
         <AlertDialog>
@@ -185,7 +193,6 @@ const EXAMPLES: Record<string, () => React.ReactNode> = {
 
 export const REGISTRY_EXAMPLE_NAMES = Object.keys(EXAMPLES);
 export const hasRegistryExample = (name: string) => Object.hasOwn(EXAMPLES, name);
-export function RegistryExample({ name }: { name: string }) {
-    const Example = EXAMPLES[name];
-    return Example ? <Example /> : null;
+export function RegistryExample({ name, selection = {} }: { name: string; selection?: Selection }) {
+    return EXAMPLES[name]?.(selection) ?? null;
 }

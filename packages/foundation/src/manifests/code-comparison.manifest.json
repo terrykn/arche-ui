@@ -1,0 +1,66 @@
+{
+  "name": "code-comparison",
+  "title": "Code Comparison",
+  "description": "Two code snippets compared.",
+  "category": "media",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--primary",
+    "--accent",
+    "--destructive",
+    "--border",
+    "--radius",
+    "--border-width",
+    "--font-mono",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "@shikijs/transformers",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "code-comparison",
+      "source": "src/templates/code-comparison.tsx",
+      "target": "components/ui/code-comparison.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Two code snippets compared.",
+    "useWhen": [
+      "Before and after code."
+    ],
+    "doNotUseWhen": [
+      "Single snippets."
+    ],
+    "rules": [
+      {
+        "id": "code-comparison-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

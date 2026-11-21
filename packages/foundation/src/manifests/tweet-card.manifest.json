@@ -1,0 +1,61 @@
+{
+  "name": "tweet-card",
+  "title": "Tweet Card",
+  "description": "A static social proof card.",
+  "category": "social",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--card-foreground",
+    "--brand",
+    "--brand-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "tweet-card",
+      "source": "src/templates/tweet-card.tsx",
+      "target": "components/ui/tweet-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A static social proof card.",
+    "useWhen": [
+      "Testimonials."
+    ],
+    "doNotUseWhen": [
+      "Live feeds."
+    ],
+    "rules": [
+      {
+        "id": "tweet-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

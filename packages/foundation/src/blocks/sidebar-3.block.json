@@ -1,0 +1,51 @@
+{
+  "name": "sidebar-3",
+  "title": "Icon Rail With Tooltips",
+  "description": "Collapsible sidebar that shrinks to an icon rail with tooltips, holding grouped navigation, badge counts, and a user footer.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "sidebar"
+  ],
+  "files": [
+    {
+      "name": "sidebar-3",
+      "source": "src/blocks/sidebar-3.tsx",
+      "target": "components/blocks/sidebar-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "sidebar"
+      }
+    ]
+  }
+}

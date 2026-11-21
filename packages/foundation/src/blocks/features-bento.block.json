@@ -1,0 +1,75 @@
+{
+  "name": "features-bento",
+  "title": "Bento feature grid",
+  "description": "Five-card bento grid with live visuals: integration beams, orbiting icons, a chart, a tag marquee and a globe.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--brand",
+    "--brand-foreground",
+    "--card",
+    "--chart-3",
+    "--font-sans",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-lg",
+    "--shadow-md",
+    "--shadow-sm",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "animated-beam",
+    "bento-grid",
+    "blur-fade",
+    "globe",
+    "marquee",
+    "number-ticker",
+    "orbiting-circles"
+  ],
+  "files": [
+    {
+      "name": "features-bento",
+      "source": "src/blocks/features-bento.tsx",
+      "target": "components/blocks/features-bento.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "animated-beam"
+      },
+      {
+        "name": "bento-grid"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "globe"
+      },
+      {
+        "name": "marquee"
+      },
+      {
+        "name": "number-ticker"
+      },
+      {
+        "name": "orbiting-circles"
+      }
+    ]
+  }
+}

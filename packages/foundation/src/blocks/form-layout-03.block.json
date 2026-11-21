@@ -1,0 +1,59 @@
+{
+  "name": "form-layout-03",
+  "title": "Form with Checkbox Settings",
+  "description": "A form with checkbox settings block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "checkbox",
+    "field",
+    "input",
+    "select",
+    "separator",
+    "textarea"
+  ],
+  "files": [
+    {
+      "name": "form-layout-03",
+      "source": "src/blocks/form-layout-03.tsx",
+      "target": "components/blocks/form-layout-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "select"
+      },
+      {
+        "name": "separator"
+      },
+      {
+        "name": "textarea"
+      }
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "command-menu-02",
+  "title": "Command Menu with Keyboard Shortcuts",
+  "description": "A command menu with keyboard shortcuts block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--radius",
+    "--shadow-lg"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "command",
+    "dialog",
+    "kbd"
+  ],
+  "files": [
+    {
+      "name": "command-menu-02",
+      "source": "src/blocks/command-menu-02.tsx",
+      "target": "components/blocks/command-menu-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "command"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "kbd"
+      }
+    ]
+  }
+}

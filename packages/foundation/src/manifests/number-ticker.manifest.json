@@ -1,0 +1,54 @@
+{
+  "name": "number-ticker",
+  "title": "Number Ticker",
+  "description": "A number that springs up in view.",
+  "category": "feedback",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "number-ticker",
+      "source": "src/templates/number-ticker.tsx",
+      "target": "components/ui/number-ticker.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A number that springs up in view.",
+    "useWhen": [
+      "Animated statistics."
+    ],
+    "doNotUseWhen": [
+      "Static figures."
+    ],
+    "rules": [
+      {
+        "id": "number-ticker-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

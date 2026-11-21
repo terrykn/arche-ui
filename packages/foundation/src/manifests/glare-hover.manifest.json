@@ -1,0 +1,52 @@
+{
+  "name": "glare-hover",
+  "title": "Glare Hover",
+  "description": "A diagonal glare on hover.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "glare-hover",
+      "source": "src/templates/glare-hover.tsx",
+      "target": "components/ui/glare-hover.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A diagonal glare on hover.",
+    "useWhen": [
+      "Button polish."
+    ],
+    "doNotUseWhen": [
+      "Flat design."
+    ],
+    "rules": [
+      {
+        "id": "glare-hover-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

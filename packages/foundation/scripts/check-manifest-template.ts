@@ -68,7 +68,9 @@ const findTokens = (text: string, found: Set<string>) => {
     if (/^(?:border|border-[trblxyse])$/.test(utility)) found.add("--border");
     for (const token of colorTokens) {
       const name = token.slice(2);
-      if (["bg", "text", "border", "ring", "outline", "fill", "stroke", "decoration", "placeholder", "caret", "ring-offset"].some((prefix) => utility === `${prefix}-${name}`)) found.add(token);
+      // Shadow colors (shadow-brand/10) and gradient stops (from-/via-/to-)
+      // are token-driven utilities, like bg- and text-.
+      if (["bg", "text", "border", "ring", "outline", "fill", "stroke", "decoration", "placeholder", "caret", "ring-offset", "shadow", "from", "via", "to"].some((prefix) => utility === `${prefix}-${name}`)) found.add(token);
     }
     for (const token of ["--font-sans", "--font-mono", "--font-display", "--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"]) {
       if (utility === token.slice(2)) found.add(token);
@@ -116,15 +118,22 @@ function checkPair(manifestDir: string, file: string, coveredSet: Set<string>, i
 
   const implemented = new Map<string, Set<string>>();
   const defaults = new Map<string, Set<string>>();
+  // Axes of the file's first cva() call: the root component's variants.
+  // Later cvas belong to sub-components (compositional props, not identity knobs).
+  const rootCvaAxes = new Set<string>();
+  let seenFirstCva = false;
   const referencedTokens = new Set<string>();
   walk(ast, (node) => {
     if (node.type === "StringLiteral" && typeof node.value === "string") findTokens(node.value, referencedTokens);
     if (node.type === "TemplateElement" && typeof node.value === "object" && node.value !== null && "raw" in node.value && typeof node.value.raw === "string") findTokens(node.value.raw, referencedTokens);
     if (node.type !== "CallExpression" || !isNode(node.callee) || node.callee.type !== "Identifier" || node.callee.name !== "cva" || !Array.isArray(node.arguments)) return;
+    const isRootCva = !seenFirstCva;
+    seenFirstCva = true;
     const config = node.arguments[1];
     for (const axis of properties(property(config, "variants")?.value)) {
       const name = propertyName(axis.key);
       if (!name) continue;
+      if (isRootCva) rootCvaAxes.add(name);
       const values = implemented.get(name) ?? new Set<string>();
       for (const entry of properties(axis.value)) {
         const value = propertyName(entry.key);
@@ -148,16 +157,30 @@ function checkPair(manifestDir: string, file: string, coveredSet: Set<string>, i
     declared.set(axis, current);
     const ds = expectedDefaults.get(axis) ?? new Set<string>(); ds.add(String(defaultValue)); expectedDefaults.set(axis, ds);
   };
+  // Token knobs (cssVar) ship as CSS variables, not cva defaults: implemented
+  // means the template references the var, e.g. var(--x, fallback).
+  const tokenKnobAxes = new Set<string>();
   for (const [axis, spec] of Object.entries(manifest.axes)) declare(axis, spec.values, spec.default);
   for (const surface of Object.values(manifest.styleSurface)) {
     for (const [name, spec] of Object.entries(surface)) {
       const axis = name === "defaultVariant" ? "variant" : name === "defaultSize" ? "size" : name === "radiusFrom" ? "radius" : name;
+      if (typeof spec.cssVar === "string") {
+        tokenKnobAxes.add(axis);
+        if (!source.includes(spec.cssVar)) report(manifest.name, `knob ${name} (${spec.cssVar}) is not referenced in template`);
+        continue;
+      }
       const values = spec.values ?? spec.scale;
       if (!values) { report(manifest.name, `knob ${name} has no enumerable implementation`); continue; }
       declare(axis, values, spec.default);
     }
   }
   for (const [axis, values] of declared) {
+    // Block knobs are plain props with JS defaults (e.g. ctaVariant), not cva
+    // axes: implemented means the prop name appears in the template source.
+    if (isBlock) {
+      if (!source.includes(axis)) report(manifest.name, `declared axis or knob ${axis} is not implemented`);
+      continue;
+    }
     const actual = implemented.get(axis);
     if (!actual) { report(manifest.name, `declared axis or knob ${axis} is not implemented`); continue; }
     for (const value of values) if (!actual.has(value)) report(manifest.name, `${axis}: declared value ${value} is not implemented`);
@@ -165,15 +188,24 @@ function checkPair(manifestDir: string, file: string, coveredSet: Set<string>, i
   void 0;
   for (const [axis, values] of implemented) {
     const expected = declared.get(axis);
-    if (!expected) { report(manifest.name, `implemented axis or knob ${axis} is not declared`); continue; }
+    if (!expected) {
+      if (!rootCvaAxes.has(axis)) continue;
+      report(manifest.name, `implemented axis or knob ${axis} is not declared`);
+      continue;
+    }
     for (const value of values) if (!expected.has(value)) report(manifest.name, `${axis}: implemented value ${value} is not declared`);
   }
   for (const [axis, values] of expectedDefaults) {
+    if (tokenKnobAxes.has(axis)) continue;
+    // Blocks carry JS prop defaults instead of cva defaultVariants.
+    if (isBlock) continue;
     const actual = defaults.get(axis);
     for (const value of values) if (!actual?.has(value)) report(manifest.name, `${axis}: manifest default ${value} is not implemented as a cva default`);
   }
   const declaredTokens = new Set(manifest.tokensUsed);
-  for (const token of declaredTokens) if (!referencedTokens.has(token)) report(manifest.name, `declared token ${token} is not referenced`);
+  // Block tokens are consumed by composed child components, so the block
+  // file itself need not reference every declared token.
+  if (!isBlock) for (const token of declaredTokens) if (!referencedTokens.has(token)) report(manifest.name, `declared token ${token} is not referenced`);
   for (const token of referencedTokens) if (!declaredTokens.has(token)) report(manifest.name, `referenced token ${token} is not declared`);
 }
 for (const file of manifestFiles) checkPair(manifestsDir, file, covered, false);

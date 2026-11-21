@@ -1,0 +1,43 @@
+{
+  "name": "logos-marquee",
+  "title": "Logo marquee",
+  "description": "A “Trusted by” line over a scrolling strip of grayscale logos that take their colour on hover.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--brand",
+    "--chart-3",
+    "--font-mono",
+    "--foreground",
+    "--motion-normal",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "marquee"
+  ],
+  "files": [
+    {
+      "name": "logos-marquee",
+      "source": "src/blocks/logos-marquee.tsx",
+      "target": "components/blocks/logos-marquee.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "marquee"
+      }
+    ]
+  }
+}

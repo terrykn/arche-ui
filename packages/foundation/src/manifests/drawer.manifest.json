@@ -1,0 +1,156 @@
+{
+  "name": "drawer",
+  "title": "Drawer",
+  "description": "A draggable edge panel.",
+  "category": "overlay",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "vaul",
+    "parts": [
+      "Root",
+      "Trigger",
+      "Portal",
+      "Close",
+      "Overlay",
+      "Content",
+      "Title",
+      "Description"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "trigger",
+      "part": "Trigger",
+      "required": false
+    },
+    {
+      "name": "portal",
+      "part": "Portal",
+      "required": false
+    },
+    {
+      "name": "close",
+      "part": "Close",
+      "required": false
+    },
+    {
+      "name": "overlay",
+      "part": "Overlay",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Content",
+      "required": false
+    },
+    {
+      "name": "header",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "footer",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "title",
+      "part": "Title",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "Description",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "handleWidth": {
+        "type": "enum",
+        "values": [
+          "64px",
+          "80px",
+          "100px",
+          "120px"
+        ],
+        "default": "100px",
+        "cssVar": "--drawer-handle-width"
+      },
+      "sideWidth": {
+        "type": "enum",
+        "values": [
+          "16rem",
+          "18rem",
+          "20rem",
+          "24rem",
+          "28rem",
+          "32rem",
+          "36rem",
+          "42rem",
+          "56rem"
+        ],
+        "default": "24rem",
+        "cssVar": "--drawer-side-width"
+      },
+      "overlayOpacity": {
+        "type": "enum",
+        "values": [
+          "20%",
+          "30%",
+          "40%",
+          "50%",
+          "60%",
+          "70%"
+        ],
+        "default": "40%",
+        "cssVar": "--drawer-overlay-opacity"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "vaul"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "drawer",
+      "source": "src/templates/drawer.tsx",
+      "target": "components/ui/drawer.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A draggable edge panel.",
+    "useWhen": [
+      "Mobile friendly secondary tasks."
+    ],
+    "doNotUseWhen": [
+      "Content must stay visible."
+    ],
+    "rules": [
+      {
+        "id": "drawer-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

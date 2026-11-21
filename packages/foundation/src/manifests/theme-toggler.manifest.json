@@ -1,0 +1,74 @@
+{
+  "name": "theme-toggler",
+  "title": "Theme Toggler",
+  "description": "A light and dark mode switch.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "buttonSize": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.25rem",
+        "cssVar": "--theme-toggler-button-size"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--muted",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "theme-toggler",
+      "source": "src/templates/theme-toggler.tsx",
+      "target": "components/ui/theme-toggler.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A light and dark mode switch.",
+    "useWhen": [
+      "Users control the theme."
+    ],
+    "doNotUseWhen": [
+      "The theme is fixed."
+    ],
+    "rules": [
+      {
+        "id": "theme-toggler-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

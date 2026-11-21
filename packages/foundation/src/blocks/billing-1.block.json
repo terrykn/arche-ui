@@ -1,0 +1,72 @@
+{
+  "name": "billing-1",
+  "title": "Current Plan Summary Card",
+  "description": "Current-plan billing card with monthly price, renewal date, a seat usage bar, and a dialog of radio tiers for switching plans.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "alert-dialog",
+    "badge",
+    "button",
+    "card",
+    "field",
+    "progress",
+    "radio-group",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "billing-1",
+      "source": "src/blocks/billing-1.tsx",
+      "target": "components/blocks/billing-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "alert-dialog"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "progress"
+      },
+      {
+        "name": "radio-group"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "name": "particles",
+  "title": "Particles",
+  "description": "A drifting twinkling particle canvas.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "particles",
+      "source": "src/templates/particles.tsx",
+      "target": "components/ui/particles.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A drifting twinkling particle canvas.",
+    "useWhen": [
+      "Ambient depth."
+    ],
+    "doNotUseWhen": [
+      "Performance budgets."
+    ],
+    "rules": [
+      {
+        "id": "particles-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

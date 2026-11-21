@@ -1,0 +1,60 @@
+{
+  "name": "file-upload-1",
+  "title": "Dropzone With Upload Progress",
+  "description": "File upload card with a drag-and-drop dropzone and an attachment list showing a spinner per file while uploading and a check when finished.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "attachment",
+    "button",
+    "card",
+    "spinner"
+  ],
+  "files": [
+    {
+      "name": "file-upload-1",
+      "source": "src/blocks/file-upload-1.tsx",
+      "target": "components/blocks/file-upload-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "attachment"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "spinner"
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "scroll-velocity",
+  "title": "Scroll Velocity",
+  "description": "A marquee following scroll speed.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "scroll-velocity",
+      "source": "src/templates/scroll-velocity.tsx",
+      "target": "components/ui/scroll-velocity.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A marquee following scroll speed.",
+    "useWhen": [
+      "Playful tickers."
+    ],
+    "doNotUseWhen": [
+      "Readable banners."
+    ],
+    "rules": [
+      {
+        "id": "scroll-velocity-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

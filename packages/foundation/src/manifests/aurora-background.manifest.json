@@ -1,0 +1,52 @@
+{
+  "name": "aurora-background",
+  "title": "Aurora Background",
+  "description": "A drifting aurora gradient backdrop.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "aurora-background",
+      "source": "src/templates/aurora-background.tsx",
+      "target": "components/ui/aurora-background.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A drifting aurora gradient backdrop.",
+    "useWhen": [
+      "Atmospheric heroes."
+    ],
+    "doNotUseWhen": [
+      "Dense dashboards."
+    ],
+    "rules": [
+      {
+        "id": "aurora-background-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

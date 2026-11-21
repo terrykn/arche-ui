@@ -1,0 +1,68 @@
+{
+  "name": "chart",
+  "title": "Chart",
+  "description": "A theme aware chart wrapper.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "ResponsiveContainer",
+      "Tooltip",
+      "DefaultTooltipContentProps",
+      "Legend",
+      "DefaultLegendContentProps"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "ResponsiveContainer",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--border",
+    "--radius",
+    "--border-width",
+    "--font-mono",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "recharts"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "chart",
+      "source": "src/templates/chart.tsx",
+      "target": "components/ui/chart.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A theme aware chart wrapper.",
+    "useWhen": [
+      "Showing trends."
+    ],
+    "doNotUseWhen": [
+      "Single exact values."
+    ],
+    "rules": [
+      {
+        "id": "chart-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

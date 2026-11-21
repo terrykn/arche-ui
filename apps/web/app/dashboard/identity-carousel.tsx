@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel } from "@/components/carousel";
-import { tokenVars } from "@/lib/fixtures-client";
 
 export type IdentityRow = {
   id: string;
@@ -15,26 +14,12 @@ export type IdentityRow = {
   payload: unknown;
 };
 
-/** The library's own tokens as CSS vars (dark by default); empty when unsaved. */
-function libraryVars(payload: unknown, mode: "light" | "dark"): Record<string, string> {
-  const tokens = (payload as { tokens?: unknown } | null)?.tokens;
-  if (!tokens || typeof tokens !== "object") return {};
-  return tokenVars(
-    { tokens: tokens as Record<string, Record<string, { $type: string; $value: unknown }>> },
-    mode,
-  );
-}
-
 export function IdentityCarousel({ libraries }: { libraries: IdentityRow[] }) {
   return (
     <div className="pt-6">
       <Carousel slideClassName="w-64 shrink-0 snap-start" label="Your identities">
         {libraries.map((library) => (
-          <Card
-            key={library.id}
-            style={libraryVars(library.payload, "dark")}
-            className="dark relative min-h-40 overflow-hidden font-sans"
-          >
+          <Card key={library.id} className="relative min-h-40 overflow-hidden">
             <CardHeader>
               <CardTitle className="font-display">
                 <Link

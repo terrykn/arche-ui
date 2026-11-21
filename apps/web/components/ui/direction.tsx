@@ -1,0 +1,24 @@
+/** GENERATED from the Default identity (fixtures/identity.default.json).
+ * Do not hand-edit — re-run: pnpm --filter web sync-components */
+"use client"
+
+import * as React from "react"
+import * as Direction from "@radix-ui/react-direction"
+
+function DirectionProvider({
+  dir,
+  direction,
+  children,
+}: React.ComponentProps<typeof Direction.DirectionProvider> & {
+  direction?: React.ComponentProps<typeof Direction.DirectionProvider>["dir"]
+}) {
+  return (
+    <Direction.DirectionProvider dir={direction ?? dir}>
+      {children}
+    </Direction.DirectionProvider>
+  )
+}
+
+const useDirection = Direction.useDirection
+
+export { DirectionProvider, useDirection }

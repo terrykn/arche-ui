@@ -38,6 +38,50 @@ function* walk(dir: string): Generator<string> {
   }
 }
 
+// Strip var(...) and Tailwind v4 shorthand (--token,...) spans (balanced
+// parens). Fallback literals inside them are token defaults emitted by the
+// registry, not hard-coded values; color-mix() over var(--token)
+// references only semantic tokens.
+function stripVars(line: string): string {
+  let out = "";
+  let i = 0;
+  for (;;) {
+    const varAt = line.indexOf("var(", i);
+    const shortAt = line.indexOf("(--", i);
+    const at = varAt === -1 ? shortAt : shortAt === -1 ? varAt : Math.min(varAt, shortAt);
+    if (at === -1) return out + line.slice(i);
+    out += line.slice(i, at);
+    const openLen = line.startsWith("var(", at) ? 4 : 1;
+    let depth = 0;
+    let j = at + openLen;
+    for (; j < line.length; j++) {
+      if (line[j] === "(") depth++;
+      else if (line[j] === ")") {
+        if (depth === 0) break;
+        depth--;
+      }
+    }
+    out += "var()";
+    i = j + 1;
+  }
+}
+
+function colorArgsOf(line: string, from: number): string {
+  let depth = 0;
+  let j = from;
+  for (; j < line.length; j++) {
+    if (line[j] === "(") depth++;
+    else if (line[j] === ")") {
+      depth--;
+      if (depth === 0) return line.slice(from, j + 1);
+    }
+  }
+  return line.slice(from);
+}
+
+const RAW_NESTED_FN_RE = /\b(?:rgb|rgba|hsl|hsla|lab|lch|oklab|oklch)\s*\(/;
+const RAW_COLOR_FN_GLOBAL_RE = new RegExp(RAW_COLOR_FN_RE.source, "g");
+
 const defects: Defect[] = [];
 let checked = 0;
 
@@ -52,9 +96,14 @@ for (const file of walk(dir)) {
     if (HEX_RE.test(line)) {
       defects.push({ file: relativePath, line: lineNumber, text: line.trim(), reason: "raw hex color" });
     }
-    if (RAW_COLOR_FN_RE.test(line)) {
-      defects.push({ file: relativePath, line: lineNumber, text: line.trim(), reason: "raw color function where a token class is required" });
-    }    for (const match of line.matchAll(PX_RE)) {
+    const stripped = stripVars(line);
+    for (const match of stripped.matchAll(RAW_COLOR_FN_GLOBAL_RE)) {
+      const args = colorArgsOf(stripped, (match.index ?? 0) + match[0].length - 1);
+      if (HEX_RE.test(args) || RAW_NESTED_FN_RE.test(args)) {
+        defects.push({ file: relativePath, line: lineNumber, text: line.trim(), reason: "raw color function where a token class is required" });
+      }
+    }
+    for (const match of stripped.matchAll(PX_RE)) {
       const value = match[1];
       if (value === "0" || value === "0.0") {
         continue; // whitelisted: zero values only (border widths use --border-width)

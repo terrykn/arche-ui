@@ -1,0 +1,52 @@
+{
+  "name": "vortex",
+  "title": "Vortex",
+  "description": "Particles spiralling to the center.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "vortex",
+      "source": "src/templates/vortex.tsx",
+      "target": "components/ui/vortex.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Particles spiralling to the center.",
+    "useWhen": [
+      "Hypnotic loaders."
+    ],
+    "doNotUseWhen": [
+      "Content sections."
+    ],
+    "rules": [
+      {
+        "id": "vortex-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

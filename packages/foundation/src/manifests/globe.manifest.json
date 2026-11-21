@@ -1,0 +1,57 @@
+{
+  "name": "globe",
+  "title": "Globe",
+  "description": "A dotted canvas globe with markers and arcs.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--brand",
+    "--muted-foreground",
+    "--ring"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "globe",
+      "source": "src/templates/globe.tsx",
+      "target": "components/ui/globe.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A dotted canvas globe with markers and arcs.",
+    "useWhen": [
+      "Global presence visuals."
+    ],
+    "doNotUseWhen": [
+      "Accurate maps."
+    ],
+    "rules": [
+      {
+        "id": "globe-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

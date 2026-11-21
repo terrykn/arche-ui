@@ -1,0 +1,54 @@
+{
+  "name": "blur-fade",
+  "title": "Blur Fade",
+  "description": "Blur fade and drift entrances.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "blur-fade",
+      "source": "src/templates/blur-fade.tsx",
+      "target": "components/ui/blur-fade.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Blur fade and drift entrances.",
+    "useWhen": [
+      "Scroll entrances."
+    ],
+    "doNotUseWhen": [
+      "Instant content."
+    ],
+    "rules": [
+      {
+        "id": "blur-fade-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

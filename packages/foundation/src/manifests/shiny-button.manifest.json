@@ -1,0 +1,62 @@
+{
+  "name": "shiny-button",
+  "title": "Shiny Button",
+  "description": "A button with a moving shine.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--primary",
+    "--radius",
+    "--border-width",
+    "--shadow-sm",
+    "--shadow-lg",
+    "--motion-normal"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "shiny-button",
+      "source": "src/templates/shiny-button.tsx",
+      "target": "components/ui/shiny-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button with a moving shine.",
+    "useWhen": [
+      "Promoting a feature."
+    ],
+    "doNotUseWhen": [
+      "Routine form submission."
+    ],
+    "rules": [
+      {
+        "id": "shiny-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

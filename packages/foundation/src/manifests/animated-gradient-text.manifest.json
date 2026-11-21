@@ -1,0 +1,52 @@
+{
+  "name": "animated-gradient-text",
+  "title": "Animated Gradient Text",
+  "description": "A brand gradient sweeping through text.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-gradient-text",
+      "source": "src/templates/animated-gradient-text.tsx",
+      "target": "components/ui/animated-gradient-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A brand gradient sweeping through text.",
+    "useWhen": [
+      "Hero headlines."
+    ],
+    "doNotUseWhen": [
+      "Body copy."
+    ],
+    "rules": [
+      {
+        "id": "animated-gradient-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

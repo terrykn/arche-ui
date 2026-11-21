@@ -1,0 +1,59 @@
+{
+  "name": "warp-background",
+  "title": "Warp Background",
+  "description": "A time warp card background.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "warp-background",
+      "source": "src/templates/warp-background.tsx",
+      "target": "components/ui/warp-background.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A time warp card background.",
+    "useWhen": [
+      "Sci-fi cards."
+    ],
+    "doNotUseWhen": [
+      "Readable panels."
+    ],
+    "rules": [
+      {
+        "id": "warp-background-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

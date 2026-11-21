@@ -1,0 +1,52 @@
+{
+  "name": "dialog-08",
+  "title": "Dialog with Email and Password Fields",
+  "description": "A dialog with email and password fields block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button",
+    "dialog",
+    "input"
+  ],
+  "files": [
+    {
+      "name": "dialog-08",
+      "source": "src/blocks/dialog-08.tsx",
+      "target": "components/blocks/dialog-08.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      },
+      {
+        "name": "input"
+      }
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "hero-aurora",
+  "title": "Aurora hero",
+  "description": "Centered hero with a drifting aurora, dotted backdrop, announcement pill and staggered copy.",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--foreground",
+    "--muted-foreground",
+    "--primary"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "animated-gradient-text",
+    "aurora-background",
+    "blur-fade",
+    "grid-pattern",
+    "shimmer-button"
+  ],
+  "files": [
+    {
+      "name": "hero-aurora",
+      "source": "src/blocks/hero-aurora.tsx",
+      "target": "components/blocks/hero-aurora.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "animated-gradient-text"
+      },
+      {
+        "name": "aurora-background"
+      },
+      {
+        "name": "blur-fade"
+      },
+      {
+        "name": "grid-pattern"
+      },
+      {
+        "name": "shimmer-button"
+      }
+    ]
+  }
+}

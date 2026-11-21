@@ -1,0 +1,49 @@
+{
+  "name": "table-03",
+  "title": "Table with Filters",
+  "description": "A table with filters block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--card",
+    "--font-mono",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "badge",
+    "select",
+    "table"
+  ],
+  "files": [
+    {
+      "name": "table-03",
+      "source": "src/blocks/table-03.tsx",
+      "target": "components/blocks/table-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "select"
+      },
+      {
+        "name": "table"
+      }
+    ]
+  }
+}

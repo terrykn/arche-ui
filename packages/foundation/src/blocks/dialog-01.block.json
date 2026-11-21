@@ -1,0 +1,36 @@
+{
+  "name": "dialog-01",
+  "title": "Dialog Confirmation",
+  "description": "A dialog confirmation block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "dialog"
+  ],
+  "files": [
+    {
+      "name": "dialog-01",
+      "source": "src/blocks/dialog-01.tsx",
+      "target": "components/blocks/dialog-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dialog"
+      }
+    ]
+  }
+}

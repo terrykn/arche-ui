@@ -1,0 +1,77 @@
+{
+  "name": "file-drop",
+  "title": "File Drop",
+  "description": "A drag and drop upload zone.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "zonePadding": {
+        "type": "enum",
+        "values": [
+          "1.5rem",
+          "2rem",
+          "2.5rem",
+          "3rem"
+        ],
+        "default": "2.5rem",
+        "cssVar": "--file-drop-zone-padding"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--card",
+    "--brand",
+    "--muted",
+    "--muted-foreground",
+    "--border",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-lg",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "file-drop",
+      "source": "src/templates/file-drop.tsx",
+      "target": "components/ui/file-drop.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A drag and drop upload zone.",
+    "useWhen": [
+      "Users upload local files."
+    ],
+    "doNotUseWhen": [
+      "Files come from an existing library."
+    ],
+    "rules": [
+      {
+        "id": "file-drop-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

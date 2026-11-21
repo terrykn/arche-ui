@@ -1,0 +1,61 @@
+{
+  "name": "grid-pattern",
+  "title": "Grid & Dot Pattern",
+  "description": "SVG grid and dot backdrops.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "dot-pattern",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--muted",
+    "--muted-foreground",
+    "--border"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "grid-pattern",
+      "source": "src/templates/grid-pattern.tsx",
+      "target": "components/ui/grid-pattern.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "SVG grid and dot backdrops.",
+    "useWhen": [
+      "Technical texture."
+    ],
+    "doNotUseWhen": [
+      "Plain surfaces."
+    ],
+    "rules": [
+      {
+        "id": "grid-pattern-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

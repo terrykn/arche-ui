@@ -1,0 +1,58 @@
+{
+  "name": "floating-navbar",
+  "title": "Floating Navbar",
+  "description": "A navbar that hides on scroll down and returns on scroll up.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--border-width",
+    "--shadow-lg",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "floating-navbar",
+      "source": "src/templates/floating-navbar.tsx",
+      "target": "components/ui/floating-navbar.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A navbar that hides on scroll down and returns on scroll up.",
+    "useWhen": [
+      "Saving vertical space."
+    ],
+    "doNotUseWhen": [
+      "Always visible navigation."
+    ],
+    "rules": [
+      {
+        "id": "floating-navbar-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "onboarding-04",
+  "title": "Onboarding Accordion",
+  "description": "A onboarding accordion block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--ring",
+    "--shadow-sm"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "utils",
+    "accordion",
+    "button"
+  ],
+  "files": [
+    {
+      "name": "onboarding-04",
+      "source": "src/blocks/onboarding-04.tsx",
+      "target": "components/blocks/onboarding-04.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "accordion"
+      },
+      {
+        "name": "button"
+      }
+    ]
+  }
+}

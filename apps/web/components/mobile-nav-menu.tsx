@@ -58,13 +58,6 @@ export function MobileNavMenu({
         </Button>
       </DialogTrigger>
       <DialogContent
-        size="full"
-        // The overlay defaults to --foreground, which is near-white in dark
-        // mode; at 60% it greyed out the whole panel. --muted keeps the veil
-        // dark so the primary text stays crisp.
-        overlayBackground="--muted"
-        overlayOpacity={0.6}
-        backdropBlur="lg"
         className="flex h-dvh w-screen max-w-none flex-col gap-0 rounded-none border-0 bg-background/85 p-0 backdrop-blur-2xl [&>button[data-slot=dialog-close]]:hidden"
       >
         <DialogDescription className="sr-only">

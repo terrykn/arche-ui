@@ -1,0 +1,59 @@
+{
+  "name": "evervault-card",
+  "title": "Evervault Card",
+  "description": "Characters shuffling through a pointer mask.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--card-foreground",
+    "--border-width",
+    "--font-mono",
+    "--shadow-xl",
+    "--motion-normal"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "evervault-card",
+      "source": "src/templates/evervault-card.tsx",
+      "target": "components/ui/evervault-card.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Characters shuffling through a pointer mask.",
+    "useWhen": [
+      "Security features."
+    ],
+    "doNotUseWhen": [
+      "Plain cards."
+    ],
+    "rules": [
+      {
+        "id": "evervault-card-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

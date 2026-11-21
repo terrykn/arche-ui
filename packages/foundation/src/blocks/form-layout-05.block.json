@@ -1,0 +1,70 @@
+{
+  "name": "form-layout-05",
+  "title": "Form with Plan Selection",
+  "description": "A form with plan selection block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "badge",
+    "button",
+    "card",
+    "field",
+    "input",
+    "radio-group",
+    "select",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "form-layout-05",
+      "source": "src/blocks/form-layout-05.tsx",
+      "target": "components/blocks/form-layout-05.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "radio-group"
+      },
+      {
+        "name": "select"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

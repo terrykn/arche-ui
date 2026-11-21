@@ -1,0 +1,52 @@
+{
+  "name": "onboarding-07",
+  "title": "Onboarding Deploy Pipeline",
+  "description": "A onboarding deploy pipeline block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "utils",
+    "accordion",
+    "button",
+    "progress"
+  ],
+  "files": [
+    {
+      "name": "onboarding-07",
+      "source": "src/blocks/onboarding-07.tsx",
+      "target": "components/blocks/onboarding-07.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "accordion"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "progress"
+      }
+    ]
+  }
+}

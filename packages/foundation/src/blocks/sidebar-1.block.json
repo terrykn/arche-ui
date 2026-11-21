@@ -1,0 +1,65 @@
+{
+  "name": "sidebar-1",
+  "title": "Dashboard Rail With Stats",
+  "description": "App layout with a collapsible icon sidebar of grouped navigation beside a dashboard inset of stat tiles and a project listing.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--motion-fast",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--shadow-sm"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "button",
+    "dropdown-menu",
+    "input",
+    "sidebar"
+  ],
+  "files": [
+    {
+      "name": "sidebar-1",
+      "source": "src/blocks/sidebar-1.tsx",
+      "target": "components/blocks/sidebar-1.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "avatar"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "dropdown-menu"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "sidebar"
+      }
+    ]
+  }
+}

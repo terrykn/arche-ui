@@ -1,0 +1,56 @@
+{
+  "name": "dotted-map",
+  "title": "Dotted Map",
+  "description": "A dotted world map.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand"
+  ],
+  "dependencies": [
+    "svg-dotted-map"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "dotted-map",
+      "source": "src/templates/dotted-map.tsx",
+      "target": "components/ui/dotted-map.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A dotted world map.",
+    "useWhen": [
+      "Geographic coverage at a glance."
+    ],
+    "doNotUseWhen": [
+      "Precise boundaries."
+    ],
+    "rules": [
+      {
+        "id": "dotted-map-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

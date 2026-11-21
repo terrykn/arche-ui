@@ -1,0 +1,112 @@
+{
+  "name": "bubble",
+  "title": "Bubble",
+  "description": "A speech bubble with reactions.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "@radix-ui/react-slot",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "reactions",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "variant": {
+      "values": [
+        "default",
+        "secondary",
+        "muted",
+        "tinted",
+        "outline",
+        "ghost",
+        "destructive"
+      ],
+      "default": "default"
+    },
+    "side": {
+      "values": [
+        "top",
+        "bottom"
+      ],
+      "default": "bottom"
+    },
+    "align": {
+      "values": [
+        "start",
+        "end"
+      ],
+      "default": "end"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--card",
+    "--foreground",
+    "--primary",
+    "--primary-foreground",
+    "--secondary",
+    "--secondary-foreground",
+    "--destructive",
+    "--muted",
+    "--border",
+    "--input",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "@radix-ui/react-slot",
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "bubble",
+      "source": "src/templates/bubble.tsx",
+      "target": "components/ui/bubble.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A speech bubble with reactions.",
+    "useWhen": [
+      "Chat excerpts."
+    ],
+    "doNotUseWhen": [
+      "Formal content."
+    ],
+    "rules": [
+      {
+        "id": "bubble-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

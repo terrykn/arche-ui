@@ -1,0 +1,49 @@
+{
+  "name": "login-01",
+  "title": "Login with Email and Google",
+  "description": "A login with email and google block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--muted-foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "input",
+    "label",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "login-01",
+      "source": "src/blocks/login-01.tsx",
+      "target": "components/blocks/login-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

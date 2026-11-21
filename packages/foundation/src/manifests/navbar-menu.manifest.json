@@ -1,0 +1,65 @@
+{
+  "name": "navbar-menu",
+  "title": "Navbar Menu",
+  "description": "A hover menu with a morphing pill and panel.",
+  "category": "navigation",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--popover",
+    "--foreground",
+    "--popover-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--shadow-xl"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "navbar-menu",
+      "source": "src/templates/navbar-menu.tsx",
+      "target": "components/ui/navbar-menu.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A hover menu with a morphing pill and panel.",
+    "useWhen": [
+      "Rich site navigation."
+    ],
+    "doNotUseWhen": [
+      "Simple link lists."
+    ],
+    "rules": [
+      {
+        "id": "navbar-menu-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

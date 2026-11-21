@@ -1,0 +1,43 @@
+{
+  "name": "charts-4",
+  "title": "Monthly Visitors Line",
+  "description": "Line chart card plotting unique visitors month by month, with a grid, labeled axes, and a hover tooltip on each point.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--primary",
+    "--ring"
+  ],
+  "dependencies": [
+    "recharts"
+  ],
+  "registryDependencies": [
+    "card",
+    "chart"
+  ],
+  "files": [
+    {
+      "name": "charts-4",
+      "source": "src/blocks/charts-4.tsx",
+      "target": "components/blocks/charts-4.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      },
+      {
+        "name": "chart"
+      }
+    ]
+  }
+}

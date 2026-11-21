@@ -1,0 +1,52 @@
+{
+  "name": "file-upload-06",
+  "title": "File Upload with Status Sections",
+  "description": "A file upload with status sections block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--font-mono",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "card",
+    "progress",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "file-upload-06",
+      "source": "src/blocks/file-upload-06.tsx",
+      "target": "components/blocks/file-upload-06.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "progress"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

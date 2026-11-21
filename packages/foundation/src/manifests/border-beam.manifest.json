@@ -1,0 +1,58 @@
+{
+  "name": "border-beam",
+  "title": "Border Beam",
+  "description": "Light traveling around a border.",
+  "category": "cards",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--chart-3",
+    "--border-width"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "border-beam",
+      "source": "src/templates/border-beam.tsx",
+      "target": "components/ui/border-beam.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Light traveling around a border.",
+    "useWhen": [
+      "Highlighting panels."
+    ],
+    "doNotUseWhen": [
+      "Quiet cards."
+    ],
+    "rules": [
+      {
+        "id": "border-beam-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

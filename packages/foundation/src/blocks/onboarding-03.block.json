@@ -1,0 +1,46 @@
+{
+  "name": "onboarding-03",
+  "title": "Onboarding Steps with Progress",
+  "description": "A onboarding steps with progress block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--primary",
+    "--radius",
+    "--ring"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "utils",
+    "progress"
+  ],
+  "files": [
+    {
+      "name": "onboarding-03",
+      "source": "src/blocks/onboarding-03.tsx",
+      "target": "components/blocks/onboarding-03.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "progress"
+      }
+    ]
+  }
+}

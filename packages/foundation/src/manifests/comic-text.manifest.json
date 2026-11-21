@@ -1,0 +1,57 @@
+{
+  "name": "comic-text",
+  "title": "Comic Text",
+  "description": "A playful comic text animation.",
+  "category": "typography",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--destructive",
+    "--brand"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "comic-text",
+      "source": "src/templates/comic-text.tsx",
+      "target": "components/ui/comic-text.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A playful comic text animation.",
+    "useWhen": [
+      "Playful headlines."
+    ],
+    "doNotUseWhen": [
+      "Formal documents."
+    ],
+    "rules": [
+      {
+        "id": "comic-text-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "name": "ripple-button",
+  "title": "Ripple Button",
+  "description": "A button that ripples from the press point.",
+  "category": "actions",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "2.75rem",
+        "cssVar": "--ripple-button-height"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--muted",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "ripple-button",
+      "source": "src/templates/ripple-button.tsx",
+      "target": "components/ui/ripple-button.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A button that ripples from the press point.",
+    "useWhen": [
+      "Press feedback matters."
+    ],
+    "doNotUseWhen": [
+      "Motion would distract."
+    ],
+    "rules": [
+      {
+        "id": "ripple-button-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

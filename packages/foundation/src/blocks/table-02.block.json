@@ -1,0 +1,51 @@
+{
+  "name": "table-02",
+  "title": "Table with Actions",
+  "description": "A table with actions block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--border-width",
+    "--card",
+    "--destructive",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "table",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "name": "table-02",
+      "source": "src/blocks/table-02.tsx",
+      "target": "components/blocks/table-02.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "table"
+      },
+      {
+        "name": "tooltip"
+      }
+    ]
+  }
+}

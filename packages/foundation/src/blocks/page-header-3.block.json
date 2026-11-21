@@ -1,0 +1,50 @@
+{
+  "name": "page-header-3",
+  "title": "Header With Section Tabs",
+  "description": "Settings page header with a title, description, primary action, and Overview, Members, and Billing tabs that switch the content below.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "tabs"
+  ],
+  "files": [
+    {
+      "name": "page-header-3",
+      "source": "src/blocks/page-header-3.tsx",
+      "target": "components/blocks/page-header-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "tabs"
+      }
+    ]
+  }
+}

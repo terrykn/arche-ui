@@ -1,0 +1,78 @@
+{
+  "name": "auth-3",
+  "title": "Sign-Up With Plan Sidebar",
+  "description": "Sign-up form paired with a plan sidebar listing Free, Pro, and Team tiers, first and last name fields, and a terms checkbox gating submit.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted",
+    "--muted-foreground",
+    "--radius"
+  ],
+  "dependencies": [
+    "sonner",
+    "zod"
+  ],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "card",
+    "checkbox",
+    "field",
+    "input",
+    "label",
+    "separator"
+  ],
+  "files": [
+    {
+      "name": "auth-3",
+      "source": "src/blocks/auth-3.tsx",
+      "target": "components/blocks/auth-3.tsx",
+      "type": "registry:block"
+    },
+    {
+      "name": "shared/icon-placeholder",
+      "source": "src/blocks/shared/icon-placeholder.tsx",
+      "target": "components/blocks/shared/icon-placeholder.tsx",
+      "type": "registry:lib"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "badge"
+      },
+      {
+        "name": "button"
+      },
+      {
+        "name": "card"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "field"
+      },
+      {
+        "name": "input"
+      },
+      {
+        "name": "label"
+      },
+      {
+        "name": "separator"
+      }
+    ]
+  }
+}

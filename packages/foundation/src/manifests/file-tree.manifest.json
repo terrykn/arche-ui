@@ -1,0 +1,60 @@
+{
+  "name": "file-tree",
+  "title": "File Tree",
+  "description": "A collapsible project structure tree.",
+  "category": "display",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--card",
+    "--muted",
+    "--muted-foreground",
+    "--radius",
+    "--border-width",
+    "--font-mono",
+    "--motion-fast"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "file-tree",
+      "source": "src/templates/file-tree.tsx",
+      "target": "components/ui/file-tree.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A collapsible project structure tree.",
+    "useWhen": [
+      "Documenting file layouts."
+    ],
+    "doNotUseWhen": [
+      "Deep navigation."
+    ],
+    "rules": [
+      {
+        "id": "file-tree-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

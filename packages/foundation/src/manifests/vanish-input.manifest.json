@@ -1,0 +1,89 @@
+{
+  "name": "vanish-input",
+  "title": "Vanish Input",
+  "description": "A search field with cycling placeholders.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {
+    "root": {
+      "height": {
+        "type": "enum",
+        "values": [
+          "2rem",
+          "2.25rem",
+          "2.5rem",
+          "2.75rem",
+          "3rem",
+          "3.5rem"
+        ],
+        "default": "3rem",
+        "cssVar": "--vanish-input-height"
+      },
+      "cornerShape": {
+        "type": "enum",
+        "values": [
+          "0px",
+          "0.375rem",
+          "0.625rem",
+          "1rem",
+          "9999px"
+        ],
+        "default": "9999px",
+        "cssVar": "--vanish-input-corner-shape"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--primary",
+    "--primary-foreground",
+    "--muted-foreground",
+    "--ring",
+    "--border-width"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "vanish-input",
+      "source": "src/templates/vanish-input.tsx",
+      "target": "components/ui/vanish-input.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A search field with cycling placeholders.",
+    "useWhen": [
+      "Suggesting example queries."
+    ],
+    "doNotUseWhen": [
+      "The placeholder carries required instructions."
+    ],
+    "rules": [
+      {
+        "id": "vanish-input-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

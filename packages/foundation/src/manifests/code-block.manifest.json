@@ -1,0 +1,124 @@
+{
+  "name": "code-block",
+  "title": "Code Block",
+  "description": "Code with copy button and diff lines.",
+  "category": "media",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "header",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "title",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "actions",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "copy-button",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "code",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "line",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "line-content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "footer",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "variant": {
+      "values": [
+        "default",
+        "destructive",
+        "added",
+        "removed",
+        "highlighted"
+      ],
+      "default": "default"
+    }
+  },
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--destructive",
+    "--muted",
+    "--muted-foreground",
+    "--input",
+    "--ring",
+    "--radius",
+    "--border-width",
+    "--font-sans",
+    "--font-mono"
+  ],
+  "dependencies": [
+    "class-variance-authority",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "code-block",
+      "source": "src/templates/code-block.tsx",
+      "target": "components/ui/code-block.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Code with copy button and diff lines.",
+    "useWhen": [
+      "Documentation snippets."
+    ],
+    "doNotUseWhen": [
+      "Prose."
+    ],
+    "rules": [
+      {
+        "id": "code-block-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

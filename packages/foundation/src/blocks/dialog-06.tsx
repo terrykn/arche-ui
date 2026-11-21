@@ -1,0 +1,81 @@
+"use client";
+
+'use client';
+
+import { useState } from 'react';
+
+import { Button } from "../templates/button.js";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../templates/dialog.js";
+import { Input } from "../templates/input.js";
+import { Label } from "../templates/label.js";
+import { Switch } from "../templates/switch.js";
+
+export default function Dialog06() {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <Dialog onOpenChange={setOpen} open={open}>
+      <DialogTrigger asChild><Button  onClick={() => setOpen(true)}>
+        Create Workspace
+      </Button></DialogTrigger>
+      <DialogContent className="p-0 sm:max-w-lg">
+        <DialogHeader className="px-6 pt-4">
+          <DialogTitle className="text-balance font-semibold text-foreground text-lg">
+            Create workspace
+          </DialogTitle>
+          <DialogDescription className="mt-2 text-pretty text-muted-foreground text-sm leading-6">
+            Workspaces are shared environments where teams can connect to data
+            sources, run queries and create reports.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form action="#" method="POST">
+          <div className="px-6 pb-4">
+            <Label className="font-medium text-sm" htmlFor="workspace-name">
+              Workspace Name<span className="text-destructive">*</span>
+            </Label>
+            <Input
+              className="mt-2"
+              id="workspace-name"
+              name="workspace-name"
+              placeholder="My workspace"
+              required
+              type="text"
+            />
+            <Button className="mt-4 w-full" type="submit">
+              Create workspace
+            </Button>
+          </div>
+          <div className="rounded-b-md border-t-(length:--border-width) bg-muted px-6 py-4">
+            <div className="flex items-start space-x-3">
+              <div className="mt-1 pt-0.5">
+                <Switch
+                  id="enable-private-workspace"
+                  name="enable-private-workspace"
+                />
+              </div>
+              <div>
+                <Label
+                  className="font-medium text-sm"
+                  htmlFor="enable-private-workspace"
+                >
+                  Set workspace to private
+                </Label>
+                <p className="text-pretty text-muted-foreground text-sm">
+                  Only those invited can access or view
+                </p>
+              </div>
+            </div>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

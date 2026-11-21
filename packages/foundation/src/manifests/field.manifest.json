@@ -1,0 +1,132 @@
+{
+  "name": "field",
+  "title": "Field",
+  "description": "Label, description, and error layout for form controls.",
+  "category": "forms",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    },
+    {
+      "name": "set",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "legend",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "group",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "label",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "description",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "separator",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "separator-content",
+      "part": "Root",
+      "required": false
+    },
+    {
+      "name": "error",
+      "part": "Root",
+      "required": false
+    }
+  ],
+  "axes": {
+    "orientation": {
+      "values": [
+        "vertical",
+        "horizontal",
+        "responsive"
+      ],
+      "default": "vertical"
+    }
+  },
+  "styleSurface": {
+    "root": {
+      "groupGap": {
+        "type": "enum",
+        "values": [
+          "1rem",
+          "1.25rem",
+          "1.5rem",
+          "1.75rem",
+          "2rem"
+        ],
+        "default": "1.75rem",
+        "cssVar": "--field-group-gap"
+      }
+    }
+  },
+  "tokensUsed": [
+    "--background",
+    "--primary",
+    "--destructive",
+    "--muted-foreground",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "class-variance-authority"
+  ],
+  "registryDependencies": [
+    "label",
+    "separator",
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "field",
+      "source": "src/templates/field.tsx",
+      "target": "components/ui/field.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Label, description, and error layout for form controls.",
+    "useWhen": [
+      "Building accessible forms."
+    ],
+    "doNotUseWhen": [
+      "Content is not a form control."
+    ],
+    "rules": [
+      {
+        "id": "field-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

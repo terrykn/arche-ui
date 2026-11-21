@@ -1,0 +1,40 @@
+{
+  "name": "dusk-features-1",
+  "title": "Features 1",
+  "description": "Tailark Dusk features variant 1 block",
+  "category": "marketing",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--border-width",
+    "--card",
+    "--foreground",
+    "--muted-foreground",
+    "--radius",
+    "--shadow-xl"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "card"
+  ],
+  "files": [
+    {
+      "name": "dusk-features-1",
+      "source": "src/blocks/dusk-features-1.tsx",
+      "target": "components/blocks/dusk-features-1.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "card"
+      }
+    ]
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "meteors",
+  "title": "Meteors",
+  "description": "Falling meteor streaks.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground"
+  ],
+  "dependencies": [],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "meteors",
+      "source": "src/templates/meteors.tsx",
+      "target": "components/ui/meteors.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Falling meteor streaks.",
+    "useWhen": [
+      "Dark hero drama."
+    ],
+    "doNotUseWhen": [
+      "Light sections."
+    ],
+    "rules": [
+      {
+        "id": "meteors-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

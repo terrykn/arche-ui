@@ -1,0 +1,56 @@
+{
+  "name": "smooth-cursor",
+  "title": "Smooth Cursor",
+  "description": "A spring trailed custom cursor.",
+  "category": "cursor",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--primary"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "smooth-cursor",
+      "source": "src/templates/smooth-cursor.tsx",
+      "target": "components/ui/smooth-cursor.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A spring trailed custom cursor.",
+    "useWhen": [
+      "Immersive sites."
+    ],
+    "doNotUseWhen": [
+      "Form heavy apps."
+    ],
+    "rules": [
+      {
+        "id": "smooth-cursor-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

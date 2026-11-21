@@ -1,0 +1,63 @@
+{
+  "name": "animated-testimonials",
+  "title": "Animated Testimonials",
+  "description": "Rotating quotes over portraits.",
+  "category": "social",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--foreground",
+    "--brand",
+    "--brand-foreground",
+    "--muted",
+    "--muted-foreground",
+    "--ring",
+    "--radius",
+    "--border-width"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "animated-testimonials",
+      "source": "src/templates/animated-testimonials.tsx",
+      "target": "components/ui/animated-testimonials.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Rotating quotes over portraits.",
+    "useWhen": [
+      "Social proof."
+    ],
+    "doNotUseWhen": [
+      "Single quotes."
+    ],
+    "rules": [
+      {
+        "id": "animated-testimonials-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "ai-01",
+  "title": "AI Chat with Voice Input",
+  "description": "A ai chat with voice input block.",
+  "category": "application",
+  "manifestVersion": 1,
+  "block": true,
+  "slots": [],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--background",
+    "--foreground",
+    "--motion-fast",
+    "--muted",
+    "--muted-foreground"
+  ],
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "utils",
+    "button",
+    "dropdown-menu",
+    "textarea"
+  ],
+  "files": [
+    {
+      "name": "ai-01",
+      "source": "src/blocks/ai-01.tsx",
+      "target": "components/blocks/ai-01.tsx",
+      "type": "registry:block"
+    }
+  ],
+  "composition": {
+    "contentSlots": [],
+    "childComponents": [
+      {
+        "name": "button"
+      },
+      {
+        "name": "dropdown-menu"
+      },
+      {
+        "name": "textarea"
+      }
+    ]
+  }
+}

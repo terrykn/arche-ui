@@ -1,0 +1,58 @@
+{
+  "name": "background-beams",
+  "title": "Background Beams",
+  "description": "Light beams flowing on curved paths.",
+  "category": "background",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [
+    "--brand",
+    "--border",
+    "--chart-3"
+  ],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "background-beams",
+      "source": "src/templates/background-beams.tsx",
+      "target": "components/ui/background-beams.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "Light beams flowing on curved paths.",
+    "useWhen": [
+      "Hero depth."
+    ],
+    "doNotUseWhen": [
+      "Text heavy pages."
+    ],
+    "rules": [
+      {
+        "id": "background-beams-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}

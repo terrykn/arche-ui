@@ -1,0 +1,54 @@
+{
+  "name": "scroll-progress",
+  "title": "Scroll Progress",
+  "description": "A gradient page progress bar.",
+  "category": "motion",
+  "manifestVersion": 1,
+  "primitive": {
+    "package": "react",
+    "parts": [
+      "Root"
+    ],
+    "propsInherited": true
+  },
+  "slots": [
+    {
+      "name": "root",
+      "part": "Root",
+      "required": true
+    }
+  ],
+  "axes": {},
+  "styleSurface": {},
+  "tokensUsed": [],
+  "dependencies": [
+    "motion"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "name": "scroll-progress",
+      "source": "src/templates/scroll-progress.tsx",
+      "target": "components/ui/scroll-progress.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "standards": {
+    "purpose": "A gradient page progress bar.",
+    "useWhen": [
+      "Long articles."
+    ],
+    "doNotUseWhen": [
+      "Short pages."
+    ],
+    "rules": [
+      {
+        "id": "scroll-progress-accessible-name",
+        "severity": "error",
+        "check": "Every interactive control has an accessible name."
+      }
+    ]
+  }
+}
