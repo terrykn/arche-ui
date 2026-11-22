@@ -35,9 +35,9 @@ export interface PlacementVerdict {
 }
 
 function suggestedAlternativeFor(manifest: Manifest, ruleId: string): string | undefined {
-  const rule = manifest.standards.rules.find((r) => r.id === ruleId);
+  const rule = manifest.standards?.rules.find((r) => r.id === ruleId);
   if (!rule) return undefined;
-  const text = `${rule.check} ${(manifest.standards.doNotUseWhen ?? []).join(" ")}`;
+  const text = `${rule.check} ${(manifest.standards?.doNotUseWhen ?? []).join(" ")}`;
   const match = /use (?:an? )?([A-Z][A-Za-z ]+?)(?:\s+rather|\s+instead|\)|$)/.exec(text);
   if (match?.[1]) {
     const candidate = match[1].trim();
@@ -99,8 +99,11 @@ export function checkPlacement(component: string, ctx: PlacementContext): Placem
   if (!manifest) {
     throw new Error(`unknown component or block '${component}'`);
   }
+  // Imported catalog blocks may declare no standards: report no rules rather
+  // than crashing, so callers can distinguish "no opinions" from "passes".
+  const rules = manifest.standards?.rules ?? [];
   const evaluation: RuleEvaluation[] = [];
-  for (const rule of manifest.standards.rules) {
+  for (const rule of rules) {
     const decided = evaluateRule(manifest.name, rule.id, ctx);
     if (decided === null) {
       evaluation.push({ id: rule.id, verdict: "not-evaluated", reason: "context insufficient to decide this rule" });
@@ -120,7 +123,7 @@ export function checkPlacement(component: string, ctx: PlacementContext): Placem
   return {
     component,
     allowed: !evaluation.some((e) => e.verdict === "violation"),
-    rules: manifest.standards.rules,
+    rules,
     evaluation,
     notEvaluated: evaluation.filter((e) => e.verdict === "not-evaluated").map((e) => e.id),
   };

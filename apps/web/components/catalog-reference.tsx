@@ -83,6 +83,7 @@ export function ComponentDetail({ manifest }: { manifest: Manifest }) {
             : `native <${manifest.native?.element}> element`}
         </p>
       </section>
+      {manifest.standards ? (
       <section>
         <h2 className="text-lg font-medium">Standards</h2>
         <p className="mt-2 text-sm text-muted-foreground">{manifest.standards.purpose}</p>
@@ -112,6 +113,7 @@ export function ComponentDetail({ manifest }: { manifest: Manifest }) {
           ))}
         </ul>
       </section>
+      ) : null}
     </div>
   );
 }

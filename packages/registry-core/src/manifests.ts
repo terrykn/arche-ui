@@ -20,7 +20,8 @@ export interface Manifest {
   dependencies: string[];
   registryDependencies: string[];
   files: Array<{ name: string; source: string; target: string; type: string }>;
-  standards: {
+  /** Absent on imported catalog blocks that ship no declared usage contract. */
+  standards?: {
     purpose: string;
     useWhen: string[];
     doNotUseWhen: string[];
