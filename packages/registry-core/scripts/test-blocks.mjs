@@ -1,6 +1,6 @@
 /**
  * Tests for the Part 6 blocks layer (acceptance 22–24):
- * - all 20 blocks emit registry:block items validating against the official
+ * - all 188 blocks emit registry:block items validating against the official
  *   shadcn registry-item JSON schema (fetched live at test time);
  * - manifest<->template agreement + token discipline enforced (positive);
  * - negative: a block with a raw hex, an undeclared component, and a missing
@@ -29,18 +29,18 @@ function emitFor(fixture) {
   return buildRegistry(identity);
 }
 
-test("20 blocks emit registry:block items", () => {
+test("188 blocks emit registry:block items", () => {
   const items = emitFor("identity.default.json");
   const { getBlockManifests } = require("./dist/index.js");
   const manifests = getBlockManifests();
-  assert.equal(manifests.length, 20);
+  assert.equal(manifests.length, 188);
   for (const manifest of manifests) {
     assert.ok(items.has(manifest.name), `missing emitted item for ${manifest.name}`);
     const item = JSON.parse(items.get(manifest.name));
     assert.equal(item.type, "registry:block");
-    assert.equal(item.files.length, 1);
-    assert.equal(item.files[0].target, `components/blocks/${manifest.name}.tsx`);
-    assert.equal(item.files[0].type, "registry:block");
+    const ownFile = item.files.find((file) => file.target === `components/blocks/${manifest.name}.tsx`);
+    assert.ok(ownFile, `${manifest.name}: missing its own block file`);
+    assert.equal(ownFile.type, "registry:block");
     const catalog = new Set([...items.keys()].filter((n) => n !== "all" && n !== "theme"));
     for (const dep of item.registryDependencies) {
       assert.ok(catalog.has(dep), `${manifest.name}: registryDependency '${dep}' not in catalog`);
