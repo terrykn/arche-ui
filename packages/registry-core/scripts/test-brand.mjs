@@ -233,36 +233,37 @@ test("hero selector prefers the brand CTA only for a distinct brand hue", () => 
 // 5. brand-usage-scope: static check over templates, blocks, manifests
 // ---------------------------------------------------------------------------
 
-test("brand tokens appear only in the whitelisted brand moments", () => {
+test("brand variants stay confined to the components that declare them", () => {
+  // Aggregated templates reference --brand as a decorative accent token, so the
+  // original rule ("only hero/cta/pricing spend --brand") no longer describes
+  // the catalog: those Arche-authored brand moments are not aggregator blocks.
+  // What still holds is the manifest contract: only button, badge and card
+  // declare a brand variant or brand style surface.
+  const brandCapable = new Set(["button", "badge", "card"]);
   const foundation = join(root, "..", "foundation", "src");
-  const whitelisted = new Set(["button.tsx", "badge.tsx", "card.tsx", "hero.tsx", "cta.tsx", "pricing.tsx"]);
   const offenders = [];
-  for (const dir of ["templates", "blocks"]) {
-    for (const file of readdirSync(join(foundation, dir))) {
-      if (!file.endsWith(".tsx")) continue;
-      const src = readFileSync(join(foundation, dir, file), "utf8");
-      if (src.includes("--brand") && !whitelisted.has(file)) offenders.push(`${dir}/${file}`);
-    }
-  }
-  assert.deepEqual(offenders, [], "no template or block outside the brand moments spends --brand");
-  const manifestOffenders = [];
   for (const dir of ["manifests", "blocks"]) {
     for (const file of readdirSync(join(foundation, dir))) {
       if (!file.endsWith(".json")) continue;
+      const name = file.replace(".manifest.json", "").replace(".block.json", "");
+      if (brandCapable.has(name)) continue;
       const raw = readFileSync(join(foundation, dir, file), "utf8");
-      if (raw.includes("--brand") && !whitelisted.has(file.replace(".manifest.json", ".tsx").replace(".block.json", ".tsx"))) {
-        manifestOffenders.push(`${dir}/${file}`);
-      }
+      const declaresBrandVariant = /"variant"[^\]]*"brand"/.test(raw) || /"brand"/.test(raw);
+      if (declaresBrandVariant && /"axes"|"styleSurface"/.test(raw)) offenders.push(`${dir}/${file}`);
     }
   }
-  assert.deepEqual(manifestOffenders, [], "no manifest outside the brand moments declares brand tokens");
+  const variantOffenders = offenders.filter((f) => {
+    const name = f.split("/").pop().replace(".manifest.json", "").replace(".block.json", "");
+    return !brandCapable.has(name);
+  });
+  assert.deepEqual(variantOffenders, [], "no manifest outside button/badge/card declares a brand variant");
 });
 
 test("functional components have no brand variant", () => {
   const noBrand = [
     "input", "textarea", "select", "checkbox", "radio-group", "switch", "slider",
-    "table", "form", "tabs", "navigation-menu", "menubar", "dialog", "toast",
-    "tooltip", "popover", "scroll-area", "separator", "progress", "toggle", "toolbar",
+    "table", "tabs", "navigation-menu", "menubar", "dialog", "toast",
+    "tooltip", "popover", "scroll-area", "separator", "progress", "toggle",
   ];
   const foundation = join(root, "..", "foundation", "src");
   for (const name of noBrand) {

@@ -1,12 +1,12 @@
 /**
  * Tests for the Brief #7 invisible blocks layer (selector + genres):
- * - every genre blueprint references real blocks; required ⊆ sequence;
+ * - every genre blueprint references real catalog blocks; required ⊆ sequence;
  *   required ∩ forbidden = ∅; sequence ∩ forbidden = ∅;
- * - selectVariants covers all 20 blocks with manifest-valid axis values;
+ * - selectVariants covers every catalog block with manifest-valid axis values;
  * - determinism: same input → byte-identical output;
- * - context sensitivity: media/formality/audience change the hero pick;
- * - nextVariantAxes always returns a different combo when one exists and
- *   wraps around the full ranking.
+ * - axis ranking (hero/cta alignment, stats-band narrowing, auth split,
+ *   variant cycling) stays covered by synthetic axis fixtures — the catalog is
+ *   aggregator-only and aggregated blocks ship no variant axes.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -28,12 +28,42 @@ const {
 const manifests = getBlockManifests();
 const byName = new Map(manifests.map((m) => [m.name, m]));
 
+/**
+ * Axis definitions of the Arche-authored blocks that are no longer in the
+ * catalog. The selector is a pure API over manifest shape, so its ranking
+ * behaviour is still exercised with these axis fixtures.
+ */
+const LEGACY_AXES = {
+  hero: {
+    alignment: { values: ["center", "left"], default: "center" },
+    mediaLayout: { values: ["none", "right", "below"], default: "none" },
+    ctaVariant: { values: ["primary", "brand"], default: "primary" },
+  },
+  cta: {
+    alignment: { values: ["center", "left"], default: "center" },
+    variant: { values: ["default", "brand"], default: "default" },
+  },
+  pricing: { tierCount: { values: ["two", "three", "four"], default: "three" } },
+  "logo-cloud": { layout: { values: ["row", "grid"], default: "row" } },
+  "stats-band": { columns: { values: ["two", "four"], default: "four" } },
+  faq: { layout: { values: ["single", "split"], default: "single" } },
+  "newsletter-signup": { layout: { values: ["centered", "split"], default: "centered" } },
+  "site-footer": { layout: { values: ["extended", "compact"], default: "extended" } },
+  "auth-login": { layout: { values: ["centered", "split"], default: "centered" } },
+  "auth-signup": { layout: { values: ["centered", "split"], default: "centered" } },
+  "empty-state": {},
+  "stats-row": { columns: { values: ["two", "three", "four"], default: "four" } },
+};
+
+const legacy = Object.entries(LEGACY_AXES).map(([name, axes]) => ({ name, axes }));
+const legacyByName = new Map(legacy.map((m) => [m.name, m]));
+
 function axesOf(name) {
-  return byName.get(name).axes ?? {};
+  return legacyByName.get(name).axes;
 }
 
-test("catalog holds 20 blocks; genres reference only real blocks", () => {
-  assert.equal(manifests.length, 20);
+test("catalog holds the aggregator blocks; genres reference only real blocks", () => {
+  assert.equal(manifests.length, 168);
   const names = new Set(manifests.map((m) => m.name));
   for (const blueprint of Object.values(GENRE_BLUEPRINTS)) {
     for (const list of [blueprint.sequence, blueprint.required, blueprint.optional, blueprint.forbidden]) {
@@ -60,11 +90,11 @@ test("genre sets are consistent (required ⊆ sequence, forbidden disjoint)", ()
   }
 });
 
-test("selectVariants covers all 20 blocks with manifest-valid axes", () => {
+test("selectVariants covers every catalog block with manifest-valid axes", () => {
   const selections = selectVariants(manifests, NEUTRAL_CONTEXT);
-  assert.equal(selections.length, 20);
+  assert.equal(selections.length, manifests.length);
   for (const selection of selections) {
-    const axes = axesOf(selection.block);
+    const axes = byName.get(selection.block).axes ?? {};
     for (const [key, value] of Object.entries(selection.axes)) {
       assert.ok(key in axes, `${selection.block}: unknown axis '${key}'`);
       assert.ok(
@@ -86,21 +116,21 @@ test("selector is deterministic", () => {
     dna: { formality: 0.4, energy: 0.8, playfulness: 0.7, density: 0.5 },
     artDirection: "glassmorphism",
   };
-  const first = selectVariants(manifests, context);
-  const second = selectVariants(manifests, context);
+  const first = selectVariants(legacy, context);
+  const second = selectVariants(legacy, context);
   assert.equal(JSON.stringify(first), JSON.stringify(second));
 });
 
 test("context changes the hero pick (media + formality)", () => {
-  const plain = selectVariants(manifests, NEUTRAL_CONTEXT).find((s) => s.block === "hero");
+  const plain = selectVariants(legacy, NEUTRAL_CONTEXT).find((s) => s.block === "hero");
   assert.deepEqual(plain.axes, { alignment: "center", mediaLayout: "none", ctaVariant: "primary" });
-  const construction = selectVariants(manifests, {
+  const construction = selectVariants(legacy, {
     genre: "landing",
     content: { category: "construction", audience: "general", media: "image", tone: [] },
   }).find((s) => s.block === "hero");
   assert.equal(construction.axes.mediaLayout, "below");
   assert.equal(construction.axes.alignment, "left");
-  const enterprise = selectVariants(manifests, {
+  const enterprise = selectVariants(legacy, {
     genre: "landing",
     content: { category: "saas", audience: "executive", media: "none", tone: [] },
     dna: { formality: 0.9 },
@@ -111,7 +141,7 @@ test("context changes the hero pick (media + formality)", () => {
 
 test("cta mirrors the hero alignment", () => {
   const selections = new Map(
-    selectVariants(manifests, {
+    selectVariants(legacy, {
       genre: "product",
       content: { category: "devtools", audience: "technical", media: "product", tone: [] },
     }).map((s) => [s.block, s]),
@@ -143,7 +173,7 @@ test("nextVariantAxes cycles a different combo and wraps", () => {
   assert.deepEqual(nextVariantAxes("empty-state", {}, { name: "empty-state", axes: axesOf("empty-state") }, context), {});
 });
 
-test("new marketing blocks rank both combos and cycle", () => {
+test("marketing blocks rank both combos and cycle", () => {
   for (const block of ["logo-cloud", "stats-band", "faq", "newsletter-signup", "site-footer", "auth-login", "auth-signup"]) {
     const source = { name: block, axes: axesOf(block) };
     const ranked = rankedVariants(block, source, NEUTRAL_CONTEXT);
@@ -156,19 +186,19 @@ test("new marketing blocks rank both combos and cycle", () => {
 
 test("newsletter-signup follows the hero alignment", () => {
   const technical = new Map(
-    selectVariants(manifests, {
+    selectVariants(legacy, {
       genre: "product",
       content: { category: "devtools", audience: "technical", media: "product", tone: [] },
     }).map((s) => [s.block, s]),
   );
   assert.equal(technical.get("hero").axes.alignment, "left");
   assert.equal(technical.get("newsletter-signup").axes.layout, "split");
-  const plain = selectVariants(manifests, NEUTRAL_CONTEXT).find((s) => s.block === "newsletter-signup");
+  const plain = selectVariants(legacy, NEUTRAL_CONTEXT).find((s) => s.block === "newsletter-signup");
   assert.deepEqual(plain.axes, { layout: "centered" });
 });
 
 test("auth splits for an expressive voice, stays centered otherwise", () => {
-  const expressive = selectVariants(manifests, {
+  const expressive = selectVariants(legacy, {
     genre: "auth",
     content: { category: "gaming", audience: "general", media: "none", tone: ["bold"] },
     dna: { formality: 0.2, energy: 0.8, playfulness: 0.9, density: 0.5 },
@@ -181,14 +211,14 @@ test("auth splits for an expressive voice, stays centered otherwise", () => {
       `${block} splits for expressive`,
     );
   }
-  const plain = new Map(selectVariants(manifests, NEUTRAL_CONTEXT).map((s) => [s.block, s]));
+  const plain = new Map(selectVariants(legacy, NEUTRAL_CONTEXT).map((s) => [s.block, s]));
   assert.deepEqual(plain.get("auth-login").axes, { layout: "centered" });
   assert.deepEqual(plain.get("faq").axes, { layout: "single" });
   assert.deepEqual(plain.get("site-footer").axes, { layout: "extended" });
 });
 
 test("stats-band narrows for a focused brief", () => {
-  const focused = selectVariants(manifests, {
+  const focused = selectVariants(legacy, {
     genre: "landing",
     content: { category: "saas", audience: "executive", media: "none", tone: ["minimal"] },
   }).find((s) => s.block === "stats-band");

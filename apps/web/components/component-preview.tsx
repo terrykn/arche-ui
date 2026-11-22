@@ -40,6 +40,7 @@ import { Toolbar, ToolbarButton } from "@/components/ui/toolbar";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { PreviewPortalContext } from "@/components/preview-portal";
 import { RegistryExample, hasRegistryExample } from "@/components/registry-example";
+import { ComponentDemo, hasComponentDemo } from "@/components/component-demos";
 
 type Selection = Record<string, unknown>;
 
@@ -516,6 +517,9 @@ export function ComponentPreview({
         </TooltipProvider>
       );
     default:
+      // Catalog components without a hand-written example render their
+      // generated demo, so every manifest shows something in the preview.
+      if (hasComponentDemo(name)) return <ComponentDemo name={name} />;
       return null;
   }
 }

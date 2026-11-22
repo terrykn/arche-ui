@@ -405,7 +405,6 @@
       "radiusFrom": "md",
       "shadow": "md"
     },
-    "form": {},
     "hover-card": {
       "radiusFrom": "lg",
       "shadow": "md"
@@ -420,12 +419,6 @@
       "shadow": "md"
     },
     "navigation-menu": {},
-    "one-time-password-field": {
-      "radiusFrom": "md"
-    },
-    "password-toggle-field": {
-      "radiusFrom": "md"
-    },
     "popover": {
       "radiusFrom": "lg",
       "shadow": "md"
@@ -464,7 +457,6 @@
       "defaultVariant": "default",
       "defaultSize": "default"
     },
-    "toolbar": {},
     "tooltip": {
       "radiusFrom": "md"
     },

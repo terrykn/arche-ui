@@ -6,6 +6,11 @@
  * consumed by the agent skill and by Studio alike; adding a genre is a data
  * entry here, never a code change. Nothing in this file touches the DOM, so
  * it is safe to bundle client-side.
+ *
+ * Every block named here comes from the aggregated catalog
+ * (catalog-aggregate.json). Aggregated blocks ship fixed compositions without
+ * variant axes, so the variant preferences below are guidance for hand edits
+ * rather than inputs the selector can rank.
  */
 
 export type GenreId = "landing" | "product" | "auth" | "dashboard";
@@ -22,21 +27,15 @@ export interface GenreBlueprint {
   optional: string[];
   /** Must never appear on a page of this genre. */
   forbidden: string[];
-  /** Per-block variant guidance for the selector (prose, not code). */
+  /** Per-block variant guidance (prose, not code). */
   variantPreferences: Record<string, string>;
   /** Checkable content rules for the generation self-check. */
   contentRules: string[];
 }
 
-const MARKETING_APP_BLOCKS = [
-  "app-shell",
-  "dashboard-home",
-  "data-table-page",
-  "settings-page",
-  "activity-feed",
-];
+const APP_BLOCKS = ["sidebar-1", "charts-2", "table-03", "settings-3", "activity-3"];
 
-const AUTH_BLOCKS = ["auth-login", "auth-signup"];
+const AUTH_BLOCKS = ["login-03", "signup-01"];
 
 export const GENRE_BLUEPRINTS: Record<GenreId, GenreBlueprint> = {
   landing: {
@@ -45,39 +44,40 @@ export const GENRE_BLUEPRINTS: Record<GenreId, GenreBlueprint> = {
     description:
       "A marketing page that states one promise and routes visitors to one or two next steps.",
     sequence: [
-      "site-header",
-      "hero",
-      "logo-cloud",
-      "features",
-      "stats-band",
-      "testimonials",
-      "pricing",
-      "faq",
-      "cta",
-      "newsletter-signup",
-      "site-footer",
+      "navbar-floating",
+      "hero-aurora",
+      "logos-grid",
+      "features-bento",
+      "dusk-stats-1",
+      "testimonials-grid",
+      "pricing-three-tiers",
+      "faq-accordion",
+      "cta-split-image",
+      "cta-newsletter",
+      "footer-columns",
     ],
-    required: ["site-header", "hero", "site-footer"],
+    required: ["navbar-floating", "hero-aurora", "footer-columns"],
     optional: [
-      "logo-cloud",
-      "features",
-      "stats-band",
-      "testimonials",
-      "pricing",
-      "faq",
-      "cta",
-      "newsletter-signup",
+      "logos-grid",
+      "features-bento",
+      "dusk-stats-1",
+      "testimonials-grid",
+      "pricing-three-tiers",
+      "faq-accordion",
+      "cta-split-image",
+      "cta-newsletter",
     ],
-    forbidden: [...MARKETING_APP_BLOCKS, ...AUTH_BLOCKS],
+    forbidden: [...APP_BLOCKS, ...AUTH_BLOCKS],
     variantPreferences: {
-      hero: "Media decides the shape: product imagery splits beside the headline; brand imagery sits below it; no media stays centered. Enterprise and formal voices align left.",
-      features:
-        "Bento for expressive or media-rich stories; split for technical comparisons; grid stays the quiet default.",
-      pricing: "Tier count follows the offer: simple offers show two, full lines show four, the default shows three.",
-      testimonials: "A single featured quote for premium voices; the grid otherwise.",
+      "hero-aurora":
+        "Media decides the shape: product imagery splits beside the headline; brand imagery sits below it; no media stays centered.",
+      "features-bento":
+        "Bento for expressive or media-rich stories; the icon grid stays the quiet default.",
+      "pricing-three-tiers": "Keep the tiers the offer actually has; do not add a tier to fill the row.",
+      "testimonials-grid": "Use the featured quote only when one customer story carries the page.",
     },
     contentRules: [
-      "One h1 per page, carried by the hero (blocks-one-h1-per-page).",
+      "One h1 per page, carried by hero-aurora (blocks-one-h1-per-page).",
       "At most one primary call-to-action in the hero (hero-one-primary-cta).",
       "Headline states the promise in 11 words or fewer.",
       "No email sign-up as the page's closing section by default.",
@@ -89,28 +89,35 @@ export const GENRE_BLUEPRINTS: Record<GenreId, GenreBlueprint> = {
     description:
       "A product page that proves the thing works: promise, proof, numbers, price.",
     sequence: [
-      "site-header",
-      "hero",
-      "features",
-      "stats-row",
-      "testimonials",
-      "pricing",
-      "faq",
-      "cta",
-      "site-footer",
+      "navbar-floating",
+      "hero-globe",
+      "features-tabs",
+      "stats-01",
+      "testimonials-featured",
+      "pricing-comparison",
+      "faq-two-column",
+      "cta-split-image",
+      "footer-columns",
     ],
-    required: ["site-header", "hero", "site-footer"],
-    optional: ["features", "stats-row", "testimonials", "pricing", "faq", "cta"],
-    forbidden: [...MARKETING_APP_BLOCKS, ...AUTH_BLOCKS, "logo-cloud", "newsletter-signup"],
+    required: ["navbar-floating", "hero-globe", "footer-columns"],
+    optional: [
+      "features-tabs",
+      "stats-01",
+      "testimonials-featured",
+      "pricing-comparison",
+      "faq-two-column",
+      "cta-split-image",
+    ],
+    forbidden: [...APP_BLOCKS, ...AUTH_BLOCKS, "logos-grid", "cta-newsletter"],
     variantPreferences: {
-      hero: "Split beside product media whenever media exists; left-aligned for technical audiences.",
-      features: "Split for feature-by-feature comparisons; bento when the product is visual.",
-      pricing: "Four tiers when the line is enterprise; two when the offer is a single plan plus trial.",
-      testimonials: "Grid of short proof quotes; single only for a flagship customer story.",
+      "hero-globe": "Split beside product media whenever media exists; left-aligned for technical audiences.",
+      "features-tabs": "Tabbed tour for feature-by-feature comparisons.",
+      "pricing-comparison": "Comparison table once there are more than three plans.",
+      "testimonials-featured": "A single flagship customer story beats a wall of short quotes.",
     },
     contentRules: [
-      "One h1 per page, carried by the hero (blocks-one-h1-per-page).",
-      "Every claimed number appears in stats-row or stats-band, never only in prose.",
+      "One h1 per page, carried by hero-globe (blocks-one-h1-per-page).",
+      "Every claimed number appears in stats-01, never only in prose.",
       "Screenshots or product media preferred over stock imagery.",
     ],
   },
@@ -118,27 +125,27 @@ export const GENRE_BLUEPRINTS: Record<GenreId, GenreBlueprint> = {
     id: "auth",
     title: "Auth",
     description: "A sign-in or sign-up page: one form, one decision, no distractions.",
-    sequence: ["site-header", "auth-login", "auth-signup", "site-footer"],
-    required: ["auth-login"],
-    optional: ["site-header", "auth-signup", "site-footer"],
+    sequence: ["navbar-floating", "login-03", "signup-01", "footer-columns"],
+    required: ["login-03"],
+    optional: ["navbar-floating", "signup-01", "footer-columns"],
     forbidden: [
-      "hero",
-      "logo-cloud",
-      "features",
-      "stats-band",
-      "testimonials",
-      "pricing",
-      "faq",
-      "cta",
-      "newsletter-signup",
-      ...MARKETING_APP_BLOCKS,
+      "hero-aurora",
+      "logos-grid",
+      "features-bento",
+      "dusk-stats-1",
+      "testimonials-grid",
+      "pricing-three-tiers",
+      "faq-accordion",
+      "cta-split-image",
+      "cta-newsletter",
+      ...APP_BLOCKS,
     ],
     variantPreferences: {
-      "auth-login": "Single centered form; no marketing blocks compete with it.",
-      "auth-signup": "Mirrors the login surface so the two pages feel like one flow.",
+      "login-03": "Single centered form; no marketing blocks compete with it.",
+      "signup-01": "Mirrors the login surface so the two pages feel like one flow.",
     },
     contentRules: [
-      "Exactly one of auth-login / auth-signup is primary per page; the other may link to it.",
+      "Exactly one of login-03 / signup-01 is primary per page; the other may link to it.",
       "No hero, pricing, or testimonials on the auth page itself.",
       "Every field carries a real label and an inline error state.",
     ],
@@ -148,41 +155,46 @@ export const GENRE_BLUEPRINTS: Record<GenreId, GenreBlueprint> = {
     title: "Dashboard",
     description: "An application surface: navigation shell plus operational content.",
     sequence: [
-      "app-shell",
-      "dashboard-home",
-      "stats-row",
-      "data-table-page",
-      "activity-feed",
-      "settings-page",
-      "empty-state",
+      "sidebar-1",
+      "charts-2",
+      "stats-03",
+      "table-03",
+      "activity-3",
+      "settings-3",
+      "empty-states-1",
     ],
-    required: ["app-shell"],
+    required: ["sidebar-1"],
     optional: [
-      "dashboard-home",
-      "stats-row",
-      "data-table-page",
-      "activity-feed",
-      "settings-page",
-      "empty-state",
+      "charts-2",
+      "stats-03",
+      "table-03",
+      "activity-3",
+      "settings-3",
+      "empty-states-1",
     ],
     forbidden: [
-      "site-header",
-      "hero",
-      "logo-cloud",
-      "features",
-      "stats-band",
-      "testimonials",
-      "pricing",
-      "faq",
-      "cta",
-      "newsletter-signup",
-      "site-footer",
+      "navbar-floating",
+      "hero-aurora",
+      "hero-globe",
+      "logos-grid",
+      "features-bento",
+      "features-tabs",
+      "dusk-stats-1",
+      "testimonials-grid",
+      "testimonials-featured",
+      "pricing-three-tiers",
+      "pricing-comparison",
+      "faq-accordion",
+      "faq-two-column",
+      "cta-split-image",
+      "cta-newsletter",
+      "footer-columns",
       ...AUTH_BLOCKS,
     ],
     variantPreferences: {
-      "app-shell": "Collapsible sidebar for dense operational tools; fixed for simple ones.",
-      "stats-row": "Four columns for full overviews; three when the page answers one question.",
-      "empty-state": "First-run and zero-data states ship with the page, not as an afterthought.",
+      "sidebar-1": "Collapsible sidebar for dense operational tools; fixed for simple ones.",
+      "stats-03": "Four columns for full overviews; three when the page answers one question.",
+      "empty-states-1": "First-run and zero-data states ship with the page, not as an afterthought.",
     },
     contentRules: [
       "No marketing hero inside application surfaces.",

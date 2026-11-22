@@ -119,10 +119,10 @@ export function EnterpriseDemo({
     <div className={mode === "dark" ? "dark" : ""}>
       <div style={vars as React.CSSProperties} className="arche-identity-scope bg-background text-foreground">
         {/* ── Site header ─────────────────────────────── */}
-        <BlockPreview name="site-header" />
+        <BlockPreview name="navbar-floating" />
 
         {/* ── Hero ────────────────────────────────────── */}
-        <BlockPreview name="hero" />
+        <BlockPreview name="hero-aurora" />
         <div className="mx-auto max-w-6xl px-6">
           <Section name="dialog">
             <div className="flex flex-wrap items-center gap-2 py-4">
@@ -172,11 +172,11 @@ export function EnterpriseDemo({
         </div>
 
         <div className="mx-auto max-w-6xl px-6">
-          <BlockPreview name="logo-cloud" />
+          <BlockPreview name="logos-grid" />
         </div>
 
         <div className="mx-auto max-w-6xl px-6">
-          <BlockPreview name="stats-band" />
+          <BlockPreview name="dusk-stats-1" />
           <Section name="tooltip">
             <p className="flex items-center gap-1 py-2 text-sm text-muted-foreground">
               Cutoff 17:30 daily
@@ -217,7 +217,7 @@ export function EnterpriseDemo({
             </Tabs>
           </Section>
           <div className="mt-6">
-            <BlockPreview name="features" />
+            <BlockPreview name="features-bento" />
           </div>
           <Section name="aspect-ratio">
             <figure className="mt-6">
@@ -388,8 +388,8 @@ export function EnterpriseDemo({
           </Section>
 
           <div className="mt-4 grid gap-4">
-            <BlockPreview name="dashboard-home" />
-            <BlockPreview name="stats-row" />
+            <BlockPreview name="charts-2" />
+            <BlockPreview name="stats-01" />
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
@@ -561,8 +561,8 @@ export function EnterpriseDemo({
               </Card>
             </Section>
             <div className="grid content-start gap-4">
-              <BlockPreview name="activity-feed" />
-              <BlockPreview name="empty-state" />
+              <BlockPreview name="activity-3" />
+              <BlockPreview name="empty-states-1" />
             </div>
           </div>
 
@@ -689,9 +689,9 @@ export function EnterpriseDemo({
 
         {/* ── Social proof + pricing ──────────────────── */}
         <div className="mx-auto max-w-6xl px-6 py-10">
-          <BlockPreview name="testimonials" />
+          <BlockPreview name="testimonials-grid" />
           <div className="mt-8">
-            <BlockPreview name="pricing" />
+            <BlockPreview name="pricing-three-tiers" />
             <Section name="popover">
               <p className="mt-2 text-sm text-muted-foreground">
                 Oversize rules apply.{" "}
@@ -720,18 +720,18 @@ export function EnterpriseDemo({
             </Section>
           </div>
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            <BlockPreview name="auth-login" />
-            <BlockPreview name="auth-signup" />
+            <BlockPreview name="login-03" />
+            <BlockPreview name="signup-01" />
           </div>
           <div className="mt-8">
-            <BlockPreview name="cta" />
+            <BlockPreview name="cta-split-image" />
             <div className="mt-8">
-              <BlockPreview name="newsletter-signup" />
+              <BlockPreview name="cta-newsletter" />
             </div>
           </div>
         </div>
 
-        <BlockPreview name="site-footer" />
+        <BlockPreview name="footer-columns" />
 
         {/* ── Theme ───────────────────────────────────── */}
         <div className="border-t border-border">

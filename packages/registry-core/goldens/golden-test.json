@@ -160,7 +160,6 @@
     "floating-navbar": {},
     "focus-cards": {},
     "following-pointer": {},
-    "form": {},
     "glare-card": {},
     "glare-hover": {},
     "globe": {},
@@ -236,16 +235,10 @@
     "noise-background": {},
     "noise-texture": {},
     "number-ticker": {},
-    "one-time-password-field": {
-      "radiusFrom": "md"
-    },
     "orbiting-circles": {},
     "pagination": {},
     "parallax-grid": {},
     "particles": {},
-    "password-toggle-field": {
-      "radiusFrom": "md"
-    },
     "pixel-image": {},
     "pointer": {},
     "pointer-highlight": {},
@@ -345,7 +338,6 @@
       "variant": "default"
     },
     "toggle-group": {},
-    "toolbar": {},
     "tooltip": {
       "radiusFrom": "md"
     },

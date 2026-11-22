@@ -32,7 +32,7 @@ export const configuration: DocsPageData = {
     },
     {
       kind: "code",
-      code: "pnpm dlx shadcn@latest add @arche/button\npnpm dlx shadcn@latest add @arche/hero",
+      code: "pnpm dlx shadcn@latest add @arche/button\npnpm dlx shadcn@latest add @arche/hero-aurora",
     },
     {
       kind: "markdown",

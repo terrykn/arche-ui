@@ -1,6 +1,6 @@
 /**
  * Tests for the Part 6 blocks layer (acceptance 22–24):
- * - all 188 blocks emit registry:block items validating against the official
+ * - all 168 blocks emit registry:block items validating against the official
  *   shadcn registry-item JSON schema (fetched live at test time);
  * - manifest<->template agreement + token discipline enforced (positive);
  * - negative: a block with a raw hex, an undeclared component, and a missing
@@ -29,11 +29,11 @@ function emitFor(fixture) {
   return buildRegistry(identity);
 }
 
-test("188 blocks emit registry:block items", () => {
+test("168 blocks emit registry:block items", () => {
   const items = emitFor("identity.default.json");
   const { getBlockManifests } = require("./dist/index.js");
   const manifests = getBlockManifests();
-  assert.equal(manifests.length, 188);
+  assert.equal(manifests.length, 168);
   for (const manifest of manifests) {
     assert.ok(items.has(manifest.name), `missing emitted item for ${manifest.name}`);
     const item = JSON.parse(items.get(manifest.name));

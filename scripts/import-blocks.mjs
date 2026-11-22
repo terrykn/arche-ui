@@ -563,7 +563,7 @@ function transform(slug, src, meta) {
   return out;
 }
 
-const curated = new Set("activity-feed app-shell auth-login auth-signup cta dashboard-home data-table-page empty-state faq features hero logo-cloud newsletter-signup pricing settings-page site-footer site-header stats-band stats-row testimonials".split(" "));
+const curated = new Set<string>(); // catalog is aggregator-only; no curated legacy blocks
 
 const results = new Map();
 const skipped = [];

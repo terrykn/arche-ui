@@ -40,7 +40,7 @@ export const ListBlocksSchema = z.object({
 });
 
 export const GetBlockSchema = z.object({
-  name: z.string().min(1).describe("Block name, e.g. hero or dashboard-home"),
+  name: z.string().min(1).describe("Block name, e.g. hero-aurora or sidebar-1"),
 });
 
 export const GetTokenContractSchema = z.object({});
@@ -58,7 +58,7 @@ export const ValidateIdentitySchema = z.object({
 });
 
 export const CheckPlacementSchema = z.object({
-  component: z.string().min(1).describe("Component or block to place, e.g. button or hero"),
+  component: z.string().min(1).describe("Component or block to place, e.g. button or hero-aurora"),
   variant: z.string().optional(),
   purpose: z.string().optional().describe("Function-fit class: navigation, action, confirmation, data-entry, ..."),
   primaryActionsInRegion: z.number().int().min(0).optional(),

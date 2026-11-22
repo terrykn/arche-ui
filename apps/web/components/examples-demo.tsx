@@ -178,7 +178,7 @@ export function ExamplesDemo({ identities }: { identities: ExampleIdentity[] }) 
             </div>
             <div className="proto-cta-row" style={{ marginTop: 22 }}>
               <Link href="/blocks" className="proto-btn proto-btn-dark">
-                Browse all 20 blocks <ArrowRight size={15} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
+                Browse all blocks <ArrowRight size={15} aria-hidden="true" style={{ verticalAlign: "-0.2em" }} />
               </Link>
             </div>
           </section>

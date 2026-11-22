@@ -80,13 +80,6 @@ function evaluateRule(manifestName: string, ruleId: string, ctx: PlacementContex
       // A destructive confirmation belongs in Alert Dialog, not Dialog.
       if (ctx.variant === "destructive" || ctx.purpose === "confirmation") return false;
       return true;
-    case "hero:blocks-one-h1-per-page":
-      // Page-level rule: a second hero means a second h1. Needs page context.
-      if (ctx.pageComponents === undefined) return null;
-      return !ctx.pageComponents.includes("hero");
-    case "site-header:site-header-one-per-page":
-      if (ctx.pageComponents === undefined) return null;
-      return !ctx.pageComponents.includes("site-header");
     default:
       // Rules from the wider catalog have no structured evaluator yet:
       // surface them as not-evaluated rather than silently passing.

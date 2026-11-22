@@ -8,7 +8,7 @@ const MAN = `${SRC}/manifests`;
 const readJson = (f) => JSON.parse(fs.readFileSync(f, "utf8"));
 const writeJson = (f, v) => fs.writeFileSync(f, `${JSON.stringify(v, null, 2)}\n`);
 
-const OLD = `accordion alert-dialog aspect-ratio avatar badge button card checkbox collapsible context-menu dialog dropdown-menu form hover-card input label menubar navigation-menu one-time-password-field password-toggle-field popover progress radio-group scroll-area select separator skeleton slider switch table tabs textarea toast toggle-group toggle toolbar tooltip`.split(" ");
+const OLD = `accordion alert-dialog aspect-ratio avatar badge button card checkbox collapsible context-menu dialog dropdown-menu hover-card input label menubar navigation-menu popover progress radio-group scroll-area select separator skeleton slider switch table tabs textarea toast toggle-group toggle tooltip`.split(" ");
 
 // Verify these against your manifest schema's category values.
 const CATEGORY = { "Forms & Inputs": "forms", "Buttons & Actions": "actions", "Overlays, Menus & Dialogs": "overlay", Navigation: "navigation", "Data Display": "display", "Feedback & Status": "feedback", "Layout & Structure": "layout", "Text & Typography": "typography", "Backgrounds & Patterns": "background", Cards: "cards", "Scroll & Motion": "motion", "Media, Mockups & Code": "media", "Cursor & Pointer": "cursor", "Social Proof & People": "social" };

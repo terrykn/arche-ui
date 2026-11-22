@@ -1,6 +1,0 @@
-{
-  "name": "toolbar", "title": "Toolbar", "description": "A group of controls for related actions.", "category": "actions", "manifestVersion": 1,
-  "primitive": { "package": "@radix-ui/react-toolbar", "parts": ["Root", "Button", "Link", "Separator", "ToggleGroup", "ToggleItem"], "propsInherited": true }, "slots": [{ "name": "root", "part": "Root", "required": true }, { "name": "button", "part": "Button", "required": false }, { "name": "link", "part": "Link", "required": false }, { "name": "separator", "part": "Separator", "required": false }, { "name": "toggle-item", "part": "ToggleItem", "required": false }], "axes": {}, "styleSurface": {},
-  "tokensUsed": ["--radius", "--border", "--border-width", "--background", "--accent", "--ring", "--primary", "--accent-foreground"], "dependencies": ["@radix-ui/react-toolbar"], "registryDependencies": ["utils"], "files": [{ "name": "toolbar", "source": "src/templates/toolbar.tsx", "target": "components/ui/toolbar.tsx", "type": "registry:ui" }],
-  "standards": { "purpose": "Group related actions in a compact toolbar.", "useWhen": ["Users need related controls together."], "doNotUseWhen": ["The actions are unrelated."], "rules": [{ "id": "toolbar-label-controls", "severity": "error", "check": "Give the toolbar and each control an accessible name." }] }
-}
