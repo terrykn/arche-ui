@@ -864,14 +864,73 @@ export function IdentityEditor({
   const [saving, setSaving] = React.useState(false);
   const [issues, setIssues] = React.useState<Array<{ path: string; message: string }> | null>(null);
   const [savedAt, setSavedAt] = React.useState<string | null>(null);
+  const themePanelRef = React.useRef<HTMLDivElement>(null);
+  const themeTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const themeCloseRef = React.useRef<HTMLButtonElement>(null);
 
   React.useEffect(() => {
     if (!themePanelOpen) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setThemePanelOpen(false);
+    const mobile = window.matchMedia("(max-width: 1023px)");
+    if (!mobile.matches) return;
+
+    const panel = themePanelRef.current;
+    const trigger = themeTriggerRef.current;
+    const previousOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    const focusables = () =>
+      Array.from(
+        panel?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((element) => element.getClientRects().length > 0);
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setThemePanelOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const items = focusables();
+      if (items.length === 0) {
+        event.preventDefault();
+        panel?.focus();
+        return;
+      }
+      const first = items[0]!;
+      const last = items[items.length - 1]!;
+      const active = document.activeElement;
+      if (!panel?.contains(active)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
+
+    document.addEventListener("keydown", onKeyDown);
+    const frame = window.requestAnimationFrame(() => themeCloseRef.current?.focus());
+
+    const closeOnDesktop = (event: MediaQueryListEvent) => {
+      if (!event.matches) setThemePanelOpen(false);
+    };
+    mobile.addEventListener("change", closeOnDesktop);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.removeEventListener("keydown", onKeyDown);
+      mobile.removeEventListener("change", closeOnDesktop);
+      document.body.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      trigger?.focus();
+    };
   }, [themePanelOpen]);
 
   const commit = (next: Doc) => {
@@ -1460,13 +1519,20 @@ export function IdentityEditor({
 
       {/* ---------- Left: theme editor (full-screen drawer on small screens) ---------- */}
       <div
-        className={`min-h-0 w-full shrink-0 flex-col bg-background lg:static lg:flex lg:w-fit lg:max-w-[50%] lg:border-r lg:border-border ${
+        ref={themePanelRef}
+        id="theme-editor-panel"
+        tabIndex={-1}
+        role={themePanelOpen ? "dialog" : undefined}
+        aria-modal={themePanelOpen || undefined}
+        aria-label={themePanelOpen ? "Theme editor" : undefined}
+        className={`min-h-0 w-full shrink-0 flex-col overscroll-contain bg-background focus:outline-none lg:static lg:flex lg:w-fit lg:max-w-[50%] lg:border-r lg:border-border ${
           themePanelOpen ? "fixed inset-0 z-50 flex" : "hidden lg:flex"
         }`}
       >
         <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-3 lg:hidden">
           <p className="text-sm font-medium">Theme editor</p>
           <Button
+            ref={themeCloseRef}
             type="button"
             variant="ghost"
             size="icon"
@@ -1585,9 +1651,13 @@ export function IdentityEditor({
       </div>
 
       <Button
+        ref={themeTriggerRef}
         type="button"
         onClick={() => setThemePanelOpen(true)}
         aria-label="Open theme editor"
+        aria-controls="theme-editor-panel"
+        aria-expanded={themePanelOpen}
+        aria-haspopup="dialog"
         title="Open theme editor"
         className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-lg lg:hidden"
       >
@@ -1714,7 +1784,7 @@ export function IdentityEditor({
               onEdit={(m) => {
                 setQuery("");
                 setEditingComponent(m.name);
-                setThemePanelOpen(true);
+                if (window.matchMedia("(max-width: 1023px)").matches) setThemePanelOpen(true);
               }}
               previewVars={previewVars as React.CSSProperties}
               dark={mode === "dark"}

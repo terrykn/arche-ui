@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -32,7 +32,12 @@ export function DemoApp() {
       </ToggleGroup>
       <div className="flex items-center gap-4">
         <Toggle aria-label="Notifications">Alerts</Toggle>
-        <Slider defaultValue={[40]} max={100} step={1} className="flex-1" aria-label="Threshold" />
+        <Slider defaultValue={[40]} max={100} step={1} className="flex-1" aria-label="Threshold">
+          <SliderTrack>
+            <SliderRange />
+          </SliderTrack>
+          <SliderThumb aria-label="Threshold" />
+        </Slider>
       </div>
       <div className="flex items-center justify-between">
         <Label htmlFor="demo-digest">Weekly digest</Label>

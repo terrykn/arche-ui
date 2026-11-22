@@ -115,7 +115,7 @@ const CURATED = {
   label: ["Label"],
   switch: ["Switch"],
   checkbox: ["Checkbox"],
-  slider: ["Slider"],
+  slider: ["Slider", "SliderTrack", "SliderRange", "SliderThumb"],
   progress: ["Progress"],
   separator: ["Separator"],
   skeleton: ["Skeleton"],
@@ -252,7 +252,12 @@ const CURATED_CODE = {
   label: `<Label htmlFor="email">Email</Label>`,
   switch: `<Switch />`,
   checkbox: `<Checkbox />`,
-  slider: `<Slider defaultValue={[50]} max={100} />`,
+  slider: `<Slider defaultValue={[50]} max={100}>
+  <SliderTrack>
+    <SliderRange />
+  </SliderTrack>
+  <SliderThumb aria-label="Value" />
+</Slider>`,
   progress: `<Progress value={60} />`,
   separator: `<Separator />`,
   skeleton: `<Skeleton className="h-4 w-40" />`,

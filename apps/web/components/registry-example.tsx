@@ -116,7 +116,7 @@ const EXAMPLES: Record<string, (selection: Selection, compact: boolean) => React
     slider: () => (
         <Slider defaultValue={[40]} max={100} aria-label="Volume" className="w-48">
             <SliderTrack><SliderRange /></SliderTrack>
-            <SliderThumb />
+            <SliderThumb aria-label="Volume" />
         </Slider>
     ),
     stepper: () => <Stepper steps={["Cart", "Shipping", "Pay"]} current={1} className="isolate w-64" />,

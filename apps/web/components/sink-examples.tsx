@@ -144,7 +144,7 @@ export const SINK_EXAMPLES: Record<string, React.ReactNode> = {
       <SliderTrack>
         <SliderRange />
       </SliderTrack>
-      <SliderThumb />
+      <SliderThumb aria-label="Demo slider" />
     </Slider>
   ),
   progress: (

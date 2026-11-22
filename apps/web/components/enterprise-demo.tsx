@@ -36,7 +36,7 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar, ScrollAreaThumb } from "@/co
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider";
+import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -283,7 +283,12 @@ export function EnterpriseDemo({
                   <Section name="slider">
                     <div className="grid gap-2">
                       <p className="text-sm">Average parcel weight — 4 lb</p>
-                      <Slider defaultValue={[4]} max={70} step={1} aria-label="Average parcel weight" />
+                      <Slider defaultValue={[4]} max={70} step={1} aria-label="Average parcel weight">
+                        <SliderTrack>
+                          <SliderRange />
+                        </SliderTrack>
+                        <SliderThumb aria-label="Average parcel weight" />
+                      </Slider>
                     </div>
                   </Section>
                   <Section name="textarea">

@@ -1228,9 +1228,12 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "slider": {
     "importPath": "@/components/ui/slider",
     "imports": [
-      "Slider"
+      "Slider",
+      "SliderTrack",
+      "SliderRange",
+      "SliderThumb"
     ],
-    "code": "import { Slider } from \"@/components/ui/slider\";\n\n<Slider defaultValue={[50]} max={100} />"
+    "code": "import { Slider, SliderTrack, SliderRange, SliderThumb } from \"@/components/ui/slider\";\n\n<Slider defaultValue={[50]} max={100}>\n  <SliderTrack>\n    <SliderRange />\n  </SliderTrack>\n  <SliderThumb aria-label=\"Value\" />\n</Slider>"
   },
   "smooth-cursor": {
     "importPath": "@/components/ui/smooth-cursor",

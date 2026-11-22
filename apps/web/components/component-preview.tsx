@@ -409,7 +409,7 @@ export function ComponentPreview({
           <SliderTrack>
             <SliderRange />
           </SliderTrack>
-          <SliderThumb />
+          <SliderThumb aria-label="Demo slider" />
         </Slider>
       );
     case "switch":
