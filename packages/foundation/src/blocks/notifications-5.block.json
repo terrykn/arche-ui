@@ -40,5 +40,31 @@
   "composition": {
     "contentSlots": [],
     "childComponents": []
+  },
+  "standards": {
+    "purpose": "Surface what changed without pulling the user out of their task.",
+    "useWhen": [
+      "Background events matter to the user but are not urgent."
+    ],
+    "doNotUseWhen": [
+      "The event blocks the current task — use an inline alert or dialog."
+    ],
+    "rules": [
+      {
+        "id": "notifications-5-unread-not-color-only",
+        "severity": "error",
+        "check": "Unread state is conveyed by text or an accessible label, not color alone."
+      },
+      {
+        "id": "notifications-5-severity-mapping",
+        "severity": "error",
+        "check": "Success, warning, and error variants match their meaning; never use success styling for failures."
+      },
+      {
+        "id": "notifications-5-stack-limit",
+        "severity": "warning",
+        "check": "At most three transient notices are stacked at once."
+      }
+    ]
   }
 }

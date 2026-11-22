@@ -55,5 +55,31 @@
         "name": "separator"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Present one person or organization with the facts needed to recognize and act on them.",
+    "useWhen": [
+      "The page is about a single account, member, or company."
+    ],
+    "doNotUseWhen": [
+      "Several entities of the same kind are being compared (use a list or table)."
+    ],
+    "rules": [
+      {
+        "id": "profile-3-real-identity",
+        "severity": "error",
+        "check": "Names, roles, and stats are real or clearly labeled sample data."
+      },
+      {
+        "id": "profile-3-image-alt",
+        "severity": "error",
+        "check": "Avatar and cover images carry alt text, or empty alt when decorative."
+      },
+      {
+        "id": "profile-3-permissioned-actions",
+        "severity": "warning",
+        "check": "Follow or message actions reflect the viewer's permissions and never appear on their own profile."
+      }
+    ]
   }
 }

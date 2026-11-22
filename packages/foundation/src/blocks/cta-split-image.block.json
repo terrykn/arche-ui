@@ -54,5 +54,31 @@
         "name": "meteors"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Close a section by offering one clear next step.",
+    "useWhen": [
+      "The reader already has enough context to act."
+    ],
+    "doNotUseWhen": [
+      "The action is unavailable, or the surface is inside the product."
+    ],
+    "rules": [
+      {
+        "id": "cta-split-image-one-primary-action",
+        "severity": "error",
+        "check": "One primary action; any secondary action is visually subordinate."
+      },
+      {
+        "id": "cta-split-image-concrete-label",
+        "severity": "warning",
+        "check": "The action label names the outcome (start trial, book a demo), never a bare 'Submit'."
+      },
+      {
+        "id": "cta-split-image-aa-contrast",
+        "severity": "error",
+        "check": "Action text and background meet WCAG AA in both light and dark themes."
+      }
+    ]
   }
 }

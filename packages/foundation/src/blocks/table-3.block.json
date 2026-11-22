@@ -37,5 +37,36 @@
         "name": "table"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Compare structured records row by row with columns that stay readable.",
+    "useWhen": [
+      "Records share the same fields and are compared across rows."
+    ],
+    "doNotUseWhen": [
+      "Records are heterogeneous or mainly discovered by scanning cards."
+    ],
+    "rules": [
+      {
+        "id": "table-3-header-semantics",
+        "severity": "error",
+        "check": "Cells are associated with header cells via th/scope or an equivalent accessible table."
+      },
+      {
+        "id": "table-3-numeric-alignment",
+        "severity": "warning",
+        "check": "Numeric columns are right-aligned with consistent precision."
+      },
+      {
+        "id": "table-3-row-action-labels",
+        "severity": "error",
+        "check": "Per-row actions are keyboard reachable and labelled with the row's identity."
+      },
+      {
+        "id": "table-3-empty-state",
+        "severity": "warning",
+        "check": "An empty table states that there are no records and offers a next step."
+      }
+    ]
   }
 }

@@ -40,5 +40,36 @@
         "name": "label"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Get a returning user back into the product with one clear, low-friction path.",
+    "useWhen": [
+      "The user already has an account and needs to authenticate."
+    ],
+    "doNotUseWhen": [
+      "The user is creating an account (use a sign-up form)."
+    ],
+    "rules": [
+      {
+        "id": "login-03-labelled-fields",
+        "severity": "error",
+        "check": "Every input carries a visible label or aria-label; a placeholder alone does not label a field."
+      },
+      {
+        "id": "login-03-autocomplete",
+        "severity": "error",
+        "check": "Credential inputs declare autocomplete values so password managers work."
+      },
+      {
+        "id": "login-03-error-announcement",
+        "severity": "error",
+        "check": "Validation errors are announced to assistive tech and tied to their field, not shown by color alone."
+      },
+      {
+        "id": "login-03-single-primary",
+        "severity": "warning",
+        "check": "The card has one primary submit action; social providers stay secondary."
+      }
+    ]
   }
 }

@@ -46,5 +46,31 @@
         "name": "spotlight-card"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Answer the questions that block a decision, in the visitor's own words.",
+    "useWhen": [
+      "Recurring objections can be answered in two or three sentences."
+    ],
+    "doNotUseWhen": [
+      "The answer needs a support conversation or legal review."
+    ],
+    "rules": [
+      {
+        "id": "faq-two-column-one-question-per-item",
+        "severity": "error",
+        "check": "Each accordion item holds one question and its answer."
+      },
+      {
+        "id": "faq-two-column-answer-length",
+        "severity": "warning",
+        "check": "Answers stay under roughly 80 words; longer material belongs on its own page."
+      },
+      {
+        "id": "faq-two-column-disclosure-semantics",
+        "severity": "error",
+        "check": "The trigger exposes aria-expanded and controls its panel."
+      }
+    ]
   }
 }

@@ -46,5 +46,31 @@
         "name": "tabs"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Orient the user in one band: where they are, what this page is, and what they can do.",
+    "useWhen": [
+      "A detail or index page needs a title, context, and page-level actions."
+    ],
+    "doNotUseWhen": [
+      "The page is a full-screen flow with its own progress chrome."
+    ],
+    "rules": [
+      {
+        "id": "page-header-3-single-h1",
+        "severity": "error",
+        "check": "The page header carries the page's only h1."
+      },
+      {
+        "id": "page-header-3-actions-subordinate",
+        "severity": "warning",
+        "check": "Page actions are grouped and secondary to the title, with at most one primary."
+      },
+      {
+        "id": "page-header-3-breadcrumb-current",
+        "severity": "error",
+        "check": "The current page is marked as current in the breadcrumb and is not a link."
+      }
+    ]
   }
 }

@@ -26,5 +26,26 @@
   "composition": {
     "contentSlots": [],
     "childComponents": []
+  },
+  "standards": {
+    "purpose": "Carry one marketing point — content, features, or proof — in a scannable band.",
+    "useWhen": [
+      "A landing page needs one more self-contained section."
+    ],
+    "doNotUseWhen": [
+      "The section would repeat a point already made above it."
+    ],
+    "rules": [
+      {
+        "id": "dusk-stats-1-single-message",
+        "severity": "warning",
+        "check": "The band makes one point; do not stack unrelated messages inside it."
+      },
+      {
+        "id": "dusk-stats-1-real-data",
+        "severity": "error",
+        "check": "Counters, metrics, and logos show real or clearly labeled sample data."
+      }
+    ]
   }
 }

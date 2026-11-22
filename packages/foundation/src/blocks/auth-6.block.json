@@ -54,5 +54,26 @@
         "name": "input"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Let a locked-out user start account recovery without revealing whether an address exists.",
+    "useWhen": [
+      "A user cannot sign in and needs a recovery link."
+    ],
+    "doNotUseWhen": [
+      "The product has no verified email channel."
+    ],
+    "rules": [
+      {
+        "id": "auth-6-no-account-enumeration",
+        "severity": "error",
+        "check": "The response is identical whether or not the address exists."
+      },
+      {
+        "id": "auth-6-single-purpose",
+        "severity": "warning",
+        "check": "One email field and one action; do not mix sign-in and recovery in the same card."
+      }
+    ]
   }
 }

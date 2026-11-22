@@ -68,5 +68,36 @@
         "name": "separator"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Tell someone what they pay for, what they have used, and how to change it.",
+    "useWhen": [
+      "The account has a plan, invoices, or metered usage."
+    ],
+    "doNotUseWhen": [
+      "The product is free and has no account billing."
+    ],
+    "rules": [
+      {
+        "id": "billing-1-currency-interval",
+        "severity": "error",
+        "check": "Amounts state their currency and billing interval."
+      },
+      {
+        "id": "billing-1-destructive-confirmation",
+        "severity": "error",
+        "check": "Cancelling, removing a card, or changing plan requires confirmation that names the consequence."
+      },
+      {
+        "id": "billing-1-no-card-data",
+        "severity": "error",
+        "check": "Never render a full card number; show brand and last four only."
+      },
+      {
+        "id": "billing-1-usage-honesty",
+        "severity": "warning",
+        "check": "Usage meters state their limit and reset date and never show fabricated usage."
+      }
+    ]
   }
 }

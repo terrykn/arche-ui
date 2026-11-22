@@ -48,5 +48,31 @@
         "name": "empty"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Turn a blank surface into a next step instead of a dead end.",
+    "useWhen": [
+      "A list, table, or panel has no content to show."
+    ],
+    "doNotUseWhen": [
+      "The surface is still loading — show a skeleton instead."
+    ],
+    "rules": [
+      {
+        "id": "empty-states-4-explain-why",
+        "severity": "error",
+        "check": "The state says why the surface is empty."
+      },
+      {
+        "id": "empty-states-4-one-next-step",
+        "severity": "warning",
+        "check": "Offer one primary next step; secondary links stay subordinate."
+      },
+      {
+        "id": "empty-states-4-distinct-from-loading",
+        "severity": "error",
+        "check": "Empty, loading, and error states are visually and textually distinct."
+      }
+    ]
   }
 }

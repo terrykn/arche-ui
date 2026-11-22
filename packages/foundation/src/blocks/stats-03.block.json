@@ -32,5 +32,31 @@
         "name": "card"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Summarize the few numbers that tell someone how things are going.",
+    "useWhen": [
+      "A dashboard opens with a small set of decision-relevant metrics."
+    ],
+    "doNotUseWhen": [
+      "The numbers are the page's main content and need their own charts or table."
+    ],
+    "rules": [
+      {
+        "id": "stats-03-units-and-window",
+        "severity": "error",
+        "check": "Every metric states its unit and time window; deltas name the comparison period."
+      },
+      {
+        "id": "stats-03-no-fake-live",
+        "severity": "error",
+        "check": "Numbers presented as live come from real data; placeholders are labeled."
+      },
+      {
+        "id": "stats-03-one-highlight",
+        "severity": "warning",
+        "check": "At most one metric is visually emphasized."
+      }
+    ]
   }
 }

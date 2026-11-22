@@ -39,5 +39,31 @@
   "composition": {
     "contentSlots": [],
     "childComponents": []
+  },
+  "standards": {
+    "purpose": "Show progress through a sequence and what remains.",
+    "useWhen": [
+      "A task is linear and its length is known."
+    ],
+    "doNotUseWhen": [
+      "Order does not matter or steps branch unpredictably."
+    ],
+    "rules": [
+      {
+        "id": "steps-1-current-step",
+        "severity": "error",
+        "check": "The current step is marked programmatically (aria-current=step), not by color."
+      },
+      {
+        "id": "steps-1-every-step-labelled",
+        "severity": "error",
+        "check": "Every step has a visible label; numbers alone are ambiguous."
+      },
+      {
+        "id": "steps-1-linear-truth",
+        "severity": "warning",
+        "check": "Completed styling applies only to steps actually completed."
+      }
+    ]
   }
 }

@@ -47,5 +47,36 @@
         "name": "kbd"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Let a keyboard-first user jump anywhere with a few keystrokes.",
+    "useWhen": [
+      "The product has many destinations or actions and a keyboard-heavy audience."
+    ],
+    "doNotUseWhen": [
+      "The surface has fewer than a handful of destinations."
+    ],
+    "rules": [
+      {
+        "id": "command-menu-02-keyboard-trigger",
+        "severity": "error",
+        "check": "The palette opens from a documented shortcut and from a visible trigger."
+      },
+      {
+        "id": "command-menu-02-escape-returns-focus",
+        "severity": "error",
+        "check": "Escape closes the palette and returns focus to the invoking control."
+      },
+      {
+        "id": "command-menu-02-grouped-results",
+        "severity": "warning",
+        "check": "Results are grouped under labels, and an empty query state is shown when nothing matches."
+      },
+      {
+        "id": "command-menu-02-combobox-semantics",
+        "severity": "error",
+        "check": "The dialog exposes a combobox/listbox relationship with an accessible name."
+      }
+    ]
   }
 }

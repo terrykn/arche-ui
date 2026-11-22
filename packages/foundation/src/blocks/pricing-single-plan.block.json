@@ -62,5 +62,31 @@
         "name": "spotlight-card"
       }
     ]
+  },
+  "standards": {
+    "purpose": "State what each plan costs and includes so a visitor can choose without contacting sales.",
+    "useWhen": [
+      "The product has priced tiers to compare."
+    ],
+    "doNotUseWhen": [
+      "Prices are not final — never publish placeholder pricing."
+    ],
+    "rules": [
+      {
+        "id": "pricing-single-plan-two-to-four-tiers",
+        "severity": "error",
+        "check": "Two to four tiers; more requires a comparison table rather than plan cards."
+      },
+      {
+        "id": "pricing-single-plan-one-highlight",
+        "severity": "warning",
+        "check": "At most one tier is featured as recommended."
+      },
+      {
+        "id": "pricing-single-plan-currency-interval",
+        "severity": "error",
+        "check": "Every price states its currency and billing interval, and an interval switch updates all prices."
+      }
+    ]
   }
 }

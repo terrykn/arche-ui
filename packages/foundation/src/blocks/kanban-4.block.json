@@ -48,5 +48,31 @@
   "composition": {
     "contentSlots": [],
     "childComponents": []
+  },
+  "standards": {
+    "purpose": "Move work between stages by dragging or an equivalent keyboard path.",
+    "useWhen": [
+      "Items have a small set of ordered stages and change stage often."
+    ],
+    "doNotUseWhen": [
+      "The workflow has many stages or needs history auditing (use a table or timeline)."
+    ],
+    "rules": [
+      {
+        "id": "kanban-4-keyboard-move",
+        "severity": "error",
+        "check": "Every drag action has a keyboard equivalent that announces the new position."
+      },
+      {
+        "id": "kanban-4-column-meaning",
+        "severity": "warning",
+        "check": "Each column is labelled with its stage and shows its item count."
+      },
+      {
+        "id": "kanban-4-optimistic-state",
+        "severity": "warning",
+        "check": "A moved card shows pending state and visibly reverts if saving fails."
+      }
+    ]
   }
 }

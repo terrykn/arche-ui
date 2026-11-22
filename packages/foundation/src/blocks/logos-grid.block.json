@@ -47,5 +47,26 @@
         "name": "spotlight-card"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Borrow credibility by showing organizations that actually use the product.",
+    "useWhen": [
+      "Named customers approved logo display."
+    ],
+    "doNotUseWhen": [
+      "Logos are aspirational, unlicensed, or no longer customers."
+    ],
+    "rules": [
+      {
+        "id": "logos-grid-real-customers",
+        "severity": "error",
+        "check": "Every logo belongs to a current customer or an explicitly labeled partner."
+      },
+      {
+        "id": "logos-grid-legible-at-size",
+        "severity": "warning",
+        "check": "Logos stay legible at small size and keep AA contrast against the section background."
+      }
+    ]
   }
 }

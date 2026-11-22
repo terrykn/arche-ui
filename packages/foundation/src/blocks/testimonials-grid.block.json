@@ -53,5 +53,26 @@
         "name": "tweet-card"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Let real customers make the case in their own words.",
+    "useWhen": [
+      "Named customers gave quotable, specific praise."
+    ],
+    "doNotUseWhen": [
+      "No customer agreed to be quoted — never fabricate testimonials."
+    ],
+    "rules": [
+      {
+        "id": "testimonials-grid-named-source",
+        "severity": "error",
+        "check": "Every quote carries a named source and role."
+      },
+      {
+        "id": "testimonials-grid-real-company-marks",
+        "severity": "error",
+        "check": "Company marks shown beside a quote belong to the customer being quoted."
+      }
+    ]
   }
 }

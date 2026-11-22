@@ -52,5 +52,31 @@
         "name": "dropdown-menu"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Get a new user to their first meaningful outcome with the fewest blocking steps.",
+    "useWhen": [
+      "A new account needs setup before the product is useful."
+    ],
+    "doNotUseWhen": [
+      "The user already completed setup."
+    ],
+    "rules": [
+      {
+        "id": "onboarding-01-progress-truth",
+        "severity": "error",
+        "check": "Progress reflects only completed, saved steps."
+      },
+      {
+        "id": "onboarding-01-skippable",
+        "severity": "warning",
+        "check": "Non-essential steps can be skipped or dismissed."
+      },
+      {
+        "id": "onboarding-01-resumable",
+        "severity": "warning",
+        "check": "Dismissed onboarding can be reopened from a stable location."
+      }
+    ]
   }
 }

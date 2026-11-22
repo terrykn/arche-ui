@@ -48,5 +48,36 @@
         "name": "input"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Interrupt for one decision that cannot be handled inline.",
+    "useWhen": [
+      "The user must confirm, choose, or enter something before continuing."
+    ],
+    "doNotUseWhen": [
+      "The content is long-form or navigational — use a page or sheet."
+    ],
+    "rules": [
+      {
+        "id": "dialog-08-requires-title",
+        "severity": "error",
+        "check": "Every dialog has an accessible title; an icon alone is not a label."
+      },
+      {
+        "id": "dialog-08-destructive-alert",
+        "severity": "error",
+        "check": "Destructive confirmations use an alert dialog with a clearly named confirm action."
+      },
+      {
+        "id": "dialog-08-no-nesting",
+        "severity": "error",
+        "check": "A dialog never opens another dialog."
+      },
+      {
+        "id": "dialog-08-focus-management",
+        "severity": "error",
+        "check": "Focus moves into the dialog on open and returns to the trigger on close."
+      }
+    ]
   }
 }

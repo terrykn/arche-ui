@@ -37,5 +37,31 @@
   "composition": {
     "contentSlots": [],
     "childComponents": []
+  },
+  "standards": {
+    "purpose": "Answer 'is it working right now, and what happened recently' without a support ticket.",
+    "useWhen": [
+      "Users depend on uptime and need a public health surface."
+    ],
+    "doNotUseWhen": [
+      "There is no monitored data to report."
+    ],
+    "rules": [
+      {
+        "id": "status-1-absolute-timestamps",
+        "severity": "error",
+        "check": "Every incident and status update carries an absolute timestamp and timezone."
+      },
+      {
+        "id": "status-1-honest-severity",
+        "severity": "error",
+        "check": "Status labels match real severity; never show operational during a known outage."
+      },
+      {
+        "id": "status-1-history-window",
+        "severity": "warning",
+        "check": "Uptime history states its window and data source."
+      }
+    ]
   }
 }

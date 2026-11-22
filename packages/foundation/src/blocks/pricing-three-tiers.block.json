@@ -60,5 +60,31 @@
         "name": "number-ticker"
       }
     ]
+  },
+  "standards": {
+    "purpose": "State what each plan costs and includes so a visitor can choose without contacting sales.",
+    "useWhen": [
+      "The product has priced tiers to compare."
+    ],
+    "doNotUseWhen": [
+      "Prices are not final — never publish placeholder pricing."
+    ],
+    "rules": [
+      {
+        "id": "pricing-three-tiers-two-to-four-tiers",
+        "severity": "error",
+        "check": "Two to four tiers; more requires a comparison table rather than plan cards."
+      },
+      {
+        "id": "pricing-three-tiers-one-highlight",
+        "severity": "warning",
+        "check": "At most one tier is featured as recommended."
+      },
+      {
+        "id": "pricing-three-tiers-currency-interval",
+        "severity": "error",
+        "check": "Every price states its currency and billing interval, and an interval switch updates all prices."
+      }
+    ]
   }
 }

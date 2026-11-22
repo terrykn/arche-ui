@@ -53,5 +53,33 @@
         "name": "wavy-background"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Open the page with its single promise and one obvious next step.",
+    "useWhen": [
+      "A page needs its opening statement of value.",
+      "A cold visitor must understand the product in one screen."
+    ],
+    "doNotUseWhen": [
+      "The surface is an app screen or dashboard — no marketing hero inside tools.",
+      "The page already opened with another hero."
+    ],
+    "rules": [
+      {
+        "id": "hero-waves-one-primary-cta",
+        "severity": "error",
+        "check": "At most two actions, and at most one of them is the primary action."
+      },
+      {
+        "id": "hero-waves-single-h1",
+        "severity": "error",
+        "check": "The hero carries the page's only h1; a second hero on the page is a violation."
+      },
+      {
+        "id": "hero-waves-no-fabricated-proof",
+        "severity": "warning",
+        "check": "Stats, logos, and screenshots must be real or explicitly labeled as illustrative."
+      }
+    ]
   }
 }

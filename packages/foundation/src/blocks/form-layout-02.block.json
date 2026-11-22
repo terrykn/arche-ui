@@ -55,5 +55,36 @@
         "name": "textarea"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Collect a set of related values in one passable, well-labeled form.",
+    "useWhen": [
+      "Several related values are submitted together."
+    ],
+    "doNotUseWhen": [
+      "A single value or an inline edit covers the need."
+    ],
+    "rules": [
+      {
+        "id": "form-layout-02-labelled-fields",
+        "severity": "error",
+        "check": "Every field has a visible label associated with its control."
+      },
+      {
+        "id": "form-layout-02-group-semantics",
+        "severity": "warning",
+        "check": "Related controls sit in a fieldset or a labelled group."
+      },
+      {
+        "id": "form-layout-02-error-placement",
+        "severity": "error",
+        "check": "Validation messages appear next to their field and are announced."
+      },
+      {
+        "id": "form-layout-02-single-primary",
+        "severity": "warning",
+        "check": "The form has one primary submit action."
+      }
+    ]
   }
 }

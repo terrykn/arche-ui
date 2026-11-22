@@ -56,5 +56,31 @@
         "name": "separator"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Place events on a time grid a person can scan and navigate.",
+    "useWhen": [
+      "Content is tied to dates and times."
+    ],
+    "doNotUseWhen": [
+      "Items have no date, or only a single upcoming date matters (use a list)."
+    ],
+    "rules": [
+      {
+        "id": "calendar-1-accessible-grid",
+        "severity": "error",
+        "check": "Day cells are gridcells or buttons whose accessible name includes the full date."
+      },
+      {
+        "id": "calendar-1-keyboard-navigation",
+        "severity": "warning",
+        "check": "Arrow keys move between days and Enter selects."
+      },
+      {
+        "id": "calendar-1-empty-day-state",
+        "severity": "warning",
+        "check": "Selecting a day with no events shows an explicit empty state."
+      }
+    ]
   }
 }

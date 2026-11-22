@@ -63,5 +63,31 @@
         "name": "switch"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Let a user change their account safely, one section at a time.",
+    "useWhen": [
+      "An account has configurable profile, billing, or notification settings."
+    ],
+    "doNotUseWhen": [
+      "The change is a one-off action rather than a stored preference."
+    ],
+    "rules": [
+      {
+        "id": "settings-4-save-model",
+        "severity": "error",
+        "check": "Each section states whether changes save immediately or on submit."
+      },
+      {
+        "id": "settings-4-destructive-confirmation",
+        "severity": "error",
+        "check": "Destructive settings require confirmation naming the consequence."
+      },
+      {
+        "id": "settings-4-unsaved-guard",
+        "severity": "warning",
+        "check": "Leaving a section with unsaved edits warns before discarding."
+      }
+    ]
   }
 }

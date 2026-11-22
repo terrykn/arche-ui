@@ -59,5 +59,36 @@
         "name": "grid-pattern"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Collect the minimum needed to create an account and set expectations up front.",
+    "useWhen": [
+      "A new user is creating an account."
+    ],
+    "doNotUseWhen": [
+      "The user is signing in to an existing account."
+    ],
+    "rules": [
+      {
+        "id": "auth-signup-card-minimum-fields",
+        "severity": "warning",
+        "check": "Ask only for what the account needs to function; extra profile data belongs in onboarding."
+      },
+      {
+        "id": "auth-signup-card-password-rules-upfront",
+        "severity": "error",
+        "check": "Password requirements are stated before submission and validated inline."
+      },
+      {
+        "id": "auth-signup-card-terms-acknowledgement",
+        "severity": "error",
+        "check": "Terms and privacy acknowledgement is present and required where legally needed."
+      },
+      {
+        "id": "auth-signup-card-labelled-fields",
+        "severity": "error",
+        "check": "Every input carries a visible label or aria-label; a placeholder alone does not label a field."
+      }
+    ]
   }
 }

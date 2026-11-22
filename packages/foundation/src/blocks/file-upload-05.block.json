@@ -44,5 +44,36 @@
         "name": "label"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Get a file from the user's device into the product with clear limits and progress.",
+    "useWhen": [
+      "The user supplies a document, image, or archive."
+    ],
+    "doNotUseWhen": [
+      "The data is short structured text that belongs in a form field."
+    ],
+    "rules": [
+      {
+        "id": "file-upload-05-limits-before-selection",
+        "severity": "error",
+        "check": "Accepted types and size limits are stated before the user selects a file."
+      },
+      {
+        "id": "file-upload-05-announce-progress",
+        "severity": "error",
+        "check": "Upload progress and completion are announced to assistive tech."
+      },
+      {
+        "id": "file-upload-05-error-recovery",
+        "severity": "error",
+        "check": "A failed upload states the reason and offers retry without losing the other files."
+      },
+      {
+        "id": "file-upload-05-keyboard-input",
+        "severity": "error",
+        "check": "The file input has an accessible label and works from the keyboard."
+      }
+    ]
   }
 }

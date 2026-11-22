@@ -36,5 +36,33 @@
         "name": "card"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Explain what the product does through scannable capabilities rather than a wall of prose.",
+    "useWhen": [
+      "A section must show three to six distinct capabilities.",
+      "Each item reduces to a short title plus one supporting line."
+    ],
+    "doNotUseWhen": [
+      "The page compares plans (use pricing).",
+      "The content is a sequence (use numbered steps)."
+    ],
+    "rules": [
+      {
+        "id": "dusk-features-2-scannable-items",
+        "severity": "error",
+        "check": "Each feature is a short title plus at most two lines of supporting copy."
+      },
+      {
+        "id": "dusk-features-2-consistent-structure",
+        "severity": "warning",
+        "check": "All cards in one section share a single internal structure; do not mix icon, screenshot, and chart cards."
+      },
+      {
+        "id": "dusk-features-2-real-visuals",
+        "severity": "error",
+        "check": "Screenshots and charts show real product UI, never fabricated interfaces."
+      }
+    ]
   }
 }

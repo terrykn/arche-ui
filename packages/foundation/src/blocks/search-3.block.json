@@ -51,5 +51,31 @@
         "name": "kbd"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Help someone find a known item fast, including when nothing matches.",
+    "useWhen": [
+      "The corpus is too large to browse by navigation."
+    ],
+    "doNotUseWhen": [
+      "There are fewer than a handful of items to choose from."
+    ],
+    "rules": [
+      {
+        "id": "search-3-labelled-input",
+        "severity": "warning",
+        "check": "The query input has an accessible label and search semantics."
+      },
+      {
+        "id": "search-3-no-results-guidance",
+        "severity": "error",
+        "check": "The no-results state states what was searched and suggests a next step."
+      },
+      {
+        "id": "search-3-announced-count",
+        "severity": "warning",
+        "check": "Result counts update with the query and are announced politely."
+      }
+    ]
   }
 }

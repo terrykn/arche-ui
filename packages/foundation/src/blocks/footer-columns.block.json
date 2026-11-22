@@ -38,5 +38,31 @@
         "name": "badge"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Close the page with navigation, legal links, and one way to reach the company.",
+    "useWhen": [
+      "Every page of a marketing site."
+    ],
+    "doNotUseWhen": [
+      "The surface is a modal or an embedded widget."
+    ],
+    "rules": [
+      {
+        "id": "footer-columns-legal-links",
+        "severity": "error",
+        "check": "Privacy, terms, and contact links are present and reachable."
+      },
+      {
+        "id": "footer-columns-single-contentinfo",
+        "severity": "error",
+        "check": "The page has exactly one footer landmark."
+      },
+      {
+        "id": "footer-columns-link-contrast",
+        "severity": "warning",
+        "check": "Footer links meet AA contrast against the footer background in both themes."
+      }
+    ]
   }
 }

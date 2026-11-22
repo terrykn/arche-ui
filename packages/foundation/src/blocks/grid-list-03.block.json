@@ -37,5 +37,31 @@
         "name": "card"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Scan a set of similar items as a compact, uniform grid.",
+    "useWhen": [
+      "Items are peers and are compared by their title and a small amount of metadata."
+    ],
+    "doNotUseWhen": [
+      "Items need long descriptions or per-item actions that cannot fit a compact cell."
+    ],
+    "rules": [
+      {
+        "id": "grid-list-03-consistent-cells",
+        "severity": "warning",
+        "check": "Every cell shares one structure; mixing media and text-only cells breaks scanning."
+      },
+      {
+        "id": "grid-list-03-accessible-actions",
+        "severity": "error",
+        "check": "Hover-only controls are reachable by keyboard and stay visible on focus."
+      },
+      {
+        "id": "grid-list-03-empty-state",
+        "severity": "warning",
+        "check": "An empty grid explains what would appear here."
+      }
+    ]
   }
 }

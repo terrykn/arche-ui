@@ -61,5 +61,36 @@
         "name": "sidebar"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Keep primary navigation reachable while the main surface scrolls.",
+    "useWhen": [
+      "The product has several top-level areas used repeatedly."
+    ],
+    "doNotUseWhen": [
+      "Navigation is a temporary overlay rather than a persistent frame."
+    ],
+    "rules": [
+      {
+        "id": "sidebar-1-current-page",
+        "severity": "error",
+        "check": "The active item is marked with aria-current, not by color alone."
+      },
+      {
+        "id": "sidebar-1-disclosure-keyboard",
+        "severity": "error",
+        "check": "Disclosure triggers are buttons with aria-expanded, reachable in order."
+      },
+      {
+        "id": "sidebar-1-persist-collapse",
+        "severity": "warning",
+        "check": "Collapsed state persists across navigation."
+      },
+      {
+        "id": "sidebar-1-mobile-sheet",
+        "severity": "warning",
+        "check": "Below the small breakpoint the sidebar becomes a sheet or drawer."
+      }
+    ]
   }
 }

@@ -45,5 +45,31 @@
         "name": "textarea"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Let a person hold a conversation with a model and see exactly what was sent.",
+    "useWhen": [
+      "An assistant answers in turns and context accumulates."
+    ],
+    "doNotUseWhen": [
+      "A single form submission covers the need."
+    ],
+    "rules": [
+      {
+        "id": "ai-01-streaming-state",
+        "severity": "warning",
+        "check": "Streaming responses show progress and can be stopped."
+      },
+      {
+        "id": "ai-01-error-recovery",
+        "severity": "error",
+        "check": "A failed turn shows a retry path and keeps the user's message."
+      },
+      {
+        "id": "ai-01-composer-keyboard",
+        "severity": "error",
+        "check": "The composer has an accessible label, sends on Enter, and inserts a newline on Shift+Enter."
+      }
+    ]
   }
 }

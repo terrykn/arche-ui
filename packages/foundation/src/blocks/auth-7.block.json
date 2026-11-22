@@ -51,5 +51,31 @@
         "name": "input"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Let a locked-out user set a new password under rules they can see while typing.",
+    "useWhen": [
+      "The user arrived from a valid, unexpired reset link."
+    ],
+    "doNotUseWhen": [
+      "The reset token is missing or expired — show a recovery path instead."
+    ],
+    "rules": [
+      {
+        "id": "auth-7-token-expiry",
+        "severity": "error",
+        "check": "The surface states that reset links expire and are single-use."
+      },
+      {
+        "id": "auth-7-password-rules-upfront",
+        "severity": "error",
+        "check": "Every requirement is shown and validated inline before submit."
+      },
+      {
+        "id": "auth-7-no-autofill-trap",
+        "severity": "warning",
+        "check": "New-password fields declare autocomplete=new-password so managers offer to save."
+      }
+    ]
   }
 }

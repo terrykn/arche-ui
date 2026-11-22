@@ -42,5 +42,31 @@
         "name": "badge"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Show what happened, in order, with enough context to act on it.",
+    "useWhen": [
+      "A workspace, profile, or admin surface needs a history of events."
+    ],
+    "doNotUseWhen": [
+      "The same information is already the primary content of the page."
+    ],
+    "rules": [
+      {
+        "id": "activity-3-actor-action-time",
+        "severity": "error",
+        "check": "Every event names its actor, its action, and a timestamp that resolves to an absolute time."
+      },
+      {
+        "id": "activity-3-newest-first",
+        "severity": "warning",
+        "check": "Order newest first unless the surface is explicitly a progress timeline."
+      },
+      {
+        "id": "activity-3-empty-state",
+        "severity": "warning",
+        "check": "An empty feed states why it is empty and what will appear."
+      }
+    ]
   }
 }

@@ -44,5 +44,36 @@
         "name": "input"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Explain what went wrong and give the fastest route back.",
+    "useWhen": [
+      "A request failed, access was denied, or the route does not exist."
+    ],
+    "doNotUseWhen": [
+      "A recoverable inline error can be shown next to the control that caused it."
+    ],
+    "rules": [
+      {
+        "id": "error-2-correct-status",
+        "severity": "error",
+        "check": "The page is served with the real HTTP status (404, 403, 500), not 200."
+      },
+      {
+        "id": "error-2-recovery-path",
+        "severity": "error",
+        "check": "Every error page offers at least one working way forward."
+      },
+      {
+        "id": "error-2-no-blame",
+        "severity": "warning",
+        "check": "Copy explains the situation without blaming the visitor or leaking internals."
+      },
+      {
+        "id": "error-2-safe-retry",
+        "severity": "warning",
+        "check": "A retry action is offered only when retrying can succeed."
+      }
+    ]
   }
 }

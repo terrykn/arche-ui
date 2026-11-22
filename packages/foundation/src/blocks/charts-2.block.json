@@ -48,5 +48,36 @@
         "name": "chart"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Make a trend comparable at a glance without distorting the data.",
+    "useWhen": [
+      "A series over time or a share of a whole must be read quickly."
+    ],
+    "doNotUseWhen": [
+      "Exact values must be compared row by row (use a table)."
+    ],
+    "rules": [
+      {
+        "id": "charts-2-labelled-axes",
+        "severity": "error",
+        "check": "Axes state what they measure and in which unit; a truncated axis is labeled as such."
+      },
+      {
+        "id": "charts-2-text-alternative",
+        "severity": "error",
+        "check": "The chart has a text alternative summarizing the trend and key values."
+      },
+      {
+        "id": "charts-2-token-series-colors",
+        "severity": "warning",
+        "check": "Series colors come from chart tokens, never raw hex values."
+      },
+      {
+        "id": "charts-2-real-data",
+        "severity": "error",
+        "check": "Displayed series are real or clearly labeled sample data."
+      }
+    ]
   }
 }

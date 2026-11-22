@@ -46,5 +46,31 @@
         "name": "resizable-navbar"
       }
     ]
+  },
+  "standards": {
+    "purpose": "Give visitors one persistent, keyboard-reachable way to move through the site.",
+    "useWhen": [
+      "The site has more than one destination."
+    ],
+    "doNotUseWhen": [
+      "A single-screen embed where navigation would be noise."
+    ],
+    "rules": [
+      {
+        "id": "navbar-floating-single-header",
+        "severity": "error",
+        "check": "One header landmark per page."
+      },
+      {
+        "id": "navbar-floating-keyboard-operable",
+        "severity": "error",
+        "check": "Every menu opens, closes, and is traversable by keyboard; focus returns to the trigger on close."
+      },
+      {
+        "id": "navbar-floating-mobile-disclosure",
+        "severity": "warning",
+        "check": "Below the small breakpoint the nav collapses to a disclosure, never an overflowing row."
+      }
+    ]
   }
 }
