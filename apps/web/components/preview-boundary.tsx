@@ -9,7 +9,8 @@ import * as React from "react";
  * whole page. Here it only blanks its own card.
  */
 export class PreviewBoundary extends React.Component<
-  { children: React.ReactNode },
+  /** `name` identifies the entry in the failure log; the fallback stays generic. */
+  { children: React.ReactNode; name?: string },
   { failed: boolean }
 > {
   state = { failed: false };
@@ -19,7 +20,9 @@ export class PreviewBoundary extends React.Component<
   }
 
   componentDidCatch(error: unknown) {
-    if (process.env.NODE_ENV !== "production") console.error("Preview failed:", error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error(`Preview failed: ${this.props.name ?? "unknown entry"}`, error);
+    }
   }
 
   render() {

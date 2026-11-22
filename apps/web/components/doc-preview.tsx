@@ -15,7 +15,7 @@ import { PreviewBoundary } from "@/components/preview-boundary";
  */
 export function DocPreview({ id, compact = false }: { id: string; compact?: boolean }) {
   return (
-    <PreviewBoundary>
+    <PreviewBoundary name={id}>
       <PreviewContent id={id} compact={compact} />
     </PreviewBoundary>
   );

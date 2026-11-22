@@ -7,6 +7,7 @@ import { ComponentPreview } from "@/components/component-preview";
 import { BlockPreview } from "@/components/block-preview";
 import { PreviewPortalHost } from "@/components/preview-portal";
 import { PreviewFrame } from "@/components/preview-frame";
+import { PreviewBoundary } from "@/components/preview-boundary";
 import { savePayload } from "../../actions";
 import { PublishButton } from "../publish-button";
 import { InstallBlock } from "@/components/install-block";
@@ -741,7 +742,8 @@ function PreviewGrid({
               </>
             }
           >
-            {renderItem(item)}
+            {/* One broken preview must not take the whole editor down. */}
+            <PreviewBoundary name={item.name}>{renderItem(item)}</PreviewBoundary>
           </PreviewFrame>
         );
       })}
@@ -819,7 +821,9 @@ export function IdentityEditor({
   const savedDoc = React.useRef<Doc>({
     tokens: initialPayload.tokens,
     components: normalizeComponents(initialPayload.components),
-    fonts: initialPayload.fonts,
+    // Payloads saved before the font registry have no `fonts`: default the
+    // slots so the editor never reads a face off undefined and blanks the page.
+    fonts: initialPayload.fonts ?? { sans: "", display: "", mono: "" },
   });
   const docRef = React.useRef<Doc>(savedDoc.current);
   const [doc, setDoc] = React.useState<Doc>(docRef.current);

@@ -11,7 +11,7 @@ import { PreviewBoundary } from "@/components/preview-boundary";
  */
 export function BlockPreview({ name }: { name: string; axes?: Record<string, string> }) {
   return (
-    <PreviewBoundary>
+    <PreviewBoundary name={name}>
       <BlockPreviewContent name={name} />
     </PreviewBoundary>
   );
