@@ -58,8 +58,8 @@ export default async function DashboardHome({
       <CreationDock prefill={prefill} />
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-[-1] h-64 translate-y-[12%] overflow-hidden opacity-20 [mask-image:linear-gradient(to_bottom,transparent,black_35%)] md:left-60"
-        style={{ filter: "brightness(0.8) saturate(1.3)" }}
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-[-1] h-64 translate-y-[12%] overflow-hidden opacity-25 [mask-image:linear-gradient(to_bottom,transparent,black_35%)] md:left-60"
+        style={{ filter: "brightness(0.9) saturate(1.5)" }}
       >
         <ResponsiveGradientBg
           className="dashboard-aurora"

@@ -127,7 +127,7 @@ test("verizon-style DNA: red brand, black-ink primary, both roles readable", asy
   }
 });
 
-test("light brand takes dark text in light mode, chosen per mode", async () => {
+test("foreground follows max contrast: white wins on the yellow-green solid, chosen per mode", async () => {
   const lemon = await compile("t-brand-lemon", {
     primaryHue: 220, accentHue: 20, neutralHue: 220, brandHue: 100,
   });
@@ -135,8 +135,11 @@ test("light brand takes dark text in light mode, chosen per mode", async () => {
     const set = lemon.tokens[mode];
     assert.ok(ratio(set, "--brand-foreground", "--brand") >= 4.5, `${mode}: yellow brand text passes AA`);
   }
+  // Max-ratio rule: on this solid white (4.64) beats black (3.79), so the
+  // text swaps to light instead of grinding dark text darker. Each mode's
+  // choice is derived and recorded separately.
   const fgLight = oklch(lemon.tokens.light["--brand-foreground"].$value);
-  assert.ok(fgLight.l < 0.5, `light-mode text on a yellow solid is dark (L ${fgLight.l})`);
+  assert.ok(fgLight.l > 0.5, `light-mode text on the yellow-green solid is light (L ${fgLight.l})`);
   // The solid is identical in both modes here, so both modes may agree —
   // the point is each mode's choice is derived and recorded separately.
   assert.equal(lemon.meta.brand.foreground.light, String(lemon.tokens.light["--brand-foreground"].$value));

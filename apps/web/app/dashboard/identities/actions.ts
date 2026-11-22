@@ -8,10 +8,15 @@ import {
   applyPromptEdit,
   completeGeneration,
   generateFromPhrase,
+  previewCustomStrategies,
   previewGeneration,
+  previewWordsSwatches,
+  type BrandSwatchSet,
   type FinishSelections,
   type GenerationPreview,
   type PickerStep,
+  type UsagePreviewOption,
+  type WordsPreviewSelections,
 } from "@/lib/generation/service";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -127,6 +132,46 @@ export async function startGenerationAction(
       throw err;
     }
     return { ok: false, message: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+/**
+ * Modal creation, custom brand tile: compile the three strategies for a
+ * custom picker hex on demand (unknowable at preview time, so fetched —
+ * still zero model calls). Returns the rows or a message.
+ */
+export async function previewCustomBrandAction(
+  preview: GenerationPreview,
+  prompt: string,
+  hex: string,
+): Promise<{ ok: true; options: UsagePreviewOption[] } | { ok: false; message: string }> {
+  await requireUserId();
+  try {
+    const options = await previewCustomStrategies(preview, prompt, hex);
+    return { ok: true, options };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, message };
+  }
+}
+
+/**
+ * Modal creation, words step: recompile the live preview from the word
+ * history (zero model calls — same fold as finish). The client debounces
+ * it; failures keep the last preview and Create still uses the picks.
+ */
+export async function previewWordsAction(
+  preview: GenerationPreview,
+  prompt: string,
+  selections: WordsPreviewSelections,
+): Promise<{ ok: true; options: BrandSwatchSet } | { ok: false; message: string }> {
+  await requireUserId();
+  try {
+    const options = await previewWordsSwatches(preview, prompt, selections);
+    return { ok: true, options };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, message };
   }
 }
 
@@ -252,6 +297,31 @@ export async function renameLibrary(
   revalidatePath("/dashboard");
   revalidatePath(`/dashboard/identities/${libraryId}`);
   return { ok: true, name: (data as unknown as { name: string }).name };
+}
+
+/** Toggle a library's visibility (public ↔ private). Cards offer this behind a confirm dialog. */
+export async function toggleVisibilityAction(
+  libraryId: string,
+  visibility: string,
+): Promise<{ ok: true; visibility: string } | { ok: false; message: string }> {
+  const owner = await requireUserId();
+  const next = visibility === "public" ? "public" : visibility === "private" ? "private" : null;
+  if (!next) {
+    return { ok: false, message: "visibility must be public or private" };
+  }
+  const service = createServiceClient();
+  const { data, error } = await service
+    .from("libraries")
+    .update({ visibility: next, updated_at: new Date().toISOString() })
+    .eq("id", libraryId)
+    .eq("owner", owner)
+    .select("visibility")
+    .maybeSingle();
+  if (error || !data) {
+    return { ok: false, message: error?.message ?? "library not found" };
+  }
+  revalidatePath("/dashboard");
+  return { ok: true, visibility: (data as unknown as { visibility: string }).visibility };
 }
 
 /** Delete a library owned by the caller. The editor navigates away on success. */

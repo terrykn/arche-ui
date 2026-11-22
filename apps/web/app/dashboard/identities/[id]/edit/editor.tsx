@@ -962,22 +962,29 @@ export function IdentityEditor({
   const save = async () => {
     setSaving(true);
     setIssues(null);
-    const result = await savePayload(libraryId, {
-      meta: initialPayload.meta,
-      fonts: doc.fonts,
-      icons: initialPayload.icons,
-      typeScale: initialPayload.typeScale,
-      dna: initialPayload.dna,
-      tokens: doc.tokens,
-      components: doc.components,
-    });
-    setSaving(false);
-    if (!result.ok) {
-      setIssues(result.issues ?? []);
-      return;
+    try {
+      const result = await savePayload(libraryId, {
+        meta: initialPayload.meta,
+        fonts: doc.fonts,
+        icons: initialPayload.icons,
+        typeScale: initialPayload.typeScale,
+        dna: initialPayload.dna,
+        tokens: doc.tokens,
+        components: doc.components,
+      });
+      if (!result.ok) {
+        setIssues(result.issues ?? []);
+        return;
+      }
+      savedDoc.current = structuredClone(docRef.current);
+      setSavedAt(new Date().toLocaleTimeString());
+    } catch (err) {
+      // A rejected action used to leave `saving` true forever (disabled
+      // Save button, no message). Surface it and always release the button.
+      setIssues([{ path: "library", message: err instanceof Error ? err.message : "Saving failed — try again." }]);
+    } finally {
+      setSaving(false);
     }
-    savedDoc.current = structuredClone(docRef.current);
-    setSavedAt(new Date().toLocaleTimeString());
   };
 
   // Live preview vars (same convention as the registry theme emission).

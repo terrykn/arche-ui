@@ -225,8 +225,15 @@ export function checkDesignRules(identity: ArcheIdentity): DesignRuleFinding[] {
     // an accident — the floor yields to it exactly like monochrome.
     const brandScale = (identity.meta as { brand?: { scale?: unknown } } | undefined)?.brand?.scale;
     const brandFloor = monochrome || brandScale === 0 ? 0 : solidFloor;
+    // Palette-row mark-only strategy: the ink structure (and the
+    // brand-lifted accent, which carries the mark voice rather than the
+    // solid band) is intent (stamped on meta.brand by the compiler), so
+    // the floor yields to it exactly like monochrome.
+    const markOnly =
+      (identity.meta as { brand?: { strategy?: unknown } } | undefined)?.brand?.strategy === "mark-only";
     for (const name of SOLID_TOKENS) {
-      const floor = name === "--brand" ? brandFloor : solidFloor;
+      const floor =
+        name === "--brand" ? brandFloor : markOnly && (name === "--primary" || name === "--accent") ? 0 : solidFloor;
       const c = tokenColor(set, name);
       if (c && (c.c < floor || c.c > ceiling)) {
         findings.push({

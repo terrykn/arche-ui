@@ -12,22 +12,25 @@
  * - WORD_CHIPS: descriptive chips mapping directly onto the 8 DNA axes.
  * - derivePaletteOptions: three named palette-anchor options from the
  *   generation's final palette (as-dreamed, surprising, quiet-ground).
- * - deriveBrandOptions: up to five Material 3 brand USAGES for the palette
- *   row (as-dreamed, on primary, muted secondary, tertiary, ink) gated by a
- *   distinctness test — the row picks how the brand participates.
+ * - deriveBrandStrategies: the three palette-row STRATEGIES (unified,
+ *   mark-only, accent) from any brand hue — the row picks how the brand
+ *   participates, and each strategy is the whole system derived from
+ *   that hue.
  * - deriveBrandColors: FIVE STATIC brand colors for the brand row, fixed and
  *   independent of any generation. Picking one rebuilds the palette row
  *   from that single hue via paletteFromBrand (a static calculation).
  * - paletteFromBrand: the static palette config calculated from one brand
- *   hue (primary/neutral/brand on the hue, accent a static +60° away).
- * - applyPickerDelta: fold chip + palette usage + brand color into DNA +
- *   anchors. A picked brand color re-bases the anchors on its static
- *   palette; the usage then applies within that palette.
+ *   hue (primary/neutral/brand on the hue, accent a static +60° away) —
+ *   legacy helper, superseded by strategy derivation.
+ * - applyPickerDelta: fold chip + palette usage + brand strategy into DNA
+ *   + anchors. A picked strategy replaces the anchors wholesale.
  * - EXAMPLE_RECORDS: reference identities for the "which feels closest"
  *   step (palette + typefaces + stack per record).
  */
-import type { DnaAxes, DnaPalette, GenerationProfile } from "@arche/foundation/dna";
+import type { DnaAxes, DnaObject, DnaPalette, GenerationProfile } from "@arche/foundation/dna";
+import { dnaEnums } from "@arche/foundation/dna";
 import { nameColor } from "@arche/foundation/taste/names";
+import type { BrandStrategyId, WordsBorderWidth } from "./compiler.js";
 
 export type DnaAxisKey = keyof DnaAxes;
 
@@ -52,6 +55,150 @@ export const WORD_CHIPS: WordChip[] = [
   { id: "minimal", label: "Minimal", deltas: { ornament: -0.3, density: -0.2, sharpness: 0.1 } },
   { id: "dense", label: "Dense", deltas: { density: 0.3 } },
 ];
+
+/**
+ * Words-step chips (creation flow). Color and type are already picked by
+ * then, so these nudge ONLY sharpness (corners, border weight) and density
+ * (spacing/size) — neither axis feeds the color voice, the chroma budget,
+ * or the typeface pick, so the words step can never redo those choices.
+ * Shadows stay as generated (material-driven) and remain tunable after
+ * creation.
+ */
+export const STRUCTURE_CHIPS: WordChip[] = [
+  { id: "rounded", label: "Rounded", deltas: { sharpness: -0.3 } },
+  { id: "angular", label: "Angular", deltas: { sharpness: 0.3 } },
+  { id: "airy", label: "Airy", deltas: { density: -0.3 } },
+  { id: "compact", label: "Compact", deltas: { density: 0.3 } },
+];
+
+/**
+ * The four working-state traits the describe-in-words step owns. Color and
+ * type are already picked by then, so no word writes the color voice
+ * (warmth/chroma/energy/playfulness/formality) — only shape and surface.
+ */
+export type WordProperty = "shadow" | "borders" | "roundedness" | "spacing";
+
+export interface DescribeWord {
+  id: string;
+  label: string;
+  /** The traits this word writes into the working state (the rest it leaves alone). */
+  properties: Partial<Record<WordProperty, string>>;
+}
+
+/**
+ * Describe-in-words vocabulary (creation flow). Each word writes its own
+ * traits into a shared working state; NOTHING is averaged. When two picked
+ * words write the same trait, the later pick overwrites the earlier one —
+ * Soft + Sharp never yields medium corners, whichever was picked last owns
+ * the radius. A word that loses every trait to later picks deselects
+ * itself; removing the winner restores the earlier word's values.
+ */
+export const DESCRIBE_WORDS: DescribeWord[] = [
+  { id: "calm", label: "Calm", properties: { shadow: "subtle", spacing: "spacious" } },
+  { id: "bold", label: "Bold", properties: { borders: "thick", roundedness: "sharp" } },
+  { id: "playful", label: "Playful", properties: { roundedness: "bubbly", shadow: "lifted" } },
+  { id: "minimal", label: "Minimal", properties: { shadow: "flat", borders: "invisible" } },
+  { id: "soft", label: "Soft", properties: { roundedness: "pillowy", shadow: "gentle" } },
+  { id: "sharp", label: "Sharp", properties: { roundedness: "square", borders: "defined" } },
+  { id: "spacious", label: "Spacious", properties: { spacing: "roomy", borders: "hairline" } },
+  { id: "compact", label: "Compact", properties: { spacing: "dense", shadow: "flat" } },
+  { id: "flat", label: "Flat", properties: { shadow: "none", borders: "hairline" } },
+];
+
+/** roundedness → sharpness axis (absolute: later pick replaces, never averages). */
+const ROUNDNESS_TO_SHARPNESS: Record<string, number> = {
+  pillowy: 0.1,
+  bubbly: 0.3,
+  sharp: 0.8,
+  square: 1,
+};
+
+/** spacing → density axis (absolute). */
+const SPACING_TO_DENSITY: Record<string, number> = {
+  spacious: 0.15,
+  roomy: 0.3,
+  dense: 0.85,
+};
+
+/**
+ * shadow → material (+ ornament for the flat family, which keys its shadow
+ * target off ornament). Subtle and gentle share the soft paper shadow —
+ * the words differ in their companion traits. Every material here is
+ * type-neutral (pixel is never written: it would flip the typeface pick).
+ * Ornament is only ever lowered, never raised past the type/icon gates.
+ */
+const SHADOW_TO_SURFACE: Record<string, { material: DnaObject["material"]; ornament?: number }> = {
+  none: { material: "flat", ornament: 0 },
+  flat: { material: "flat", ornament: 0.25 },
+  subtle: { material: "paper" },
+  gentle: { material: "paper" },
+  lifted: { material: "clay" },
+};
+
+export interface ResolvedWords {
+  /** Winning value + owner per trait (null when no picked word writes it). */
+  slots: Record<WordProperty, { wordId: string; value: string } | null>;
+  /** Picked words that still own at least one trait, in pick order. */
+  activeIds: string[];
+  /** Absolute axis writes from the winning slot values (material included). */
+  axes: { sharpness?: number; density?: number; material?: DnaObject["material"]; ornament?: number };
+  /** Winning borders voice (resolved per profile at emission). */
+  borderWidth?: WordsBorderWidth;
+  /** Word ids with no vocabulary entry (ignored, recorded for the draft log). */
+  unknownWords: string[];
+}
+
+/**
+ * Replay a pick history (oldest → newest) into the working state. Pure +
+ * deterministic: the same order always yields the same slots. Later picks
+ * overwrite earlier ones per trait; nothing composes, nothing averages.
+ */
+export function resolveDescribeWords(wordOrder: string[]): ResolvedWords {
+  const byId = new Map(DESCRIBE_WORDS.map((word) => [word.id, word]));
+  const slots: ResolvedWords["slots"] = { shadow: null, borders: null, roundedness: null, spacing: null };
+  const unknownWords: string[] = [];
+  const seen = new Set<string>();
+  const order: string[] = [];
+  for (const id of wordOrder) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const word = byId.get(id);
+    if (!word) {
+      unknownWords.push(id);
+      continue;
+    }
+    order.push(id);
+    for (const [trait, value] of Object.entries(word.properties) as Array<[WordProperty, string]>) {
+      slots[trait] = { wordId: id, value };
+    }
+  }
+  const owned = new Set<string>();
+  for (const slot of Object.values(slots)) {
+    if (slot) owned.add(slot.wordId);
+  }
+  const activeIds = order.filter((id) => owned.has(id));
+  const axes: ResolvedWords["axes"] = {};
+  const roundedness = slots.roundedness?.value;
+  if (roundedness !== undefined && roundedness in ROUNDNESS_TO_SHARPNESS) {
+    axes.sharpness = ROUNDNESS_TO_SHARPNESS[roundedness]!;
+  }
+  const spacing = slots.spacing?.value;
+  if (spacing !== undefined && spacing in SPACING_TO_DENSITY) {
+    axes.density = SPACING_TO_DENSITY[spacing]!;
+  }
+  const shadow = slots.shadow?.value;
+  if (shadow !== undefined && shadow in SHADOW_TO_SURFACE) {
+    const surface = SHADOW_TO_SURFACE[shadow]!;
+    axes.material = surface.material;
+    if (surface.ornament !== undefined) axes.ornament = surface.ornament;
+  }
+  let borderWidth: WordsBorderWidth | undefined;
+  const borders = slots.borders?.value;
+  if (borders === "invisible" || borders === "hairline" || borders === "defined" || borders === "thick") {
+    borderWidth = borders;
+  }
+  return { slots, activeIds, axes, borderWidth, unknownWords };
+}
 
 export interface PaletteOption {
   id: string;
@@ -137,34 +284,44 @@ export function derivePaletteOptions(
  * reason string is stored on the draft (`picker.brandReason`) so a remix is
  * explainable after the fact.
  */
-export interface BrandOption {
-  id: "as-dreamed" | "brand-primary" | "brand-secondary" | "brand-tertiary" | "brand-ink";
-  /** Usage label shown beside the evocative color name. */
+export interface BrandStrategy {
+  id: BrandStrategyId;
+  /** Usage label: Unified | Mark only | Accent. */
   roleLabel: string;
-  /** Evocative name from the compiler naming table (never a bare hex). */
+  /** Evocative name of the emitted brand solid (never a bare hex). */
   name: string;
+  /** Final mark hue (post-rotation for the accent strategy). */
   brandHue: number;
   /**
-   * Voice multiplier applied to the system chroma when this option
-   * compiles: 1 = full voice, 0.45 = Material 3 secondary muting,
-   * 0 = neutral ink. The service passes it to the compiler; the picker
-   * rows and the draft record the id + reason.
+   * Compiler flag: HOW the brand participates. The service passes it as
+   * `brandStrategy`; the compiler rebuilds the structural roles around
+   * the mark (unified = brand IS primary, mark-only = achromatic
+   * structure, accent = dark desaturated structure + vivid mark).
    */
-  chromaScale: number;
-  /** Recorded reason: as-dreamed | brand-equals-primary | secondary-muted |
-   * tertiary-accentHue | tertiary-rotated-60 | tertiary-rotated-120 | ink. */
+  strategy: BrandStrategyId;
+  /** Full system anchors for this strategy, derived from the brand hue. */
+  anchors: DnaPalette;
+  /** Recorded reason: unified-brand-equals-primary |
+   * mark-only-ink-primary | accent-direct | accent-rotated-60 |
+   * accent-rotated-120. */
   reason: string;
 }
 
-export interface BrandOptionContext {
+export interface BrandStrategyContext {
   profile?: GenerationProfile;
   /**
-   * True when the brief (or the DNA) forces every chroma to zero: hue
-   * rotations then emit the identical color, so the distinctness gate
-   * collapses them and only "As Dreamed" ships. Brand never breaks
-   * monochrome.
+   * True when the brief (or the DNA) forces every chroma to zero: every
+   * strategy emits the same gray, so only Unified ships. Brand never
+   * breaks monochrome.
    */
   achromatic?: boolean;
+  /**
+   * Explicit structural hue override (tests only): the accent structure
+   * builds from this instead of the brand hue, so the rotation cascade
+   * can be exercised. Production always omits it — structure derives
+   * from the winning brand hue, so switching brand rebuilds all three.
+   */
+  structuralHue?: number;
 }
 
 /** Distinctness gate thresholds (hue degrees, CIEDE2000, lightness). */
@@ -293,121 +450,108 @@ export function brandDistinctness(a: GateColor, b: GateColor): Distinctness {
   };
 }
 
-/** Material 3 secondary muting: same hue at 0.45× the voice chroma. */
-const SECONDARY_SCALE = 0.45;
-/** Chroma leg: the muted mark is its own choice once the muting gap ≥ 0.05. */
-const SECONDARY_GAP = 0.05;
-
 /**
- * Distinctness for brand-slot derivation: the shared gate, plus a chroma
- * leg for the muted secondary. A same-hue mark at half chroma or less is
- * its own choice once the muting is absolute enough to see; on an
- * already-muted identity it collapses onto primary instead — correct, not
- * a bug. Full-voice pairs never take the leg (ratio 1), so every other
- * slot follows the shared gate exactly.
- */
-function slotDistinct(a: GateColor, b: GateColor): boolean {
-  if (brandDistinctness(a, b).distinct) return true;
-  if (hueDistance(a.h, b.h) >= DISTINCT_HUE) return false;
-  const hi = Math.max(a.c, b.c);
-  const lo = Math.min(a.c, b.c);
-  return hi > 0 && lo / hi <= 0.5 && hi - lo >= SECONDARY_GAP;
-}
-
-/**
- * Brand-only options from the generation's own anchors, deterministic and
- * model-free (Material 3 brand slots, order fixed, dedup preserves order):
+ * The three palette-row strategies from ANY brand hue — deterministic and
+ * model-free, order fixed (unified, mark-only, accent):
  *
- * 1. As Dreamed — the model's `brandHue`, untouched, full voice.
- * 2. Brand = Primary — `brandHue := primaryHue` (the unified T-Mobile
- *    pattern), full voice.
- * 3. Brand = Secondary — same hue as primary at 0.45× chroma (the muted
- *    mark: same family, quieter).
- * 4. Brand = Tertiary — `accentHue` when it clears the distinctness gate vs
- *    primary, else `primaryHue + 60°`, else `primaryHue + 120°`.
- * 5. Brand = Ink — C = 0 neutral ink (the mark-only black/gray pattern);
- *    its hue anchor rests on primary so hue-spread and hero-CTA affinity
- *    stay sane.
+ * 1. Unified (T-Mobile) — brand IS primary. One calculation:
+ *    `brandHue := primaryHue`. A single scale feeds both: --brand and
+ *    --primary emit the same solid, secondary rides the same hue at
+ *    0.45× chroma. The distinctness check is skipped on purpose — they
+ *    are the same color by design.  * 2. Mark-only (Verizon) — the mark is scarce signal. Primary/secondary
+  *    compile achromatic (near-black buttons in light mode, near-white in
+  *    dark) while the brand stays full voice on its hue; accent is the
+  *    brand lifted one ladder step (same hue, slightly lighter signal
+  *    highlights), never derived from the ink primary.
+ *    Neutrals keep the voice's warmth tint (40–60° by warmth).
+ * 3. Accent (Stripe) — the brand is the highlight. The structure is the
+ *    dark desaturated sibling of the mark hue (same family, near-navy of
+ *    H at ~0.45× chroma and a darker/lighter step per mode) while
+ *    brand/accent carry the full-voice hue. The gate compares the actual
+ *    emitted pair (vivid mark at step 8 vs dusty structure at step 10
+ *    light / step 4 dark), so same-family structure is distinct by
+ *    lightness; only a true collapse rotates the mark +60° (Material 3
+ *    tertiary rule), then +120°, first distinct hue wins.
  *
- * Deduplication: an option that collapses onto one already kept (all three
- * of ΔH < 30°, ΔE₀₀ < 15, ΔL < 0.15) is hidden — two identical choices are
- * never shown. Under an achromatic brief every hue emits the same gray, so
- * only As Dreamed ships (brand never breaks monochrome).
+ * Under an achromatic brief every strategy emits the same gray, so only
+ * Unified ships (brand never breaks monochrome).
  */
-export function deriveBrandOptions(
-  palette: DnaPalette,
-  context: BrandOptionContext = {},
-): BrandOption[] {
-  const profile = context.profile ?? "standard";
+export function deriveBrandStrategies(
+  brandHue: number,
+  context: BrandStrategyContext = {},
+): BrandStrategy[] {
+  const H = normHue(brandHue);
   const achromatic = context.achromatic === true;
-  const primaryHue = normHue(palette.primaryHue);
-  const accentHue = normHue(palette.accentHue);
-  const dreamedHue = normHue(palette.brandHue ?? palette.primaryHue);
-  const colorOf = (hue: number, scale = 1): GateColor => ({
-    l: GATE_LIGHTNESS,
-    c: achromatic || scale === 0 ? 0 : GATE_CHROMA * scale,
-    h: normHue(hue),
-  });
-  const option = (
-    id: BrandOption["id"],
-    roleLabel: string,
-    brandHue: number,
-    scale: number,
-    reason: string,
-  ): BrandOption => ({
-    id,
-    roleLabel,
-    name: nameColor(
-      achromatic || scale === 0
-        ? `oklch(0.56 0 0)`
-        : `oklch(0.56 ${GATE_CHROMA * scale} ${normHue(brandHue)})`,
-    ),
-    brandHue: normHue(brandHue),
-    chromaScale: scale,
-    reason,
-  });
-  const kept: BrandOption[] = [option("as-dreamed", "As Dreamed", dreamedHue, 1, "as-dreamed")];
-  // Usage labels read as answers to "how is the brand used?" — the palette
-  // row, not a color list.
-
-  const gateOf = (entry: BrandOption): GateColor => colorOf(entry.brandHue, entry.chromaScale);
-  const collapsesOntoKept = (candidate: GateColor): boolean =>
-    kept.some((entry) => !slotDistinct(candidate, gateOf(entry)));
-  const primaryGate = colorOf(primaryHue);
-  // Brand = Primary: hidden when the dreamed brand already sits on primary.
-  if (!collapsesOntoKept(primaryGate)) {
-    kept.push(option("brand-primary", "On Primary", primaryHue, 1, "brand-equals-primary"));
+  const structural = normHue(context.structuralHue ?? H);
+  const markName = (hue: number): string =>
+    nameColor(achromatic ? `oklch(0.56 0 0)` : `oklch(0.56 ${GATE_CHROMA} ${normHue(hue)})`);
+  if (achromatic) {
+    const anchors: DnaPalette = { primaryHue: H, accentHue: H, neutralHue: H, brandHue: H };
+    return [
+      {
+        id: "unified",
+        roleLabel: "Unified",
+        name: markName(H),
+        brandHue: H,
+        strategy: "unified",
+        anchors,
+        reason: "unified-brand-equals-primary",
+      },
+    ];
   }
-  // Brand = Secondary: hidden when the muting would be invisible (an
-  // already-muted identity) or when it collapses onto a kept option.
-  const secondaryGate = colorOf(primaryHue, SECONDARY_SCALE);
-  if (!collapsesOntoKept(secondaryGate)) {
-    kept.push(option("brand-secondary", "Muted", primaryHue, SECONDARY_SCALE, "secondary-muted"));
+  const unified: BrandStrategy = {
+    id: "unified",
+    roleLabel: "Unified",
+    name: markName(H),
+    brandHue: H,
+    strategy: "unified",
+    anchors: { primaryHue: H, accentHue: H, neutralHue: H, brandHue: H },
+    reason: "unified-brand-equals-primary",
+  };
+  const markOnly: BrandStrategy = {
+    id: "mark-only",
+    roleLabel: "Mark only",
+    name: markName(H),
+    brandHue: H,
+    strategy: "mark-only",
+    anchors: { primaryHue: H, accentHue: H, neutralHue: H, brandHue: H },
+    reason: "mark-only-ink-primary",
+  };
+  // Accent: same-family structure (dark dusty H) vs vivid mark (step 8).
+  // The gate compares the actual emitted pair — light mode shown (dark
+  // mode separates further) — so same-hue structure is distinct by
+  // lightness and ships direct; only a true collapse rotates the mark.
+  const primaryGateLight: GateColor = { l: 0.38, c: GATE_CHROMA * 0.45, h: structural };
+  const accentCandidates: Array<[number, string]> = [
+    [H, "accent-direct"],
+    [H + 60, "accent-rotated-60"],
+    [H + 120, "accent-rotated-120"],
+  ];
+  let accentHue = H;
+  let accentReason = "accent-direct";
+  for (const [hue, reason] of accentCandidates) {
+    if (brandDistinctness({ l: GATE_LIGHTNESS, c: GATE_CHROMA, h: normHue(hue) }, primaryGateLight).distinct) {
+      accentHue = normHue(hue);
+      accentReason = reason;
+      break;
+    }
   }
-  // Brand = Tertiary: the accent family when it clears the gate vs
-  // primary, else the M3 +60°/+120° rotations. Enterprise has no accent
-  // family, so it starts at the rotations (the brand stays exempt from
-  // the accent-collapse rule; it is simply never the accent).
-  const tertiaryCandidates: Array<[number, string]> = [];
-  if (profile !== "enterprise") tertiaryCandidates.push([accentHue, "tertiary-accentHue"]);
-  tertiaryCandidates.push(
-    [primaryHue + 60, "tertiary-rotated-60"],
-    [primaryHue + 120, "tertiary-rotated-120"],
-  );
-  for (const [hue, reason] of tertiaryCandidates) {
-    const candidate = colorOf(hue);
-    if (!slotDistinct(candidate, primaryGate)) continue;
-    if (collapsesOntoKept(candidate)) continue;
-    kept.push(option("brand-tertiary", "Tertiary", hue, 1, reason));
-    break;
-  }
-  // Brand = Ink: hidden only when an earlier kept option is already gray.
-  const inkGate = colorOf(primaryHue, 0);
-  if (!collapsesOntoKept(inkGate)) {
-    kept.push(option("brand-ink", "Ink", primaryHue, 0, "ink"));
-  }
-  return kept;
+  // Production omits structuralHue so structure derives from the winning
+  // brand hue (structHue = H): every brand switch rebuilds this strategy.
+  // An explicit structuralHue (tests only) pins the structure instead, so
+  // the rotation cascade can be exercised.
+  const accent: BrandStrategy = {
+    id: "accent",
+    roleLabel: "Accent",
+    name: markName(accentHue),
+    brandHue: accentHue,
+    strategy: "accent",
+    anchors: { primaryHue: structural, accentHue, neutralHue: structural, brandHue: accentHue },
+    reason: accentReason,
+  };
+  return [unified, markOnly, accent];
 }
+
 
 /**
  * One brand-row choice: a single STATIC color, independent of any
@@ -442,6 +586,46 @@ export function deriveBrandColors(): BrandColorOption[] {
 export function resolveBrandColor(id: string | undefined | null): BrandColorOption | undefined {
   if (!id) return undefined;
   return deriveBrandColors().find((color) => color.id === id);
+}
+
+/**
+ * Minimum hue separation between two brand-row tiles. Matches the
+ * distinctness gate (ΔH ≥ 30°): anything closer reads as the same color
+ * on small swatches.
+ */
+const BRAND_ROW_MIN_HUE = 30;
+
+/**
+ * The brand row for one preview: the five static colors curated against
+ * the dreamed hue. A static color sitting within 30° of the dreamed mark
+ * would render as a near-duplicate tile, so it is replaced — same slot id,
+ * replacement hue from the offset cascade (complement first), verified
+ * ≥30° from the dreamed hue and every other tile. Deterministic: same
+ * dreamed hue → same row, and a dreamed hue clear of the wheel returns
+ * the static row untouched. The Generated tile (the dreamed hue itself,
+ * always default-selected) is never moved — curation only moves the
+ * alternatives around it.
+ */
+export function curateBrandColors(dreamedHue: number): BrandColorOption[] {
+  const H = normHue(dreamedHue);
+  const base = deriveBrandColors();
+  const placed: number[] = [];
+  return base.map((color) => {
+    if (hueDistance(color.brandHue, H) >= BRAND_ROW_MIN_HUE) {
+      placed.push(color.brandHue);
+      return color;
+    }
+    const others = base.filter((entry) => entry.id !== color.id).map((entry) => entry.brandHue);
+    for (const offset of [180, 150, 210, 120, 240, 90, 270]) {
+      const candidate = normHue(color.brandHue + offset);
+      if (hueDistance(candidate, H) < BRAND_ROW_MIN_HUE) continue;
+      if ([...others, ...placed].some((hue) => hueDistance(candidate, hue) < BRAND_ROW_MIN_HUE)) continue;
+      placed.push(candidate);
+      return { ...color, brandHue: candidate };
+    }
+    placed.push(color.brandHue);
+    return color;
+  });
 }
 
 /** Static tertiary offset: the accent sits +60° off the brand hue (the M3 tertiary slot). */
@@ -510,41 +694,63 @@ export const EXAMPLE_RECORDS: ExampleRecord[] = [
 
 export interface PickerSelections {
   chipIds: string[];
+  /**
+   * Describe-in-words pick history (oldest → newest). Resolved by
+   * last-pick-wins per trait AFTER the legacy chip deltas, so words
+   * overwrite — creation flow only; the staged Studio flow never sends it
+   * and keeps pure legacy behavior.
+   */
+  wordOrder?: string[];
   paletteId: string;
-  /** Palette-row usage; absent keeps the palette option's brand anchor. */
+  /** Palette-row strategy; absent keeps the palette option's anchors. */
   brandId?: string;
-  /** Brand-row color; when known it wins over the usage's pinned hue. */
+  /**
+   * Brand-row color id. Resolved by the caller (service) into strategy
+   * derivation — the strategies already carry the winning hue, so the
+   * fold itself ignores this field.
+   */
   brandColorId?: string;
+  /**
+   * Custom brand hue (degrees, from the color-picker tile). Same contract
+   * as brandColorId: the caller derives strategies from it; ignored here.
+   */
+  customBrandHue?: number;
   exampleId?: string;
 }
 
 export interface PickerApplied {
-  axes: DnaAxes;
+  axes: DnaAxes & { material?: DnaObject["material"] };
   anchors: DnaPalette;
   /** Chips that had no registry entry (ignored, recorded for the draft log). */
   unknownChips: string[];
+  /** Winning borders voice from the word history (absent when no word writes borders). */
+  borderWidth?: WordsBorderWidth;
 }
 
 /**
  * Fold picker selections into DNA + anchors. Pure + deterministic: chip
  * order never matters (deltas commute; clamp is idempotent), unknown chips
  * and unknown brand ids are ignored and reported, and an unknown palette id
- * falls back to the generation's own anchors. A picked brand color re-bases
- * the anchors on its static palette (independent of the generation); the
- * palette usage then applies within that palette. No color picked means the
- * generation's own anchors — the model's output reproduces exactly.
+ * falls back to the generation's own anchors. A picked palette-row strategy
+ * replaces the anchors wholesale — each strategy IS the whole system derived
+ * from the brand hue (the caller derives the strategies from the winning
+ * hue: custom picker hex, else fixed brand row, else the dreamed brand).
+ * No strategy picked means the palette option's own anchors — the model's
+ * output reproduces exactly.
  */
 export function applyPickerDelta(
-  axes: DnaAxes,
+  axes: DnaAxes & { material?: DnaObject["material"] },
   palette: DnaPalette,
   selections: PickerSelections,
   options: PaletteOption[] = derivePaletteOptions(palette),
-  brandOptions: BrandOption[] = deriveBrandOptions(palette),
-  brandColors: BrandColorOption[] = deriveBrandColors(),
+  brandOptions: BrandStrategy[] = deriveBrandStrategies(
+    normHue(palette.brandHue ?? palette.primaryHue),
+    { structuralHue: normHue(palette.primaryHue) },
+  ),
 ): PickerApplied {
-  const chipsById = new Map(WORD_CHIPS.map((chip) => [chip.id, chip]));
+  const chipsById = new Map([...WORD_CHIPS, ...STRUCTURE_CHIPS].map((chip) => [chip.id, chip]));
   const unknownChips: string[] = [];
-  const next: DnaAxes = { ...axes };
+  const next: DnaAxes & { material?: DnaObject["material"] } = { ...axes };
   const seen = new Set<string>();
   for (const id of selections.chipIds) {
     if (seen.has(id)) continue;
@@ -558,25 +764,33 @@ export function applyPickerDelta(
       next[axis] = Math.min(1, Math.max(0, Math.round((next[axis] + delta) * 1000) / 1000));
     }
   }
-  const color = selections.brandColorId
-    ? brandColors.find((candidate) => candidate.id === selections.brandColorId)
-    : undefined;
-  // A picked brand color re-bases the whole system on its static palette —
-  // the palettes are generated from the single brand color, independent of
-  // the generation. Otherwise the palette option's own anchors stand.
-  const option = options.find((candidate) => candidate.id === selections.paletteId);
-  const anchors: DnaPalette = color
-    ? { ...paletteFromBrand(color.brandHue) }
-    : option
-      ? { ...option.anchors }
-      : { ...palette };
-  // Usage last: it sets the mark's voice and pinned hue within the (possibly
-  // brand-derived) system.
+  // Describe-in-words history: absolute overwrites per trait, replayed in
+  // pick order after the legacy deltas. Same history → same DNA.
+  let borderWidth: WordsBorderWidth | undefined;
+  if (selections.wordOrder !== undefined) {
+    const resolved = resolveDescribeWords(selections.wordOrder);
+    unknownChips.push(...resolved.unknownWords);
+    for (const [axis, value] of Object.entries(resolved.axes)) {
+      if (axis === "material") {
+        if ((dnaEnums.material as readonly string[]).includes(value as string)) {
+          next.material = value as DnaObject["material"];
+        }
+        continue;
+      }
+      next[axis as DnaAxisKey] = Math.min(1, Math.max(0, Math.round((value as number) * 1000) / 1000));
+    }
+    borderWidth = resolved.borderWidth ?? borderWidth;
+  }
+  // Strategy first: it replaces the anchors wholesale. Otherwise the
+  // palette option's own anchors stand.
   const brand = selections.brandId
     ? brandOptions.find((candidate) => candidate.id === selections.brandId)
     : undefined;
-  if (brand) {
-    anchors.brandHue = brand.brandHue;
-  }
-  return { axes: next, anchors, unknownChips };
+  const option = options.find((candidate) => candidate.id === selections.paletteId);
+  const anchors: DnaPalette = brand
+    ? { ...brand.anchors }
+    : option
+      ? { ...option.anchors }
+      : { ...palette };
+  return { axes: next, anchors, unknownChips, borderWidth };
 }

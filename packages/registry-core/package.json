@@ -42,6 +42,7 @@
     "test:presentation": "pnpm build && node --test scripts/test-presentation.mjs",
     "test:blocks": "pnpm build && node --test scripts/test-blocks.mjs",
     "test:selector": "pnpm build && node --test scripts/test-selector.mjs",
+    "test:words": "pnpm build && node --test scripts/test-words.mjs",
     "test:picker": "pnpm build && node --test scripts/test-picker.mjs",
     "test:picker-recompile": "pnpm build && node --test scripts/test-picker-recompile.mjs",
     "test:verification": "pnpm build && node --test scripts/test-verification.mjs",

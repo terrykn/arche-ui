@@ -19,6 +19,7 @@ const {
   applyPickerDelta,
   derivePaletteOptions,
   EXAMPLE_RECORDS,
+  STRUCTURE_CHIPS,
   WORD_CHIPS,
 } = require("./dist/index.js");
 
@@ -35,6 +36,33 @@ test("chips reference real DNA axes with bounded deltas", () => {
     for (const [axis, delta] of Object.entries(chip.deltas)) {
       assert.ok(AXES.includes(axis), `chip '${chip.id}': unknown axis '${axis}'`);
       assert.ok(Math.abs(delta) <= 0.5, `chip '${chip.id}': delta out of nudge range`);
+    }
+  }
+});
+
+test("structure chips touch only sharpness + density (never color or type)", () => {
+  assert.deepEqual(
+    STRUCTURE_CHIPS.map((chip) => chip.id),
+    ["rounded", "angular", "airy", "compact"],
+    "words step offers the four structural chips",
+  );
+  const palette = { primaryHue: 170, accentHue: 20, neutralHue: 170 };
+  for (const chip of STRUCTURE_CHIPS) {
+    for (const axis of Object.keys(chip.deltas)) {
+      assert.ok(
+        axis === "sharpness" || axis === "density",
+        `structure chip '${chip.id}': axis '${axis}' would move color, type, or icons`,
+      );
+    }
+    const result = applyPickerDelta(midAxes(), palette, { chipIds: [chip.id], paletteId: "as-dreamed" });
+    assert.deepEqual(result.unknownChips, [], "structure chips are known selections");
+    for (const axis of AXES) {
+      const delta = chip.deltas[axis] ?? 0;
+      assert.equal(
+        result.axes[axis],
+        Math.round((0.5 + delta) * 1000) / 1000,
+        `chip '${chip.id}': only its own axes move`,
+      );
     }
   }
 });

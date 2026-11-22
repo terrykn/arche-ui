@@ -2,16 +2,20 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowUp, X } from "lucide-react";
-import { WORD_CHIPS } from "@arche/registry-core/picker";
+import { ArrowUp, Moon, Pipette, Sun, X } from "lucide-react";
+import { DESCRIBE_WORDS } from "@arche/registry-core/picker";
 import type {
+  BrandSwatchSet,
   FinishSelections,
   GenerationPreview,
   PalettePreviewSwatches,
+  UsagePreviewOption,
 } from "@/lib/generation/service";
 import {
   createIdentity,
   finishGenerationAction,
+  previewCustomBrandAction,
+  previewWordsAction,
   startGenerationAction,
 } from "./identities/actions";
 import { Button } from "@/components/ui/button";
@@ -25,12 +29,12 @@ import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 type Phase = "idle" | "generating" | "failed" | "palettes" | "typefaces" | "words" | "creating";
 
 /** Header prompt preview stays one short line; the full text is one toggle away. */
-const PROMPT_PREVIEW_LIMIT = 80;
+const PROMPT_PREVIEW_LIMIT = 50;
 
 const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
-  palettes: {
+  words: {
     n: "Step 1 of 3",
-    title: "Pick your colors",
+    title: "Describe it in words",
     lede: "",
   },
   typefaces: {
@@ -38,23 +42,77 @@ const STEP_LABEL: Record<string, { n: string; title: string; lede: string }> = {
     title: "Pick a typeface",
     lede: "",
   },
-  words: {
+  palettes: {
     n: "Step 3 of 3",
-    title: "Describe it in words",
+    title: "Pick your colors",
     lede: "",
   },
 };
 
+/** sRGB channel (0–255) to linear light. */
+function srgbChannelToLinear(u: number): number {
+  const v = u / 255;
+  return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+}
+
+function linearToSrgbChannel(u: number): number {
+  const c = Math.min(1, Math.max(0, u));
+  return Math.round((c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055) * 255);
+}
+
+function oklchToHexString(l: number, c: number, hDeg: number): string {
+  const h = (hDeg * Math.PI) / 180;
+  const a = c * Math.cos(h);
+  const b = c * Math.sin(h);
+  const l_ = l + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = l - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = l - 0.0894841775 * a - 1.291485548 * b;
+  const l3 = l_ ** 3;
+  const m3 = m_ ** 3;
+  const s3 = s_ ** 3;
+  const r = linearToSrgbChannel(4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3);
+  const g = linearToSrgbChannel(-1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3);
+  const bl = linearToSrgbChannel(-0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * s3);
+  return `#${((r << 16) | (g << 8) | bl).toString(16).padStart(6, "0")}`;
+}
+
+/** Display/edit hex for an emitted token (oklch or hex); null when unparseable. */
+function tokenToHex(value: string): string | null {
+  const hex = value.trim().match(/^#([0-9a-f]{6})$/i);
+  if (hex) return `#${hex[1]!.toLowerCase()}`;
+  const match = value.match(/^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/i);
+  if (!match) return null;
+  return oklchToHexString(Number(match[1]), Number(match[2]), Number(match[3]));
+}
+
+function relativeLuminance(hex: string): number {
+  const n = Number.parseInt(hex.slice(1), 16);
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(srgbChannelToLinear);
+  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+}
+
+/** Preview-only brand foreground for a custom hex: whichever of white or
+ *  black contrasts more with it. Finish re-derives the real AA-gated pair
+ *  server-side, so this is just the live swatch. */
+function onBrandForHex(hex: string): string {
+  const lum = relativeLuminance(hex);
+  const withWhite = 1.05 / (lum + 0.05);
+  const withBlack = (lum + 0.05) / 0.05;
+  return withWhite >= withBlack ? "#ffffff" : "#000000";
+}
+
 /**
- * Plain color strip (compiled light-mode tokens) — the palette and brand rows
- * are color choices only. The shared live preview above shows the composed UI.
+ * Plain color strip (compiled light-mode tokens) — the palette row names no
+ * strategy. Each strip is one whole system derived from the winning brand
+ * hue (Unified: brand IS primary; Mark only: achromatic structure + vivid
+ * mark; Accent: dark desaturated structure + vivid highlight); the shared
+ * live preview above shows what each strategy does.
  */
 function SwatchStrip({ swatches }: { swatches: PalettePreviewSwatches }) {
   const chips = [
-    { label: "Surface", value: swatches.surface },
+    { label: "Background", value: swatches.surface },
     { label: "Primary", value: swatches.primary },
     { label: "Accent", value: swatches.accent },
-    { label: "Brand", value: swatches.brand },
     { label: "Secondary", value: swatches.secondary },
   ];
   return (
@@ -90,24 +148,48 @@ export function CreationDock({ prefill }: { prefill: string }) {
   const [usageId, setUsageId] = React.useState("");
   /** Brand row: one of five fixed colors; empty means the generation's own palette. */
   const [brandColorId, setBrandColorId] = React.useState("");
+  /** Custom brand color from the picker tile ("#rrggbb"); wins over the fixed row. */
+  const [customBrand, setCustomBrand] = React.useState<string | null>(null);
+  /** Live preview mode: light/dark swaps the palette strips and the live
+   * preview only — never the app theme. Resets to light per generation. */
+  const [previewMode, setPreviewMode] = React.useState<"light" | "dark">("light");
+  /** Strategy rows compiled for the custom hex (fetched — the hex is
+   *  unknowable at preview time, unlike the fixed row). */
+  const [customUsages, setCustomUsages] = React.useState<UsagePreviewOption[] | null>(null);
+  const [customPending, setCustomPending] = React.useState(false);
+  const [customError, setCustomError] = React.useState<string | null>(null);
+  const customRequest = React.useRef(0);
   const [typefaceId, setTypefaceId] = React.useState("");
-  const [chipIds, setChipIds] = React.useState<string[]>([]);
+  /** Describe-in-words pick history (oldest → newest); past five, a new pick replaces the fifth. */
+  const [wordOrder, setWordOrder] = React.useState<string[]>([]);
+  /** Live words preview (both modes); null until the first word pick recompiles. */
+  const [wordsSwatches, setWordsSwatches] = React.useState<BrandSwatchSet | null>(null);
+  const [wordsPending, setWordsPending] = React.useState(false);
+  const [wordsError, setWordsError] = React.useState<string | null>(null);
+  const wordsRequest = React.useRef(0);
   const [error, setError] = React.useState<string | null>(null);
   const [expanded, setExpanded] = React.useState(false);
   const autoStarted = React.useRef(false);
   const router = useRouter();
   const panelRef = React.useRef<HTMLDivElement>(null);
   const open = phase !== "idle";
-  /** Picker modal (failed, steps, creating). Generating shows the loader instead. */
-  const modalOpen = open && phase !== "generating";
+  /** Picker modal (failed, steps). Generating and creating show the shared
+   *  full-screen loader instead — creating says Saving changes. */
+  const modalOpen = open && phase !== "generating" && phase !== "creating";
 
   const close = React.useCallback(() => {
     setPhase("idle");
     setPreview(null);
     setUsageId("");
     setBrandColorId("");
+    setCustomBrand(null);
+    setCustomUsages(null);
+    setPreviewMode("light");
     setTypefaceId("");
-    setChipIds([]);
+    setWordOrder([]);
+    setWordsSwatches(null);
+    setWordsPending(false);
+    setWordsError(null);
     setError(null);
     window.history.replaceState(null, "", "/dashboard");
   }, []);
@@ -127,8 +209,14 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setPreview(null);
     setUsageId("");
     setBrandColorId("");
+    setCustomBrand(null);
+    setCustomUsages(null);
+    setPreviewMode("light");
     setTypefaceId("");
-    setChipIds([]);
+    setWordOrder([]);
+    setWordsSwatches(null);
+    setWordsPending(false);
+    setWordsError(null);
     setPhase("generating");
     // A dropped/timed-out action rejects the promise; without this the
     // full-screen loader would spin forever with no message.
@@ -144,11 +232,11 @@ export function CreationDock({ prefill }: { prefill: string }) {
       return;
     }
     setPreview(result.preview);
-    // Default to the model's own answers ("As Dreamed" in both rows); the
-    // user narrows from there. Anything unpicked stays as the model generated it.
+    // Default to the model's own answers (Generated tile + Unified strategy);
+    // the user narrows from there. Anything unpicked stays as the model generated it.
     setUsageId(result.preview.usageOptions[0]?.id ?? "");
     setTypefaceId(result.preview.typeOptions[0]?.id ?? "");
-    setPhase("palettes");
+    setPhase("words");
   }, []);
 
   // Hero handoff (?prompt=): open the modal and generate once.
@@ -180,30 +268,143 @@ export function CreationDock({ prefill }: { prefill: string }) {
 
   const brandColors = preview?.brandColors ?? [];
   const typeOptions = preview?.typeOptions ?? [];
-  // The palette row follows the brand instantly: every brand color's row is
-  // precalculated with the preview, so switching brand is a tab-switch —
-  // no fetch, no waiting. No brand means the generation's own row. Either
-  // way the shared live preview above shows what the pick does — the rows
-  // themselves are just colors.
+  // The palette row follows the brand instantly: every fixed brand color's
+  // row is precalculated with the preview, so switching brand is a
+  // tab-switch — no fetch, no waiting. The custom hex (unknowable up
+  // front) fetches its rows below; no brand means the generation's own
+  // row. Either way the shared live preview above shows what the pick
+  // does — the rows themselves are just colors.
   const usageOptions =
-    (brandColorId && preview?.brandPalettes?.[brandColorId]) || preview?.usageOptions || [];
+    customUsages ||
+    (brandColorId && preview?.brandPalettes?.[brandColorId]) ||
+    preview?.usageOptions ||
+    [];
   const activeUsage =
     usageOptions.find((option) => option.id === (usageId || usageOptions[0]?.id)) ?? usageOptions[0];
-  const liveSwatches = activeUsage?.swatches.light;
+  // The AI's own mark color: the dreamed usage's emitted brand solid. This
+  // is the default-selected Generated tile in the Brand section; picking a
+  // palette strategy never changes it — only the Brand section does.
+  const dreamedBrand =
+    preview?.usageOptions[0]?.swatches.light.brand ??
+    preview?.paletteOptions[0]?.swatches.brand ??
+    "#333333";
+  // A fixed row pick shelves any earlier custom pick (the row wins); the
+  // custom hex only applies while no fixed color is set.
+  const effectiveCustomBrand = brandColorId ? null : customBrand;
+  const dreamedHex = tokenToHex(dreamedBrand) ?? "#7c3aed";
+  // A custom picker color re-skins the mark client-side only: the hue is
+  // what finish folds in, and the compiler emits the real AA-gated pair.
+  const liveBase = activeUsage?.swatches[previewMode];
+  const liveSwatches =
+    effectiveCustomBrand && liveBase
+      ? { ...liveBase, brand: effectiveCustomBrand, onBrand: onBrandForHex(effectiveCustomBrand) }
+      : liveBase;
+
+  // Custom hex rows: debounced fetch (the native picker fires
+  // continuously while dragging); a stale response never wins.
+  React.useEffect(() => {
+    if (!preview || !effectiveCustomBrand) {
+      setCustomUsages(null);
+      return;
+    }
+    const hex = effectiveCustomBrand;
+    const id = (customRequest.current += 1);
+    setCustomPending(true);
+    setCustomError(null);
+    const timer = window.setTimeout(() => {
+      void previewCustomBrandAction(preview, prompt, hex)
+        .catch((err) => {
+          console.error("custom brand preview failed", err);
+          return null;
+        })
+        .then((result) => {
+          if (customRequest.current !== id) return;
+          setCustomPending(false);
+          if (result?.ok) {
+            setCustomUsages(result.options);
+          } else {
+            setCustomError(
+              result?.message ?? "Couldn't preview palettes for that color — your pick is kept and Create still uses it.",
+            );
+          }
+        });
+    }, 350);
+    return () => window.clearTimeout(timer);
+  }, [preview, effectiveCustomBrand, prompt]);
+
+  // Live words preview for the colors step: every history change
+  // recompiles the showing strategy with the word fold (debounced — the
+  // resolver runs locally but the compile is server-side). Steps 1 and 2
+  // show no preview; step 3 shows words + typeface + colors together.
+  // Empty history means no fetch: the precomputed strategy row already
+  // is the words-empty compile.
+  const wordsBrandId = activeUsage?.id;
+  React.useEffect(() => {
+    if (!preview || phase !== "palettes" || wordOrder.length === 0) {
+      setWordsSwatches(null);
+      setWordsPending(false);
+      return;
+    }
+    const history = [...wordOrder];
+    const id = (wordsRequest.current += 1);
+    setWordsPending(true);
+    setWordsError(null);
+    const timer = window.setTimeout(() => {
+      void previewWordsAction(preview, prompt, {
+        brandId: wordsBrandId,
+        brandColorId: brandColorId || undefined,
+        customBrandHex: effectiveCustomBrand ?? undefined,
+        wordOrder: history,
+      })
+        .catch((err) => {
+          console.error("words preview failed", err);
+          return null;
+        })
+        .then((result) => {
+          if (wordsRequest.current !== id) return;
+          setWordsPending(false);
+          if (result?.ok) {
+            setWordsSwatches(result.options);
+          } else {
+            setWordsError(
+              result?.message ?? "Couldn't preview those words — your picks are kept and Create still uses them.",
+            );
+          }
+        });
+    }, 350);
+    return () => window.clearTimeout(timer);
+  }, [preview, prompt, phase, wordOrder, wordsBrandId, brandColorId, effectiveCustomBrand]);
+
+  // The picked typeface pair renders in the live previews (words step
+  // shows the default until step 2 picks one); the finish compile applies
+  // the same override, so preview and draft agree.
+  const activeTypeface = typeOptions.find((option) => option.id === (typefaceId || typeOptions[0]?.id)) ?? typeOptions[0];
+  // The colors-step preview: word-folded shape when words are picked
+  // (live recompile), else the precomputed row — plus the picked fonts.
+  // The custom hex always re-skins on top (instant, client-side), so a
+  // custom pick never waits on — or hides behind — the words refetch.
+  const wordsBase = wordsSwatches?.[previewMode] ?? liveSwatches;
+  const colorsSwatches =
+    effectiveCustomBrand && wordsBase
+      ? { ...wordsBase, brand: effectiveCustomBrand, onBrand: onBrandForHex(effectiveCustomBrand) }
+      : wordsBase;
 
   const finish = async () => {
     if (preview == null) return;
     setError(null);
     setPhase("creating");
     const selections: FinishSelections = {
-      // The palette row picks the brand usage; a picked brand color re-bases
-      // the system on its static palette server-side, so finish agrees with
-      // the preview row exactly.
+      // The palette row picks the brand strategy; finish re-derives the
+      // strategies from the winning hue server-side, so finish agrees with
+      // the preview row exactly. A custom picker hex wins over the fixed
+      // row at its own hue.
       paletteId: "as-dreamed",
-      brandId: usageId || usageOptions[0]?.id || "as-dreamed",
+      brandId: usageId || usageOptions[0]?.id || "unified",
       brandColorId: brandColorId || undefined,
+      customBrandHex: effectiveCustomBrand ?? undefined,
       typefaceId: typefaceId || undefined,
-      chipIds,
+      chipIds: [],
+      wordOrder,
     };
     const result = await finishGenerationAction(preview, prompt, selections).catch(() => null);
     // Success navigates to the Studio; failure lands back on the last step
@@ -221,9 +422,22 @@ export function CreationDock({ prefill }: { prefill: string }) {
     setPhase("words");
   };
 
-  const toggleChip = (id: string) => {
-    setChipIds((current) => (current.includes(id) ? current.filter((c) => c !== id) : [...current, id]));
+  // Words step: pick history, oldest first. Tapping a picked word removes
+  // it (restoring whatever it shadowed); past five, a new pick replaces
+  // the fifth (the most recent), so the earliest picks — the deliberate
+  // ones — stay. The working state derives from the history on every
+  // render, so the preview and the final draft always agree.
+  const toggleWord = (id: string) => {
+    setWordOrder((current) => {
+      if (current.includes(id)) return current.filter((c) => c !== id);
+      if (current.length >= 5) return [...current.slice(0, 4), id];
+      return [...current, id];
+    });
   };
+  // The pick history is the source of truth: every picked word renders
+  // checked, so three picks always read as three. The working state
+  // (last pick wins per trait, resolved server-side) still decides the
+  // compile; removing a winner restores whatever it shadowed.
 
   return (
     <>
@@ -292,11 +506,9 @@ export function CreationDock({ prefill }: { prefill: string }) {
                 <h2 className="font-display text-2xl">
                   {phase === "failed"
                     ? "Generation failed"
-                    : phase === "creating"
-                      ? "Creating your identity…"
-                      : phase === "palettes" || phase === "typefaces" || phase === "words"
-                        ? STEP_LABEL[phase]?.title
-                        : "Create identity"}
+                    : phase === "palettes" || phase === "typefaces" || phase === "words"
+                      ? STEP_LABEL[phase]?.title
+                      : "Create identity"}
                 </h2>
                 {prompt ? (
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -328,12 +540,6 @@ export function CreationDock({ prefill }: { prefill: string }) {
               </button>
             </div>
 
-            {phase === "creating" ? (
-              <p className="mt-4 text-sm text-muted-foreground">
-                Compiling your selections into a private draft…
-              </p>
-            ) : null}
-
             {phase === "failed" ? (
               <div className="mt-4">
                 <p role="alert" className="rounded-md border-(length:--border-width) border-destructive/40 bg-card p-3 text-sm text-destructive">
@@ -364,21 +570,84 @@ export function CreationDock({ prefill }: { prefill: string }) {
 
             {phase === "palettes" && preview != null ? (
               <div className="mt-4 flex flex-col gap-5">
-                {liveSwatches ? (
+                {colorsSwatches ? (
                   <div className="flex flex-col gap-1.5" data-testid="live-preview">
-                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                      Live preview
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                        Live preview
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewMode((mode) => (mode === "light" ? "dark" : "light"))}
+                        aria-label={previewMode === "light" ? "Show dark preview" : "Show light preview"}
+                        title={previewMode === "light" ? "Show dark preview" : "Show light preview"}
+                        className="rounded-full p-1.5 text-muted-foreground hover:text-foreground"
+                      >
+                        {previewMode === "light" ? (
+                          <Moon size={14} aria-hidden="true" />
+                        ) : (
+                          <Sun size={14} aria-hidden="true" />
+                        )}
+                      </button>
+                    </div>
                     <MiniSystemPreview
-                      swatches={liveSwatches}
+                      swatches={colorsSwatches}
                       size="full"
                       label="Live identity preview"
+                      displayFont={activeTypeface?.display}
+                      bodyFont={activeTypeface?.body}
+                      loading={wordOrder.length > 0 && wordsPending}
                     />
+                    {wordOrder.length > 0 && wordsError && !wordsPending ? (
+                      <p className="text-xs text-muted-foreground" role="alert">
+                        {wordsError}
+                      </p>
+                    ) : null}
                   </div>
                 ) : null}
                 <fieldset className="flex flex-col">
                   <legend className="mb-2 text-sm font-medium">Brand</legend>
                   <div className="flex flex-wrap gap-2" data-testid="brand-row">
+                    <label
+                      title="Generated brand color — selected by default, click to select, use the pipette to pick any color"
+                      className={`relative cursor-pointer rounded-lg border-(length:--border-width) bg-card p-2 ${
+                        !brandColorId ? "border-primary" : "border-border"
+                      }`}
+                    >
+                      <Input
+                        type="radio"
+                        name="brand"
+                        value="as-dreamed"
+                        checked={!brandColorId}
+                        onChange={() => {
+                          setBrandColorId("");
+                        }}
+                        className="sr-only"
+                      />
+                      <span
+                        aria-hidden
+                        title="Generated brand color"
+                        className="block h-8 w-16 rounded-md border border-border"
+                        style={{ backgroundColor: effectiveCustomBrand ?? dreamedBrand }}
+                      />
+                      <span
+                        title="Pick any color"
+                        className="absolute -bottom-1.5 -right-1.5 rounded-full border border-border bg-card p-1 text-muted-foreground"
+                      >
+                        <Pipette size={12} aria-hidden="true" />
+                        <input
+                          type="color"
+                          aria-label="Generated brand color — pick any color"
+                          value={effectiveCustomBrand ?? dreamedHex}
+                          onChange={(event) => {
+                            setCustomBrand(event.target.value);
+                            setBrandColorId("");
+                          }}
+                          onClick={(event) => event.stopPropagation()}
+                          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        />
+                      </span>
+                    </label>
                     {brandColors.map((color) => (
                       <label
                         key={color.id}
@@ -389,7 +658,10 @@ export function CreationDock({ prefill }: { prefill: string }) {
                           name="brand"
                           value={color.id}
                           checked={brandColorId === color.id}
-                          onChange={() => setBrandColorId(color.id)}
+                          onChange={() => {
+                            setBrandColorId(color.id);
+                            setCustomBrand(null);
+                          }}
                           className="sr-only"
                         />
                         <span
@@ -405,7 +677,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
 
                 <fieldset className="flex flex-col">
                   <legend className="mb-2 text-sm font-medium">Palette</legend>
-                  <div className="grid gap-2 sm:grid-cols-2" data-testid="palette-row">
+                  <div className="grid grid-cols-3 gap-2" data-testid="palette-row">
                     {usageOptions.map((option) => (
                       <label
                         key={option.id}
@@ -419,71 +691,77 @@ export function CreationDock({ prefill }: { prefill: string }) {
                           onChange={() => setUsageId(option.id)}
                           className="sr-only"
                         />
-                        <SwatchStrip swatches={option.swatches.light} />
+                        <SwatchStrip swatches={option.swatches[previewMode]} />
                       </label>
                     ))}
                   </div>
-                  {brandColorId ? (
-                    <button
-                      type="button"
-                      onClick={() => setBrandColorId("")}
-                      className="mt-2 w-fit text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
-                    >
-                      Reset to generated palette
-                    </button>
+                  {customBrand && customPending ? (
+                    <p className="mt-2 text-xs text-muted-foreground" role="status">
+                      Updating palettes…
+                    </p>
+                  ) : null}
+                  {customBrand && customError && !customPending ? (
+                    <p className="mt-2 text-xs text-muted-foreground" role="alert">
+                      {customError}
+                    </p>
                   ) : null}
                 </fieldset>
               </div>
             ) : null}
 
             {phase === "typefaces" && preview != null ? (
-              <div className="mt-4 flex flex-col gap-3">
+              <div className="mt-4 grid grid-cols-3 gap-2" data-testid="typeface-row">
                 {typeOptions.map((option) => (
                   <label
                     key={option.id}
-                    className="flex cursor-pointer flex-col gap-2 rounded-lg border-(length:--border-width) border-border bg-card p-4 has-checked:border-primary"
+                    className="flex cursor-pointer flex-col gap-1.5 rounded-lg border-(length:--border-width) border-border bg-card p-3 has-checked:border-primary"
                   >
-                    <span className="flex items-center gap-2">
-                      <Input
-                        type="radio"
-                        name="typeface"
-                        value={option.id}
-                        checked={(typefaceId || typeOptions[0]?.id) === option.id}
-                        onChange={() => setTypefaceId(option.id)}
-                        className="h-4 w-4"
-                      />
-                      <span className="font-medium">{option.name}</span>
-                    </span>
+                    <Input
+                      type="radio"
+                      name="typeface"
+                      value={option.id}
+                      aria-label={option.name}
+                      checked={(typefaceId || typeOptions[0]?.id) === option.id}
+                      onChange={() => setTypefaceId(option.id)}
+                      className="sr-only"
+                    />
                     <TypefaceOptionPreview option={option} />
-                    <span className="text-sm text-muted-foreground">{option.reason}</span>
                   </label>
                 ))}
-
               </div>
             ) : null}
 
             {phase === "words" ? (
-              <div className="mt-4 flex flex-col gap-3">
-                <fieldset className="flex flex-wrap gap-2">
-                  <legend className="sr-only">Descriptive words</legend>
-                  {WORD_CHIPS.map((chip) => (
-                    <label
-                      key={chip.id}
-                      className="cursor-pointer rounded-full border-(length:--border-width) border-border bg-card px-4 py-2 text-sm has-checked:border-primary has-checked:bg-primary has-checked:text-primary-foreground"
-                    >
-                      <Input
-                        type="checkbox"
-                        name="chips"
-                        value={chip.id}
-                        checked={chipIds.includes(chip.id)}
-                        onChange={() => toggleChip(chip.id)}
-                        className="sr-only"
-                      />
-                      {chip.label}
-                    </label>
-                  ))}
-                </fieldset>
+              <div className="mt-4 flex flex-col gap-5">
+                <div className="flex flex-col gap-1.5">
+                  <fieldset className="flex flex-wrap gap-2">
+                    <legend className="sr-only">Descriptive words</legend>
+                    {DESCRIBE_WORDS.map((word) => (
+                      <label
+                        key={word.id}
+                        className="cursor-pointer rounded-full border-(length:--border-width) border-border bg-card px-4 py-2 text-sm has-checked:border-primary has-checked:bg-primary has-checked:text-primary-foreground"
+                      >
+                        <Input
+                          type="checkbox"
+                          name="words"
+                          value={word.id}
+                          checked={wordOrder.includes(word.id)}
+                          onChange={() => toggleWord(word.id)}
+                          className="sr-only"
+                        />
+                        {word.label}
+                      </label>
+                    ))}
+                  </fieldset>
+                  <p className="mt-3 text-xs text-muted-foreground">Pick up to 5</p>
+                </div>
               </div>
+            ) : null}
+
+            {(phase === "palettes" || phase === "typefaces") && preview != null ? (
+              <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                Nothing here is final. You can refine everything in the Studio after creation.
+              </p>
             ) : null}
           </div>
 
@@ -493,31 +771,31 @@ export function CreationDock({ prefill }: { prefill: string }) {
                   {STEP_LABEL[phase]?.n}
                 </p>
                 <div className="flex gap-2">
-                  {phase === "palettes" ? (
+                  {phase === "words" ? (
                     <>
-                      <Button onClick={() => setPhase("typefaces")} className="w-fit">
-                        Continue
-                      </Button>
                       <Button variant="outline" onClick={close}>
                         Discard
+                      </Button>
+                      <Button onClick={() => setPhase("typefaces")} className="w-fit">
+                        Continue
                       </Button>
                     </>
                   ) : phase === "typefaces" ? (
                     <>
-                      <Button onClick={() => setPhase("words")} className="w-fit">
-                        Continue to words
-                      </Button>
-                      <Button variant="outline" onClick={() => setPhase("palettes")}>
+                      <Button variant="outline" onClick={() => setPhase("words")}>
                         Back
+                      </Button>
+                      <Button onClick={() => setPhase("palettes")} className="w-fit">
+                        Continue to colors
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button onClick={() => void finish()} className="w-fit">
-                        Create identity
-                      </Button>
                       <Button variant="outline" onClick={() => setPhase("typefaces")}>
                         Back
+                      </Button>
+                      <Button onClick={() => void finish()} className="w-fit">
+                        Create identity
                       </Button>
                     </>
                   )}
@@ -528,6 +806,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
         </div>
       ) : null}
       {phase === "generating" ? <GeneratingLoader /> : null}
+      {phase === "creating" ? <GeneratingLoader label="Saving changes" /> : null}
     </>
   );
 }

@@ -135,14 +135,16 @@ function cleanTypefaceVariant(
 /**
  * Normalize the model's 3 typography variants against the closed font
  * registry (unknown ids, wrong slots, and incompatible pairings are
- * replaced deterministically). The first fallback is always the compiler's
- * own pick for the DNA ("As Dreamed"); the rest are registered compatible
- * pairs. Always returns exactly 3 variants with unique ids.
+ * replaced deterministically). Slots 1–3 are the model's variants; slots
+ * 4–6 are registered compatible pairings not already chosen, so the step
+ * always offers six distinct choices. The first fallback is always the
+ * compiler's own pick for the DNA ("As Dreamed"). Always returns exactly
+ * 6 variants with unique ids.
  */
 export function normalizeTypefaceVariants(
   raw: unknown,
   compilerPick: { display: string; sans: string },
-): [TypefaceVariant, TypefaceVariant, TypefaceVariant] {
+): TypefaceVariant[] {
   const byId = fontEntriesById();
   const fallback: TypefaceVariant[] = [
     {
@@ -154,7 +156,7 @@ export function normalizeTypefaceVariants(
     },
   ];
   for (const [display, body] of recommendedFontPairs()) {
-    if (fallback.length >= 3) break;
+    if (fallback.length >= 6) break;
     if (display === compilerPick.display && body === compilerPick.sans) continue;
     const displayEntry = byId.get(display);
     const bodyEntry = byId.get(body);
@@ -167,24 +169,62 @@ export function normalizeTypefaceVariants(
       reason: "A registered compatible pairing from the font registry.",
     });
   }
+  const pairingTaken = (display: string, body: string): boolean =>
+    out.some((option) => option.display === display && option.body === body);
+  const uniqueId = (id: string): string => {
+    if (!seen.has(id)) return id;
+    let n = 2;
+    while (seen.has(`${id}-${n}`)) n++;
+    return `${id}-${n}`;
+  };
   const list = Array.isArray(raw) ? raw : [];
   const seen = new Set<string>();
   const out: TypefaceVariant[] = [];
   for (let i = 0; i < 3; i++) {
     const cleaned = cleanTypefaceVariant(list[i], byId);
-    if (cleaned && !seen.has(cleaned.id)) {
+    if (cleaned && !seen.has(cleaned.id) && !pairingTaken(cleaned.display, cleaned.body)) {
       seen.add(cleaned.id);
       out.push(cleaned);
-    } else {
-      let replacement = fallback[Math.min(i, fallback.length - 1)]!;
-      if (seen.has(replacement.id)) {
-        replacement = { ...replacement, id: `typeface-${i + 1}` };
-      }
-      seen.add(replacement.id);
-      out.push(replacement);
+      continue;
+    }
+    // Replacement: first fallback at/after this position whose id and
+    // pairing are both still free — a bad model slot must never clone an
+    // earlier choice.
+    let placed = false;
+    for (let j = i; j < fallback.length; j++) {
+      const candidate = fallback[j]!;
+      if (seen.has(candidate.id) || pairingTaken(candidate.display, candidate.body)) continue;
+      const id = uniqueId(candidate.id);
+      seen.add(id);
+      out.push({ ...candidate, id });
+      placed = true;
+      break;
+    }
+    if (!placed) {
+      const candidate = fallback[Math.min(i, fallback.length - 1)]!;
+      const id = uniqueId(`${candidate.id}-alt`);
+      seen.add(id);
+      out.push({ ...candidate, id });
     }
   }
-  return out as [TypefaceVariant, TypefaceVariant, TypefaceVariant];
+  for (const candidate of fallback) {
+    if (out.length >= 6) break;
+    if (pairingTaken(candidate.display, candidate.body)) continue;
+    const id = uniqueId(candidate.id);
+    seen.add(id);
+    out.push({ ...candidate, id });
+  }
+  // Defensive: the registry always holds enough pairs that this never
+  // triggers; it keeps the six-slot contract if it ever does.
+  let pad = 0;
+  while (out.length < 6) {
+    const candidate = fallback[pad % fallback.length]!;
+    pad++;
+    const id = uniqueId(`${candidate.id}-alt`);
+    seen.add(id);
+    out.push({ ...candidate, id });
+  }
+  return out;
 }
 
 export interface TypefaceSpec {

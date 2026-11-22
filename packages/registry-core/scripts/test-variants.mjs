@@ -104,10 +104,14 @@ test("palette variants: non-array input yields the deterministic derivation", ()
   assert.deepEqual(out[0].anchors, { ...PALETTE, brandHue: PALETTE.primaryHue });
 });
 
-test("typography variants: valid triple passes through untouched", () => {
+test("typography variants: valid triple leads, three registered pairs follow", () => {
   const pick = deriveTypePick(AXES, "standard");
   const out = normalizeTypefaceVariants(goodTypefaces, pick);
-  assert.deepEqual(out, goodTypefaces);
+  assert.equal(out.length, 6);
+  assert.deepEqual(out.slice(0, 3), goodTypefaces);
+  assert.equal(new Set(out.map((o) => o.id)).size, 6, "six unique ids");
+  const pairings = new Set(out.map((o) => `${o.display}+${o.body}`));
+  assert.equal(pairings.size, 6, "six distinct pairings — no two choices look alike");
 });
 
 test("typography variants: unknown fonts and bad pairings fall back, never throw", () => {
@@ -119,11 +123,13 @@ test("typography variants: unknown fonts and bad pairings fall back, never throw
     { id: "clash", name: "Clash", display: "satoshi", body: "switzer", reason: "Incompatible pair." },
   ];
   const out = normalizeTypefaceVariants(raw, pick);
-  assert.equal(out.length, 3);
+  assert.equal(out.length, 6);
   assert.deepEqual(out[0], goodTypefaces[0]);
   assert.notEqual(out[1].display, "not-a-font");
   assert.notDeepEqual([out[2].display, out[2].body], ["satoshi", "switzer"]);
-  assert.equal(new Set(out.map((o) => o.id)).size, 3, "ids unique after fallback");
+  assert.equal(new Set(out.map((o) => o.id)).size, 6, "ids unique after fallback");
+  const pairings = new Set(out.map((o) => `${o.display}+${o.body}`));
+  assert.equal(pairings.size, 6, "six distinct pairings — no two choices look alike");
   const again = normalizeTypefaceVariants(raw, pick);
   assert.deepEqual(out, again);
 });
@@ -131,7 +137,7 @@ test("typography variants: unknown fonts and bad pairings fall back, never throw
 test("typography variants: first fallback is the compiler's own pick", () => {
   const pick = deriveTypePick(AXES, "standard");
   const out = normalizeTypefaceVariants([], pick);
-  assert.equal(out.length, 3);
+  assert.equal(out.length, 6);
   assert.equal(out[0].display, pick.display);
   assert.equal(out[0].body, pick.sans);
 });

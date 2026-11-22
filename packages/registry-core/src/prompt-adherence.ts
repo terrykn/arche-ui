@@ -177,11 +177,29 @@ function circDist(a: number, b: number): number {
  * Runs AFTER design repair, BEFORE the AA pass (AA only moves lightness,
  * so caps survive it). Every action is logged with a prompt-* rule id.
  */
+export interface EnforcementOptions {
+  /**
+   * Palette-row brand strategy riding along (unified | mark-only | accent).
+   * The mark-only ink structure is stamped strategy intent (like
+   * monochrome): the vivid-accent floor governs accents, never the ink it
+   * defines itself by — boosting it breaks the chroma taper.
+   */
+  brandStrategy?: string;
+  /**
+   * True when the compile's brand hue is an explicit user pick (brand tile,
+   * custom hex), not the dreamed answer: the prompt's hue family governed
+   * the dreamed choice, and the pick IS the new family — the family snap is
+   * skipped so alternatives render truthfully instead of collapsing back.
+   */
+  preservePickedHues?: boolean;
+}
+
 export function enforceConstraints(
   tokens: Record<string, Record<string, { $type: string; $value: unknown }>>,
   constraints: PromptConstraints,
   profile: "enterprise" | "standard" | "expressive",
   adjustments: EnforcementAdjustment[],
+  options: EnforcementOptions = {},
 ): void {
   if (Object.keys(constraints).length === 0) return;
   const ceiling = profile === "enterprise" ? 0.19 : profile === "expressive" ? 0.26 : 0.24;
@@ -236,9 +254,14 @@ export function enforceConstraints(
   // 3. Accent floor: raise primary/accent solids (never above ceiling).
   if (constraints.chromaFloorAccent !== undefined) {
     const floor = Math.min(constraints.chromaFloorAccent, ceiling);
+    // Mark-only exempt on --primary: its achromatic ink structure is the
+    // strategy (stamped intent, like monochrome) — the floor governs the
+    // accent, which here is the brand lifted one step (full mark voice),
+    // so intent is satisfied.
+    const floored = options.brandStrategy === "mark-only" ? ["--accent"] : ["--primary", "--accent"];
     for (const mode of modes) {
       const set = tokens[mode]!;
-      for (const name of ["--primary", "--accent"]) {
+      for (const name of floored) {
         const entry = set[name];
         if (!entry || typeof entry.$value !== "string" || !entry.$value.startsWith("oklch(")) continue;
         const parsed = parseOklch(entry.$value);
@@ -261,7 +284,10 @@ export function enforceConstraints(
   // anchor when more than 30° away. Brand included (Brand Token brief §3):
   // a family constraint governs the brand too. --brand-foreground is
   // near-neutral text and falls below the chroma floor, so it never snaps.
-  if (constraints.hueFamily !== undefined) {
+  // Skipped for explicit picks: the picked hue IS the new family, and
+  // snapping it back would make every alternative render as the dreamed
+  // color (and silently discard custom hex choices at finish).
+  if (constraints.hueFamily !== undefined && options.preservePickedHues !== true) {
     const anchor = ((constraints.hueFamily % 360) + 360) % 360;
     const families: Record<string, string[]> = {
       primary: ["--primary", "--secondary", "--ring"],
