@@ -27,7 +27,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { NEUTRAL_CONTEXT, nextVariantAxes } from "@arche/registry-core/selector";
-import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle, SlidersHorizontal } from "lucide-react";
+import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle, SlidersHorizontal, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -756,15 +756,32 @@ function PreviewGrid({
  * Section headers come from catalog-aggregate.json, so the pane groups exactly
  * like the docs indexes; a search keeps only the sections that still match.
  */
+/** Search bar height; the section headers stick directly beneath it. */
+const PREVIEW_SEARCH_HEIGHT = 56;
+
+/** Nearest vertically scrolling ancestor, used to measure and drive the pane. */
+function scrollParent(element: HTMLElement): HTMLElement | null {
+  let node = element.parentElement;
+  while (node) {
+    const { overflowY } = getComputedStyle(node);
+    if (overflowY === "auto" || overflowY === "scroll") return node;
+    node = node.parentElement;
+  }
+  return null;
+}
+
 function PreviewSections({
   items,
   sections,
   sectionOf,
+  searching,
   ...gridProps
 }: {
   items: Manifest[];
   sections: CatalogSection[];
   sectionOf: Record<string, string>;
+  /** Items are filtered by the search box, so every remaining section opens. */
+  searching: boolean;
 } & Omit<React.ComponentProps<typeof PreviewGrid>, "items">) {
   const grouped = sections
     .map((section) => ({
@@ -774,24 +791,117 @@ function PreviewSections({
     }))
     .filter((section) => section.items.length > 0);
 
+  // Sections start collapsed; searching opens whatever is left so matches show.
+  const [open, setOpen] = React.useState<string[]>([]);
+  /** Next section to fly to, when the one being read is taller than the pane. */
+  const [jumpTo, setJumpTo] = React.useState<string | null>(null);
+  const listRef = React.useRef<HTMLDivElement | null>(null);
+  const keys = grouped.map((section) => section.key);
+  const keyList = keys.join("|");
+
+  React.useEffect(() => {
+    const root = listRef.current;
+    if (!root) return;
+    const scroller = scrollParent(root);
+    if (!scroller) return;
+
+    const measure = () => {
+      if (searching || keyList === "") {
+        setJumpTo(null);
+        return;
+      }
+      const sectionsInView = keyList.split("|");
+      const viewport = scroller.getBoundingClientRect();
+      const marker = viewport.top + PREVIEW_SEARCH_HEIGHT + 1;
+      // The section being read is the last one whose top has passed the search bar.
+      let currentIndex = -1;
+      for (let index = 0; index < sectionsInView.length; index += 1) {
+        const element = root.querySelector<HTMLElement>(`[data-preview-section="${sectionsInView[index]}"]`);
+        if (!element) continue;
+        if (element.getBoundingClientRect().top > marker) break;
+        currentIndex = index;
+      }
+      const next = currentIndex >= 0 ? sectionsInView[currentIndex + 1] : undefined;
+      const element =
+        currentIndex >= 0
+          ? root.querySelector<HTMLElement>(`[data-preview-section="${sectionsInView[currentIndex]}"]`)
+          : null;
+      const tallerThanPane = element
+        ? element.getBoundingClientRect().height > scroller.clientHeight - PREVIEW_SEARCH_HEIGHT
+        : false;
+      const currentOpen = currentIndex >= 0 && open.includes(sectionsInView[currentIndex]!);
+      setJumpTo(tallerThanPane && currentOpen && next ? next : null);
+    };
+
+    measure();
+    scroller.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    const observer = new ResizeObserver(measure);
+    observer.observe(root);
+    observer.observe(scroller);
+    return () => {
+      scroller.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+      observer.disconnect();
+    };
+  }, [keyList, open, searching]);
+
+  /** Jump straight to the next section's header, clearing the sticky search bar. */
+  const jump = () => {
+    const root = listRef.current;
+    if (!root || !jumpTo) return;
+    const scroller = scrollParent(root);
+    const target = root.querySelector<HTMLElement>(`[data-preview-section="${jumpTo}"]`);
+    if (!scroller || !target) return;
+    const top =
+      scroller.scrollTop +
+      target.getBoundingClientRect().top -
+      scroller.getBoundingClientRect().top -
+      PREVIEW_SEARCH_HEIGHT;
+    scroller.scrollTo({ top, behavior: "instant" });
+  };
+
   if (grouped.length === 0) return <PreviewGrid items={[]} {...gridProps} />;
 
   return (
-    <Accordion type="multiple" defaultValue={grouped.map((section) => section.key)} className="px-3">
-      {grouped.map((section) => (
-        <AccordionItem key={section.key} value={section.key}>
-          <AccordionTrigger className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            <span className="flex min-w-0 flex-1 items-baseline gap-2">
-              <span className="truncate">{section.label}</span>
-              <span className="font-normal normal-case tabular-nums">{section.items.length}</span>
-            </span>
-          </AccordionTrigger>
-          <AccordionContent className="pb-0">
-            <PreviewGrid items={section.items} {...gridProps} flush />
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+    <div ref={listRef}>
+      <Accordion type="multiple" value={searching ? keys : open} onValueChange={setOpen} className="px-3">
+        {grouped.map((section) => (
+          <AccordionItem
+            key={section.key}
+            value={section.key}
+            data-preview-section={section.key}
+            className="max-lg:pt-0"
+          >
+            {/* Sticks under the search bar while the section's own cards scroll past. */}
+            <div className="max-lg:sticky max-lg:top-14 max-lg:z-10 max-lg:bg-background max-lg:py-2">
+              <AccordionTrigger className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                <span className="flex min-w-0 flex-1 items-baseline gap-2">
+                  <span className="truncate">{section.label}</span>
+                  <span className="font-normal normal-case tabular-nums">{section.items.length}</span>
+                </span>
+              </AccordionTrigger>
+            </div>
+            <AccordionContent className="pb-0">
+              <PreviewGrid items={section.items} {...gridProps} flush />
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+      {jumpTo ? (
+        <Button
+          type="button"
+          size="sm"
+          onClick={jump}
+          className="fixed bottom-4 left-1/2 z-30 -translate-x-1/2 gap-1.5 rounded-full shadow-lg"
+          aria-label="Jump to the next section"
+          title="Jump to the next section"
+        >
+          <ArrowDown aria-hidden />
+          Next section
+        </Button>
+      ) : null}
+    </div>
   );
 }
 
@@ -1514,7 +1624,7 @@ export function IdentityEditor({
   ];
 
   return (
-    <div className="flex flex-col lg:h-[calc(100dvh-65px)] lg:min-h-0 lg:flex-row">
+    <div className="flex h-[calc(100dvh-65px)] min-h-0 flex-col lg:flex-row">
       <IdentityFontLinks fonts={doc.fonts} />
 
       {/* ---------- Left: theme editor (full-screen drawer on small screens) ---------- */}
@@ -1665,8 +1775,8 @@ export function IdentityEditor({
       </Button>
 
       {/* ---------- Right: live preview ---------- */}
-      <div className="flex min-h-[60dvh] min-w-0 flex-1 flex-col lg:min-h-0">
-        <div className="flex flex-wrap items-center gap-1 border-b border-border px-3 py-2 sm:h-13 sm:flex-nowrap sm:py-0">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="flex shrink-0 flex-wrap items-center gap-1 gap-y-2 border-b border-border px-3 py-2 sm:h-13 sm:flex-nowrap sm:gap-y-0 sm:py-0">
           <Tabs
             value={previewTab}
             onValueChange={(v) => setPreviewTab(v as PreviewTab)}
@@ -1695,57 +1805,61 @@ export function IdentityEditor({
           <Button type="button" variant="ghost" size="icon" onClick={redo} disabled={!canRedo} aria-label="Redo" title="Redo">
             <Redo2 aria-hidden />
           </Button>
-          <Button type="button" variant="ghost" size="sm" onClick={resetAll} title="Reset to saved">
-            Reset
-          </Button>
-          {savedAt ? <span className="hidden text-xs text-muted-foreground sm:inline">Saved {savedAt}</span> : null}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button type="button" variant="ghost" size="sm">
-                Install
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-h-[85dvh] max-w-2xl overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Install {libraryName}</DialogTitle>
-                <DialogDescription>
-                  Publish first so the registry serves your latest tokens, then run these commands in any
-                  project. The CLI pulls this identity&apos;s components, skinned by your theme.
-                </DialogDescription>
-              </DialogHeader>
-              <InstallBlock
-                base={install.base}
-                username={install.username}
-                slug={install.slug}
-                authed={install.authed}
-              />
-              {install.authed ? (
-                <p className="text-xs text-muted-foreground">
-                  Private library — installs require your registry token (avatar menu → Settings).
-                </p>
-              ) : null}
-            </DialogContent>
-          </Dialog>
-          <Button type="button" variant="secondary" size="sm" onClick={save} disabled={saving}>
-            {saving ? "Saving…" : "Save"}
-          </Button>
-          <PublishButton
-            libraryId={libraryId}
-            variant="default"
-            onDone={(result) => {
-              if (result.ok) {
-                setSavedAt(`Published v${result.version ?? "?"}`);
-                setIssues(null);
-              } else {
-                setIssues(result.issues ?? [{ path: "publish", message: "publish failed" }]);
-              }
-            }}
-          />
+          {/* Actions get their own row on small screens so the tabs and history controls keep a full row. */}
+          <div className="flex w-full items-center gap-1 max-sm:justify-between sm:w-auto">
+            <Button type="button" variant="ghost" size="sm" onClick={resetAll} title="Reset to saved">
+              Reset
+            </Button>
+            {savedAt ? <span className="hidden text-xs text-muted-foreground sm:inline">Saved {savedAt}</span> : null}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button type="button" variant="ghost" size="sm">
+                  Install
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[85dvh] max-w-2xl overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Install {libraryName}</DialogTitle>
+                  <DialogDescription>
+                    Publish first so the registry serves your latest tokens, then run these commands in any
+                    project. The CLI pulls this identity&apos;s components, skinned by your theme.
+                  </DialogDescription>
+                </DialogHeader>
+                <InstallBlock
+                  base={install.base}
+                  username={install.username}
+                  slug={install.slug}
+                  authed={install.authed}
+                />
+                {install.authed ? (
+                  <p className="text-xs text-muted-foreground">
+                    Private library — installs require your registry token (avatar menu → Settings).
+                  </p>
+                ) : null}
+              </DialogContent>
+            </Dialog>
+            <Button type="button" variant="secondary" size="sm" onClick={save} disabled={saving}>
+              {saving ? "Saving…" : "Save"}
+            </Button>
+            <PublishButton
+              libraryId={libraryId}
+              variant="default"
+              onDone={(result) => {
+                if (result.ok) {
+                  setSavedAt(`Published v${result.version ?? "?"}`);
+                  setIssues(null);
+                } else {
+                  setIssues(result.issues ?? [{ path: "publish", message: "publish failed" }]);
+                }
+              }}
+            />
+          </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto bg-background">
-          <div className="sticky top-0 z-10 border-b border-border bg-background px-4 py-2">
-            <div className="relative">
+        {/* `transform` keeps the floating jump control anchored to this pane. */}
+        <div className="min-h-0 flex-1 overflow-y-auto bg-background [transform:translateZ(0)]">
+          <div className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b border-border bg-background px-4">
+            <div className="relative w-full">
               <Search
                 size={14}
                 aria-hidden
@@ -1772,6 +1886,8 @@ export function IdentityEditor({
           ) : null}
           {previewTab === "components" ? (
             <PreviewSections
+              key="components"
+              searching={previewQuery.trim() !== ""}
               sections={COMPONENT_SECTIONS}
               sectionOf={COMPONENT_SECTION_BY_NAME}
               items={manifests.filter(
@@ -1798,6 +1914,8 @@ export function IdentityEditor({
             />
           ) : (
             <PreviewSections
+              key="blocks"
+              searching={previewQuery.trim() !== ""}
               sections={BLOCK_SECTIONS}
               sectionOf={BLOCK_SECTION_BY_NAME}
               items={blocks.filter(
