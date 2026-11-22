@@ -153,9 +153,10 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "apple-cards-carousel": {
     "importPath": "@/components/ui/apple-cards-carousel",
     "imports": [
-      "CardsCarousel"
+      "CardsCarousel",
+      "CarouselCard"
     ],
-    "code": "import { CardsCarousel } from \"@/components/ui/apple-cards-carousel\";\n\n<CardsCarousel />"
+    "code": "import { CardsCarousel, CarouselCard } from \"@/components/ui/apple-cards-carousel\";\n\n<CardsCarousel>\n  <CarouselCard src=\"/cover.jpg\" category=\"Guides\" title=\"Getting started\">\n    <p>Read the guide.</p>\n  </CarouselCard>\n</CardsCarousel>"
   },
   "aspect-ratio": {
     "importPath": "@/components/ui/aspect-ratio",
@@ -168,11 +169,14 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "importPath": "@/components/ui/attachment",
     "imports": [
       "Attachment",
-      "AttachmentTrigger",
+      "AttachmentMedia",
       "AttachmentContent",
-      "AttachmentTitle"
+      "AttachmentTitle",
+      "AttachmentDescription",
+      "AttachmentActions",
+      "AttachmentAction"
     ],
-    "code": "import { Attachment, AttachmentTrigger, AttachmentContent, AttachmentTitle } from \"@/components/ui/attachment\";\n\n<Attachment>\n  <AttachmentTrigger>Open</AttachmentTrigger>\n  <AttachmentContent>Content</AttachmentContent>\n  <AttachmentTitle>Title</AttachmentTitle>\n</Attachment>"
+    "code": "import { Attachment, AttachmentMedia, AttachmentContent, AttachmentTitle, AttachmentDescription, AttachmentActions, AttachmentAction } from \"@/components/ui/attachment\";\n\n<Attachment>\n  <AttachmentMedia>◆</AttachmentMedia>\n  <AttachmentContent>\n    <AttachmentTitle>brand-guide.pdf</AttachmentTitle>\n    <AttachmentDescription>2.4 MB · PDF</AttachmentDescription>\n  </AttachmentContent>\n  <AttachmentActions>\n    <AttachmentAction aria-label=\"Remove\">×</AttachmentAction>\n  </AttachmentActions>\n</Attachment>"
   },
   "aurora-background": {
     "importPath": "@/components/ui/aurora-background",
@@ -235,9 +239,10 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "bento-grid": {
     "importPath": "@/components/ui/bento-grid",
     "imports": [
-      "BentoGrid"
+      "BentoGrid",
+      "BentoCard"
     ],
-    "code": "import { BentoGrid } from \"@/components/ui/bento-grid\";\n\n<BentoGrid />"
+    "code": "import { BentoGrid, BentoCard } from \"@/components/ui/bento-grid\";\n\n<BentoGrid>\n  <BentoCard\n    name=\"Fast by default\"\n    description=\"Server components and streaming.\"\n    className=\"md:col-span-2\"\n    href=\"/docs\"\n  />\n</BentoGrid>"
   },
   "blur-fade": {
     "importPath": "@/components/ui/blur-fade",
@@ -257,10 +262,13 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "importPath": "@/components/ui/breadcrumb",
     "imports": [
       "Breadcrumb",
+      "BreadcrumbList",
       "BreadcrumbItem",
-      "BreadcrumbList"
+      "BreadcrumbLink",
+      "BreadcrumbSeparator",
+      "BreadcrumbPage"
     ],
-    "code": "import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from \"@/components/ui/breadcrumb\";\n\n<Breadcrumb>\n  <BreadcrumbItem>Item</BreadcrumbItem>\n  <BreadcrumbList>List</BreadcrumbList>\n</Breadcrumb>"
+    "code": "import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from \"@/components/ui/breadcrumb\";\n\n<Breadcrumb>\n  <BreadcrumbList>\n    <BreadcrumbItem>\n      <BreadcrumbLink href=\"/\">Home</BreadcrumbLink>\n    </BreadcrumbItem>\n    <BreadcrumbSeparator />\n    <BreadcrumbItem>\n      <BreadcrumbPage>Components</BreadcrumbPage>\n    </BreadcrumbItem>\n  </BreadcrumbList>\n</Breadcrumb>"
   },
   "bubble": {
     "importPath": "@/components/ui/bubble",
@@ -322,9 +330,11 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "imports": [
       "Carousel",
       "CarouselContent",
-      "CarouselItem"
+      "CarouselItem",
+      "CarouselPrevious",
+      "CarouselNext"
     ],
-    "code": "import { Carousel, CarouselContent, CarouselItem } from \"@/components/ui/carousel\";\n\n<Carousel>\n  <CarouselContent>Content</CarouselContent>\n  <CarouselItem>Item</CarouselItem>\n</Carousel>"
+    "code": "import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from \"@/components/ui/carousel\";\n\n<Carousel className=\"w-full max-w-xs\">\n  <CarouselContent>\n    <CarouselItem>One</CarouselItem>\n    <CarouselItem>Two</CarouselItem>\n  </CarouselContent>\n  <CarouselPrevious />\n  <CarouselNext />\n</Carousel>"
   },
   "chart": {
     "importPath": "@/components/ui/chart",
@@ -346,11 +356,13 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "importPath": "@/components/ui/code-block",
     "imports": [
       "CodeBlock",
-      "CodeBlockContent",
       "CodeBlockHeader",
-      "CodeBlockFooter"
+      "CodeBlockTitle",
+      "CodeBlockActions",
+      "CodeBlockCopyButton",
+      "CodeBlockContent"
     ],
-    "code": "import { CodeBlock, CodeBlockContent, CodeBlockHeader, CodeBlockFooter } from \"@/components/ui/code-block\";\n\n<CodeBlock>\n  <CodeBlockContent>Content</CodeBlockContent>\n  <CodeBlockHeader>Header</CodeBlockHeader>\n  <CodeBlockFooter>Footer</CodeBlockFooter>\n</CodeBlock>"
+    "code": "import { CodeBlock, CodeBlockHeader, CodeBlockTitle, CodeBlockActions, CodeBlockCopyButton, CodeBlockContent } from \"@/components/ui/code-block\";\n\n<CodeBlock>\n  <CodeBlockHeader>\n    <CodeBlockTitle>arche.ts</CodeBlockTitle>\n    <CodeBlockActions>\n      <CodeBlockCopyButton value=\"export const arche = 'tokens';\" />\n    </CodeBlockActions>\n  </CodeBlockHeader>\n  <CodeBlockContent>export const arche = 'tokens';</CodeBlockContent>\n</CodeBlock>"
   },
   "code-comparison": {
     "importPath": "@/components/ui/code-comparison",
@@ -390,10 +402,13 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "importPath": "@/components/ui/command",
     "imports": [
       "Command",
-      "CommandItem",
-      "CommandList"
+      "CommandInput",
+      "CommandList",
+      "CommandEmpty",
+      "CommandGroup",
+      "CommandItem"
     ],
-    "code": "import { Command, CommandItem, CommandList } from \"@/components/ui/command\";\n\n<Command>\n  <CommandItem>Item</CommandItem>\n  <CommandList>List</CommandList>\n</Command>"
+    "code": "import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from \"@/components/ui/command\";\n\n<Command>\n  <CommandInput placeholder=\"Search commands…\" />\n  <CommandList>\n    <CommandEmpty>No results.</CommandEmpty>\n    <CommandGroup heading=\"Actions\">\n      <CommandItem>New project</CommandItem>\n    </CommandGroup>\n  </CommandList>\n</Command>"
   },
   "compare-slider": {
     "importPath": "@/components/ui/compare-slider",
@@ -424,7 +439,7 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
       "ContextMenuContent",
       "ContextMenuItem"
     ],
-    "code": "import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } from \"@/components/ui/context-menu\";\n\n<ContextMenu>\n  <ContextMenuTrigger>Open</ContextMenuTrigger>\n  <ContextMenuContent>Content</ContextMenuContent>\n  <ContextMenuItem>Item</ContextMenuItem>\n</ContextMenu>"
+    "code": "import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } from \"@/components/ui/context-menu\";\n\n<ContextMenu>\n  <ContextMenuTrigger className=\"flex h-24 w-56 items-center justify-center rounded-md border border-dashed text-sm\">\n    Right-click here\n  </ContextMenuTrigger>\n  <ContextMenuContent>\n    <ContextMenuItem>Copy</ContextMenuItem>\n    <ContextMenuItem>Paste</ContextMenuItem>\n  </ContextMenuContent>\n</ContextMenu>"
   },
   "cool-mode": {
     "importPath": "@/components/ui/cool-mode",
@@ -490,9 +505,10 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "dock": {
     "importPath": "@/components/ui/dock",
     "imports": [
-      "Dock"
+      "Dock",
+      "DockIcon"
     ],
-    "code": "import { Dock } from \"@/components/ui/dock\";\n\n<Dock />"
+    "code": "import { Dock, DockIcon } from \"@/components/ui/dock\";\n\n<Dock>\n  <DockIcon label=\"Home\">⌂</DockIcon>\n  <DockIcon label=\"Search\">⌕</DockIcon>\n</Dock>"
   },
   "dot-pattern": {
     "importPath": "@/components/ui/dot-pattern",
@@ -518,9 +534,10 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "draggable-card": {
     "importPath": "@/components/ui/draggable-card",
     "imports": [
+      "DraggableCardContainer",
       "DraggableCard"
     ],
-    "code": "import { DraggableCard } from \"@/components/ui/draggable-card\";\n\n<DraggableCard />"
+    "code": "import { DraggableCardContainer, DraggableCard } from \"@/components/ui/draggable-card\";\n\n<DraggableCardContainer className=\"h-48\">\n  <DraggableCard label=\"Drag me\">\n    <p className=\"py-6 text-center text-sm\">Drag me</p>\n  </DraggableCard>\n</DraggableCardContainer>"
   },
   "drawer": {
     "importPath": "@/components/ui/drawer",
@@ -548,11 +565,13 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "importPath": "@/components/ui/empty",
     "imports": [
       "Empty",
-      "EmptyContent",
       "EmptyHeader",
-      "EmptyTitle"
+      "EmptyMedia",
+      "EmptyTitle",
+      "EmptyDescription",
+      "EmptyContent"
     ],
-    "code": "import { Empty, EmptyContent, EmptyHeader, EmptyTitle } from \"@/components/ui/empty\";\n\n<Empty>\n  <EmptyContent>Content</EmptyContent>\n  <EmptyHeader>Header</EmptyHeader>\n  <EmptyTitle>Title</EmptyTitle>\n</Empty>"
+    "code": "import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from \"@/components/ui/empty\";\n\n<Empty>\n  <EmptyHeader>\n    <EmptyMedia variant=\"icon\">◆</EmptyMedia>\n    <EmptyTitle>No projects yet</EmptyTitle>\n    <EmptyDescription>Create a project to get started.</EmptyDescription>\n  </EmptyHeader>\n  <EmptyContent>New project</EmptyContent>\n</Empty>"
   },
   "evervault-card": {
     "importPath": "@/components/ui/evervault-card",
@@ -730,9 +749,12 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "input-group": {
     "importPath": "@/components/ui/input-group",
     "imports": [
-      "InputGroup"
+      "InputGroup",
+      "InputGroupAddon",
+      "InputGroupText",
+      "InputGroupInput"
     ],
-    "code": "import { InputGroup } from \"@/components/ui/input-group\";\n\n<InputGroup />"
+    "code": "import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput } from \"@/components/ui/input-group\";\n\n<InputGroup>\n  <InputGroupAddon>\n    <InputGroupText>$</InputGroupText>\n  </InputGroupAddon>\n  <InputGroupInput placeholder=\"0.00\" />\n  <InputGroupAddon align=\"inline-end\">\n    <InputGroupText>USD</InputGroupText>\n  </InputGroupAddon>\n</InputGroup>"
   },
   "input-otp": {
     "importPath": "@/components/ui/input-otp",
@@ -768,18 +790,20 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "importPath": "@/components/ui/item",
     "imports": [
       "Item",
+      "ItemMedia",
       "ItemContent",
-      "ItemHeader",
-      "ItemFooter"
+      "ItemTitle",
+      "ItemDescription",
+      "ItemActions"
     ],
-    "code": "import { Item, ItemContent, ItemHeader, ItemFooter } from \"@/components/ui/item\";\n\n<Item>\n  <ItemContent>Content</ItemContent>\n  <ItemHeader>Header</ItemHeader>\n  <ItemFooter>Footer</ItemFooter>\n</Item>"
+    "code": "import { Item, ItemMedia, ItemContent, ItemTitle, ItemDescription, ItemActions } from \"@/components/ui/item\";\n\n<Item variant=\"outline\">\n  <ItemMedia>◆</ItemMedia>\n  <ItemContent>\n    <ItemTitle>Invoice #204</ItemTitle>\n    <ItemDescription>Paid · $480</ItemDescription>\n  </ItemContent>\n  <ItemActions>View</ItemActions>\n</Item>"
   },
   "kbd": {
     "importPath": "@/components/ui/kbd",
     "imports": [
       "Kbd"
     ],
-    "code": "import { Kbd } from \"@/components/ui/kbd\";\n\n<Kbd />"
+    "code": "import { Kbd } from \"@/components/ui/kbd\";\n\n<Kbd>⌘K</Kbd>"
   },
   "kinetic-text": {
     "importPath": "@/components/ui/kinetic-text",
@@ -884,21 +908,25 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "importPath": "@/components/ui/menubar",
     "imports": [
       "Menubar",
+      "MenubarMenu",
       "MenubarTrigger",
       "MenubarContent",
-      "MenubarItem"
+      "MenubarItem",
+      "MenubarSeparator"
     ],
-    "code": "import { Menubar, MenubarTrigger, MenubarContent, MenubarItem } from \"@/components/ui/menubar\";\n\n<Menubar>\n  <MenubarTrigger>Open</MenubarTrigger>\n  <MenubarContent>Content</MenubarContent>\n  <MenubarItem>Item</MenubarItem>\n</Menubar>"
+    "code": "import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator } from \"@/components/ui/menubar\";\n\n<Menubar>\n  <MenubarMenu>\n    <MenubarTrigger>File</MenubarTrigger>\n    <MenubarContent>\n      <MenubarItem>New window</MenubarItem>\n      <MenubarSeparator />\n      <MenubarItem>Print</MenubarItem>\n    </MenubarContent>\n  </MenubarMenu>\n</Menubar>"
   },
   "message": {
     "importPath": "@/components/ui/message",
     "imports": [
+      "MessageGroup",
       "Message",
+      "MessageAvatar",
       "MessageContent",
       "MessageHeader",
       "MessageFooter"
     ],
-    "code": "import { Message, MessageContent, MessageHeader, MessageFooter } from \"@/components/ui/message\";\n\n<Message>\n  <MessageContent>Content</MessageContent>\n  <MessageHeader>Header</MessageHeader>\n  <MessageFooter>Footer</MessageFooter>\n</Message>"
+    "code": "import { MessageGroup, Message, MessageAvatar, MessageContent, MessageHeader, MessageFooter } from \"@/components/ui/message\";\n\n<MessageGroup>\n  <Message>\n    <MessageAvatar>AC</MessageAvatar>\n    <MessageContent>\n      <MessageHeader>Acme</MessageHeader>\n      Your changes are live.\n      <MessageFooter>Just now</MessageFooter>\n    </MessageContent>\n  </Message>\n</MessageGroup>"
   },
   "meteors": {
     "importPath": "@/components/ui/meteors",
@@ -931,9 +959,10 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "native-select": {
     "importPath": "@/components/ui/native-select",
     "imports": [
-      "NativeSelect"
+      "NativeSelect",
+      "NativeSelectOption"
     ],
-    "code": "import { NativeSelect } from \"@/components/ui/native-select\";\n\n<NativeSelect />"
+    "code": "import { NativeSelect, NativeSelectOption } from \"@/components/ui/native-select\";\n\n<NativeSelect defaultValue=\"starter\">\n  <NativeSelectOption value=\"starter\">Starter</NativeSelectOption>\n  <NativeSelectOption value=\"growth\">Growth</NativeSelectOption>\n</NativeSelect>"
   },
   "navbar-menu": {
     "importPath": "@/components/ui/navbar-menu",
@@ -941,17 +970,19 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
       "NavbarMenu",
       "MenuItem"
     ],
-    "code": "import { NavbarMenu, MenuItem } from \"@/components/ui/navbar-menu\";\n\n<NavbarMenu>\n  <MenuItem>Item</MenuItem>\n</NavbarMenu>"
+    "code": "import { NavbarMenu, MenuItem } from \"@/components/ui/navbar-menu\";\n\n<NavbarMenu>\n  <MenuItem label=\"Product\" href=\"/product\" />\n  <MenuItem label=\"Pricing\" href=\"/pricing\" />\n</NavbarMenu>"
   },
   "navigation-menu": {
     "importPath": "@/components/ui/navigation-menu",
     "imports": [
       "NavigationMenu",
+      "NavigationMenuList",
+      "NavigationMenuItem",
       "NavigationMenuTrigger",
       "NavigationMenuContent",
-      "NavigationMenuItem"
+      "NavigationMenuLink"
     ],
-    "code": "import { NavigationMenu, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuItem } from \"@/components/ui/navigation-menu\";\n\n<NavigationMenu>\n  <NavigationMenuTrigger>Open</NavigationMenuTrigger>\n  <NavigationMenuContent>Content</NavigationMenuContent>\n  <NavigationMenuItem>Item</NavigationMenuItem>\n</NavigationMenu>"
+    "code": "import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink } from \"@/components/ui/navigation-menu\";\n\n<NavigationMenu>\n  <NavigationMenuList>\n    <NavigationMenuItem>\n      <NavigationMenuTrigger>Product</NavigationMenuTrigger>\n      <NavigationMenuContent>\n        <NavigationMenuLink href=\"/docs\">Documentation</NavigationMenuLink>\n      </NavigationMenuContent>\n    </NavigationMenuItem>\n  </NavigationMenuList>\n</NavigationMenu>"
   },
   "neon-gradient-card": {
     "importPath": "@/components/ui/neon-gradient-card",
@@ -993,9 +1024,12 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
     "imports": [
       "Pagination",
       "PaginationContent",
-      "PaginationItem"
+      "PaginationItem",
+      "PaginationPrevious",
+      "PaginationLink",
+      "PaginationNext"
     ],
-    "code": "import { Pagination, PaginationContent, PaginationItem } from \"@/components/ui/pagination\";\n\n<Pagination>\n  <PaginationContent>Content</PaginationContent>\n  <PaginationItem>Item</PaginationItem>\n</Pagination>"
+    "code": "import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from \"@/components/ui/pagination\";\n\n<Pagination>\n  <PaginationContent>\n    <PaginationItem>\n      <PaginationPrevious href=\"#\" />\n    </PaginationItem>\n    <PaginationItem>\n      <PaginationLink href=\"#\" isActive>\n        1\n      </PaginationLink>\n    </PaginationItem>\n    <PaginationItem>\n      <PaginationNext href=\"#\" />\n    </PaginationItem>\n  </PaginationContent>\n</Pagination>"
   },
   "parallax-grid": {
     "importPath": "@/components/ui/parallax-grid",
@@ -1044,9 +1078,10 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "progress": {
     "importPath": "@/components/ui/progress",
     "imports": [
-      "Progress"
+      "Progress",
+      "ProgressIndicator"
     ],
-    "code": "import { Progress } from \"@/components/ui/progress\";\n\n<Progress value={60} />"
+    "code": "import { Progress, ProgressIndicator } from \"@/components/ui/progress\";\n\n<Progress value={60} aria-label=\"Upload progress\">\n  <ProgressIndicator style={{ width: \"60%\" }} />\n</Progress>"
   },
   "progressive-blur": {
     "importPath": "@/components/ui/progressive-blur",
@@ -1131,9 +1166,10 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "scroll-based-velocity": {
     "importPath": "@/components/ui/scroll-based-velocity",
     "imports": [
-      "ScrollVelocityContainer"
+      "ScrollVelocityContainer",
+      "ScrollVelocityRow"
     ],
-    "code": "import { ScrollVelocityContainer } from \"@/components/ui/scroll-based-velocity\";\n\n<ScrollVelocityContainer />"
+    "code": "import { ScrollVelocityContainer, ScrollVelocityRow } from \"@/components/ui/scroll-based-velocity\";\n\n<ScrollVelocityContainer>\n  <ScrollVelocityRow baseVelocity={2}>Design · Build · Ship</ScrollVelocityRow>\n</ScrollVelocityContainer>"
   },
   "scroll-progress": {
     "importPath": "@/components/ui/scroll-progress",
@@ -1432,21 +1468,25 @@ export const COMPONENT_USAGE: Record<string, ComponentUsage> = {
   "tooltip": {
     "importPath": "@/components/ui/tooltip",
     "imports": [
+      "TooltipProvider",
       "Tooltip",
       "TooltipTrigger",
       "TooltipContent"
     ],
-    "code": "import { Tooltip, TooltipTrigger, TooltipContent } from \"@/components/ui/tooltip\";\n\n<Tooltip>\n  <TooltipTrigger>Open</TooltipTrigger>\n  <TooltipContent>Content</TooltipContent>\n</Tooltip>"
+    "code": "import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from \"@/components/ui/tooltip\";\n\n<TooltipProvider>\n  <Tooltip>\n    <TooltipTrigger>Hover me</TooltipTrigger>\n    <TooltipContent>Saved to your workspace</TooltipContent>\n  </Tooltip>\n</TooltipProvider>"
   },
   "trace": {
     "importPath": "@/components/ui/trace",
     "imports": [
       "Trace",
+      "TraceLine",
+      "TraceTitle",
+      "TraceDescription",
+      "TraceCollapsible",
       "TraceCollapsibleTrigger",
-      "TraceCollapsibleContent",
-      "TraceTitle"
+      "TraceCollapsibleContent"
     ],
-    "code": "import { Trace, TraceCollapsibleTrigger, TraceCollapsibleContent, TraceTitle } from \"@/components/ui/trace\";\n\n<Trace>\n  <TraceCollapsibleTrigger>Open</TraceCollapsibleTrigger>\n  <TraceCollapsibleContent>Content</TraceCollapsibleContent>\n  <TraceTitle>Title</TraceTitle>\n</Trace>"
+    "code": "import { Trace, TraceLine, TraceTitle, TraceDescription, TraceCollapsible, TraceCollapsibleTrigger, TraceCollapsibleContent } from \"@/components/ui/trace\";\n\n<Trace>\n  <TraceLine>\n    <TraceTitle>Fetched profile</TraceTitle>\n    <TraceDescription>120ms</TraceDescription>\n  </TraceLine>\n  <TraceCollapsible>\n    <TraceCollapsibleTrigger>\n      <TraceTitle>Ran 3 tools</TraceTitle>\n    </TraceCollapsibleTrigger>\n    <TraceCollapsibleContent>\n      <TraceLine>\n        <TraceTitle>Read schema</TraceTitle>\n      </TraceLine>\n    </TraceCollapsibleContent>\n  </TraceCollapsible>\n</Trace>"
   },
   "tracing-beam": {
     "importPath": "@/components/ui/tracing-beam",

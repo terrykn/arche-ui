@@ -14,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AnimatedBeam } from "@/components/ui/animated-beam";
 import { DraggableCardContainer } from "@/components/ui/draggable-card";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
 import {
   Sidebar,
   SidebarContent,
@@ -161,6 +162,26 @@ function AnimatedBeamDemo() {
         API
       </div>
       <AnimatedBeam containerRef={containerRef} fromRef={fromRef} toRef={toRef} />
+    </div>
+  );
+}
+
+/* The bar is `position: fixed`, which would pin it to the top of the app.
+   A transformed stage becomes its containing block, and the inner scroll box
+   is passed as `container` so the bar tracks this preview, not the page. */
+function ScrollProgressDemo() {
+  const containerRef = React.useRef<HTMLElement | null>(null);
+  return (
+    <div className="relative h-40 w-full overflow-hidden rounded-md border bg-muted/20 [transform:translateZ(0)]">
+      <div
+        ref={(element) => {
+          containerRef.current = element;
+        }}
+        className="h-full overflow-auto"
+      >
+        <div className="h-96 p-4 text-sm">Scroll to see progress</div>
+      </div>
+      <ScrollProgress container={containerRef} />
     </div>
   );
 }
@@ -508,12 +529,7 @@ export const COMPONENT_DEMOS: Record<string, React.ComponentType> = {
   "scroll-based-velocity": demo(() => import("@/components/ui/scroll-based-velocity"), (C) => (
     <C><span className="text-sm">Scroll-based velocity</span></C>
   )),
-  "scroll-progress": demo(() => import("@/components/ui/scroll-progress"), (C) => (
-    <div className="relative h-40 w-full overflow-auto rounded-md border">
-      <C />
-      <div className="h-96 p-4 text-sm">Scroll to see progress</div>
-    </div>
-  )),
+  "scroll-progress": ScrollProgressDemo,
   "scroll-velocity": demo(() => import("@/components/ui/scroll-velocity"), (C) => (
     <C><span className="px-4 text-sm">Scroll velocity</span></C>
   )),

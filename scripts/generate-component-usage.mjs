@@ -4,8 +4,10 @@
  *
  * Import names come from the template's own `export { … }` list, so a snippet
  * can never name a part the shipped file does not export. Composition is
- * curated for shapes whose markup is structural (table, dialog, tabs …) and
- * otherwise built from the root export plus its first few sibling parts.
+ * curated for compound shapes whose parts only work nested a particular way
+ * (dialog, menu, tooltip, progress …) and otherwise built from the root
+ * export plus its first few sibling parts. Every snippet is validated: each
+ * tag it renders must be imported, and each import must be used.
  *
  * Writes apps/web/components/component-usage.generated.ts.
  */
@@ -57,6 +59,26 @@ function takesChildren(name, exportName) {
   if (start === -1) return false;
   const signature = source.slice(start, start + 900);
   return /\bchildren\b/.test(signature.split("{")[0]);
+}
+
+/** JSX component names a snippet renders, e.g. DialogContent. */
+function jsxTags(code) {
+  // Comments can mention examples that the snippet does not import.
+  const markup = code.replace(/\{\/\*[\s\S]*?\*\/\}/g, "");
+  return new Set([...markup.matchAll(/<([A-Z][A-Za-z0-9]*)/g)].map((match) => match[1]));
+}
+
+/** A snippet whose tags and imports disagree is a bug, not a style choice. */
+function validateSnippet(name, snippet) {
+  const tags = jsxTags(snippet.code);
+  const unimported = [...tags].filter((tag) => !snippet.imports.includes(tag));
+  const unused = snippet.imports.filter((entry) => !tags.has(entry));
+  if (unimported.length === 0 && unused.length === 0) return;
+  throw new Error(
+    `${name}: usage snippet and imports disagree` +
+      (unimported.length ? ` — rendered but not imported: ${unimported.join(", ")}` : "") +
+      (unused.length ? ` — imported but not rendered: ${unused.join(", ")}` : ""),
+  );
 }
 
 function importPathFor(manifest) {
@@ -116,12 +138,36 @@ const CURATED = {
   switch: ["Switch"],
   checkbox: ["Checkbox"],
   slider: ["Slider", "SliderTrack", "SliderRange", "SliderThumb"],
-  progress: ["Progress"],
+  progress: ["Progress", "ProgressIndicator"],
   separator: ["Separator"],
   skeleton: ["Skeleton"],
   "input-otp": ["InputOTP", "InputOTPGroup", "InputOTPSlot"],
   resizable: ["ResizablePanelGroup", "ResizablePanel", "ResizableHandle"],
   chart: ["ChartContainer", "ChartTooltip", "ChartTooltipContent"],
+  // Compound components whose parts only render nested in a required order.
+  breadcrumb: ["Breadcrumb", "BreadcrumbList", "BreadcrumbItem", "BreadcrumbLink", "BreadcrumbSeparator", "BreadcrumbPage"],
+  pagination: ["Pagination", "PaginationContent", "PaginationItem", "PaginationPrevious", "PaginationLink", "PaginationNext"],
+  command: ["Command", "CommandInput", "CommandList", "CommandEmpty", "CommandGroup", "CommandItem"],
+  menubar: ["Menubar", "MenubarMenu", "MenubarTrigger", "MenubarContent", "MenubarItem", "MenubarSeparator"],
+  "navigation-menu": ["NavigationMenu", "NavigationMenuList", "NavigationMenuItem", "NavigationMenuTrigger", "NavigationMenuContent", "NavigationMenuLink"],
+  "context-menu": ["ContextMenu", "ContextMenuTrigger", "ContextMenuContent", "ContextMenuItem"],
+  tooltip: ["TooltipProvider", "Tooltip", "TooltipTrigger", "TooltipContent"],
+  carousel: ["Carousel", "CarouselContent", "CarouselItem", "CarouselPrevious", "CarouselNext"],
+  "apple-cards-carousel": ["CardsCarousel", "CarouselCard"],
+  trace: ["Trace", "TraceLine", "TraceTitle", "TraceDescription", "TraceCollapsible", "TraceCollapsibleTrigger", "TraceCollapsibleContent"],
+  "code-block": ["CodeBlock", "CodeBlockHeader", "CodeBlockTitle", "CodeBlockActions", "CodeBlockCopyButton", "CodeBlockContent"],
+  empty: ["Empty", "EmptyHeader", "EmptyMedia", "EmptyTitle", "EmptyDescription", "EmptyContent"],
+  message: ["MessageGroup", "Message", "MessageAvatar", "MessageContent", "MessageHeader", "MessageFooter"],
+  item: ["Item", "ItemMedia", "ItemContent", "ItemTitle", "ItemDescription", "ItemActions"],
+  attachment: ["Attachment", "AttachmentMedia", "AttachmentContent", "AttachmentTitle", "AttachmentDescription", "AttachmentActions", "AttachmentAction"],
+  "input-group": ["InputGroup", "InputGroupAddon", "InputGroupText", "InputGroupInput"],
+  "native-select": ["NativeSelect", "NativeSelectOption"],
+  dock: ["Dock", "DockIcon"],
+  "draggable-card": ["DraggableCardContainer", "DraggableCard"],
+  "navbar-menu": ["NavbarMenu", "MenuItem"],
+  "bento-grid": ["BentoGrid", "BentoCard"],
+  "scroll-based-velocity": ["ScrollVelocityContainer", "ScrollVelocityRow"],
+  kbd: ["Kbd"],
 };
 
 const CURATED_CODE = {
@@ -258,7 +304,191 @@ const CURATED_CODE = {
   </SliderTrack>
   <SliderThumb aria-label="Value" />
 </Slider>`,
-  progress: `<Progress value={60} />`,
+  progress: `<Progress value={60} aria-label="Upload progress">
+  <ProgressIndicator style={{ width: "60%" }} />
+</Progress>`,
+  breadcrumb: `<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Components</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>`,
+  pagination: `<Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href="#" />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="#" isActive>
+        1
+      </PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext href="#" />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>`,
+  command: `<Command>
+  <CommandInput placeholder="Search commands…" />
+  <CommandList>
+    <CommandEmpty>No results.</CommandEmpty>
+    <CommandGroup heading="Actions">
+      <CommandItem>New project</CommandItem>
+    </CommandGroup>
+  </CommandList>
+</Command>`,
+  menubar: `<Menubar>
+  <MenubarMenu>
+    <MenubarTrigger>File</MenubarTrigger>
+    <MenubarContent>
+      <MenubarItem>New window</MenubarItem>
+      <MenubarSeparator />
+      <MenubarItem>Print</MenubarItem>
+    </MenubarContent>
+  </MenubarMenu>
+</Menubar>`,
+  "navigation-menu": `<NavigationMenu>
+  <NavigationMenuList>
+    <NavigationMenuItem>
+      <NavigationMenuTrigger>Product</NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <NavigationMenuLink href="/docs">Documentation</NavigationMenuLink>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+  </NavigationMenuList>
+</NavigationMenu>`,
+  "context-menu": `<ContextMenu>
+  <ContextMenuTrigger className="flex h-24 w-56 items-center justify-center rounded-md border border-dashed text-sm">
+    Right-click here
+  </ContextMenuTrigger>
+  <ContextMenuContent>
+    <ContextMenuItem>Copy</ContextMenuItem>
+    <ContextMenuItem>Paste</ContextMenuItem>
+  </ContextMenuContent>
+</ContextMenu>`,
+  tooltip: `<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger>Hover me</TooltipTrigger>
+    <TooltipContent>Saved to your workspace</TooltipContent>
+  </Tooltip>
+</TooltipProvider>`,
+  carousel: `<Carousel className="w-full max-w-xs">
+  <CarouselContent>
+    <CarouselItem>One</CarouselItem>
+    <CarouselItem>Two</CarouselItem>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>`,
+  "apple-cards-carousel": `<CardsCarousel>
+  <CarouselCard src="/cover.jpg" category="Guides" title="Getting started">
+    <p>Read the guide.</p>
+  </CarouselCard>
+</CardsCarousel>`,
+  trace: `<Trace>
+  <TraceLine>
+    <TraceTitle>Fetched profile</TraceTitle>
+    <TraceDescription>120ms</TraceDescription>
+  </TraceLine>
+  <TraceCollapsible>
+    <TraceCollapsibleTrigger>
+      <TraceTitle>Ran 3 tools</TraceTitle>
+    </TraceCollapsibleTrigger>
+    <TraceCollapsibleContent>
+      <TraceLine>
+        <TraceTitle>Read schema</TraceTitle>
+      </TraceLine>
+    </TraceCollapsibleContent>
+  </TraceCollapsible>
+</Trace>`,
+  "code-block": `<CodeBlock>
+  <CodeBlockHeader>
+    <CodeBlockTitle>arche.ts</CodeBlockTitle>
+    <CodeBlockActions>
+      <CodeBlockCopyButton value="export const arche = 'tokens';" />
+    </CodeBlockActions>
+  </CodeBlockHeader>
+  <CodeBlockContent>export const arche = 'tokens';</CodeBlockContent>
+</CodeBlock>`,
+  empty: `<Empty>
+  <EmptyHeader>
+    <EmptyMedia variant="icon">◆</EmptyMedia>
+    <EmptyTitle>No projects yet</EmptyTitle>
+    <EmptyDescription>Create a project to get started.</EmptyDescription>
+  </EmptyHeader>
+  <EmptyContent>New project</EmptyContent>
+</Empty>`,
+  message: `<MessageGroup>
+  <Message>
+    <MessageAvatar>AC</MessageAvatar>
+    <MessageContent>
+      <MessageHeader>Acme</MessageHeader>
+      Your changes are live.
+      <MessageFooter>Just now</MessageFooter>
+    </MessageContent>
+  </Message>
+</MessageGroup>`,
+  item: `<Item variant="outline">
+  <ItemMedia>◆</ItemMedia>
+  <ItemContent>
+    <ItemTitle>Invoice #204</ItemTitle>
+    <ItemDescription>Paid · $480</ItemDescription>
+  </ItemContent>
+  <ItemActions>View</ItemActions>
+</Item>`,
+  attachment: `<Attachment>
+  <AttachmentMedia>◆</AttachmentMedia>
+  <AttachmentContent>
+    <AttachmentTitle>brand-guide.pdf</AttachmentTitle>
+    <AttachmentDescription>2.4 MB · PDF</AttachmentDescription>
+  </AttachmentContent>
+  <AttachmentActions>
+    <AttachmentAction aria-label="Remove">×</AttachmentAction>
+  </AttachmentActions>
+</Attachment>`,
+  "input-group": `<InputGroup>
+  <InputGroupAddon>
+    <InputGroupText>$</InputGroupText>
+  </InputGroupAddon>
+  <InputGroupInput placeholder="0.00" />
+  <InputGroupAddon align="inline-end">
+    <InputGroupText>USD</InputGroupText>
+  </InputGroupAddon>
+</InputGroup>`,
+  "native-select": `<NativeSelect defaultValue="starter">
+  <NativeSelectOption value="starter">Starter</NativeSelectOption>
+  <NativeSelectOption value="growth">Growth</NativeSelectOption>
+</NativeSelect>`,
+  dock: `<Dock>
+  <DockIcon label="Home">⌂</DockIcon>
+  <DockIcon label="Search">⌕</DockIcon>
+</Dock>`,
+  "draggable-card": `<DraggableCardContainer className="h-48">
+  <DraggableCard label="Drag me">
+    <p className="py-6 text-center text-sm">Drag me</p>
+  </DraggableCard>
+</DraggableCardContainer>`,
+  "navbar-menu": `<NavbarMenu>
+  <MenuItem label="Product" href="/product" />
+  <MenuItem label="Pricing" href="/pricing" />
+</NavbarMenu>`,
+  "bento-grid": `<BentoGrid>
+  <BentoCard
+    name="Fast by default"
+    description="Server components and streaming."
+    className="md:col-span-2"
+    href="/docs"
+  />
+</BentoGrid>`,
+  "scroll-based-velocity": `<ScrollVelocityContainer>
+  <ScrollVelocityRow baseVelocity={2}>Design · Build · Ship</ScrollVelocityRow>
+</ScrollVelocityContainer>`,
+  kbd: `<Kbd>⌘K</Kbd>`,
   separator: `<Separator />`,
   skeleton: `<Skeleton className="h-4 w-40" />`,
   "input-otp": `<InputOTP maxLength={6}>
@@ -331,11 +561,16 @@ for (const name of manifestNames) {
 
   let snippet;
   const curatedNames = CURATED[name];
-  if (curatedNames && curatedNames.every((entry) => exports.includes(entry)) && CURATED_CODE[name]) {
-    snippet = { imports: curatedNames, code: CURATED_CODE[name] };
-  } else {
-    snippet = genericSnippet(name, exports, manifest);
+  const missing = curatedNames?.filter((entry) => !exports.includes(entry)) ?? [];
+  if (curatedNames && CURATED_CODE[name]) {
+    if (missing.length === 0) {
+      snippet = { imports: curatedNames, code: CURATED_CODE[name] };
+    } else {
+      console.warn(`stale hint ${name}: template no longer exports ${missing.join(", ")}; using generic snippet`);
+    }
   }
+  if (!snippet) snippet = genericSnippet(name, exports, manifest);
+  validateSnippet(name, snippet);
 
   const code = `import { ${snippet.imports.join(", ")} } from "${importPath}";\n\n${snippet.code}`;
   entries.push({
