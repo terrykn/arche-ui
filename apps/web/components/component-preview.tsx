@@ -28,7 +28,7 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar, ScrollAreaThumb } from "@/co
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider";
+import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -405,7 +405,12 @@ export function ComponentPreview({
       );
     case "slider":
       return (
-<Slider defaultValue={[40]} max={100} step={1} aria-label="Demo slider" className="w-48" />
+        <Slider defaultValue={[40]} max={100} step={1} aria-label="Demo slider" className="w-48">
+          <SliderTrack>
+            <SliderRange />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
       );
     case "switch":
       return <Switch aria-label="Demo switch" defaultChecked />;

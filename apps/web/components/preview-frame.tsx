@@ -44,7 +44,7 @@ export function PreviewFrame({
       <div className="min-h-0 flex-1 overflow-auto">
         <div
           style={style}
-          className={`flex min-h-full bg-background p-6 font-sans text-foreground ${dark ? "dark" : ""} ${canvasClassName ?? ""}`}
+          className={`relative flex min-h-full bg-background p-6 font-sans text-foreground ${dark ? "dark" : ""} ${canvasClassName ?? ""}`}
         >
           <PreviewPortalHost>
             <div className={contentClassName}>{children}</div>

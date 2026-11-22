@@ -26,7 +26,7 @@ import { ScrollArea, ScrollAreaViewport, ScrollBar, ScrollAreaThumb } from "@/co
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider";
+import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -140,7 +140,12 @@ export const SINK_EXAMPLES: Record<string, React.ReactNode> = {
     </Avatar>
   ),
   slider: (
-<Slider defaultValue={[40]} max={100} aria-label="Demo slider" />
+    <Slider defaultValue={[40]} max={100} aria-label="Demo slider" className="w-48">
+      <SliderTrack>
+        <SliderRange />
+      </SliderTrack>
+      <SliderThumb />
+    </Slider>
   ),
   progress: (
     <Progress value={60} aria-label="Demo progress">

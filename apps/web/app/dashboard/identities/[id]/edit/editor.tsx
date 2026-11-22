@@ -27,7 +27,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { NEUTRAL_CONTEXT, nextVariantAxes } from "@arche/registry-core/selector";
-import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle } from "lucide-react";
+import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -832,6 +832,7 @@ export function IdentityEditor({
   const [, setTick] = React.useState(0);
 
   const [mode, setMode] = React.useState<"light" | "dark">("dark");
+  const [themePanelOpen, setThemePanelOpen] = React.useState(false);
   const [previewTab, setPreviewTab] = React.useState<PreviewTab>("components");
   const [previewQuery, setPreviewQuery] = React.useState("");
   const [tab, setTab] = React.useState("colors");
@@ -863,6 +864,15 @@ export function IdentityEditor({
   const [saving, setSaving] = React.useState(false);
   const [issues, setIssues] = React.useState<Array<{ path: string; message: string }> | null>(null);
   const [savedAt, setSavedAt] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!themePanelOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setThemePanelOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [themePanelOpen]);
 
   const commit = (next: Doc) => {
     past.current.push(structuredClone(docRef.current));
@@ -1448,8 +1458,25 @@ export function IdentityEditor({
     <div className="flex flex-col lg:h-[calc(100dvh-65px)] lg:min-h-0 lg:flex-row">
       <IdentityFontLinks fonts={doc.fonts} />
 
-      {/* ---------- Left: theme editor ---------- */}
-      <div className="flex min-h-0 w-full shrink-0 flex-col border-b border-border lg:w-fit lg:max-w-[50%] lg:border-b-0 lg:border-r">
+      {/* ---------- Left: theme editor (full-screen drawer on small screens) ---------- */}
+      <div
+        className={`min-h-0 w-full shrink-0 flex-col bg-background lg:static lg:flex lg:w-fit lg:max-w-[50%] lg:border-r lg:border-border ${
+          themePanelOpen ? "fixed inset-0 z-50 flex" : "hidden lg:flex"
+        }`}
+      >
+        <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-3 lg:hidden">
+          <p className="text-sm font-medium">Theme editor</p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setThemePanelOpen(false)}
+            aria-label="Close theme editor"
+            title="Close theme editor"
+          >
+            <X aria-hidden />
+          </Button>
+        </div>
         {editingManifest ? (
           <div className="flex min-h-0 flex-1 flex-col">
             <div className="flex h-13 shrink-0 items-center gap-2 border-b border-border px-3">
@@ -1556,6 +1583,16 @@ export function IdentityEditor({
           </Tabs>
         )}
       </div>
+
+      <Button
+        type="button"
+        onClick={() => setThemePanelOpen(true)}
+        aria-label="Open theme editor"
+        title="Open theme editor"
+        className="fixed bottom-5 right-5 z-40 size-12 rounded-full shadow-lg lg:hidden"
+      >
+        <SlidersHorizontal aria-hidden />
+      </Button>
 
       {/* ---------- Right: live preview ---------- */}
       <div className="flex min-h-[60dvh] min-w-0 flex-1 flex-col lg:min-h-0">
@@ -1677,6 +1714,7 @@ export function IdentityEditor({
               onEdit={(m) => {
                 setQuery("");
                 setEditingComponent(m.name);
+                setThemePanelOpen(true);
               }}
               previewVars={previewVars as React.CSSProperties}
               dark={mode === "dark"}

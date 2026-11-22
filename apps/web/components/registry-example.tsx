@@ -39,7 +39,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { ShinyButton } from "@/components/ui/shiny-button";
-import { Slider } from "@/components/ui/slider";
+import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
 import { StatefulButton } from "@/components/ui/stateful-button";
 import { Stepper } from "@/components/ui/stepper";
 import { Switch } from "@/components/ui/switch";
@@ -56,7 +56,7 @@ const THUMBNAIL = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
 function FieldExample() {
     const id = React.useId();
     return (
-        <FieldGroup>
+        <FieldGroup className="w-64">
             <Field>
                 <FieldLabel htmlFor={id}>Email</FieldLabel>
                 <Input id={id} type="email" />
@@ -113,7 +113,12 @@ const EXAMPLES: Record<string, (selection: Selection, compact: boolean) => React
     select: () => (
         <Select><SelectTrigger aria-label="Option"><SelectValue placeholder="Select option" /></SelectTrigger><SelectContent><SelectItem value="one">One</SelectItem><SelectItem value="two">Two</SelectItem></SelectContent></Select>
     ),
-    slider: () => <Slider defaultValue={[40]} max={100} aria-label="Volume" className="w-48" />,
+    slider: () => (
+        <Slider defaultValue={[40]} max={100} aria-label="Volume" className="w-48">
+            <SliderTrack><SliderRange /></SliderTrack>
+            <SliderThumb />
+        </Slider>
+    ),
     stepper: () => <Stepper steps={["Cart", "Shipping", "Pay"]} current={1} className="isolate w-64" />,
     switch: () => <Switch aria-label="Notifications" defaultChecked />,
     textarea: () => <Textarea aria-label="Message" placeholder="Message" />,

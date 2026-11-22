@@ -12,6 +12,7 @@
 import * as React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AnimatedBeam } from "@/components/ui/animated-beam";
+import { DraggableCardContainer } from "@/components/ui/draggable-card";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import {
   Sidebar,
@@ -350,9 +351,20 @@ export const COMPONENT_DEMOS: Record<string, React.ComponentType> = {
     <div className="relative h-40 w-full overflow-hidden rounded-md border"><C /></div>
   )),
   "dotted-map": demo(() => import("@/components/ui/dotted-map"), (C) => <C className="h-40 w-full" />),
-  "draggable-card": demo(() => import("@/components/ui/draggable-card"), (C) => (
-    <C><div className="w-40 border bg-card p-4 text-sm">Drag me</div></C>
-  )),
+  // `DraggableCard` is absolute and needs its board: without the container it
+  // anchored to the page and escaped the preview box. The board is imported
+  // above, so the lazy factory is told which export to render.
+  "draggable-card": demo(
+    () => import("@/components/ui/draggable-card"),
+    (C) => (
+      <DraggableCardContainer className="h-48">
+        <C label="Drag me">
+          <p className="py-6 text-center text-sm">Drag me</p>
+        </C>
+      </DraggableCardContainer>
+    ),
+    "DraggableCard",
+  ),
   empty: demo(() => import("@/components/ui/empty"), (C) => <C title="Nothing here yet">Create your first project.</C>),
   "evervault-card": demo(() => import("@/components/ui/evervault-card"), (C) => (
     <C label="Acme"><p className="text-sm">Encrypted surface</p></C>
@@ -372,8 +384,15 @@ export const COMPONENT_DEMOS: Record<string, React.ComponentType> = {
   "floating-3d-particles": demo(() => import("@/components/ui/floating-3d-particles"), (C) => (
     <div className="relative h-40 w-full overflow-hidden rounded-md border"><C /></div>
   )),
+  // The bar is `position: fixed`, which would pin it to the top of the app.
+  // A transformed stage becomes its containing block, so it stays in the box.
   "floating-navbar": demo(() => import("@/components/ui/floating-navbar"), (C) => (
-    <C><span className="px-3 text-sm">Floating navbar</span></C>
+    <div className="relative h-32 w-full overflow-hidden rounded-md border bg-muted/40 [transform:translateZ(0)]">
+      <C>
+        <span className="px-3 text-sm">Floating navbar</span>
+        <span className="text-xs text-muted-foreground">Menu</span>
+      </C>
+    </div>
   )),
   "focus-cards": demo(() => import("@/components/ui/focus-cards"), (C) => (
     <C cards={IMAGES.slice(0, 3).map((src) => ({ src, alt: "" }))} />
