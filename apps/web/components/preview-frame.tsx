@@ -9,8 +9,10 @@ import { PreviewPortalHost } from "@/components/preview-portal";
  *
  * Only the inner content wrapper carries the library tokens (`style` and
  * `.dark`): the box, its header and the canvas behind it all use the app's own
- * theme, so library edits never restyle the chrome. Content is centered in a
- * padded canvas, and overlays mount inside it via PreviewPortalHost.
+ * theme, so library edits never restyle the chrome. The content wrapper spans
+ * the canvas so components that size off their parent (backgrounds, full-width
+ * surfaces) have a box to fill; intrinsically sized content stays centered.
+ * Overlays mount inside it via PreviewPortalHost.
  */
 export function PreviewFrame({
   title,
@@ -20,7 +22,7 @@ export function PreviewFrame({
   dark = false,
   className,
   canvasClassName,
-  contentClassName = "m-auto max-w-full",
+  contentClassName = "m-auto flex w-full max-w-full flex-col items-center",
 }: {
   title?: React.ReactNode;
   actions?: React.ReactNode;

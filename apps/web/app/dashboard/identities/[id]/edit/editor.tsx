@@ -805,9 +805,16 @@ function PreviewSections({
     const scroller = scrollParent(root);
     if (!scroller) return;
 
+    let frame = 0;
+    /** Only re-render when the destination actually changes. */
+    const setTarget = (next: string | null) => {
+      setJumpTo((current) => (current === next ? current : next));
+    };
+    /** One measurement per animation frame — scroll events outpace layout. */
     const measure = () => {
+      frame = 0;
       if (searching || keyList === "") {
-        setJumpTo(null);
+        setTarget(null);
         return;
       }
       const sectionsInView = keyList.split("|");
@@ -830,18 +837,22 @@ function PreviewSections({
         ? element.getBoundingClientRect().height > scroller.clientHeight - PREVIEW_SEARCH_HEIGHT
         : false;
       const currentOpen = currentIndex >= 0 && open.includes(sectionsInView[currentIndex]!);
-      setJumpTo(tallerThanPane && currentOpen && next ? next : null);
+      setTarget(tallerThanPane && currentOpen && next ? next : null);
+    };
+    const schedule = () => {
+      if (frame === 0) frame = window.requestAnimationFrame(measure);
     };
 
-    measure();
-    scroller.addEventListener("scroll", measure, { passive: true });
-    window.addEventListener("resize", measure);
-    const observer = new ResizeObserver(measure);
+    schedule();
+    scroller.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    const observer = new ResizeObserver(schedule);
     observer.observe(root);
     observer.observe(scroller);
     return () => {
-      scroller.removeEventListener("scroll", measure);
-      window.removeEventListener("resize", measure);
+      if (frame !== 0) window.cancelAnimationFrame(frame);
+      scroller.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
       observer.disconnect();
     };
   }, [keyList, open, searching]);
@@ -1624,7 +1635,7 @@ export function IdentityEditor({
   ];
 
   return (
-    <div className="flex h-[calc(100dvh-65px)] min-h-0 flex-col lg:flex-row">
+    <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
       <IdentityFontLinks fonts={doc.fonts} />
 
       {/* ---------- Left: theme editor (full-screen drawer on small screens) ---------- */}

@@ -37,11 +37,7 @@ export default async function ComponentDoc({ params }: { params: Promise<{ id: s
       <p className="proto-lede">{manifest.description}</p>
 
       <div style={{ marginTop: 22 }}>
-        <PreviewFrame
-          className="min-h-56"
-          canvasClassName="min-h-56 items-center"
-          contentClassName="m-auto w-full max-w-full"
-        >
+        <PreviewFrame className="min-h-56" canvasClassName="min-h-56 items-center">
           <DocPreview id={manifest.name} />
         </PreviewFrame>
       </div>

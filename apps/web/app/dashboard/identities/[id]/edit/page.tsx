@@ -46,7 +46,9 @@ export default async function EditIdentity({
   const proto = host.startsWith("localhost") ? "http" : "https";
 
   return (
-    <>
+    // The editor fills whatever height is left under the top bar instead of
+    // assuming it — the bar can wrap on narrow screens.
+    <div className="flex h-dvh min-h-0 flex-col">
       <EditorTopBar libraryId={id} initialName={row.name} />
       <IdentityEditor
       libraryId={id}
@@ -70,6 +72,6 @@ export default async function EditIdentity({
         classification: f.classification,
       }))}
       />
-    </>
+    </div>
   );
 }
