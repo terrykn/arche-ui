@@ -303,3 +303,11 @@ export const SINK_EXAMPLES: Record<string, React.ReactNode> = {
     </PasswordToggleField>
   ),
 };
+
+/**
+ * One-variant versions for the small cards on the All Components index, where
+ * a row of variants is too wide to read.
+ */
+export const SINK_EXAMPLES_COMPACT: Record<string, React.ReactNode> = {
+  badge: <Badge variant="secondary">Beta</Badge>,
+};

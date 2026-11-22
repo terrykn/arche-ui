@@ -80,7 +80,7 @@ export function ComponentsIndex() {
                       transform: "translateZ(0)",
                     }}
                   >
-                    <DocPreview id={manifest.name} />
+                    <DocPreview id={manifest.name} compact />
                   </div>
                   <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>
                 </DocsLink>

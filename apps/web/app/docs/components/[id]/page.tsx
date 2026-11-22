@@ -5,7 +5,7 @@ import { DocPreview } from "@/components/doc-preview";
 import { CopyButton } from "@/components/copy-button";
 import { PreviewFrame } from "@/components/preview-frame";
 import { COMPONENT_USAGE } from "@/components/component-usage.generated";
-import { Code } from "@/components/docs/blocks";
+import { CodeSnippet } from "@/components/docs/parts/code-snippet";
 import { ArrowLeft } from "lucide-react";
 import { DocsPageHeader } from "@/components/docs-page-header";
 
@@ -101,12 +101,7 @@ export default async function ComponentDoc({ params }: { params: Promise<{ id: s
       {usage ? (
         <>
           <h2 style={{ marginTop: 30 }}>Usage</h2>
-          <div style={{ marginTop: 12 }}>
-            <Code code={usage.code} />
-          </div>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
-            <CopyButton text={usage.code} />
-          </div>
+          <CodeSnippet code={usage.code} label={`${manifest.name}.tsx`} style={{ marginTop: 12 }} />
         </>
       ) : null}
 

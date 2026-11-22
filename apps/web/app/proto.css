@@ -1253,6 +1253,16 @@
   border-color: var(--line);
 }
 
+/* Static label in place of tabs — names the file a snippet belongs in. */
+.proto-pm-tab-label {
+  cursor: default;
+}
+
+.proto-pm-tab-label:hover {
+  color: var(--ink);
+  background: var(--card);
+}
+
 .proto-copy-btn {
   margin-left: auto;
   display: inline-flex;

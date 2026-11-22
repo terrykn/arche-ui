@@ -73,6 +73,13 @@ function demo(
       // back to the first renderable export when no PascalCase name survives.
       values.find(isComponent) ??
       values.find(isRenderable);
+    // A module with no component export at all (only helpers) would render
+    // `undefined` and throw, so fall back to a quiet label instead.
+    if (!isRenderable(picked)) {
+      return {
+        default: () => <p className="text-xs text-muted-foreground">Preview unavailable</p>,
+      };
+    }
     const Component = picked as AnyComponent;
     return { default: () => render(Component) };
   });

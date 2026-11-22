@@ -72,7 +72,7 @@ function ThemeExample() {
 }
 
 type Selection = Record<string, unknown>;
-const EXAMPLES: Record<string, (selection: Selection) => React.ReactNode> = {
+const EXAMPLES: Record<string, (selection: Selection, compact: boolean) => React.ReactNode> = {
     attachment: () => (
         <Attachment>
             <AttachmentMedia><FileIcon /></AttachmentMedia>
@@ -118,8 +118,10 @@ const EXAMPLES: Record<string, (selection: Selection) => React.ReactNode> = {
     switch: () => <Switch aria-label="Notifications" defaultChecked />,
     textarea: () => <Textarea aria-label="Message" placeholder="Message" />,
     "vanish-input": () => <VanishInput placeholders={["Search orders", "Search people"]} />,
-    button: (selection) => {
+    button: (selection, compact) => {
         const look = selection as Pick<React.ComponentProps<typeof Button>, "shadow" | "fontWeight">;
+        // The index cards are small: one representative button, not the matrix.
+        if (compact) return <Button shadow={look.shadow} fontWeight={look.fontWeight}>Ship order</Button>;
         return (
             <div className="flex flex-wrap gap-2">
                 {(["default", "secondary", "destructive", "outline", "ghost", "link", "brand"] as const).map((v) => (
@@ -193,6 +195,6 @@ const EXAMPLES: Record<string, (selection: Selection) => React.ReactNode> = {
 
 export const REGISTRY_EXAMPLE_NAMES = Object.keys(EXAMPLES);
 export const hasRegistryExample = (name: string) => Object.hasOwn(EXAMPLES, name);
-export function RegistryExample({ name, selection = {} }: { name: string; selection?: Selection }) {
-    return EXAMPLES[name]?.(selection) ?? null;
+export function RegistryExample({ name, selection = {}, compact = false }: { name: string; selection?: Selection; compact?: boolean }) {
+    return EXAMPLES[name]?.(selection, compact) ?? null;
 }
