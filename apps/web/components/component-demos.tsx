@@ -10,6 +10,7 @@
  * components themselves.
  */
 import * as React from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AnimatedBeam } from "@/components/ui/animated-beam";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import {
@@ -78,6 +79,17 @@ function demo(
 }
 
 /* ---------- bespoke demos that need refs or event wiring ---------- */
+
+/* Alert places its title and description in the second grid column; a bare
+   text child lands in the zero-width icon column and wraps word by word. */
+function AlertDemo() {
+  return (
+    <Alert>
+      <AlertTitle>Heads up</AlertTitle>
+      <AlertDescription>Your trial ends in 3 days.</AlertDescription>
+    </Alert>
+  );
+}
 
 /* Panels must live inside their Group; the bare group render throws otherwise. */
 function ResizableDemo() {
@@ -176,7 +188,7 @@ export const COMPONENT_DEMOS: Record<string, React.ComponentType> = {
     (C) => <C title="Acme · Launch" href="#preview">Hover the pin</C>,
     "Pin3D",
   ),
-  alert: demo(() => import("@/components/ui/alert"), (C) => <C title="Heads up">Your trial ends in 3 days.</C>),
+  alert: AlertDemo,
   android: demo(() => import("@/components/ui/android"), (C) => <C videoSrc="about:blank" className="w-48" />),
   "animated-beam": AnimatedBeamDemo,
   "animated-circular-progress-bar": demo(() => import("@/components/ui/animated-circular-progress-bar"), (C) => <C value={72} />),

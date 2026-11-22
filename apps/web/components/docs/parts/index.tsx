@@ -4,67 +4,153 @@ import { buildToolRegistry } from "@arche/mcp";
 import { DocsMarkdown } from "@/components/docs/markdown";
 import { DocPreview } from "@/components/doc-preview";
 import { BlockPreview } from "@/components/block-preview";
+import {
+  BLOCK_SECTIONS,
+  COMPONENT_SECTIONS,
+  type CatalogSection,
+} from "@/content/catalog-sections.generated";
 
 // Data-only docs blocks that need registry or manifest data. Each one is a
 // server component: nothing here ships to the client (DocPreview and
 // BlockPreview are client islands for the live previews).
 
-// Every component manifest, each with a small live preview. Title only —
-// no badge, no description. Dense grid: the previews are small.
-export function ComponentsIndex() {
-  const manifests = getManifests();
+/** Anchor id for a section heading, built from its group and label. */
+export function sectionAnchor(section: Pick<CatalogSection, "group" | "label">) {
+  return [section.group, section.label]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+// The aggregator's sections as a clickable list — every entry jumps to its
+// group below, so the index always mirrors catalog-aggregate.json.
+function SectionLinks({ sections }: { sections: CatalogSection[] }) {
   return (
-    <div
-      style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 14, marginTop: 22 }}
-    >
-      {manifests.map((manifest) => (
-        <DocsLink
-          key={manifest.name}
-          path={`/components/${manifest.name}`}
-          className="proto-card"
-          style={{ padding: 12, textDecoration: "none", color: "inherit", display: "block" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: 72,
-              overflow: "hidden",
-              pointerEvents: "none",
-            }}
-          >
-            <DocPreview id={manifest.name} />
-          </div>
-          <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>
-        </DocsLink>
+    <nav aria-label="Sections" className="proto-section-links">
+      {sections.map((section) => (
+        <a key={section.key} href={`#${sectionAnchor(section)}`} className="proto-section-link">
+          {section.label}
+          <span className="proto-section-count">{section.items.length}</span>
+        </a>
       ))}
-    </div>
+    </nav>
   );
 }
 
-// Every block manifest, each with a small live preview, 3 per row.
-// Title only — no badge, no description.
-export function BlocksIndex() {
-  const manifests = getBlockManifests();
+// Every component manifest, grouped into the aggregator's sections, each with
+// a small live preview. Title only — no badge, no description.
+export function ComponentsIndex() {
+  const byName = new Map(getManifests().map((manifest) => [manifest.name, manifest]));
+  const sections = COMPONENT_SECTIONS.map((section) => ({
+    ...section,
+    entries: section.items.flatMap((name) => {
+      const manifest = byName.get(name);
+      return manifest ? [manifest] : [];
+    }),
+  })).filter((section) => section.entries.length > 0);
+
   return (
-    <div
-      style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14, marginTop: 22 }}
-    >
-      {manifests.map((manifest) => (
-        <DocsLink
-          key={manifest.name}
-          path={`/blocks/${manifest.name}`}
-          className="proto-card"
-          style={{ padding: 12, textDecoration: "none", color: "inherit", display: "block", minWidth: 0 }}
-        >
-          <div style={{ height: 170, overflow: "hidden", pointerEvents: "none" }}>
-            <BlockPreview name={manifest.name} />
+    <>
+      <SectionLinks sections={sections} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 30, marginTop: 26 }}>
+        {sections.map((section) => (
+          <section key={section.key} id={sectionAnchor(section)}>
+            <h2 style={{ margin: 0, fontSize: 18 }}>{section.label}</h2>
+            <div
+              style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 14, marginTop: 14 }}
+            >
+              {section.entries.map((manifest) => (
+                <DocsLink
+                  key={manifest.name}
+                  path={`/components/${manifest.name}`}
+                  className="proto-card"
+                  style={{ padding: 12, textDecoration: "none", color: "inherit", display: "block" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minHeight: 72,
+                      overflow: "hidden",
+                      pointerEvents: "none",
+                      // Contain fixed-position internals inside the card.
+                      transform: "translateZ(0)",
+                    }}
+                  >
+                    <DocPreview id={manifest.name} />
+                  </div>
+                  <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>
+                </DocsLink>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </>
+  );
+}
+
+// Every block manifest, grouped into the aggregator's sections (marketing and
+// application), 3 previews per row. Title only — no badge, no description.
+export function BlocksIndex() {
+  const byName = new Map(getBlockManifests().map((manifest) => [manifest.name, manifest]));
+  const groups = new Map<string, Array<CatalogSection & { entries: ReturnType<typeof getBlockManifests> }>>();
+  for (const section of BLOCK_SECTIONS) {
+    const entries = section.items.flatMap((name) => {
+      const manifest = byName.get(name);
+      return manifest ? [manifest] : [];
+    });
+    if (entries.length === 0) continue;
+    const list = groups.get(section.group) ?? [];
+    list.push({ ...section, entries });
+    groups.set(section.group, list);
+  }
+  const allSections = [...groups.values()].flat();
+
+  return (
+    <>
+      <SectionLinks sections={allSections} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 30, marginTop: 26 }}>
+        {[...groups.entries()].map(([group, sections]) => (
+          <div key={group} style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+            {group ? <h2 style={{ margin: 0, fontSize: 20 }}>{group}</h2> : null}
+            {sections.map((section) => (
+              <section key={section.key} id={sectionAnchor(section)}>
+                <h3 style={{ margin: 0, fontSize: 16 }}>{section.label}</h3>
+                <div
+                  style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14, marginTop: 14 }}
+                >
+                  {section.entries.map((manifest) => (
+                    <DocsLink
+                      key={manifest.name}
+                      path={`/blocks/${manifest.name}`}
+                      className="proto-card"
+                      style={{ padding: 12, textDecoration: "none", color: "inherit", display: "block", minWidth: 0 }}
+                    >
+                      <div
+                        style={{
+                          height: 170,
+                          overflow: "hidden",
+                          pointerEvents: "none",
+                          // Contain fixed-position internals inside the card.
+                          transform: "translateZ(0)",
+                        }}
+                      >
+                        <BlockPreview name={manifest.name} />
+                      </div>
+                      <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>
+                    </DocsLink>
+                  ))}
+                </div>
+              </section>
+            ))}
           </div>
-          <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>
-        </DocsLink>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 }
 

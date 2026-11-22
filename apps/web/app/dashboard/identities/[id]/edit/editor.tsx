@@ -6,6 +6,7 @@ import { PromptEdit } from "./prompt-edit";
 import { ComponentPreview } from "@/components/component-preview";
 import { BlockPreview } from "@/components/block-preview";
 import { PreviewPortalHost } from "@/components/preview-portal";
+import { PreviewFrame } from "@/components/preview-frame";
 import { savePayload } from "../../actions";
 import { PublishButton } from "../publish-button";
 import { InstallBlock } from "@/components/install-block";
@@ -36,6 +37,13 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { componentTokenVars } from "@arche/registry-core/component-tokens";
+import {
+  BLOCK_SECTIONS,
+  BLOCK_SECTION_BY_NAME,
+  COMPONENT_SECTIONS,
+  COMPONENT_SECTION_BY_NAME,
+  type CatalogSection,
+} from "@/content/catalog-sections.generated";
 
 type PreviewTab = "components" | "blocks";
 
@@ -660,6 +668,7 @@ function PreviewGrid({
   onEdit,
   previewVars,
   dark,
+  flush = false,
 }: {
   items: Manifest[];
   boxClass: string;
@@ -670,12 +679,14 @@ function PreviewGrid({
   onEdit?: (item: Manifest) => void;
   previewVars: React.CSSProperties;
   dark: boolean;
+  /** Nested inside a section: keep vertical rhythm, drop the outer padding. */
+  flush?: boolean;
 }) {
   if (items.length === 0) {
     return <p className="p-4 text-sm text-muted-foreground">No {emptyLabel} match the search.</p>;
   }
   return (
-    <div className={`grid gap-4 p-4 ${colsClass}`}>
+    <div className={`grid gap-4 ${flush ? "py-3" : "p-4"} ${colsClass}`}>
       {items.map((item) => {
         const editable =
           !onEdit ||
@@ -697,51 +708,88 @@ function PreviewGrid({
           </Button>
         );
         return (
-        <div
-          key={item.name}
-          className={`flex flex-col overflow-hidden rounded-lg border border-border bg-background ${boxClass}`}
-        >
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-3 py-2">
-            <p className="min-w-0 flex-1 truncate text-sm font-medium">{item.title}</p>
-            <span className="flex shrink-0 items-center gap-1">
-              {onEdit ? (
-                editable ? (
-                  editButton(false)
-                ) : (
-                  <span title="No component-specific tokens" className="inline-flex">
-                    {editButton(true)}
-                  </span>
-                )
-              ) : null}
-              {onExpand ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  onClick={() => onExpand(item)}
-                  aria-label={`Expand ${item.title} preview`}
-                  title={`Expand ${item.title} preview`}
-                >
-                  <Maximize2 aria-hidden />
-                </Button>
-              ) : null}
-            </span>
-          </div>
-          <div className="min-h-0 flex-1 overflow-auto">
-            <div
-              style={previewVars}
-              className={`flex min-h-full bg-background p-4 font-sans text-foreground ${dark ? "dark" : ""}`}
-            >
-              <PreviewPortalHost>
-                <div className="m-auto max-w-full">{renderItem(item)}</div>
-              </PreviewPortalHost>
-            </div>
-          </div>
-        </div>
+          <PreviewFrame
+            key={item.name}
+            title={item.title}
+            className={boxClass}
+            style={previewVars}
+            dark={dark}
+            actions={
+              <>
+                {onEdit ? (
+                  editable ? (
+                    editButton(false)
+                  ) : (
+                    <span title="No component-specific tokens" className="inline-flex">
+                      {editButton(true)}
+                    </span>
+                  )
+                ) : null}
+                {onExpand ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => onExpand(item)}
+                    aria-label={`Expand ${item.title} preview`}
+                    title={`Expand ${item.title} preview`}
+                  >
+                    <Maximize2 aria-hidden />
+                  </Button>
+                ) : null}
+              </>
+            }
+          >
+            {renderItem(item)}
+          </PreviewFrame>
         );
       })}
     </div>
+  );
+}
+
+/**
+ * The catalog split into the aggregator's sections, each one a collapsible.
+ * Section headers come from catalog-aggregate.json, so the pane groups exactly
+ * like the docs indexes; a search keeps only the sections that still match.
+ */
+function PreviewSections({
+  items,
+  sections,
+  sectionOf,
+  ...gridProps
+}: {
+  items: Manifest[];
+  sections: CatalogSection[];
+  sectionOf: Record<string, string>;
+} & Omit<React.ComponentProps<typeof PreviewGrid>, "items">) {
+  const grouped = sections
+    .map((section) => ({
+      key: section.key,
+      label: section.group ? `${section.group.replace(/ blocks$/, "")} · ${section.label}` : section.label,
+      items: items.filter((item) => sectionOf[item.name] === section.key),
+    }))
+    .filter((section) => section.items.length > 0);
+
+  if (grouped.length === 0) return <PreviewGrid items={[]} {...gridProps} />;
+
+  return (
+    <Accordion type="multiple" defaultValue={grouped.map((section) => section.key)} className="px-3">
+      {grouped.map((section) => (
+        <AccordionItem key={section.key} value={section.key}>
+          <AccordionTrigger className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+            <span className="flex min-w-0 flex-1 items-baseline gap-2">
+              <span className="truncate">{section.label}</span>
+              <span className="font-normal normal-case tabular-nums">{section.items.length}</span>
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="pb-0">
+            <PreviewGrid items={section.items} {...gridProps} flush />
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
   );
 }
 
@@ -1612,7 +1660,9 @@ export function IdentityEditor({
             </ul>
           ) : null}
           {previewTab === "components" ? (
-            <PreviewGrid
+            <PreviewSections
+              sections={COMPONENT_SECTIONS}
+              sectionOf={COMPONENT_SECTION_BY_NAME}
               items={manifests.filter(
                 (m) =>
                   previewQuery.trim() === "" ||
@@ -1635,7 +1685,9 @@ export function IdentityEditor({
               )}
             />
           ) : (
-            <PreviewGrid
+            <PreviewSections
+              sections={BLOCK_SECTIONS}
+              sectionOf={BLOCK_SECTION_BY_NAME}
               items={blocks.filter(
                 (b) =>
                   previewQuery.trim() === "" ||

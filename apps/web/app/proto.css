@@ -293,6 +293,39 @@
   overflow: hidden;
 }
 
+/* Aggregator section links at the top of the catalog indexes: each one jumps
+   to its group further down the page. */
+.proto-section-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.proto-section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 11px;
+  border: var(--border-width) solid var(--line2);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.proto-section-link:hover {
+  border-color: var(--ink);
+}
+
+.proto-section-count {
+  color: var(--ink2);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
 .proto-code {
   background: var(--code-bg);
   color: var(--code-tx);
