@@ -899,18 +899,21 @@ function PreviewSections({
           </AccordionItem>
         ))}
       </Accordion>
+      {/* Sticky inside the pane itself, so it stays pinned while a long section scrolls. */}
       {jumpTo ? (
-        <Button
-          type="button"
-          size="sm"
-          onClick={jump}
-          className="fixed bottom-4 left-1/2 z-30 -translate-x-1/2 gap-1.5 rounded-full shadow-lg"
-          aria-label="Jump to the next section"
-          title="Jump to the next section"
-        >
-          <ArrowDown aria-hidden />
-          Next section
-        </Button>
+        <div className="pointer-events-none sticky bottom-4 z-30 flex justify-center">
+          <Button
+            type="button"
+            size="sm"
+            onClick={jump}
+            className="pointer-events-auto gap-1.5 rounded-full shadow-lg"
+            aria-label="Jump to the next section"
+            title="Jump to the next section"
+          >
+            <ArrowDown aria-hidden />
+            Next section
+          </Button>
+        </div>
       ) : null}
     </div>
   );
@@ -1817,7 +1820,7 @@ export function IdentityEditor({
             <Redo2 aria-hidden />
           </Button>
           {/* Actions get their own row on small screens so the tabs and history controls keep a full row. */}
-          <div className="flex w-full items-center gap-1 max-sm:justify-between sm:w-auto">
+          <div className="flex w-full items-center gap-1 max-sm:justify-start sm:w-auto">
             <Button type="button" variant="ghost" size="sm" onClick={resetAll} title="Reset to saved">
               Reset
             </Button>
@@ -1867,8 +1870,7 @@ export function IdentityEditor({
           </div>
         </div>
 
-        {/* `transform` keeps the floating jump control anchored to this pane. */}
-        <div className="min-h-0 flex-1 overflow-y-auto bg-background [transform:translateZ(0)]">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-background">
           <div className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b border-border bg-background px-4">
             <div className="relative w-full">
               <Search
