@@ -7,7 +7,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const alertDialogContentVariants = cva("fixed top-1/2 left-1/2 z-50 grid w-full -translate-x-1/2 -translate-y-1/2 gap-4 border-(length:--border-width) bg-popover p-6 text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95", {
+const alertDialogContentVariants = cva("fixed top-1/2 left-1/2 z-50 grid w-[calc(100%_-_2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 border-(length:--border-width) bg-popover p-6 text-popover-foreground outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95", {
   variants: {
     size: { sm: "max-w-sm", default: "max-w-lg", lg: "max-w-2xl" },
     radius: { sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", xl: "rounded-xl" },

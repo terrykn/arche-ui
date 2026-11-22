@@ -112,7 +112,7 @@ export default function NotificationsBlock() {
 
   return (
     <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
-      <Popover defaultOpen>
+      <Popover>
         <PopoverTrigger
           aria-label="Open notifications" asChild><Button 
               variant="outline"

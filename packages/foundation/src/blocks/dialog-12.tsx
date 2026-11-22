@@ -18,7 +18,7 @@ import { Input } from "../templates/input.js";
 import { Label } from "../templates/label.js";
 
 export default function Dialog12() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
   const [authorName, setAuthorName] = useState('Ephraim Duncan');
   const [title, setTitle] = useState('Design Engineer');
   const [image, setImage] = useState<string | null>(null);

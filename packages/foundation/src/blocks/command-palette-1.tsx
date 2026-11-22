@@ -135,7 +135,7 @@ const actionCommands = [
 ]
 
 export default function CommandPaletteBlock() {
-  const [open, setOpen] = React.useState(true)
+  const [open, setOpen] = React.useState(false)
   const [ranLabel, setRanLabel] = React.useState<string | null>(null)
 
   React.useEffect(() => {

@@ -1784,9 +1784,17 @@
   .proto-nav-links {
     display: none;
   }
-  /* Keep the nav compact: icon-only search trigger, no shortcut hint. */
+  /* Icon-only search trigger on phones: square and thumb-sized, no shortcut
+     hint. */
   .proto-search-trigger {
-    padding: 7px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .proto-search-trigger svg {
+    width: 20px;
+    height: 20px;
   }
   .proto-docs-head {
     align-items: flex-start;

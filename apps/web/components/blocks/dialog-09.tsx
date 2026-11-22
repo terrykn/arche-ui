@@ -38,7 +38,7 @@ export default function Dialog09() {
   };
 
   return (
-    <Dialog defaultOpen>
+    <Dialog>
       <DialogTrigger asChild><Button>
         <Share2 className="mr-2 h-4 w-4" />
         Share

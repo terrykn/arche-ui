@@ -69,7 +69,10 @@ export function ProtoNav() {
                 Get Started <ArrowRight aria-hidden="true" />
               </Link>
             </Button>
-            <MobileNavMenu links={MOBILE_NAV_LINKS} className="md:hidden" />
+            <MobileNavMenu
+              links={MOBILE_NAV_LINKS}
+              className="max-md:size-11 max-md:[&_svg:not([class*='size-'])]:size-5 md:hidden"
+            />
           </div>
         </div>
       </header>

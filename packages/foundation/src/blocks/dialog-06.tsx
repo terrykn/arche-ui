@@ -18,7 +18,7 @@ import { Label } from "../templates/label.js";
 import { Switch } from "../templates/switch.js";
 
 export default function Dialog06() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>

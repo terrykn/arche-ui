@@ -786,7 +786,7 @@ function PreviewSections({
   const grouped = sections
     .map((section) => ({
       key: section.key,
-      label: section.group ? `${section.group.replace(/ blocks$/, "")} · ${section.label}` : section.label,
+      label: section.label,
       items: items.filter((item) => sectionOf[item.name] === section.key),
     }))
     .filter((section) => section.items.length > 0);

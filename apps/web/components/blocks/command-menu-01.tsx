@@ -67,7 +67,7 @@ const settingsItems = [
 ];
 
 export function CommandMenu01() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

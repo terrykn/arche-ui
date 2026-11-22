@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function Dialog02() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>

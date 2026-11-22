@@ -17,7 +17,7 @@ import {
 
 export default function Dialog01() {
   return (
-    <Dialog defaultOpen>
+    <Dialog>
       <DialogTrigger asChild><Button  variant="outline">
         Show Dialog
       </Button></DialogTrigger>

@@ -27,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Dialog11() {
   return (
-    <Dialog defaultOpen>
+    <Dialog>
       <DialogTrigger asChild><Button>Initialize New Project</Button></DialogTrigger>
       <DialogContent className="gap-0 overflow-visible p-0 sm:max-w-2xl">
         <DialogHeader className="mb-0 border-b-(length:--border-width) px-6 py-4">

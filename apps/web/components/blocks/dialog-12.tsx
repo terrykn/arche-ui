@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function Dialog12() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
   const [authorName, setAuthorName] = useState('Ephraim Duncan');
   const [title, setTitle] = useState('Design Engineer');
   const [image, setImage] = useState<string | null>(null);

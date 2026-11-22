@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
 export default function Dialog06() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>

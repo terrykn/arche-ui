@@ -17,7 +17,7 @@ import { Label } from "../templates/label.js";
 
 export default function Dialog03() {
   return (
-    <Dialog defaultOpen>
+    <Dialog>
       <div className="flex items-center justify-center py-36">
         <DialogTrigger asChild><Button>Edit Profile</Button></DialogTrigger>
       </div>

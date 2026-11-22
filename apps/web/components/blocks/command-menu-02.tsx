@@ -45,7 +45,7 @@ import {
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 
 export function CommandMenu02() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {

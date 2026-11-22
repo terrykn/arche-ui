@@ -19,7 +19,7 @@ import { Input } from "../templates/input.js";
 import { Label } from "../templates/label.js";
 
 export default function Dialog05() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState);
