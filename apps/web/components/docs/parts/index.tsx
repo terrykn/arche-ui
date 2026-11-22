@@ -58,9 +58,7 @@ export function ComponentsIndex() {
         {sections.map((section) => (
           <section key={section.key} id={sectionAnchor(section)}>
             <h2 style={{ margin: 0, fontSize: 18 }}>{section.label}</h2>
-            <div
-              style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 14, marginTop: 14 }}
-            >
+            <div className="proto-component-grid">
               {section.entries.map((manifest) => (
                 <DocsLink
                   key={manifest.name}
@@ -68,18 +66,7 @@ export function ComponentsIndex() {
                   className="proto-card"
                   style={{ padding: 12, textDecoration: "none", color: "inherit", display: "block" }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      minHeight: 72,
-                      overflow: "hidden",
-                      pointerEvents: "none",
-                      // Contain fixed-position internals inside the card.
-                      transform: "translateZ(0)",
-                    }}
-                  >
+                  <div className="proto-component-preview">
                     <DocPreview id={manifest.name} compact />
                   </div>
                   <p style={{ margin: "10px 0 0", fontSize: 13, fontWeight: 600 }}>{manifest.title}</p>

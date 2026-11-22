@@ -326,6 +326,34 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* All Components index: one column on narrow screens, where two preview
+   cards get too tight to read, then as many as fit from 640px up. */
+.proto-component-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+@media (min-width: 640px) {
+  .proto-component-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+/* Fixed preview box per card: a tall demo (calendar, sidebar) is clipped
+   instead of stretching the whole row. */
+.proto-component-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88px;
+  overflow: hidden;
+  pointer-events: none;
+  /* Contain fixed-position internals inside the card. */
+  transform: translateZ(0);
+}
+
 .proto-code {
   background: var(--code-bg);
   color: var(--code-tx);
