@@ -506,10 +506,15 @@ test("the picker step renders brand then palette on one screen under one live pr
   assert.ok(dock.includes("wordOrder"), "the words step keeps a pick history");
   assert.ok(dock.includes("current.slice(0, 4)"), "past five, a new pick replaces the fifth");
   assert.ok(dock.includes("previewWordsAction"), "the words preview recompiles live on every change");
-  // The custom hex re-skins on top of the final swatches (never masked by
-  // a stale words recompile) and loading shows a skeleton, never text.
-  assert.ok(dock.includes("wordsBase"), "the custom pick layers over the word-folded preview");
-  assert.ok(dock.includes("loading={wordOrder.length > 0 && wordsPending}"), "loading pulses the preview text in place");
+  // The preview renders the compiled row only: the custom pick is pinned by
+  // the compiler (brandSolid), so painting the raw hex on top would show a
+  // color Create never stores. Loading pulses the preview text in place.
+  assert.ok(!dock.includes("brand: effectiveCustomBrand"), "the preview never paints the raw picker hex");
+  assert.ok(dock.includes("swatches={option.swatches[previewMode]}"), "palette strips show compiled swatches, never the raw pick");
+  assert.ok(
+    dock.includes("loading={customPending || (wordOrder.length > 0 && wordsPending)}"),
+    "a compiling custom color pulses the preview text in place",
+  );
   assert.ok(mini.includes("aria-busy"), "the preview reports its loading state");
   assert.ok(!dock.includes("Updating preview…"), "no updating text under the preview");
   // Step order: words → typeface → colors. Generation lands on words;
@@ -812,4 +817,43 @@ test("the emitted mark follows the picked brand through the strategy", async () 
     hueDist(oklch(emitted.tokens.light["--primary"].$value).h, 160) <= 2,
     "the system sits on the brand hue, not the generation's",
   );
+});
+
+test("a custom pick is the stored solid, and it stays visible in both modes", async () => {
+  const palette = { primaryHue: 250, accentHue: 250, neutralHue: 250, brandHue: 250 };
+  const picked = await compile("t-custom-solid", palette, AXES, {
+    brandStrategy: "unified",
+    preservePickedHues: true,
+    brandSolid: "#e11d48",
+  });
+  const light = oklch(picked.tokens.light["--brand"].$value);
+  const dark = oklch(picked.tokens.dark["--brand"].$value);
+  assert.ok(hueDist(light.h, 17.6) <= 1, "the solid keeps the picked hue");
+  assert.ok(Math.abs(light.l - 0.586) < 0.02, "the solid keeps the picked lightness");
+  assert.deepEqual(light, dark, "one pick renders one solid in both modes");
+  assert.equal(
+    picked.tokens.light["--primary"].$value,
+    picked.tokens.light["--brand"].$value,
+    "Unified feeds primary from the same picked solid",
+  );
+
+  // A near-black pick is lifted enough to read on the dark canvas.
+  const darkPick = await compile("t-custom-dark", palette, AXES, {
+    brandStrategy: "unified",
+    preservePickedHues: true,
+    brandSolid: "#121212",
+  });
+  const darkSolid = oklch(darkPick.tokens.dark["--brand"].$value);
+  const darkGround = oklch(darkPick.tokens.dark["--background"].$value);
+  assert.ok(darkSolid.l - darkGround.l >= 0.15, "a dark pick separates from the dark background");
+
+  // A near-white pick stays under the near-white canvas.
+  const palePick = await compile("t-custom-pale", palette, AXES, {
+    brandStrategy: "unified",
+    preservePickedHues: true,
+    brandSolid: "#ffe066",
+  });
+  const paleSolid = oklch(palePick.tokens.light["--brand"].$value);
+  const paleGround = oklch(palePick.tokens.light["--background"].$value);
+  assert.ok(paleGround.l - paleSolid.l >= 0.15, "a pale pick separates from the light background");
 });

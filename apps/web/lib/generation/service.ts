@@ -646,6 +646,9 @@ export async function previewCustomStrategies(
     base: auroraBase(),
     achromatic: achromaticBrief(axes, palette, preview.constraints),
     alternative: true,
+    // The pick is the mark itself, not just its hue: preview and draft must
+    // show the color the user selected.
+    brandSolid: hexColor(hex),
   });
 }
 
@@ -695,6 +698,7 @@ export async function previewWordsSwatches(
       brandStrategy: brand.strategy,
       preservePickedHues: pickedBrandHue != null,
       borderWidth: applied.borderWidth,
+      brandSolid: hexColor(selections.customBrandHex),
     },
     validateIdentity,
   );
@@ -724,6 +728,8 @@ async function compileUsageOptions(args: {
    * The dreamed row omits this and keeps the family snap.
    */
   alternative?: boolean;
+  /** Exact picker color ("#rrggbb"): the user's own swatch is the mark solid. */
+  brandSolid?: string;
 }): Promise<UsagePreviewOption[]> {
   const strategies = deriveBrandStrategies(args.brandHue, {
     profile: args.profile,
@@ -747,6 +753,7 @@ async function compileUsageOptions(args: {
           // prompt's hue family governed the dreamed choice, not this one.
           brandStrategy: strategy.strategy,
           preservePickedHues: args.alternative,
+          brandSolid: args.brandSolid,
         },
         validateIdentity,
       );
@@ -1030,6 +1037,13 @@ function hueFromHexColor(hex: unknown): number | null {
   return ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360;
 }
 
+/** Normalized "#rrggbb" or undefined — picker values are client-supplied. */
+function hexColor(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const match = value.trim().match(/^#([0-9a-f]{6})$/i);
+  return match ? `#${match[1]!.toLowerCase()}` : undefined;
+}
+
 /**
  * Winning mark hue for a brand pick: a valid custom picker hex wins over
  * the fixed row, else the fixed row's hue, else the dreamed brand. Shared
@@ -1206,6 +1220,9 @@ export async function completeGeneration(
           // not snap it back onto the dreamed color. As-dreamed keeps it.
           preservePickedHues: pickedBrandHue != null,
           borderWidth: folded.borderWidth,
+          // A custom swatch is the mark solid itself, so the stored identity
+          // matches the color the picker showed.
+          brandSolid: hexColor(selections.customBrandHex),
         },
         validateIdentity,
       );
@@ -1235,6 +1252,7 @@ export async function completeGeneration(
           brandStrategy: folded.brand.strategy,
           preservePickedHues: pickedBrandHue != null,
           borderWidth: folded.borderWidth,
+          brandSolid: hexColor(selections.customBrandHex),
         },
         validateIdentity,
       );

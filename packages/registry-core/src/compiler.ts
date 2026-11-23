@@ -107,6 +107,15 @@ export interface CompileInput {
    * collapsing back onto the dreamed color. Dreamed compiles omit this.
    */
   preservePickedHues?: boolean;
+  /**
+   * Exact picker color ("#rrggbb") for the mark. The user's own selection is
+   * the brand solid, not just its hue: the pinned color keeps its own
+   * lightness, saturation and hue, and the design-repair band still clamps
+   * its chroma, so a custom pick can never widen a registry. Ignored under a
+   * grayscale voice or a mute-to-ink brand scale — the brand never breaks
+   * monochrome.
+   */
+  brandSolid?: string;
 }
 
 /** Palette-row brand strategies (one system per brand hue). */
@@ -165,6 +174,45 @@ function withLightness(value: string, l: number): string {
   const parsed = parseOklch(value);
   parsed.l = Math.min(1, Math.max(0, Math.round(l * 1000) / 1000));
   return formatOklch(parsed);
+}
+
+/**
+ * A picker color is one solid on both modes' backgrounds, so its lightness
+ * is held inside a range that stays visible on a near-white canvas and on a
+ * near-black one. Hue and chroma are untouched; only an extreme pick (near
+ * black or near white) is lifted or deepened enough to be seen.
+ */
+const PINNED_LIGHTNESS_MIN = 0.42;
+const PINNED_LIGHTNESS_MAX = 0.82;
+
+function pinnedSolid(color: Oklch): Oklch {
+  return { ...color, l: Math.min(PINNED_LIGHTNESS_MAX, Math.max(PINNED_LIGHTNESS_MIN, color.l)) };
+}
+
+/**
+ * sRGB hex ("#rrggbb") → OKLCH. Carries the picker color's own lightness,
+ * chroma and hue; only the design-repair band may still clamp the chroma.
+ */
+function hexToOklch(hex: string): Oklch {
+  const match = hex.trim().match(/^#([0-9a-f]{6})$/i);
+  if (!match) throw new Error(`compiler: cannot read brand color '${hex}'`);
+  const n = Number.parseInt(match[1]!, 16);
+  const channel = (u: number): number => {
+    const v = u / 255;
+    return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  const r = channel((n >> 16) & 255);
+  const g = channel((n >> 8) & 255);
+  const b = channel(n & 255);
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const lightness = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bAxis = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  const chroma = Math.hypot(a, bAxis);
+  const hue = chroma < 1e-4 ? 0 : ((Math.atan2(bAxis, a) * 180) / Math.PI + 360) % 360;
+  return { l: lightness, c: chroma, h: hue };
 }
 
 // ---------------------------------------------------------------------------
@@ -564,6 +612,7 @@ function buildModeTokens(
   brandScale: number,
   strategy: BrandStrategyId | null = null,
   borderWidth?: WordsBorderWidth,
+  brandSolid?: string,
 ): TokenRecord {
   const dark = mode === "dark";
   const P = palette.primaryHue;
@@ -616,7 +665,13 @@ function buildModeTokens(
   // Picker brand voice: the muted secondary and neutral ink marks scale
   // only the brand chroma (monochrome still forces zero everywhere).
   const BC = monochrome || voice.target === 0 || brandScale === 0 ? 0 : C * brandScale;
-  const brand = scaleColor(B, BC, 8);
+  // A picker color pins the mark to the user's own selection: its exact
+  // lightness, chroma and hue land in --brand (and, under Unified, in
+  // --primary with it). The design-repair pass below still clamps the chroma
+  // into the profile band, so the pin can never widen a registry.
+  const pinnedBrand =
+    brandSolid && !grayscale && brandScale > 0 ? formatOklch(pinnedSolid(hexToOklch(brandSolid))) : null;
+  const brand = pinnedBrand ?? scaleColor(B, BC, 8);
   const brandFg = autoText(brand);
   const brandInk = (() => {
     if (grayscale || brandScale === 0) {
@@ -905,8 +960,8 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
       : 1;
   const brandStrategy: BrandStrategyId | null = input.brandStrategy ?? null;
   const tokens: Record<string, TokenRecord> = {
-    light: buildModeTokens("light", effectiveAxes, palette, voice, profile, monochrome, brandScale, brandStrategy, input.borderWidth),
-    dark: buildModeTokens("dark", effectiveAxes, palette, voice, profile, monochrome, brandScale, brandStrategy, input.borderWidth),
+    light: buildModeTokens("light", effectiveAxes, palette, voice, profile, monochrome, brandScale, brandStrategy, input.borderWidth, input.brandSolid),
+    dark: buildModeTokens("dark", effectiveAxes, palette, voice, profile, monochrome, brandScale, brandStrategy, input.borderWidth, input.brandSolid),
   };
 
   // Font stacks must mirror the selected registry families exactly.
@@ -959,7 +1014,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   // clamped into the envelope with hue/lightness preserved where the rule
   // allows it; every repair is recorded with its design-rule id.
   const adjustments: Adjustment[] = [];
-  repairDesign(tokens, profile, adjustments, voice.target, monochrome, brandScale, brandStrategy);
+  repairDesign(tokens, profile, adjustments, voice.target, monochrome, brandScale, brandStrategy, Boolean(input.brandSolid));
 
   // Prompt-adherence enforcement (Brief: words → numbers → code). Runs
   // AFTER design repair (so the true-zero monochrome rule runs after any
@@ -1036,6 +1091,9 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   };
   if (brandScale !== 1) brandRecord.scale = Math.round(brandScale * 1000) / 1000;
   if (brandStrategy) brandRecord.strategy = brandStrategy;
+  // The pin is intent: the validator lets a picked color sit below the solid
+  // floor (the ceiling still binds). Stamped only for pins.
+  if (input.brandSolid) brandRecord.pinned = true;
   (compiled.meta as Record<string, unknown>).brand = brandRecord;
   if (migrated.migrated) {
     (compiled.meta as Record<string, unknown>).dnaMigration = "v1→v2: retroFuturism dropped, chroma defaulted";
@@ -1157,6 +1215,7 @@ function repairDesign(
   monochrome = false,
   brandScale = 1,
   strategy: BrandStrategyId | null = null,
+  brandPinned = false,
 ): void {
   const bgCap = (mode: "light" | "dark"): number =>
     Math.round(
@@ -1209,8 +1268,10 @@ function repairDesign(
     // Brand Token brief: the brand solid lives in the same chroma band —
     // ceilings bind runaway saturation; the floor yields to low-chroma
     // intent exactly like the other solids. The picker ink voice is intent
-    // too: a neutral mark never gets floored back into color.
-    const brandFloor = monochrome || brandScale === 0 ? 0 : solidFloor;
+    // too: a neutral mark never gets floored back into color. An exact
+    // picker color is intent as well — a gray pick stays gray; the ceiling
+    // still binds, so the pin can never widen a registry.
+    const brandFloor = monochrome || brandScale === 0 || brandPinned ? 0 : solidFloor;
     for (const token of ["--primary", "--accent", "--destructive", "--brand"]) {
       // Mark-only intent: the ink structure (and the brand-lifted accent,
       // which carries the mark voice rather than the solid band) is the
@@ -1218,7 +1279,8 @@ function repairDesign(
       const floor =
         token === "--brand"
           ? brandFloor
-          : strategy === "mark-only" && (token === "--primary" || token === "--accent")
+          : (brandPinned && strategy === "unified" && token === "--primary") ||
+              (strategy === "mark-only" && (token === "--primary" || token === "--accent"))
             ? 0
             : solidFloor;
       const c = chromaOf(token);

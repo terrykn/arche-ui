@@ -85,22 +85,6 @@ function tokenToHex(value: string): string | null {
   return oklchToHexString(Number(match[1]), Number(match[2]), Number(match[3]));
 }
 
-function relativeLuminance(hex: string): number {
-  const n = Number.parseInt(hex.slice(1), 16);
-  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(srgbChannelToLinear);
-  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
-}
-
-/** Preview-only brand foreground for a custom hex: whichever of white or
- *  black contrasts more with it. Finish re-derives the real AA-gated pair
- *  server-side, so this is just the live swatch. */
-function onBrandForHex(hex: string): string {
-  const lum = relativeLuminance(hex);
-  const withWhite = 1.05 / (lum + 0.05);
-  const withBlack = (lum + 0.05) / 0.05;
-  return withWhite >= withBlack ? "#ffffff" : "#000000";
-}
-
 /**
  * Plain color strip (compiled light-mode tokens) — the palette row names no
  * strategy. Each strip is one whole system derived from the winning brand
@@ -288,17 +272,16 @@ export function CreationDock({ prefill }: { prefill: string }) {
     preview?.usageOptions[0]?.swatches.light.brand ??
     preview?.paletteOptions[0]?.swatches.brand ??
     "#333333";
-  // A fixed row pick shelves any earlier custom pick (the row wins); the
-  // custom hex only applies while no fixed color is set.
+  // A fixed row pick wins while it is selected, but the custom hex is kept:
+  // returning to the Generated tile restores the color the user picked
+  // instead of snapping back to the dreamed one.
   const effectiveCustomBrand = brandColorId ? null : customBrand;
   const dreamedHex = tokenToHex(dreamedBrand) ?? "#7c3aed";
-  // A custom picker color re-skins the mark client-side only: the hue is
-  // what finish folds in, and the compiler emits the real AA-gated pair.
-  const liveBase = activeUsage?.swatches[previewMode];
-  const liveSwatches =
-    effectiveCustomBrand && liveBase
-      ? { ...liveBase, brand: effectiveCustomBrand, onBrand: onBrandForHex(effectiveCustomBrand) }
-      : liveBase;
+  // The preview renders the compiled row only — never the raw picker hex —
+  // so what it shows is exactly the solid Create stores (same pinned color,
+  // same AA-gated foreground). While a fresh row compiles the last one stays
+  // up instead of showing an approximation.
+  const liveSwatches = activeUsage?.swatches[previewMode];
 
   // Custom hex rows: debounced fetch (the native picker fires
   // continuously while dragging); a stale response never wins.
@@ -383,11 +366,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
   // (live recompile), else the precomputed row — plus the picked fonts.
   // The custom hex always re-skins on top (instant, client-side), so a
   // custom pick never waits on — or hides behind — the words refetch.
-  const wordsBase = wordsSwatches?.[previewMode] ?? liveSwatches;
-  const colorsSwatches =
-    effectiveCustomBrand && wordsBase
-      ? { ...wordsBase, brand: effectiveCustomBrand, onBrand: onBrandForHex(effectiveCustomBrand) }
-      : wordsBase;
+  const colorsSwatches = wordsSwatches?.[previewMode] ?? liveSwatches;
 
   const finish = async () => {
     if (preview == null) return;
@@ -596,7 +575,7 @@ export function CreationDock({ prefill }: { prefill: string }) {
                       label="Live identity preview"
                       displayFont={activeTypeface?.display}
                       bodyFont={activeTypeface?.body}
-                      loading={wordOrder.length > 0 && wordsPending}
+                      loading={customPending || (wordOrder.length > 0 && wordsPending)}
                     />
                     {wordOrder.length > 0 && wordsError && !wordsPending ? (
                       <p className="text-xs text-muted-foreground" role="alert">
@@ -660,7 +639,6 @@ export function CreationDock({ prefill }: { prefill: string }) {
                           checked={brandColorId === color.id}
                           onChange={() => {
                             setBrandColorId(color.id);
-                            setCustomBrand(null);
                           }}
                           className="sr-only"
                         />

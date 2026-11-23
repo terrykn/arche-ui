@@ -224,16 +224,27 @@ export function checkDesignRules(identity: ArcheIdentity): DesignRuleFinding[] {
     // a muted brand voice on meta.brand, and a neutral mark is intent, not
     // an accident — the floor yields to it exactly like monochrome.
     const brandScale = (identity.meta as { brand?: { scale?: unknown } } | undefined)?.brand?.scale;
-    const brandFloor = monochrome || brandScale === 0 ? 0 : solidFloor;
+    // An exact picker color is intent too: the user's own swatch may sit
+    // below the solid floor, so the floor yields (the ceiling still binds).
+    const brandPinned =
+      (identity.meta as { brand?: { pinned?: unknown } } | undefined)?.brand?.pinned === true;
+    const brandFloor = monochrome || brandScale === 0 || brandPinned ? 0 : solidFloor;
     // Palette-row mark-only strategy: the ink structure (and the
     // brand-lifted accent, which carries the mark voice rather than the
     // solid band) is intent (stamped on meta.brand by the compiler), so
     // the floor yields to it exactly like monochrome.
     const markOnly =
       (identity.meta as { brand?: { strategy?: unknown } } | undefined)?.brand?.strategy === "mark-only";
+    // Unified is one solid for both roles: a pinned mark carries --primary
+    // with it, so the floor yields there exactly like --brand.
+    const unified = (identity.meta as { brand?: { strategy?: unknown } } | undefined)?.brand?.strategy === "unified";
     for (const name of SOLID_TOKENS) {
       const floor =
-        name === "--brand" ? brandFloor : markOnly && (name === "--primary" || name === "--accent") ? 0 : solidFloor;
+        name === "--brand"
+          ? brandFloor
+          : (brandPinned && unified && name === "--primary") || (markOnly && (name === "--primary" || name === "--accent"))
+            ? 0
+            : solidFloor;
       const c = tokenColor(set, name);
       if (c && (c.c < floor || c.c > ceiling)) {
         findings.push({

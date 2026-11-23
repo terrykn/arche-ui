@@ -25,6 +25,17 @@ export class PreviewBoundary extends React.Component<
     }
   }
 
+  /**
+   * A boundary can outlive the entry it guards — the editor's expanded
+   * preview swaps blocks in place, and filtered grids reuse cards — so a
+   * failure must not stick to the next entry rendered in the same slot.
+   */
+  componentDidUpdate(previous: { name?: string }) {
+    if (previous.name !== this.props.name && this.state.failed) {
+      this.setState({ failed: false });
+    }
+  }
+
   render() {
     if (this.state.failed) {
       return <p className="text-xs text-muted-foreground">Preview unavailable</p>;
