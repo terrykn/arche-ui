@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { DocsSearch } from "@/components/docs-search";
 import { MobileNavMenu } from "@/components/mobile-nav-menu";
+import { PUBLIC_NAV_LINKS } from "@/components/public-nav-links";
 
 // Backdrop wash derived only from identity tokens (primary/secondary/accent).
 // No hardcoded colors here — the hero headline gradient is the single exception.
@@ -21,12 +22,7 @@ export function ProtoAurora() {
   return <div className="proto-aurora" aria-hidden />;
 }
 
-const NAV_LINKS = [
-  // Docs open on Configuration, the first page in the reading order.
-  { href: "/docs/configuration", label: "Docs" },
-  { href: "/examples", label: "Examples" },
-  { href: "/pricing", label: "Pricing" },
-];
+const NAV_LINKS = PUBLIC_NAV_LINKS;
 
 /** The inline row hides below `md`; the menu carries the same links plus the CTA. */
 const MOBILE_NAV_LINKS = [...NAV_LINKS, { href: "/sign-up", label: "Get Started" }];

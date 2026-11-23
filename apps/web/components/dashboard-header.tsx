@@ -5,9 +5,20 @@ import { usePathname } from "next/navigation";
 import { Plus } from "lucide-react";
 import { ArcheLogo } from "@/components/arche-logo";
 import { DASH_LINKS, DashboardNav } from "@/components/dashboard-nav";
-import { MobileNavMenu } from "@/components/mobile-nav-menu";
+import { MobileNavMenu, type MobileNavLink } from "@/components/mobile-nav-menu";
+import { PUBLIC_NAV_LINKS } from "@/components/public-nav-links";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/app/(auth)/actions";
+
+// Same destinations as the home menu, preceded by the dashboard's own pages.
+// "Docs" is already the dashboard's docs entry, so the public one is skipped
+// instead of showing two different "Docs" options in one menu. Settings comes
+// last so it sits directly above Sign out.
+const MENU_LINKS: MobileNavLink[] = [
+  ...DASH_LINKS.filter(({ label }) => label !== "Settings").map(({ href, label }) => ({ href, label })),
+  ...PUBLIC_NAV_LINKS.filter(({ label }) => label !== "Docs"),
+  ...DASH_LINKS.filter(({ label }) => label === "Settings").map(({ href, label }) => ({ href, label })),
+];
 
 /**
  * Dashboard chrome. Non-editor pages get a left sidebar (plus a compact top
@@ -29,8 +40,9 @@ export function DashboardHeader() {
             <ArcheLogo size={32} />
           </Link>
           <MobileNavMenu
-            links={DASH_LINKS}
+            links={MENU_LINKS}
             label="Open dashboard menu"
+            className="max-md:size-11 max-md:[&_svg:not([class*='size-'])]:size-5"
             footer={
               <form action={signOut}>
                 <Button variant="outline" size="sm" type="submit" className="w-full">
