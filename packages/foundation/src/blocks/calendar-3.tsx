@@ -125,7 +125,7 @@ export default function CalendarBlock() {
   const selectedLabel = selected ? `${MONTH_NAMES[selMonth!]} ${selDay}` : ""
 
   return (
-    <section className="flex min-h-svh w-full items-start justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-start justify-center px-6 py-16 text-foreground">
       <div className="w-full max-w-3xl">
         <div className="overflow-hidden rounded-lg border-(length:--border-width) border-border bg-card text-card-foreground shadow-sm">
           <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">

@@ -101,7 +101,7 @@ const events: Event[] = [
 
 export default function ActivityBlock() {
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="w-full max-w-lg rounded-xl border-(length:--border-width) border-border bg-background">
         <div className="flex items-center justify-between border-b-(length:--border-width) border-border px-5 py-4">
           <h2 className="font-heading text-sm font-semibold">Audit Log</h2>

@@ -52,7 +52,7 @@ import { SINK_EXAMPLES } from "@/components/sink-examples";
 /** Coverage section: stamps data-component so the check script can verify every catalog component renders here. */
 function Section({ name, children }: { name: string; children: React.ReactNode }) {
   return (
-    <section data-component={name} id={`demo-${name}`} className="scroll-mt-24">
+    <section data-component={name} data-arche-section id={`demo-${name}`} className="scroll-mt-24">
       {children}
     </section>
   );

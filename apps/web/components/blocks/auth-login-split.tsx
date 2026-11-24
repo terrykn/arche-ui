@@ -47,7 +47,7 @@ export function AuthLoginSplit() {
   }
 
   return (
-    <section className="grid min-h-[48rem] bg-background lg:grid-cols-2">
+    <section className="grid min-h-[48rem] lg:grid-cols-2">
       <div className="flex flex-col px-6 py-10 sm:px-12 lg:px-16">
         <a
           href={LINKS.home}

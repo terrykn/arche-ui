@@ -219,7 +219,7 @@ export default function CommandPaletteBlock() {
   const selected = byId[value]
 
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="grid h-[26.25rem] w-full max-w-2xl grid-cols-1 overflow-hidden rounded-lg border-(length:--border-width) border-border bg-popover sm:grid-cols-[1fr_16.25rem]">
         <Command
           value={value}

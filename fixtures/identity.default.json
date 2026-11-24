@@ -194,6 +194,34 @@
       "--brand-foreground": {
         "$type": "color",
         "$value": "oklch(0.99 0 0)"
+      },
+      "--composition": {
+        "$type": "option",
+        "$value": "grid-strict"
+      },
+      "--imagery": {
+        "$type": "option",
+        "$value": "none"
+      },
+      "--surface-card": {
+        "$type": "option",
+        "$value": "flat"
+      },
+      "--surface-photo": {
+        "$type": "image",
+        "$value": "url(\"/example_bg_photo.jpg\")"
+      },
+      "--surface-tint": {
+        "$type": "other",
+        "$value": "initial"
+      },
+      "--surface-photo-scrim": {
+        "$type": "option",
+        "$value": "on"
+      },
+      "--surface-scrim": {
+        "$type": "color",
+        "$value": "oklch(1 0 0)"
       }
     },
     "dark": {
@@ -350,6 +378,34 @@
       "--brand-foreground": {
         "$type": "color",
         "$value": "oklch(0.99 0 0)"
+      },
+      "--composition": {
+        "$type": "option",
+        "$value": "grid-strict"
+      },
+      "--imagery": {
+        "$type": "option",
+        "$value": "none"
+      },
+      "--surface-card": {
+        "$type": "option",
+        "$value": "flat"
+      },
+      "--surface-photo": {
+        "$type": "image",
+        "$value": "url(\"/example_bg_photo.jpg\")"
+      },
+      "--surface-tint": {
+        "$type": "other",
+        "$value": "initial"
+      },
+      "--surface-photo-scrim": {
+        "$type": "option",
+        "$value": "on"
+      },
+      "--surface-scrim": {
+        "$type": "color",
+        "$value": "oklch(0 0 0)"
       }
     }
   },
@@ -683,6 +739,18 @@
     "blur-fade": {},
     "container-scroll": {},
     "hero-parallax": {},
+    "hero-aurora": {
+      "background": "flat"
+    },
+    "hero-globe": {
+      "background": "flat"
+    },
+    "hero-grid-minimal": {
+      "background": "flat"
+    },
+    "hero-waves": {
+      "background": "flat"
+    },
     "macbook-scroll": {},
     "marquee": {},
     "orbiting-circles": {},

@@ -43,7 +43,7 @@ export const mcp: DocsPageData = {
 {
   "servers": {
     "arche": {
-      "url": "https://<host>/api/mcp",
+      "url": "https://arche-ui.vercel.app/api/mcp",
       "headers": { "Authorization": "Bearer <paste-mcp-token>" }
     }
   }

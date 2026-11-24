@@ -111,7 +111,7 @@ export default function TableBlock() {
   const total = subtotal + tax
 
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-12 text-foreground">
       <div className="w-full max-w-2xl">
         <div className="flex flex-col gap-1 border-b-(length:--border-width) border-border pb-5">
           <div className="flex items-start justify-between gap-4">

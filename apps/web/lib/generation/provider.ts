@@ -22,7 +22,7 @@ import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
  */
 
 export interface DnaCallResult {
-  output: Pick<ModelOutput, "axes" | "palette" | "palettes" | "typefaces">;
+  output: Pick<ModelOutput, "axes" | "palette" | "palettes" | "typefaces" | "composition" | "imagery">;
   model: string;
   tokensIn: number | null;
   tokensOut: number | null;
@@ -498,6 +498,8 @@ export async function generateDna(prompt: string, repairOrOpts?: string | Genera
         palette: first.data.palette,
         palettes: first.data.palettes,
         typefaces: first.data.typefaces,
+        composition: first.data.composition,
+        imagery: first.data.imagery,
       },
       model: call.model,
       tokensIn: call.tokensIn,
@@ -531,6 +533,8 @@ export async function generateDna(prompt: string, repairOrOpts?: string | Genera
       palette: second.data.palette,
       palettes: second.data.palettes,
       typefaces: second.data.typefaces,
+      composition: second.data.composition,
+      imagery: second.data.imagery,
     },
     model: retry.model,
     tokensIn: (call.tokensIn ?? 0) + (retry.tokensIn ?? 0),

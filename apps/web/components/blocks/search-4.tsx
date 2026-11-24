@@ -97,7 +97,7 @@ export default function SearchBlock() {
   }
 
   return (
-    <section className="flex min-h-svh w-full items-start justify-center bg-background px-6 py-24 text-foreground">
+    <section className="flex min-h-svh w-full items-start justify-center px-6 py-24 text-foreground">
       <div className="w-full max-w-md">
         <div className="relative">
           <div className="relative">

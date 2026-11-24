@@ -69,7 +69,7 @@ function MeterRow({ meter }: { meter: Meter }) {
 
 export default function BillingBlock() {
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <Card className="w-full max-w-lg">
         <CardHeader className="flex-row items-start justify-between gap-3">
           <div>

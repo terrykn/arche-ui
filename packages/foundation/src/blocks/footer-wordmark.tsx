@@ -38,7 +38,7 @@ const focusRing =
  */
 export function FooterWordmark() {
   return (
-    <footer className="relative isolate overflow-hidden border-t-(length:--border-width) bg-background px-6 pt-20 pb-6 sm:pt-24 sm:pb-8 lg:px-8">
+    <footer className="relative isolate overflow-hidden border-t-(length:--border-width) px-6 pt-20 pb-6 sm:pt-24 sm:pb-8 lg:px-8">
       <h2 className="sr-only">Footer</h2>
       {/* Faint brand glow rising behind the wordmark */}
       <div

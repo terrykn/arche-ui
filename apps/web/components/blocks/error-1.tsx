@@ -7,7 +7,7 @@ import { IconPlaceholder } from "./shared/icon-placeholder"
 
 export default function ErrorBlock() {
   return (
-    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-6 bg-background px-6 py-12 text-center text-foreground">
+    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-6 px-6 py-12 text-center text-foreground">
       <p className="font-mono text-7xl font-bold tracking-tighter sm:text-8xl">
         404
       </p>

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { COMPOSITION_OPTIONS, IMAGERY_OPTIONS } from "./composition.js";
+import { SURFACE_OPTIONS, SURFACE_SLOTS } from "./surfaces.js";
 
 /**
  * Design DNA v2 (Brief #8, Deliverable 1) — the AI's entire output surface.
@@ -125,6 +127,21 @@ export const dnaSourceSchema = z.object({
 
 export type DnaSource = z.infer<typeof dnaSourceSchema>;
 
+/**
+ * Composition + imagery DNA layer (additive, backward compatible).
+ *
+ * `composition` is the primary composition affinity; `imagery` is the
+ * DNA-level imagery direction. Both are optional on the section so older
+ * payloads remain valid. Surfaces live on the token contract as global
+ * option token (--surface-card) plus per-block background choices — the Studio
+ * sidebar edits those directly; the compiler defaults them from the art
+ * direction when the payload predates them.
+ */
+export const compositionSchema = z.enum(COMPOSITION_OPTIONS);
+export const imagerySchema = z.enum(IMAGERY_OPTIONS);
+export const surfaceSchema = z.enum(SURFACE_OPTIONS);
+export const surfaceSlotSchema = z.enum(SURFACE_SLOTS);
+
 /** Payload-level DNA section (§4). Optional on the payload: older payloads
  * without it remain valid; required for generated identities. */
 export const dnaSectionSchema = z.object({
@@ -135,6 +152,10 @@ export const dnaSectionSchema = z.object({
   profile: generationProfileSchema,
   /** Bump when compiler mappings change; goldens regenerate deliberately. */
   compilerVersion: z.number().int().min(1),
+  /** Primary composition affinity. Optional for back-compat. */
+  composition: compositionSchema.optional(),
+  /** DNA-level imagery direction. Optional for back-compat. */
+  imagery: imagerySchema.optional(),
 });
 
 export type DnaSection = z.infer<typeof dnaSectionSchema>;
@@ -185,6 +206,8 @@ export const modelOutputSchema = z
     palette: dnaPaletteSchema,
     palettes: z.array(paletteVariantSchema).length(3),
     typefaces: z.array(typefaceVariantSchema).length(3),
+    composition: compositionSchema.optional(),
+    imagery: imagerySchema.optional(),
   })
   .strict();
 
@@ -214,6 +237,8 @@ export const modelDeltaOutputSchema = z
           })
           .optional(),
         palette: dnaPaletteSchema.partial().optional(),
+        composition: compositionSchema.optional(),
+        imagery: imagerySchema.optional(),
       })
       .optional(),
   })
@@ -243,6 +268,8 @@ export const dnaDeltaSchema = z.object({
     })
     .optional(),
   palette: dnaPaletteSchema.partial().optional(),
+  composition: compositionSchema.optional(),
+  imagery: imagerySchema.optional(),
 });
 
 export type DnaDelta = z.infer<typeof dnaDeltaSchema>;
@@ -275,3 +302,27 @@ export function migrateDnaAxes(axes: Record<string, unknown>): { axes: Record<st
  * deliberately, fixtures backfilled descriptively).
  */
 export const DNA_COMPILER_VERSION = 7;
+
+export {
+  COMPOSITION_OPTIONS,
+  IMAGERY_OPTIONS,
+  defaultCompositionFor,
+  defaultImageryFor,
+  isCompositionId,
+  isImageryId,
+} from "./composition.js";
+export type { CompositionId, ImageryId } from "./composition.js";
+export {
+  DEFAULT_SURFACE,
+  DEFAULT_SURFACE_DEFAULTS,
+  BLOCK_BACKGROUND_OPTIONS,
+  SURFACE_OPTIONS,
+  SURFACE_SLOTS,
+  isProceduralSurface,
+  isRuntimeIllustrationSurface,
+  isRuntimePhotoSurface,
+  isSurfaceId,
+  isSurfaceSlot,
+  resolveSurfaceDefaults,
+} from "./surfaces.js";
+export type { BlockBackground, SurfaceDefaults, SurfaceId, SurfaceSlot } from "./surfaces.js";

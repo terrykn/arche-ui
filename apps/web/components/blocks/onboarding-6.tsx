@@ -25,7 +25,7 @@ export default function OnboardingBlock() {
   const percent = Math.round((completed / steps.length) * 100)
 
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="w-full max-w-sm rounded-xl border-(length:--border-width) border-border bg-background">
         <div className="flex items-start justify-between gap-3 border-b-(length:--border-width) border-border p-4">
           <div className="flex flex-col gap-2">

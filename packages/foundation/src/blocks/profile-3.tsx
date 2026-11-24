@@ -21,7 +21,7 @@ const team = [
 
 export default function ProfileBlock() {
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="mx-auto w-full max-w-lg rounded-xl border-(length:--border-width) border-border bg-background p-6">
         <div className="flex items-start gap-4">
           <span

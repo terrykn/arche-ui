@@ -85,7 +85,7 @@ export default function OnboardingBlock() {
   }
 
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-12 text-foreground">
       <div className="flex w-full max-w-4xl flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">

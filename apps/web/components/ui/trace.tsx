@@ -61,7 +61,7 @@ function TraceTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="trace-title"
-      className={cn("min-w-0 truncate motion-reduce:animate-pulse-none", className)}
+      className={cn("min-w-0 truncate motion-reduce:animate-none", className)}
       {...props}
     />
   )

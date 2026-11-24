@@ -7,7 +7,7 @@ import { IconPlaceholder } from "./shared/icon-placeholder"
 
 export default function ErrorBlock() {
   return (
-    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-6 bg-background px-6 py-12 text-center text-foreground">
+    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-6 px-6 py-12 text-center text-foreground">
       <div className="flex size-16 items-center justify-center rounded-lg border-(length:--border-width) border-border bg-muted/30">
         <IconPlaceholder
           lucide="CircleAlert"

@@ -6,7 +6,7 @@ import { IconPlaceholder } from "./shared/icon-placeholder.js"
 
 export default function PageHeaderBlock() {
   return (
-    <section className="min-h-svh w-full bg-background px-6 py-12 text-foreground">
+    <section className="min-h-svh w-full px-6 py-12 text-foreground">
       <div className="mx-auto w-full max-w-5xl">
         <div className="flex flex-col gap-4 border-b-(length:--border-width) border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex flex-col gap-1.5">

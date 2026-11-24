@@ -8,6 +8,9 @@ import { BlockPreview } from "@/components/block-preview";
 import { PreviewPortalHost } from "@/components/preview-portal";
 import { PreviewFrame } from "@/components/preview-frame";
 import { PreviewBoundary } from "@/components/preview-boundary";
+import { SourceCodeDialog } from "@/components/source-code-dialog";
+import { surfaceScopeAttrs, surfaceSlotForBlock } from "@/components/surface-attrs";
+import type { SurfaceSlot } from "@/components/surface-attrs";
 import { savePayload } from "../../actions";
 import { PublishButton } from "../publish-button";
 import { InstallBlock } from "@/components/install-block";
@@ -27,7 +30,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { NEUTRAL_CONTEXT, nextVariantAxes } from "@arche/registry-core/selector";
-import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle, SlidersHorizontal, ArrowDown } from "lucide-react";
+import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle, SlidersHorizontal, ArrowDown, ImagePlus, RotateCcw, Contrast } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -37,7 +40,12 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { componentTokenVars } from "@arche/registry-core/component-tokens";
+import { brandRampVars, componentTokenVars } from "@arche/registry-core/component-tokens";
+/* NOTE: never import the @arche/registry-core barrel here — it pulls node:fs
+ * into the browser bundle and panics Turbopack. Option lists live in the
+ * client-safe @arche/foundation/dna barrel instead. */
+import { BLOCK_BACKGROUND_OPTIONS } from "@arche/foundation/dna";
+import { blockBackgroundAttr } from "@/components/surface-attrs";
 import {
   BLOCK_SECTIONS,
   BLOCK_SECTION_BY_NAME,
@@ -48,9 +56,83 @@ import {
 
 type PreviewTab = "components" | "blocks";
 
+/** Default surface photo (public/example_bg_photo.jpg), stored as a full
+ * url(...) so CSS substitutes it with plain var(). */
+const DEFAULT_SURFACE_PHOTO = 'url("/example_bg_photo.jpg")';
+/** Surface option values that render the shared photo image. */
+const PHOTO_SURFACE_VALUES = new Set(["photo", "photo-duotone", "photo-tinted"]);
+/** Surface tokens whose procedural treatments take the shared tint color. */
+const TINTABLE_SURFACE_TOKENS = new Set(["--surface-card"]);
+/**
+ * Palette tokens each surface option paints with (besides the shared tint).
+ * Page-slot lists back per-block backgrounds; card-slot lists back the
+ * global card surface. Photo options reuse the photo/scrim UI separately.
+ */
+function surfaceOptionColors(slot: "page" | "card", option: string): string[] {
+  const base = slot === "page" ? "--background" : "--card";
+  switch (option) {
+    case "flat":
+      return [base];
+    case "gradient-linear":
+      return slot === "page"
+        ? ["--primary", "--secondary", "--accent", base]
+        : ["--primary", "--accent", base];
+    case "gradient-mesh":
+      return slot === "page"
+        ? ["--primary", "--brand", "--accent", base]
+        : ["--primary", "--brand", base];
+    case "grainy-gradient":
+      return slot === "page" ? ["--primary", "--muted", "--accent", base] : ["--primary", base];
+    case "pattern":
+    case "texture":
+      return ["--foreground", base];
+    case "glass":
+      return slot === "page" ? ["--brand", "--card", base] : ["--card", "--primary"];
+    case "photo-duotone":
+      return ["--foreground", "--brand"];
+    case "photo-tinted":
+      return ["--brand", "--primary"];
+    default:
+      return [];
+  }
+}
+/** Fallback swatch while no tint is picked (token default is 'initial'). */
+const TINT_INPUT_FALLBACK = "#808080";
+
+/** Unwrap a url("...") token value for <img> preview. */
+function photoImageSrc(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const match = value.match(/^url\(\s*["']?(.*?)["']?\s*\)$/);
+  return match?.[1] ? match[1] : null;
+}
+
+/** Read an image file, downscaling to a max-1920px JPEG data URL for the token. */
+function fileToPhotoUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const scale = Math.min(1, 1920 / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(`url("${canvas.toDataURL("image/jpeg", 0.85)}")`);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("could not read image"));
+    };
+    img.src = objectUrl;
+  });
+}
+
 interface TokenDef {
   name: string;
   $type: string;
+  /** Closed legal values for option tokens (composition, imagery, surfaces). */
+  values?: string[];
 }
 
 interface KnobSpec {
@@ -366,6 +448,9 @@ const TOKEN_LABEL_OVERRIDES: Record<string, string> = {
   "--shadow-xl": "Extra large shadow",
   "--motion-fast": "Fast",
   "--motion-normal": "Normal",
+  "--composition": "Composition",
+  "--imagery": "Imagery",
+  "--surface-card": "Card surface",
 };
 
 const KNOB_LABEL_OVERRIDES: Record<string, string> = {
@@ -417,6 +502,14 @@ function friendlyKnobLabel(knob: string): string {
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .split(/[-_\s]+/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+/** Human-friendly label for a closed option value (grid-strict → Grid strict). */
+function friendlyOptionLabel(value: string): string {
+  return value
+    .split("-")
+    .map((word) => (word ? word.charAt(0).toUpperCase() + word.slice(1) : word))
     .join(" ");
 }
 
@@ -670,6 +763,9 @@ function PreviewGrid({
   previewVars,
   dark,
   flush = false,
+  surfaceSlotForItem,
+  sourceKind,
+  blockBackgroundForItem,
 }: {
   items: Manifest[];
   boxClass: string;
@@ -682,6 +778,12 @@ function PreviewGrid({
   dark: boolean;
   /** Nested inside a section: keep vertical rhythm, drop the outer padding. */
   flush?: boolean;
+  /** Structural slot the item demonstrates (CTA blocks preview as bands). */
+  surfaceSlotForItem?: (item: Manifest) => SurfaceSlot;
+  /** Copy-paste source button kind for every item in this grid. */
+  sourceKind?: "component" | "block";
+  /** Per-block background choice (blocks only; components ignore it). */
+  blockBackgroundForItem?: (item: Manifest) => string | undefined;
 }) {
   if (items.length === 0) {
     return <p className="p-4 text-sm text-muted-foreground">No {emptyLabel} match the search.</p>;
@@ -691,6 +793,7 @@ function PreviewGrid({
       {items.map((item) => {
         const editable =
           !onEdit ||
+          sourceKind === "block" ||
           Object.values(item.styleSurface).some((knobs) =>
             Object.keys(knobs).some((knob) => !NON_TOKEN_KNOBS.has(knob)),
           );
@@ -713,8 +816,13 @@ function PreviewGrid({
             key={item.name}
             title={item.title}
             className={boxClass}
+            surfaceSlot={surfaceSlotForItem?.(item) ?? "page"}
+            sourceKind={sourceKind}
+            sourceName={item.name}
             style={previewVars}
             dark={dark}
+            flush={sourceKind === "block"}
+            blockBackground={blockBackgroundForItem?.(item)}
             actions={
               <>
                 {onEdit ? (
@@ -758,6 +866,11 @@ function PreviewGrid({
  */
 /** Search bar height; the section headers stick directly beneath it. */
 const PREVIEW_SEARCH_HEIGHT = 56;
+
+/** On wide screens the search lives in the header row, so no offset is needed. */
+function previewSearchHeight(): number {
+  return window.matchMedia("(min-width: 1024px)").matches ? 0 : PREVIEW_SEARCH_HEIGHT;
+}
 
 /** Nearest vertically scrolling ancestor, used to measure and drive the pane. */
 function scrollParent(element: HTMLElement): HTMLElement | null {
@@ -819,7 +932,7 @@ function PreviewSections({
       }
       const sectionsInView = keyList.split("|");
       const viewport = scroller.getBoundingClientRect();
-      const marker = viewport.top + PREVIEW_SEARCH_HEIGHT + 1;
+      const marker = viewport.top + previewSearchHeight() + 1;
       // The section being read is the last one whose top has passed the search bar.
       let currentIndex = -1;
       for (let index = 0; index < sectionsInView.length; index += 1) {
@@ -834,7 +947,7 @@ function PreviewSections({
           ? root.querySelector<HTMLElement>(`[data-preview-section="${sectionsInView[currentIndex]}"]`)
           : null;
       const tallerThanPane = element
-        ? element.getBoundingClientRect().height > scroller.clientHeight - PREVIEW_SEARCH_HEIGHT
+        ? element.getBoundingClientRect().height > scroller.clientHeight - previewSearchHeight()
         : false;
       const currentOpen = currentIndex >= 0 && open.includes(sectionsInView[currentIndex]!);
       setTarget(tallerThanPane && currentOpen && next ? next : null);
@@ -868,7 +981,7 @@ function PreviewSections({
       scroller.scrollTop +
       target.getBoundingClientRect().top -
       scroller.getBoundingClientRect().top -
-      PREVIEW_SEARCH_HEIGHT;
+      previewSearchHeight();
     scroller.scrollTo({ top, behavior: "instant" });
   };
 
@@ -882,10 +995,10 @@ function PreviewSections({
             key={section.key}
             value={section.key}
             data-preview-section={section.key}
-            className="max-lg:pt-0"
+            className="pt-0"
           >
             {/* Sticks under the search bar while the section's own cards scroll past. */}
-            <div className="max-lg:sticky max-lg:top-14 max-lg:z-10 max-lg:bg-background max-lg:py-2">
+            <div className="sticky top-14 z-20 bg-background py-2 lg:top-0">
               <AccordionTrigger className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 <span className="flex min-w-0 flex-1 items-baseline gap-2">
                   <span className="truncate">{section.label}</span>
@@ -1087,7 +1200,10 @@ export function IdentityEditor({
   };
   const resetAll = () => commit(structuredClone(savedDoc.current));
 
-  const editingManifest = manifests.find((m) => m.name === editingComponent) ?? null;
+  const editingManifest =
+    manifests.find((m) => m.name === editingComponent) ?? blocks.find((b) => b.name === editingComponent) ?? null;
+  /** Blocks edit their own background; components never match the blocks list. */
+  const editingIsBlock = editingManifest !== null && blocks.some((b) => b.name === editingManifest.name);
   const selection = editingManifest ? (doc.components[editingManifest.name] ?? {}) : {};
 
   const dirty = React.useMemo(
@@ -1134,6 +1250,285 @@ export function IdentityEditor({
         },
       },
     });
+  };
+
+  /**
+   * Global option tokens (composition, imagery, surfaces) are
+   * mode-independent like --border-width: one choice lands on both modes
+   * so light and dark can never disagree.
+   */
+  const setOptionToken = (name: string, value: string) => {
+    const next = { ...docRef.current.tokens };
+    for (const m of ["light", "dark"] as const) {
+      next[m] = { ...next[m], [name]: { $type: "option", $value: value } };
+    }
+    commit({ ...docRef.current, tokens: next });
+  };
+
+  /** Closed values for an option token, from the contract the server passes in. */
+  const optionValues = (name: string): string[] =>
+    contract.tokens.find((t) => t.name === name)?.values ?? [];
+
+  /** Set the shared surface photo (mode-independent, like the option tokens). */
+  const setPhotoToken = (value: string) => {
+    const next = { ...docRef.current.tokens };
+    for (const m of ["light", "dark"] as const) {
+      next[m] = { ...next[m], "--surface-photo": { $type: "image", $value: value } };
+    }
+    commit({ ...docRef.current, tokens: next });
+  };
+
+  /** Set the photo readability scrim (mode-independent, like the option tokens). */
+  const setScrimToken = (value: string) => {
+    const next = { ...docRef.current.tokens };
+    for (const m of ["light", "dark"] as const) {
+      next[m] = { ...next[m], "--surface-photo-scrim": { $type: "option", $value: value } };
+    }
+    commit({ ...docRef.current, tokens: next });
+  };
+
+  /** Set the shared surface tint (mode-independent, like the option tokens). */
+  const setTintToken = (value: string) => {
+    const next = { ...docRef.current.tokens };
+    for (const m of ["light", "dark"] as const) {
+      next[m] = { ...next[m], "--surface-tint": { $type: "other", $value: value } };
+    }
+    commit({ ...docRef.current, tokens: next });
+  };
+
+  /**
+   * Set one block's background choice (Block backgrounds brief). Stored on
+   * the block's component selection — mode-independent, like the global
+   * option tokens — so a pick survives regeneration unless recompiled.
+   */
+  const setBlockBackground = (name: string, value: string) => {
+    commit({
+      ...docRef.current,
+      components: {
+        ...docRef.current.components,
+        [name]: { ...docRef.current.components[name], background: value },
+      },
+    });
+  };
+
+  /** This block's background choice if it names a real option, else unset. */
+  const blockBackgroundFor = (name: string): string | undefined => {
+    const value = (doc.components[name] as Record<string, unknown> | undefined)?.background;
+    return typeof value === "string" && (BLOCK_BACKGROUND_OPTIONS as readonly string[]).includes(value)
+      ? value
+      : undefined;
+  };
+
+  /** Shared tint picker row (global tint token, mode-independent). */
+  const renderTintRow = (label: string) => {
+    const tintValue = doc.tokens[mode]?.["--surface-tint"]?.$value;
+    const tintHex =
+      typeof tintValue === "string" && /^#[0-9a-fA-F]{6}$/.test(tintValue) ? tintValue : TINT_INPUT_FALLBACK;
+    const isDefaultTint = tintValue === "initial";
+    return (
+      <div className="flex items-center gap-2 pb-2 pl-[7.5rem]">
+        <input
+          type="color"
+          value={tintHex}
+          onChange={(e) => setTintToken(e.target.value)}
+          aria-label={`${label} tint color`}
+          title="Treatment color"
+          className="h-7 w-10 cursor-pointer rounded border border-border bg-card p-0.5"
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="ml-auto h-7 w-7"
+          disabled={isDefaultTint}
+          onClick={() => setTintToken("initial")}
+          aria-label="Reset tint color"
+          title="Reset tint"
+        >
+          <RotateCcw aria-hidden />
+        </Button>
+      </div>
+    );
+  };
+
+  /**
+   * Per-option palette pickers (current mode). Every color the option paints
+   * with gets its own picker, next to the tint row.
+   */
+  const renderSurfaceColorRows = (colors: string[]) => {
+    if (colors.length === 0) return null;
+    return (
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pb-2 pl-[7.5rem]">
+        {colors.map((token) => {
+          const raw = valueOf(token);
+          const hex = typeof raw === "string" ? colorToHex(raw) : null;
+          return (
+            <label
+              key={token}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground"
+              title={`${friendlyTokenLabel(token)} (${mode} mode)`}
+            >
+              <input
+                type="color"
+                value={hex ?? "#808080"}
+                onChange={(e) => setToken(token, null, hexToOklch(e.target.value))}
+                aria-label={`${friendlyTokenLabel(token)} color`}
+                className="h-7 w-10 cursor-pointer rounded border border-border bg-card p-0.5"
+              />
+              {friendlyTokenLabel(token)}
+            </label>
+          );
+        })}
+      </div>
+    );
+  };
+
+  /**
+   * Shared photo rows: attach/replace/reset the global photo, the scrim
+   * on/off toggle, and the scrim color picker (current mode).
+   */
+  const renderPhotoRows = (key: string) => {
+    const photoValue = doc.tokens[mode]?.["--surface-photo"]?.$value;
+    const photoSrc = photoImageSrc(photoValue);
+    const isDefaultPhoto = photoValue === DEFAULT_SURFACE_PHOTO;
+    const scrimValue = doc.tokens[mode]?.["--surface-photo-scrim"]?.$value;
+    const scrimOn = scrimValue !== "off";
+    const scrimRaw = valueOf("--surface-scrim");
+    const scrimHex =
+      typeof scrimRaw === "string" ? (colorToHex(scrimRaw) ?? (mode === "dark" ? "#000000" : "#ffffff")) : mode === "dark" ? "#000000" : "#ffffff";
+    return (
+      <div className="flex items-center gap-2 pb-2 pl-[7.5rem]">
+        {photoSrc ? (
+          <img
+            src={photoSrc}
+            alt=""
+            className="size-10 shrink-0 rounded border border-border object-cover"
+          />
+        ) : null}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => document.getElementById(`surface-photo-${key}`)?.click()}
+        >
+          <ImagePlus aria-hidden />
+          {photoSrc && !isDefaultPhoto ? "Replace photo" : "Attach photo"}
+        </Button>
+        <input
+          type="color"
+          value={scrimHex}
+          onChange={(e) => setToken("--surface-scrim", null, hexToOklch(e.target.value))}
+          aria-label={`Scrim color (${mode} mode)`}
+          title={`Scrim color (${mode} mode)`}
+          className="h-7 w-10 cursor-pointer rounded border border-border bg-card p-0.5"
+        />
+        <Button
+          type="button"
+          variant={scrimOn ? "secondary" : "ghost"}
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setScrimToken(scrimOn ? "off" : "on")}
+          aria-pressed={scrimOn}
+          aria-label="Readable text scrim"
+          title={`Readable text scrim (${scrimOn ? "on" : "off"})`}
+        >
+          <Contrast aria-hidden />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="ml-auto h-7 w-7"
+          disabled={isDefaultPhoto}
+          onClick={() => setPhotoToken(DEFAULT_SURFACE_PHOTO)}
+          aria-label="Reset to default photo"
+          title="Reset to default"
+        >
+          <RotateCcw aria-hidden />
+        </Button>
+        <input
+          id={`surface-photo-${key}`}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          aria-label="Attach surface photo"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = "";
+            if (!file) return;
+            void fileToPhotoUrl(file)
+              .then(setPhotoToken)
+              .catch(() => setIssues([{ path: "--surface-photo", message: "could not read that image" }]))
+            ;
+          }}
+        />
+      </div>
+    );
+  };
+
+  const renderOptionRow = (name: string) => {
+    const options = optionValues(name);
+    const current = String(doc.tokens[mode]?.[name]?.$value ?? options[0] ?? "");
+    const showTint = TINTABLE_SURFACE_TOKENS.has(name) && !PHOTO_SURFACE_VALUES.has(current) && current !== "none";
+    const colors = surfaceOptionColors("card", current);
+    return (
+      <div key={name}>
+        <div className="flex items-center gap-2 py-1.5">
+          <span className="w-28 shrink-0 truncate text-xs text-muted-foreground">
+            {friendlyTokenLabel(name)}
+          </span>
+          <Select value={current} onValueChange={(v) => setOptionToken(name, v)}>
+            <SelectTrigger aria-label={`${friendlyTokenLabel(name)} value`} className="min-w-0 flex-1">
+              <SelectValue placeholder="Select a value" />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((o) => (
+                <SelectItem key={o} value={o}>
+                  {friendlyOptionLabel(o)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {renderSurfaceColorRows(colors)}
+        {showTint ? renderTintRow(friendlyTokenLabel(name)) : null}
+      </div>
+    );
+  };
+
+  /**
+   * One block's background row for the per-block editor: the same surface
+   * choices the global page token used to offer, with the same tint, photo,
+   * scrim, and per-option color rows — stored on the block's own selection.
+   */
+  const renderBlockBackground = (name: string) => {
+    const raw = (doc.components[name] as Record<string, unknown> | undefined)?.background;
+    const current =
+      typeof raw === "string" && (BLOCK_BACKGROUND_OPTIONS as readonly string[]).includes(raw) ? raw : "none";
+    const showTint = !PHOTO_SURFACE_VALUES.has(current) && current !== "none";
+    const colors = surfaceOptionColors("page", current);
+    return (
+      <div key={`${name}-background`}>
+        <div className="flex items-center gap-2 py-1.5">
+          <span className="w-28 shrink-0 truncate text-xs text-muted-foreground">Background</span>
+          <Select value={current} onValueChange={(v) => setBlockBackground(name, v)}>
+            <SelectTrigger aria-label={`${name} background`} className="min-w-0 flex-1">
+              <SelectValue placeholder="Select a value" />
+            </SelectTrigger>
+            <SelectContent>
+              {(BLOCK_BACKGROUND_OPTIONS as readonly string[]).map((o) => (
+                <SelectItem key={o} value={o}>
+                  {friendlyOptionLabel(o)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        {PHOTO_SURFACE_VALUES.has(current) ? renderPhotoRows(`block-${name}`) : null}
+        {showTint ? renderTintRow("Background") : null}
+        {renderSurfaceColorRows(colors)}
+      </div>
+    );
   };
 
   const setKnob = (knob: string, next: unknown) => {
@@ -1258,6 +1653,8 @@ export function IdentityEditor({
   );
 
   Object.assign(previewVars, componentTokenVars(manifests, doc.components));
+  // Brand gradient ramp tracks the edited brand, like the theme emission.
+  Object.assign(previewVars, brandRampVars(doc.tokens[mode]?.["--brand"]?.$value));
 
   const valueOf = (name: string): unknown => doc.tokens[mode]?.[name]?.$value ?? "";
 
@@ -1477,25 +1874,43 @@ export function IdentityEditor({
   const shadowTokens = ["--shadow-sm", "--shadow-md", "--shadow-lg", "--shadow-xl"].filter((t) =>
     rowMatch(`${friendlyTokenLabel(t)} shadow elevation`, t),
   );
-  const shapeSections = [
+  const motionTokens = ["--motion-fast", "--motion-normal"].filter((t) =>
+    rowMatch(`${friendlyTokenLabel(t)} timing duration easing`, t),
+  );
+  const feelSections = [
     ...(rowMatch("Corner radius rounding", "--radius")
       ? [{ id: "radius", title: "Radius", body: renderTokenRow("--radius") }]
       : []),
     ...(shadowTokens.length > 0
       ? [{ id: "elevation", title: "Elevation", body: shadowTokens.map(renderTokenRow) }]
       : []),
+    ...(motionTokens.length > 0
+      ? [{ id: "timing", title: "Timing", body: motionTokens.map(renderTokenRow) }]
+      : []),
   ];
 
-  const motionTokens = ["--motion-fast", "--motion-normal"].filter((t) =>
-    rowMatch(`${friendlyTokenLabel(t)} timing duration easing`, t),
-  );
-  const motionSections =
-    motionTokens.length > 0
-      ? [{ id: "timing", title: "Timing", body: motionTokens.map(renderTokenRow) }]
-      : [];
+  /** Global composition + surface tokens: contract-driven dropdowns, one choice for both modes. */
+  const SURFACE_GROUPS = [
+    { id: "composition", title: "Composition", tokens: ["--composition", "--imagery"] },
+    {
+      id: "surfaces",
+      title: "Surfaces",
+      tokens: ["--surface-card"],
+    },
+  ];
+  const surfaceSections = SURFACE_GROUPS.flatMap((group) => {
+    const rows = group.tokens.filter((t) =>
+      rowMatch(`${friendlyTokenLabel(t)} ${optionValues(t).join(" ")} ${t}`, t),
+    );
+    if (rows.length === 0) return [];
+    return [{ id: group.id, title: group.title, body: rows.map(renderOptionRow) }];
+  });
 
   const tuneSlots = editingManifest ? Object.entries(editingManifest.styleSurface) : [];
   const tuneSections = [
+    ...(editingIsBlock && editingManifest
+      ? [{ id: "background", title: "Background", body: renderBlockBackground(editingManifest.name) }]
+      : []),
     ...tuneSlots.flatMap(([slot, knobs]) => {
       const rows = Object.entries(knobs).filter(
         ([knob]) =>
@@ -1618,14 +2033,19 @@ export function IdentityEditor({
       body: renderFontSlot({ slot, token, label }),
     })),
     ...(rowMatch("Corner radius rounding", "--radius")
-      ? [{ id: "find-shape-radius", title: "Shape · Radius", body: renderTokenRow("--radius") }]
+      ? [{ id: "find-feel-radius", title: "Feel · Radius", body: renderTokenRow("--radius") }]
       : []),
     ...(shadowTokens.length > 0
-      ? [{ id: "find-shape-elevation", title: "Shape · Elevation", body: shadowTokens.map(renderTokenRow) }]
+      ? [{ id: "find-feel-elevation", title: "Feel · Elevation", body: shadowTokens.map(renderTokenRow) }]
       : []),
     ...(motionTokens.length > 0
-      ? [{ id: "find-motion", title: "Motion · Timing", body: motionTokens.map(renderTokenRow) }]
+      ? [{ id: "find-feel-timing", title: "Feel · Timing", body: motionTokens.map(renderTokenRow) }]
       : []),
+    ...surfaceSections.map((section) => ({
+      id: `find-surfaces-${section.id}`,
+      title: `Surfaces · ${section.title}`,
+      body: section.body,
+    })),
     ...(visibleTweaks.length > 0
       ? [
           {
@@ -1702,14 +2122,14 @@ export function IdentityEditor({
             </div>
           </div>
         ) : (
-          <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col gap-0">
+          <Tabs value={tab === "shape" || tab === "motion" ? "feel" : tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col gap-0">
           <div className="flex h-13 shrink-0 items-center border-b border-border px-2 sm:px-3">
             <TabsList aria-label="Theme editor" className="w-fit max-w-full overflow-x-auto">
               {[
                 { label: "Colors", value: "colors" },
                 { label: "Typography", value: "typography" },
-                { label: "Shape", value: "shape" },
-                { label: "Motion", value: "motion" },
+                { label: "Feel", value: "feel" },
+                { label: "Surfaces", value: "surfaces" },
                 { label: "AI Edit", value: "ai-edit" },
               ].map((tab) => (
                 <TabsTrigger key={tab.value} value={tab.value} className="shrink-0">
@@ -1746,12 +2166,15 @@ export function IdentityEditor({
             />
           </TabsContent>
 
-          <TabsContent value="shape" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
-            <FilteredSections searching={q !== ""} emptyLabel={query} sections={shapeSections} />
+          <TabsContent value="feel" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
+            <FilteredSections searching={q !== ""} emptyLabel={query} sections={feelSections} />
           </TabsContent>
 
-          <TabsContent value="motion" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
-            <FilteredSections searching={q !== ""} emptyLabel={query} sections={motionSections} />
+          <TabsContent value="surfaces" className="mt-0 min-h-0 flex-1 overflow-y-auto px-3 pb-3 [contain:inline-size]">
+            <p className="pt-2 text-xs text-muted-foreground">
+              Global composition and surface treatments — one choice applies to light and dark.
+            </p>
+            <FilteredSections searching={q !== ""} emptyLabel={query} sections={surfaceSections} />
           </TabsContent>
 
           <TabsContent value="ai-edit" className="mt-0 flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3 pt-3 [contain:inline-size]">
@@ -1801,6 +2224,21 @@ export function IdentityEditor({
               <TabsTrigger value="blocks">Blocks</TabsTrigger>
             </TabsList>
           </Tabs>
+          <div className="relative hidden w-52 shrink-0 lg:block xl:w-64">
+            <Search
+              size={14}
+              aria-hidden
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              value={previewQuery}
+              onChange={(e) => setPreviewQuery(e.target.value)}
+              placeholder={previewTab === "components" ? "Search components…" : "Search blocks…"}
+              aria-label="Search preview"
+              spellCheck={false}
+              className="pl-8"
+            />
+          </div>
           <div className="ml-auto flex items-center gap-1">
             <Button
               type="button"
@@ -1821,8 +2259,15 @@ export function IdentityEditor({
           </Button>
           {/* Actions get their own row on small screens so the tabs and history controls keep a full row. */}
           <div className="flex w-full items-center gap-1 max-sm:justify-start sm:w-auto">
-            <Button type="button" variant="ghost" size="sm" onClick={resetAll} title="Reset to saved">
-              Reset
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={resetAll}
+              title="Reset to saved"
+              aria-label="Reset to saved"
+            >
+              <RotateCcw aria-hidden />
             </Button>
             {savedAt ? <span className="hidden text-xs text-muted-foreground sm:inline">Saved {savedAt}</span> : null}
             <Dialog>
@@ -1871,7 +2316,7 @@ export function IdentityEditor({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto bg-background">
-          <div className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b border-border bg-background px-4">
+          <div className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b border-border bg-background px-4 lg:hidden">
             <div className="relative w-full">
               <Search
                 size={14}
@@ -1901,6 +2346,7 @@ export function IdentityEditor({
             <PreviewSections
               key="components"
               searching={previewQuery.trim() !== ""}
+              sourceKind="component"
               sections={COMPONENT_SECTIONS}
               sectionOf={COMPONENT_SECTION_BY_NAME}
               items={manifests.filter(
@@ -1929,6 +2375,7 @@ export function IdentityEditor({
             <PreviewSections
               key="blocks"
               searching={previewQuery.trim() !== ""}
+              sourceKind="block"
               sections={BLOCK_SECTIONS}
               sectionOf={BLOCK_SECTION_BY_NAME}
               items={blocks.filter(
@@ -1940,9 +2387,16 @@ export function IdentityEditor({
               colsClass="grid-cols-1"
               emptyLabel="blocks"
               onExpand={openExpanded}
+              onEdit={(b) => {
+                setQuery("");
+                setEditingComponent(b.name);
+                if (window.matchMedia("(max-width: 1023px)").matches) setThemePanelOpen(true);
+              }}
               previewVars={previewVars as React.CSSProperties}
               dark={mode === "dark"}
               renderItem={(b) => <BlockPreview name={b.name} />}
+              surfaceSlotForItem={(b) => surfaceSlotForBlock(BLOCK_SECTION_BY_NAME[b.name])}
+              blockBackgroundForItem={(b) => blockBackgroundFor(b.name)}
             />
           )}
         </div>
@@ -1967,6 +2421,23 @@ export function IdentityEditor({
                 <X aria-hidden />
               </Button>
               <p className="min-w-0 flex-1 truncate text-sm font-medium">{expandedBlock.title}</p>
+              <SourceCodeDialog kind="block" name={expandedBlock.name} />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  const name = expandedBlock.name;
+                  closeExpanded();
+                  setQuery("");
+                  setEditingComponent(name);
+                  if (window.matchMedia("(max-width: 1023px)").matches) setThemePanelOpen(true);
+                }}
+                aria-label={`Edit ${expandedBlock.title} background`}
+                title="Edit background"
+              >
+                <Pencil aria-hidden />
+              </Button>
               {expandedAxisCount > 0 ? (
                 <Button
                   type="button"
@@ -1981,12 +2452,19 @@ export function IdentityEditor({
               ) : null}
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
-              <div
-                style={previewVars as React.CSSProperties}
-                className={`min-h-full bg-background font-sans text-foreground ${mode === "dark" ? "dark" : ""}`}
-              >
+              <div className="min-h-full bg-background">
                 <PreviewPortalHost>
-                  <BlockPreview name={expandedBlock.name} axes={expandedAxes ?? undefined} />
+                  <div
+                    style={previewVars as React.CSSProperties}
+                    {...surfaceScopeAttrs(previewVars)}
+                    className={`flex min-h-full w-full flex-col items-center justify-center font-sans text-foreground ${mode === "dark" ? "dark" : ""}`}
+                    {...(surfaceSlotForBlock(BLOCK_SECTION_BY_NAME[expandedBlock.name]) === "band"
+                      ? { "data-arche-band": "" }
+                      : { "data-arche-section": "" })}
+                    {...blockBackgroundAttr(blockBackgroundFor(expandedBlock.name))}
+                  >
+                    <BlockPreview name={expandedBlock.name} axes={expandedAxes ?? undefined} />
+                  </div>
                 </PreviewPortalHost>
               </div>
             </div>

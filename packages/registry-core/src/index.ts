@@ -13,7 +13,7 @@ import {
   type ArcheIdentityFonts,
 } from "@arche/foundation/fonts";
 import { validateIconSelection } from "@arche/foundation/icons";
-import { dnaSectionSchema, type DnaSection } from "@arche/foundation/dna";
+import { BLOCK_BACKGROUND_OPTIONS, dnaSectionSchema, type DnaSection } from "@arche/foundation/dna";
 import tokenContract from "@arche/foundation/contract/token-contract.json" with { type: "json" };
 
 
@@ -29,8 +29,8 @@ export type { Manifest } from "./manifests.js";
 export { getManifests, getBlockManifests, getCatalogManifests, getTokenContract } from "./manifests.js";
 
 export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
-export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, PaletteVariant, TypefaceVariant } from "@arche/foundation/dna";
-export { dnaSectionSchema, dnaDeltaSchema, dnaObjectSchema, dnaPaletteSchema, generationProfileSchema, deriveProfile, migrateDnaAxes, resolveBrandHue, withBrandDefault, modelOutputSchema, modelDeltaOutputSchema, paletteVariantSchema, typefaceVariantSchema, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
+export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, PaletteVariant, TypefaceVariant, CompositionId, ImageryId, SurfaceId, SurfaceSlot, SurfaceDefaults } from "@arche/foundation/dna";
+export { BLOCK_BACKGROUND_OPTIONS, dnaSectionSchema, dnaDeltaSchema, dnaObjectSchema, dnaPaletteSchema, compositionSchema, imagerySchema, surfaceSchema, surfaceSlotSchema, generationProfileSchema, deriveProfile, migrateDnaAxes, resolveBrandHue, withBrandDefault, modelOutputSchema, modelDeltaOutputSchema, paletteVariantSchema, typefaceVariantSchema, defaultCompositionFor, defaultImageryFor, resolveSurfaceDefaults, isCompositionId, isImageryId, isSurfaceId, isSurfaceSlot, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
 export {
   normalizePaletteVariants,
   normalizeTypefaceVariants,
@@ -93,6 +93,8 @@ export {
   nextVariantAxes,
   rankedVariants,
   selectVariants,
+  compositionOfVariant,
+  VARIANT_COMPOSITIONS,
   type AxisSource,
   type BlockVariantSelection,
   type ContentSignals,
@@ -213,8 +215,8 @@ function validateRegistries(identity: ArcheIdentity, issues: ValidationIssue[]):
 
 import type { Manifest } from "./manifests.js";
 import { getManifests } from "./manifests.js";
-import { componentTokenVars, isTokenKnob, resolveKnobValue, componentTokenName } from "./component-tokens.js";
-export { componentTokenVars, isTokenKnob, resolveKnobValue, componentTokenName } from "./component-tokens.js";
+import { brandRampVars, componentTokenVars, isTokenKnob, resolveKnobValue, componentTokenName } from "./component-tokens.js";
+export { brandRampVars, componentTokenVars, isTokenKnob, resolveKnobValue, componentTokenName } from "./component-tokens.js";
 import { checkDesignRules } from "./design-rules.js";
 import {
   deriveTypeScale,
@@ -323,10 +325,24 @@ export function validateIdentity(identity: ArcheIdentity): ValidationResult {
   validateRegistries(identity, issues);
 
   const manifestNames = new Set(MANIFESTS.map((manifest) => manifest.name));
-  for (const name of Object.keys(identity.components)) {
-    if (!manifestNames.has(name)) {
-      issues.push({ path: `components.${name}`, message: `component '${name}' is not declared in the catalog` });
+  const blockNames = new Set(BLOCK_MANIFESTS.map((manifest) => manifest.name));
+  for (const [name, selections] of Object.entries(identity.components)) {
+    if (manifestNames.has(name)) continue;
+    // Blocks carry only their own background choice (Block backgrounds
+    // brief) — validated against the closed background list, not the
+    // component knob surface.
+    if (blockNames.has(name)) {
+      for (const [knobName, knobValue] of Object.entries(selections ?? {})) {
+        if (knobName !== "background" || !(BLOCK_BACKGROUND_OPTIONS as readonly string[]).includes(knobValue as string)) {
+          issues.push({
+            path: `components.${name}.${knobName}`,
+            message: `block '${name}' only supports a 'background' choice of [${BLOCK_BACKGROUND_OPTIONS.join(", ")}]`,
+          });
+        }
+      }
+      continue;
     }
+    issues.push({ path: `components.${name}`, message: `component '${name}' is not declared in the catalog` });
   }
 
   for (const manifest of MANIFESTS) {
@@ -518,6 +534,10 @@ const HEX_COLOR_VARS = [
   // text-brand-foreground utilities in consumers.
   "brand",
   "brand-foreground",
+  // Brand gradient ramp: from/via/to utilities (aurora, gradient text).
+  "brand-from",
+  "brand-via",
+  "brand-to",
 ];
 
 interface ThemeEmission {
@@ -562,6 +582,14 @@ function emitTheme(identity: ArcheIdentity): ThemeEmission {
 
   // Component tokens are mode-independent: emitted once on :root.
   Object.assign(cssVarsLight, unprefixed(componentTokenVars(MANIFESTS, identity.components)));
+  // Brand gradient ramp (aurora/gradient utilities): derived per mode from
+  // the --brand solid, so from/via/to always track the identity's brand.
+  for (const [modeName, cssVars] of [["light", cssVarsLight], ["dark", cssVarsDark]] as const) {
+    const ramp = brandRampVars(identity.tokens[modeName]?.["--brand"]?.$value);
+    for (const [name, value] of Object.entries(ramp)) {
+      cssVars[name.slice(2)] = value;
+    }
+  }
 
   // radius scale derived at emission (contract: only the base --radius is a token)
   // convention matches shadcn's default mapping exactly; no radius-xs (Tailwind v4's built-in xs is left untouched)

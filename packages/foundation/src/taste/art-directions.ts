@@ -1,5 +1,7 @@
 import { fontEntriesById } from "../fonts/fonts.js";
 import type { DnaObject, GenerationProfile } from "../dna/dna.js";
+import type { CompositionId, ImageryId } from "../dna/composition.js";
+import type { SurfaceDefaults } from "../dna/surfaces.js";
 
 /**
  * Art directions (Brief #7 Deliverable 1). A direction = base + treatment =
@@ -29,6 +31,16 @@ export interface ArtDirection {
   layoutGrammar: string;
   /** Closed material hints (subset of the DNA material enum). */
   materials: Array<DnaObject["material"]>;
+  /**
+   * Composition affinity layer (Part 1): the primary composition this
+   * direction prefers. Scored by the variant selector; ties break by
+   * registry order so older tests without a composition stay stable.
+   */
+  composition: CompositionId;
+  /** DNA-level imagery direction this direction prefers. */
+  imagery: ImageryId;
+  /** Per-slot surface defaults (Part 2). Missing slots resolve to flat/none. */
+  surfaces: SurfaceDefaults;
   /** Per-axis inclusive ranges; absent axes are unconstrained. */
   dnaRanges: Partial<Record<keyof DnaObject, readonly [number, number]>>;
   /** Profiles this direction may serve (absent = any). */
@@ -52,6 +64,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "smooth",
     layoutGrammar: "Layered depth: backdrop wash, floating panels with blur, generous air between layers.",
     materials: ["glass"],
+    composition: "immersive",
+    imagery: "texture-led",
+    surfaces: {
+      "hero-background": "gradient-mesh",
+      "card-surface": "glass",
+      "auth-panel": "glass",
+      "empty-state-visual": "none",
+      "illustration-spot": "none",
+    },
     dnaRanges: { energy: r(0.3, 0.7), ornament: r(0.3, 0.8) },
   },
   {
@@ -66,6 +87,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "snappy",
     layoutGrammar: "Strict column grid, strong left edges, oversized numerals and rules as ornament.",
     materials: ["flat", "paper"],
+    composition: "grid-strict",
+    imagery: "none",
+    surfaces: {
+      "hero-background": "flat",
+      "card-surface": "flat",
+      "auth-panel": "flat",
+      "empty-state-visual": "none",
+      "illustration-spot": "none",
+    },
     dnaRanges: { sharpness: r(0.7, 1), formality: r(0.7, 1), density: r(0.3, 0.7) },
   },
   {
@@ -80,6 +110,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "snappy",
     layoutGrammar: "Full-bleed headlines, tight leading, overlapping scale contrasts; one idea per view.",
     materials: ["flat"],
+    composition: "editorial",
+    imagery: "duotone",
+    surfaces: {
+      "hero-background": "flat",
+      "card-surface": "flat",
+      "auth-panel": "flat",
+      "empty-state-visual": "none",
+      "illustration-spot": "none",
+    },
     dnaRanges: { energy: r(0.7, 1), sharpness: r(0.6, 1) },
     profiles: ["expressive", "standard"],
   },
@@ -96,6 +135,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "smooth",
     layoutGrammar: "Soft stacked surfaces, tactile dividers, texture as the section break.",
     materials: ["paper", "clay", "flat"],
+    composition: "stacked",
+    imagery: "texture-led",
+    surfaces: {
+      "hero-background": "grainy-gradient",
+      "card-surface": "flat",
+      "auth-panel": "flat",
+      "empty-state-visual": "none",
+      "illustration-spot": "none",
+    },
     dnaRanges: { ornament: r(0.5, 1) },
   },
   {
@@ -110,6 +158,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "glitchy",
     layoutGrammar: "Glossy pills and bevels, beveled panels, playful asymmetry inside a tight grid.",
     materials: ["metal", "glass"],
+    composition: "split",
+    imagery: "photo",
+    surfaces: {
+      "hero-background": "gradient-mesh",
+      "card-surface": "glass",
+      "auth-panel": "glass",
+      "empty-state-visual": "none",
+      "illustration-spot": "shapes",
+    },
     dnaRanges: { playfulness: r(0.5, 1), ornament: r(0.3, 1) },
   },
   {
@@ -124,6 +181,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "smooth",
     layoutGrammar: "Pill shapes, airy rhythm, single centered column with soft dividers.",
     materials: ["clay", "paper", "flat"],
+    composition: "centered",
+    imagery: "duotone",
+    surfaces: {
+      "hero-background": "grainy-gradient",
+      "card-surface": "flat",
+      "auth-panel": "flat",
+      "empty-state-visual": "photo-duotone",
+      "illustration-spot": "photo-duotone",
+    },
     dnaRanges: { warmth: r(0.65, 1), sharpness: r(0, 0.4) },
   },
   {
@@ -138,6 +204,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "glitchy",
     layoutGrammar: "Chunky bordered panels, terminal grids, pixel rules as ornament.",
     materials: ["pixel"],
+    composition: "grid-strict",
+    imagery: "texture-led",
+    surfaces: {
+      "hero-background": "flat",
+      "card-surface": "flat",
+      "auth-panel": "flat",
+      "empty-state-visual": "none",
+      "illustration-spot": "none",
+    },
     dnaRanges: {},
   },
   {
@@ -152,6 +227,15 @@ export const ART_DIRECTIONS: ArtDirection[] = [
     motionFeel: "stately",
     layoutGrammar: "Conservative grid, generous margins, tabular numerals for key figures.",
     materials: ["flat", "paper"],
+    composition: "centered",
+    imagery: "none",
+    surfaces: {
+      "hero-background": "flat",
+      "card-surface": "flat",
+      "auth-panel": "flat",
+      "empty-state-visual": "none",
+      "illustration-spot": "none",
+    },
     dnaRanges: { formality: r(0.75, 1) },
     profiles: ["enterprise", "standard"],
   },

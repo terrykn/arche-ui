@@ -42,7 +42,7 @@ export function FooterNewsletter() {
   const emailId = useId();
 
   return (
-    <footer className="border-t-(length:--border-width) bg-background px-6 pt-16 pb-10 sm:pt-20 lg:px-8">
+    <footer className="border-t-(length:--border-width) px-6 pt-16 pb-10 sm:pt-20 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="relative isolate overflow-hidden rounded-3xl border-(length:--border-width) bg-card px-6 py-8 sm:px-10 sm:py-10">
           <div

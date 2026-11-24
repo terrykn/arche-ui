@@ -92,7 +92,7 @@ export default function FileUploadBlock() {
     setImages((prev) => prev.filter((image) => image.id !== id))
 
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <Card className="w-full max-w-lg">
         <CardHeader className="flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">

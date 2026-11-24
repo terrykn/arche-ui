@@ -20,8 +20,8 @@ export const installation: DocsPageData = {
         },
         {
           title: "Connect the MCP server",
-          body: "Give your agents the same manifests you read. [Full MCP setup](./mcp).",
-          code: `// .mcp.json (Claude Code)\n{\n  "mcpServers": {\n    "arche": {\n      "command": "node",\n      "args": ["<repo>/packages/mcp/dist/stdio.js"],\n      "env": { "ARCHE_MCP_PAYLOADS": "<repo>/fixtures" }\n    }\n  }\n}`,
+          body: "Give your agents the same manifests you read. Paste an MCP token from dashboard Settings. [Full MCP setup](./mcp).",
+          code: `// .mcp.json (Claude Code)\n{\n  "servers": {\n    "arche": {\n      "url": "https://arche-ui.vercel.app/api/mcp",\n      "headers": { "Authorization": "Bearer <paste-mcp-token>" }\n    }\n  }\n}`,
         },
       ],
     },

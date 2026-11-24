@@ -83,7 +83,7 @@ export default function ProfileBlock() {
   const [following, setFollowing] = React.useState(false)
 
   return (
-    <section className="flex min-h-svh w-full justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full justify-center px-6 py-16 text-foreground">
       <div className="mx-auto w-full max-w-2xl rounded-xl border-(length:--border-width) border-border bg-background">
         <div
           className="h-32 w-full rounded-t-xl bg-linear-to-br from-foreground/15 via-muted to-muted-foreground/10"

@@ -1,9 +1,23 @@
 {
   "name": "@arche/cli",
   "version": "0.1.0",
-  "private": true,
+  "description": "Install and check Arche component libraries: wire a library, add components and blocks, publish-safe upgrades, and a standards linter.",
+  "keywords": ["arche", "shadcn", "components", "blocks", "cli", "design-system", "react", "tailwind"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/terrykn/arche-ui.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/terrykn/arche-ui/tree/main/packages/cli#readme",
+  "bugs": "https://github.com/terrykn/arche-ui/issues",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "arche": "./dist/index.js"
   },

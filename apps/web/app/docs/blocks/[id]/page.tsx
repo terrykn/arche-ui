@@ -1,10 +1,26 @@
 import { DocsLink } from "@/components/docs-base";
 import { notFound } from "next/navigation";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { getBlockManifests } from "@arche/registry-core";
 import { BlockPreview } from "@/components/block-preview";
+import { blockBackgroundAttr, surfaceSlotForBlock } from "@/components/surface-attrs";
+import { BLOCK_SECTION_BY_NAME } from "@/content/catalog-sections.generated";
 import { CopyButton } from "@/components/copy-button";
 import { ArrowLeft } from "lucide-react";
 import { DocsPageHeader } from "@/components/docs-page-header";
+
+/** Default-identity per-block backgrounds (fixture is the documented default). */
+function fixtureBlockBackground(name: string): string | undefined {
+  try {
+    const base = process.cwd().endsWith("web") ? join(process.cwd(), "..", "..") : process.cwd();
+    const fixture = JSON.parse(readFileSync(join(base, "fixtures", "identity.default.json"), "utf8"));
+    const background = fixture?.components?.[name]?.background;
+    return typeof background === "string" ? background : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 export function generateStaticParams() {
   return getBlockManifests().map((manifest) => ({ id: manifest.name }));
@@ -32,7 +48,15 @@ export default async function BlockDoc({ params }: { params: Promise<{ id: strin
       <p className="proto-lede">{manifest.description}</p>
 
       <div className="proto-card proto-block-frame" style={{ marginTop: 22 }}>
-        <BlockPreview name={manifest.name} />
+        <div
+          className="flex flex-col items-center justify-center"
+          {...(surfaceSlotForBlock(BLOCK_SECTION_BY_NAME[manifest.name]) === "band"
+            ? { "data-arche-band": "" }
+            : { "data-arche-section": "" })}
+          {...blockBackgroundAttr(fixtureBlockBackground(manifest.name))}
+        >
+          <BlockPreview name={manifest.name} />
+        </div>
       </div>
 
       <div className="proto-code" style={{ marginTop: 18 }}>

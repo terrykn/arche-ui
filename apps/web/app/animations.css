@@ -1,0 +1,279 @@
+/* Canonical animation utilities ported from the legacy catalog aggregate.
+ * Static file (hand-maintained): the keyframes predate the token contract and
+ * never vary by identity. --animate-* entries generate the animate-* utilities
+ * (variant-safe, e.g. motion-safe:), keyframes are emitted when used. */
+@theme {
+  --animate-aurora: aurora 8s ease-in-out infinite alternate;
+  --animate-aurora-1: aurora-1 14s ease-in-out infinite alternate;
+  --animate-aurora-2: aurora-2 18s ease-in-out infinite alternate;
+  --animate-aurora-3: aurora-3 22s ease-in-out infinite alternate;
+  --animate-background-position-spin: background-position-spin 3000ms infinite alternate;
+  --animate-blink-cursor: blink-cursor 1.2s step-end infinite;
+  --animate-flicker: flicker 3s steps(1, end) infinite;
+  --animate-gradient: gradient 6s ease infinite;
+  --animate-line-shadow: line-shadow 15s linear infinite;
+  --animate-marquee: marquee var(--duration, 40s) linear infinite;
+  --animate-marquee-vertical: marquee-vertical var(--duration, 40s) linear infinite;
+  --animate-meteor: meteor 5s linear infinite;
+  --animate-moving-border: moving-border var(--mb-duration, 4s) linear infinite;
+  --animate-orbit: orbit calc(var(--duration) * 1s) linear infinite;
+  --animate-pulse-ripple: pulse-ripple var(--duration) cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  --animate-rainbow: rainbow var(--rainbow-duration, 4s) linear infinite;
+  --animate-retro-grid: retro-grid 18s linear infinite;
+  --animate-ripple: ripple 600ms ease-out forwards;
+  --animate-ripple-ring: ripple-ring 3s ease-out infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-shine: shine var(--duration) infinite linear;
+  --animate-shiny-text: shiny-text 8s infinite;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes aurora {
+    0% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+    25% {
+      background-position: 50% 100%;
+      transform: rotate(5deg) scale(1.1);
+    }
+    50% {
+      background-position: 100% 50%;
+      transform: rotate(-3deg) scale(0.95);
+    }
+    75% {
+      background-position: 50% 0%;
+      transform: rotate(3deg) scale(1.05);
+    }
+    100% {
+      background-position: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+  }
+  @keyframes aurora-1 {
+    0% {
+      transform: translate(-10%, -12%) scale(1);
+    }
+    50% {
+      transform: translate(12%, 8%) scale(1.25);
+    }
+    100% {
+      transform: translate(-6%, 14%) scale(0.95);
+    }
+  }
+  @keyframes aurora-2 {
+    0% {
+      transform: translate(12%, 10%) scale(1.1);
+    }
+    50% {
+      transform: translate(-14%, -6%) scale(0.9);
+    }
+    100% {
+      transform: translate(8%, -12%) scale(1.2);
+    }
+  }
+  @keyframes aurora-3 {
+    0% {
+      transform: translate(0%, 16%) scale(0.95);
+    }
+    50% {
+      transform: translate(10%, -10%) scale(1.15);
+    }
+    100% {
+      transform: translate(-12%, 4%) scale(1);
+    }
+  }
+  @keyframes background-position-spin {
+    0% {
+      background-position: top center;
+    }
+    100% {
+      background-position: bottom center;
+    }
+  }
+  @keyframes blink-cursor {
+    0%, 49% {
+      opacity: 1;
+    }
+    50%, 100% {
+      opacity: 0;
+    }
+  }
+  @keyframes flicker {
+    0%, 100% {
+      opacity: var(--flicker-max, 0.45);
+    }
+    50% {
+      opacity: var(--flicker-min, 0.08);
+    }
+  }
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  @keyframes line-shadow {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 100% -100%;
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes meteor {
+    0% {
+      transform: rotate(var(--meteor-angle, 215deg)) translateX(0);
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(var(--meteor-angle, 215deg)) translateX(-600px);
+      opacity: 0;
+    }
+  }
+  @keyframes moving-border {
+    from {
+      offset-distance: 0%;
+    }
+    to {
+      offset-distance: 100%;
+    }
+  }
+  @keyframes orbit {
+    0% {
+      transform: rotate(calc(var(--angle) * 1deg)) translateY(calc(var(--radius) * -1px)) rotate(calc(var(--angle) * -1deg));
+    }
+    100% {
+      transform: rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * -1px)) rotate(calc((var(--angle) * 1deg + 360deg) * -1));
+    }
+  }
+  @keyframes pulse {
+    0%, 100% {
+      boxShadow: 0 0 0 0 var(--pulse-color, oklch(from var(--bg) l c h / 0.5));
+    }
+    50% {
+      boxShadow: 0 0 0 var(--distance) var(--pulse-color, oklch(from var(--bg) l c h / 0.5));
+    }
+  }
+  @keyframes pulse-ripple {
+    0% {
+      boxShadow: 0 0 0 0 oklch(from var(--pulse-color, var(--bg)) l c h / 1);
+    }
+    100% {
+      boxShadow: 0 0 0 var(--distance) oklch(from var(--pulse-color, var(--bg)) l c h / 0);
+    }
+  }
+  @keyframes rainbow {
+    from {
+      background-position: 0% 50%;
+    }
+    to {
+      background-position: 200% 50%;
+    }
+  }
+  @keyframes retro-grid {
+    from {
+      transform: translateY(-50%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes ripple {
+    from {
+      transform: scale(0);
+      opacity: 0.35;
+    }
+    to {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+  @keyframes ripple-ring {
+    from {
+      transform: scale(0.6);
+      opacity: 0.5;
+    }
+    to {
+      transform: scale(2.2);
+      opacity: 0;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes shine {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
+    }
+  }
+  @keyframes shiny-text {
+    0%, 90%, 100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%, 60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
+}

@@ -69,7 +69,7 @@ export function Onboarding04() {
   };
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-background p-4">
+    <div className="flex min-h-dvh items-center justify-center p-4">
       <div className="mx-auto w-full min-w-0 max-w-sm sm:min-w-sm">
         <h3 className="font-semibold text-foreground text-lg">Quick start</h3>
         <p className="mt-1 text-muted-foreground text-sm">

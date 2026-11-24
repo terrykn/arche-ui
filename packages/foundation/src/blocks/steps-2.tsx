@@ -30,7 +30,7 @@ const steps: { title: string; description: string; status: Status }[] = [
 
 export default function StepsBlock() {
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="w-full max-w-md">
         <ol className="flex flex-col">
           {steps.map((step, i) => {

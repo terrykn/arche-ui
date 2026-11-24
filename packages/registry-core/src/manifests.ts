@@ -35,6 +35,12 @@ export interface Manifest {
       notes: string;
     }
   >;
+  /**
+   * Composition affinity tags (Part 1): ONE primary composition per
+   * variant key (e.g. hero "left/right" → "split"). Tag what the
+   * variant *is*; the secondary lives in prose, not here.
+   */
+  variantComposition?: Record<string, string>;
   /** Present on block manifests only (Part 6): typed composition contract. */
   composition?: {
     contentSlots: Array<{

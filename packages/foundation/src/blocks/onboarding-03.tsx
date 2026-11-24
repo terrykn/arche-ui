@@ -37,7 +37,7 @@ export function Onboarding03() {
   const [activeStep, setActiveStep] = useState(0);
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-background p-4">
+    <div className="flex min-h-dvh items-center justify-center p-4">
       <div className="sm:mx-auto sm:max-w-lg">
         <h3 className="font-semibold text-foreground text-lg">Store setup</h3>
         <p className="mt-1 text-muted-foreground text-sm leading-6">

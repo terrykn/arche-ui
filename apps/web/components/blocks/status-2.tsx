@@ -69,7 +69,7 @@ const incidents: Incident[] = [
 
 export default function StatusBlock() {
   return (
-    <section className="flex min-h-svh w-full justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full justify-center px-6 py-16 text-foreground">
       <div className="mx-auto w-full max-w-2xl">
         <div className="mb-8">
           <h2 className="font-heading text-2xl font-bold tracking-tight">

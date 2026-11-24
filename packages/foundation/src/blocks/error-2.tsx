@@ -13,7 +13,7 @@ const popularPages = [
 
 export default function ErrorBlock() {
   return (
-    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-8 bg-background px-6 py-12 text-center text-foreground">
+    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-8 px-6 py-12 text-center text-foreground">
       <div className="flex flex-col items-center gap-2">
         <span className="text-6xl font-bold tracking-tight tabular-nums sm:text-7xl">
           404

@@ -101,7 +101,7 @@ export default function NotificationsBlock() {
   const [toasts, setToasts] = useState(initial)
 
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="flex w-full max-w-sm flex-col gap-3">
         {toasts.map((toast) => {
           const { icon: Icon, accent } = config[toast.variant]

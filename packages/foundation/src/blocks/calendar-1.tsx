@@ -130,7 +130,7 @@ export default function CalendarBlock() {
   const selectedEvent = selected ? EVENTS[selected] : undefined
 
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-12 text-foreground">
       <div className="w-full max-w-sm">
         <div className="overflow-hidden rounded-xl border-(length:--border-width) border-border bg-card text-card-foreground">
           <div className="flex items-center justify-between gap-2 px-4 py-3">

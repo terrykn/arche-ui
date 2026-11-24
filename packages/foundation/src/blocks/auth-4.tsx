@@ -80,7 +80,7 @@ export default function AuthBlock() {
   return (
     <>
       <Toaster />
-      <section className="grid min-h-svh w-full grid-cols-1 bg-background text-foreground md:grid-cols-2">
+      <section className="grid min-h-svh w-full grid-cols-1 text-foreground md:grid-cols-2">
         <div className="flex items-center justify-center px-6 py-12 sm:px-10">
           <Card className="w-full max-w-sm border-0 bg-transparent shadow-none ring-0">
             <CardHeader className="px-0">

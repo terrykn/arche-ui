@@ -16,7 +16,7 @@ import { IconPlaceholder } from "./shared/icon-placeholder"
 
 export default function PageHeaderBlock() {
   return (
-    <section className="min-h-svh w-full bg-background px-6 py-12 text-foreground">
+    <section className="min-h-svh w-full px-6 py-12 text-foreground">
       <div className="mx-auto w-full max-w-5xl">
         <Breadcrumb className="mb-4">
           <BreadcrumbList>

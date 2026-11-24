@@ -39,7 +39,7 @@ const hints = [
 
 export default function OnboardingBlock() {
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="flex w-full max-w-md flex-col items-center text-center">
         <div className="relative flex size-20 items-center justify-center">
           <div

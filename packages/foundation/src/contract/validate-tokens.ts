@@ -113,6 +113,13 @@ function checkType(
       }
       return null;
     }
+    case "option": {
+      const legal = (contract.tokens.find((tokenDef) => tokenDef.name === defName)?.values ?? []);
+      if (typeof token.$value !== "string" || (legal.length > 0 && !legal.includes(token.$value))) {
+        return { path, message: `option must be one of [${legal.join(", ")}], got '${String(token.$value)}'` };
+      }
+      return null;
+    }
     case "fontFamily": {
       if (typeof token.$value !== "string" || !FONT_FAMILY_RE.test(token.$value)) {
         return { path, message: `fontFamily must be a comma-separated family list, got '${String(token.$value)}'` };

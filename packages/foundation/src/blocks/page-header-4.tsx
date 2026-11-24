@@ -30,7 +30,7 @@ const contributors = [
 
 export default function PageHeaderBlock() {
   return (
-    <section className="w-full bg-background px-6 py-10 text-foreground">
+    <section className="w-full px-6 py-10 text-foreground">
       <div className="mx-auto w-full max-w-4xl">
         <Button
           variant="ghost"

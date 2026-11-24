@@ -46,7 +46,7 @@ export default function EmptyStatesBlock() {
   }
 
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-12 text-foreground">
       <Toaster />
       <div className="w-full max-w-lg overflow-hidden rounded-lg border-(length:--border-width) border-border bg-card">
         <div className="flex items-center justify-center border-b-(length:--border-width) border-border bg-muted px-8 py-12">

@@ -38,7 +38,7 @@ export default function FileUploadBlock() {
   }
 
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-12 text-foreground">
       <div className="w-full max-w-sm">
         <FieldGroup>
           <Field>

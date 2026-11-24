@@ -285,11 +285,12 @@
   border-radius: var(--radius);
 }
 
-/* Live block preview frame: breathing room between the card border and the
-   block itself. Padding lives on the frame — never inside the installable
-   block templates. Overflow clips full-bleed blocks to the card radius. */
+/* Live block preview frame: the block sits flush against the card border —
+   blocks are standalone full views that handle their own spacing, and the
+   page surface (or the app background) shows directly behind them with no
+   gap. Overflow clips full-bleed blocks to the card radius. */
 .proto-block-frame {
-  padding: 28px;
+  padding: 0;
   overflow: hidden;
 }
 

@@ -79,7 +79,7 @@ export default function SettingsBlock() {
   const [active, setActive] = useState("profile")
 
   return (
-    <section className="flex min-h-svh w-full items-start justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex min-h-svh w-full items-start justify-center px-6 py-12 text-foreground">
       <div className="w-full max-w-3xl">
         <h1 className="font-heading text-2xl font-bold tracking-tight">
           Settings

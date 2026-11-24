@@ -123,7 +123,7 @@ export default function AuthBlock() {
   }
 
   return (
-    <section className="flex w-full items-center justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <Toaster />
       <Card className="w-full max-w-md gap-6">
         <CardHeader className="items-center gap-3 text-center">

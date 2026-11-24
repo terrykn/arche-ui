@@ -87,7 +87,7 @@ const legend: DayStatus[] = ["operational", "degraded", "outage"]
 
 export default function StatusBlock() {
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="mx-auto w-full max-w-3xl">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>

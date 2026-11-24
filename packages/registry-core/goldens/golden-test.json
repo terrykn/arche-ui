@@ -166,9 +166,21 @@
     "glowing-effect": {},
     "glyph-matrix": {},
     "grid-pattern": {},
+    "hero-aurora": {
+      "background": "flat"
+    },
+    "hero-globe": {
+      "background": "flat"
+    },
+    "hero-grid-minimal": {
+      "background": "flat"
+    },
     "hero-parallax": {},
     "hero-video-dialog": {
       "width": "56rem"
+    },
+    "hero-waves": {
+      "background": "flat"
     },
     "hexagon-pattern": {},
     "hover-card": {
@@ -375,6 +387,8 @@
       "warmth": 0.5
     },
     "compilerVersion": 7,
+    "composition": "grid-strict",
+    "imagery": "none",
     "palette": {
       "accentHue": 0,
       "brandHue": 0,
@@ -579,6 +593,10 @@
         "$type": "color",
         "$value": "oklch(0.645 0.175 200)"
       },
+      "--composition": {
+        "$type": "option",
+        "$value": "grid-strict"
+      },
       "--destructive": {
         "$type": "color",
         "$value": "oklch(0.58 0.22 25)"
@@ -602,6 +620,10 @@
       "--foreground": {
         "$type": "color",
         "$value": "oklch(0.985 0.004 50)"
+      },
+      "--imagery": {
+        "$type": "option",
+        "$value": "none"
       },
       "--input": {
         "$type": "color",
@@ -676,6 +698,26 @@
       "--shadow-xl": {
         "$type": "shadow",
         "$value": "0 20px 25px -5px oklch(0.2 0.01 50 / 0.1)"
+      },
+      "--surface-card": {
+        "$type": "option",
+        "$value": "flat"
+      },
+      "--surface-photo": {
+        "$type": "image",
+        "$value": "url(\"/example_bg_photo.jpg\")"
+      },
+      "--surface-photo-scrim": {
+        "$type": "option",
+        "$value": "on"
+      },
+      "--surface-scrim": {
+        "$type": "color",
+        "$value": "oklch(0 0 0)"
+      },
+      "--surface-tint": {
+        "$type": "other",
+        "$value": "initial"
       }
     },
     "light": {
@@ -735,6 +777,10 @@
         "$type": "color",
         "$value": "oklch(0.785 0.175 200)"
       },
+      "--composition": {
+        "$type": "option",
+        "$value": "grid-strict"
+      },
       "--destructive": {
         "$type": "color",
         "$value": "oklch(0.55 0.22 25)"
@@ -758,6 +804,10 @@
       "--foreground": {
         "$type": "color",
         "$value": "oklch(0.27 0.009 50)"
+      },
+      "--imagery": {
+        "$type": "option",
+        "$value": "none"
       },
       "--input": {
         "$type": "color",
@@ -832,6 +882,26 @@
       "--shadow-xl": {
         "$type": "shadow",
         "$value": "0 20px 25px -5px oklch(0.2 0.01 50 / 0.1)"
+      },
+      "--surface-card": {
+        "$type": "option",
+        "$value": "flat"
+      },
+      "--surface-photo": {
+        "$type": "image",
+        "$value": "url(\"/example_bg_photo.jpg\")"
+      },
+      "--surface-photo-scrim": {
+        "$type": "option",
+        "$value": "on"
+      },
+      "--surface-scrim": {
+        "$type": "color",
+        "$value": "oklch(1 0 0)"
+      },
+      "--surface-tint": {
+        "$type": "other",
+        "$value": "initial"
       }
     }
   },

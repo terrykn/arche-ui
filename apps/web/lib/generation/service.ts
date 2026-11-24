@@ -259,6 +259,8 @@ export async function generateFromPhrase(
           profile,
           base,
           constraints,
+          composition: output.composition,
+          imagery: output.imagery,
         },
         validateIdentity,
       );

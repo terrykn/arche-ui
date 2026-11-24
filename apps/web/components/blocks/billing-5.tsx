@@ -39,7 +39,7 @@ export default function BillingBlock() {
   const [open, setOpen] = useState(false)
 
   return (
-    <section className="flex w-full items-start justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-start justify-center px-6 py-16 text-foreground">
       <div className="w-full max-w-lg rounded-xl border-(length:--border-width) border-border bg-card">
         <div className="flex items-center justify-between border-b-(length:--border-width) border-border px-5 py-4">
           <div className="flex flex-col gap-0.5">

@@ -5,7 +5,7 @@ import { IconPlaceholder } from "./shared/icon-placeholder.js"
 
 export default function ErrorBlock() {
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="mx-auto flex max-w-md flex-col items-center text-center">
         <span
           className="flex size-14 items-center justify-center rounded-lg border-(length:--border-width) border-border bg-muted/40"

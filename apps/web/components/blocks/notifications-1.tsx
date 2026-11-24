@@ -151,7 +151,7 @@ export default function NotificationsBlock() {
     setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })))
 
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-12 text-foreground">
       <Sheet>
         <SheetTrigger
           aria-label="Open notifications" asChild><Button  variant="outline" size="icon">

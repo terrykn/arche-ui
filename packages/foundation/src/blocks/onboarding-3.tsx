@@ -139,7 +139,7 @@ export default function OnboardingBlock() {
   }
 
   return (
-    <section className="flex w-full items-center justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <Card className="mx-auto w-full max-w-2xl">
         <CardHeader className="gap-6">
           <div className="flex items-center justify-between gap-4">

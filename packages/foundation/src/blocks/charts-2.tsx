@@ -50,7 +50,7 @@ const growth = Math.round(
 
 export default function ChartsBlock() {
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-12 text-foreground">
       <Card className="w-full max-w-3xl">
         <CardHeader className="flex flex-row items-start justify-between gap-4">
           <div className="flex flex-col gap-1">

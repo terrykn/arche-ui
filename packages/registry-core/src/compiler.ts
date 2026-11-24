@@ -17,8 +17,12 @@ import {
   contract as tokenContract,
 } from "@arche/foundation/contract/validate-tokens";
 import {
+  DEFAULT_SURFACE_DEFAULTS,
   deriveProfile,
   DNA_COMPILER_VERSION,
+  isCompositionId,
+  isImageryId,
+  isSurfaceId,
   migrateDnaAxes,
   resolveBrandHue,
   type DnaObject,
@@ -34,18 +38,20 @@ import {
 } from "@arche/foundation/typography";
 import {
   ACCENT_PLACEMENT,
+  ART_DIRECTIONS,
   nameColor,
   NAMED_ROLES,
   runTasteSelfCheck,
   scoreSurprise,
   selectArtDirection,
+  type ArtDirection,
   type NamedColor,
 } from "@arche/foundation/taste";
 import { assertTypefaceOverride } from "./variants.js";
 import { assertGeneratedCompliant, CLOSED_EASINGS } from "./design-rules.js";
 import { enforceConstraints, type PromptConstraints } from "./prompt-adherence.js";
 import type { ArcheIdentity } from "./index.js";
-import { getManifests, type Manifest } from "./manifests.js";
+import { getBlockManifests, getManifests, type Manifest } from "./manifests.js";
 
 /** Compiler version stamped on every compiled DNA section. */
 export const COMPILER_VERSION = DNA_COMPILER_VERSION;
@@ -116,6 +122,14 @@ export interface CompileInput {
    * monochrome.
    */
   brandSolid?: string;
+  /**
+   * Composition + imagery voice for the global option tokens. The model's
+   * dreamed values (when present) win over the art-direction defaults and
+   * land on the --composition / --imagery tokens, which the Studio
+   * sidebar edits directly. Absent = direction defaults (code decides).
+   */
+  composition?: string;
+  imagery?: string;
 }
 
 /** Palette-row brand strategies (one system per brand hue). */
@@ -1063,12 +1077,83 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   // --brand == --primary until regenerated).
   const brandHue = resolveBrandHue(palette);
   const compiledPalette: DnaPalette = { ...palette, brandHue };
+  // Global option tokens (Surfaces brief): composition + imagery resolve
+  // caller → stored DNA → art-direction default (code decides, never the
+  // model); surfaces resolve from the art direction. Both modes carry the
+  // same value (mode-independent, like --border-width). The Studio sidebar
+  // edits these tokens directly; recompiles re-derive them, exactly like
+  // every other token.
+  const directionEarly = selectArtDirection(effectiveAxes, profile);
+  const artDirectionDef: ArtDirection =
+    ART_DIRECTIONS.find((d) => d.id === directionEarly.id) ?? ART_DIRECTIONS[0]!;
+  const storedDna = base.dna as { composition?: unknown; imagery?: unknown } | undefined;
+  const compositionCandidate = input.composition ?? storedDna?.composition;
+  const compositionValue = isCompositionId(compositionCandidate)
+    ? compositionCandidate
+    : artDirectionDef.composition;
+  const imageryCandidate = input.imagery ?? storedDna?.imagery;
+  const imageryValue = isImageryId(imageryCandidate) ? imageryCandidate : artDirectionDef.imagery;
+  const surfaceFor = (slot: keyof ArtDirection["surfaces"]): string =>
+    isSurfaceId(artDirectionDef.surfaces[slot])
+      ? artDirectionDef.surfaces[slot]
+      : DEFAULT_SURFACE_DEFAULTS[slot];
+  const optionTokens: Record<string, string> = {
+    "--composition": compositionValue,
+    "--imagery": imageryValue,
+    "--surface-card": surfaceFor("card-surface"),
+  };
+  for (const mode of ["light", "dark"] as const) {
+    for (const [tokenName, tokenValue] of Object.entries(optionTokens)) {
+      tokens[mode]![tokenName] = { $type: "option", $value: tokenValue };
+    }
+    // Surface photo image (Surface photo brief): the photo surface options
+    // render this image; the Studio sidebar replaces or resets it. Kept as a
+    // full url(...) string so CSS can substitute it with plain var().
+    tokens[mode]!["--surface-photo"] = {
+      $type: "image",
+      $value: 'url("/example_bg_photo.jpg")',
+    };
+    // Surface tint (Surface tint brief): lead hue for the procedural
+    // treatments, picked in the Studio sidebar. Default 'initial' makes
+    // every var(--surface-tint, <role>) fall back to its authored role,
+    // so the default look is byte-identical to no tint.
+    tokens[mode]!["--surface-tint"] = { $type: "other", $value: "initial" };
+    // Photo scrim (Photo scrim brief): readability veil over the photo
+    // treatments. On by default; the sidebar toggles it per photo row.
+    tokens[mode]!["--surface-photo-scrim"] = { $type: "option", $value: "on" };
+  // Block backgrounds (Block backgrounds brief): one shared choice for ALL
+  // hero blocks, derived from the art direction like the old global page
+  // token was. Fill-if-missing so a per-block pick survives regeneration.
+  // Placed after surfaceFor is declared (used-before-declaration otherwise).
+  compiled.components ??= {};
+  for (const manifest of getBlockManifests()) {
+    if (!manifest.name.startsWith("hero-")) continue;
+    const selection: Record<string, unknown> = compiled.components[manifest.name] ?? {};
+    if (typeof selection.background !== "string" || !isSurfaceId(selection.background)) {
+      selection.background = surfaceFor("hero-background");
+    }
+    compiled.components[manifest.name] = selection;
+  }
+    // Scrim color (Scrim color brief): veil hue for the photo treatments —
+    // white in light, black in dark. Fill-if-missing so a picked color
+    // survives regeneration; new payloads gain the default.
+    if (!tokens[mode]!["--surface-scrim"]) {
+      tokens[mode]!["--surface-scrim"] = {
+        $type: "color",
+        $value: mode === "light" ? "oklch(1 0 0)" : "oklch(0 0 0)",
+      };
+    }
+  }
   compiled.dna = {
     source: { ...source },
     axes: { ...effectiveAxes },
     palette: compiledPalette,
     profile,
     compilerVersion: COMPILER_VERSION,
+    // Resolved voice, stored for prompt-edit round-trips (base fallback
+    // above) and the variant selector's composition bonus.
+    composition: compositionValue,
+    imagery: imageryValue,
   };
   // Brand record (Brand Token brief): the resolved hue, the per-mode
   // foreground choice off the actual emitted solid, and the hero CTA
@@ -1102,7 +1187,7 @@ export function compileIdentity(input: CompileInput): ArcheIdentity {
   // Taste system (Brief #7 D1): descriptive only — direction, surprise,
   // evocative names, and the fix-ordered self-check. Nothing here moves a
   // token, so the AA gate below still rules on the repaired values.
-  const direction = selectArtDirection(effectiveAxes, profile);
+  const direction = directionEarly;
   const surprise = scoreSurprise(palette, profile);
   const tastePalette: NamedColor[] = NAMED_ROLES.map(({ role, token }) => {
     const value = light[token]?.$value;

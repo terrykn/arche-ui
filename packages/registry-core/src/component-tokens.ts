@@ -28,6 +28,38 @@ export function resolveKnobValue(knob: string, value: unknown): string | null {
 export function componentTokenName(component: string, knob: string): string {
     return component + "-" + knob.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 }
+/* ------------------------------------------------------------------ */
+/* Brand gradient ramp (brand-from/via/to). Derived at emission from   */
+/* the --brand solid so every gradient/aurora utility resolves: from   */
+/* is deeper, via is the brand itself, to is lighter and airier. Same  */
+/* input renders byte-identical output; unparseable input falls back   */
+/* to the brand solid for every stop.                                  */
+/* ------------------------------------------------------------------ */
+
+const OKLCH_RE = /^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.%]+)?\s*\)$/;
+
+function fmt3(n: number): string {
+  return String(Math.round(n * 1000) / 1000);
+}
+
+/** `{ "--brand-from": ..., "--brand-via": ..., "--brand-to": ... }` from a brand solid. */
+export function brandRampVars(brand: unknown): Record<string, string> {
+  const match = typeof brand === "string" ? brand.match(OKLCH_RE) : null;
+  if (!match) {
+    const fallback = typeof brand === "string" && brand.length > 0 ? brand : "var(--brand)";
+    return { "--brand-from": fallback, "--brand-via": fallback, "--brand-to": fallback };
+  }
+  const l = Number(match[1]);
+  const c = Number(match[2]);
+  const h = Number(match[3]);
+  const clamp01 = (n: number): number => Math.min(1, Math.max(0, Math.round(n * 1000) / 1000));
+  return {
+    "--brand-from": `oklch(${fmt3(clamp01(l - 0.1))} ${fmt3(Math.max(0, c + 0.015))} ${fmt3(h)})`,
+    "--brand-via": `oklch(${fmt3(clamp01(l))} ${fmt3(Math.max(0, c))} ${fmt3(h)})`,
+    "--brand-to": `oklch(${fmt3(clamp01(l + 0.14))} ${fmt3(Math.max(0, c - 0.04))} ${fmt3(h)})`,
+  };
+}
+
 /** `{ "--button-height": "2.25rem" }` for every token knob, falling back to manifest defaults. */
 export function componentTokenVars(
     manifests: TokenManifest[],

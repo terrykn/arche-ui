@@ -119,7 +119,7 @@ export default function SettingsBlock() {
   }
 
   return (
-    <section className="flex min-h-svh w-full justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full justify-center px-6 py-16 text-foreground">
       <div className="flex w-full max-w-3xl flex-col gap-8">
         <header className="flex flex-col gap-1">
           <h1 className="font-heading text-2xl font-bold tracking-tight">

@@ -205,7 +205,7 @@ export default function CommandPaletteBlock() {
   }
 
   return (
-    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-6 bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-6 px-6 py-16 text-foreground">
       <div className="flex w-full max-w-md flex-col items-center gap-4 text-center">
         <span className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
           Acme Console

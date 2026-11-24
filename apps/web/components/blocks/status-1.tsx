@@ -22,7 +22,7 @@ const services: { name: string; status: StatusKey; uptime: string }[] = [
 
 export default function StatusBlock() {
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="mx-auto w-full max-w-2xl">
         <div className="flex items-center gap-4 rounded-lg border-(length:--border-width) border-border bg-card p-5">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-success/10 text-success">

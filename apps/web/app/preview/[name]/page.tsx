@@ -66,6 +66,10 @@ export default async function PreviewPage({
   Object.assign(vars, componentTokenVars(getManifests(), payload.components));
   const category = (manifest as { category?: string }).category;
   const isBlock = category === "marketing" || category === "application";
+  const blockBackground =
+    isBlock && typeof (payload.components[manifest.name] as Record<string, unknown> | undefined)?.background === "string"
+      ? (payload.components[manifest.name] as Record<string, unknown>).background as string
+      : undefined;
 
   return (
     <>
@@ -88,6 +92,7 @@ export default async function PreviewPage({
             mode={mode}
             identity={key}
             identities={Object.entries(FIXTURE_FILES).map(([id, f]) => ({ id, label: f.label }))}
+            blockBackground={blockBackground}
           />
         </div>
         <div className="mx-auto mt-8 max-w-3xl">

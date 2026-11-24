@@ -64,7 +64,7 @@ const focusRing =
  */
 export function FooterColumns() {
   return (
-    <footer className="border-t-(length:--border-width) bg-background px-6 pt-20 pb-10 sm:pt-24 lg:px-8">
+    <footer className="border-t-(length:--border-width) px-6 pt-20 pb-10 sm:pt-24 lg:px-8">
       <h2 className="sr-only">Footer</h2>
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCheck } from "./check.js";
@@ -28,7 +29,7 @@ Usage:
 
 Options:
   --app <url>       Arche app origin (or ARCHE_APP_URL). Defaults to the
-                    stored login, else http://localhost:3000.
+                    stored login, else the hosted app.
   --token           Paste the registry token (headless login).
   --token-env       Read the registry token from ARCHE_TOKEN (CI).
   --library <u/l>   Target library when several are wired.
@@ -71,6 +72,18 @@ function dataDir(): string {
   return join(dirname(fileURLToPath(import.meta.url)), "data");
 }
 
+/** CLI version, read from the published package.json (never hardcoded). */
+function cliVersion(): string {
+  try {
+    const pkg = JSON.parse(
+      readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "package.json"), "utf8"),
+    ) as { version?: unknown };
+    return typeof pkg.version === "string" ? pkg.version : "0.0.0";
+  } catch {
+    return "0.0.0";
+  }
+}
+
 async function main(): Promise<number> {
   const argv = process.argv.slice(2);
   if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") {
@@ -78,7 +91,7 @@ async function main(): Promise<number> {
     return 0;
   }
   if (argv[0] === "--version" || argv[0] === "-v") {
-    console.log("arche 0.1.0");
+    console.log(`arche ${cliVersion()}`);
     return 0;
   }
   const [command, ...rest] = argv as [string, ...string[]];
@@ -87,13 +100,13 @@ async function main(): Promise<number> {
 
   switch (command) {
     case "login": {
+      const { resolveAppUrl } = await import("./config.js");
       if (parsed.flags.has("--token-env")) {
-        return loginWithTokenEnv(app ?? "http://localhost:3000");
+        return loginWithTokenEnv(resolveAppUrl(app));
       }
       if (parsed.flags.has("--token")) {
-        return loginWithToken(app ?? "http://localhost:3000");
+        return loginWithToken(resolveAppUrl(app));
       }
-      const { resolveAppUrl } = await import("./config.js");
       return loginBrowser(resolveAppUrl(app));
     }
     case "logout":

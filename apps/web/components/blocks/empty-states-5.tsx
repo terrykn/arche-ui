@@ -59,7 +59,7 @@ const tips = [
 
 export default function EmptyStatesBlock() {
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <Empty className="w-full max-w-md border-(length:--border-width) border-dashed border-border py-14">
         <EmptyHeader>
           <EmptyMedia variant="icon">

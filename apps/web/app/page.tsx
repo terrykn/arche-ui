@@ -25,12 +25,12 @@ const GRID_OFFSETS = [
 
 const FEATURES = [
   {
-    title: "You describe. Arche creates.",
-    code: '$ npx @arche/cli generate "playful, warm, and bubbly educational app"',
+    title: "Install what you need. Own the source code.",
+    code: "$ npx @arche/cli login\n$ npx @arche/cli init <user>/<library>\n$ npx @arche/cli add button dialog",
   },
   {
-    title: "Install what you need. Own the source code.",
-    code: "$ npx @arche/cli login\n$ npx @arche/cli init\n$ npx @arche/cli add button",
+    title: "Check your code against the system.",
+    code: "$ npx @arche/cli check --strict",
   },
   {
     title: "Agents follow your system via MCP.",

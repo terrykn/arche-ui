@@ -21,7 +21,7 @@ export default function ProfileBlock() {
   const [following, setFollowing] = React.useState(false)
 
   return (
-    <section className="flex w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <div className="flex flex-col items-center gap-3 text-center">

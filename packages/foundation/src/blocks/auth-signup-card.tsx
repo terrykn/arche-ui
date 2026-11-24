@@ -38,7 +38,7 @@ export function AuthSignupCard() {
   }
 
   return (
-    <section className="relative isolate overflow-hidden bg-background px-6 py-20 sm:py-24 lg:px-8">
+    <section className="relative isolate overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
       <GridPattern
         width={44}
         height={44}

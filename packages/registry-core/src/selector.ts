@@ -29,6 +29,15 @@ export interface SelectorDna {
   density?: number;
   chroma?: number;
   warmth?: number;
+  /**
+   * Composition affinity layer (Part 1): the DNA's primary composition.
+   * When present, variants tagged with that composition score +1
+   * (decisive only between placement-equal variants — media and
+   * formal/enterprise signals keep their existing weight).
+   */
+  composition?: string;
+  /** DNA-level imagery direction (informational for surface choice). */
+  imagery?: string;
 }
 
 export interface SelectorContext {
@@ -342,6 +351,72 @@ function scoreAuth(axes: Record<string, string>, blockName: string, content: Res
   return { score, reason: `${blockName} → ${axes.layout}: ${why}` };
 }
 
+/**
+ * Composition affinity tags (Part 1): ONE primary composition per variant.
+ * Tag what the variant *is*, not what it could become — removing the
+ * imagery leaves the primary. Mirrors the `variantComposition` key that
+ * block manifests carry for Terry's tagging pass.
+ */
+export const VARIANT_COMPOSITIONS: Record<string, Record<string, string>> = {
+  hero: {
+    "left/below": "editorial",
+    "left/right": "split",
+    "center/below": "stacked",
+    "center/none": "centered",
+    "left/none": "grid-strict",
+    "center/right": "split",
+  },
+  features: { bento: "bento", grid: "card-grid", split: "split" },
+  pricing: { two: "card-grid", three: "card-grid", four: "card-grid" },
+  testimonials: { grid: "card-grid", single: "centered" },
+  cta: { center: "centered", left: "split" },
+  "stats-row": { three: "grid-strict", four: "grid-strict" },
+  "logo-cloud": { row: "centered", grid: "card-grid" },
+  "stats-band": { two: "grid-strict", four: "grid-strict" },
+  faq: { single: "stacked", split: "split" },
+  "newsletter-signup": { centered: "centered", split: "split" },
+  "site-footer": { compact: "minimal-text", extended: "stacked" },
+  "auth-login": { centered: "centered", split: "split" },
+  "auth-signup": { centered: "centered", split: "split" },
+  "app-shell": { fixed: "sidebar-led", collapsible: "sidebar-led" },
+};
+
+/** Primary composition tag for a variant combo (null = no opinion). */
+export function compositionOfVariant(blockName: string, axes: Record<string, string>): string | null {
+  const table = VARIANT_COMPOSITIONS[blockName];
+  if (!table) return null;
+  const key = variantKey(blockName, axes);
+  return table[key] ?? null;
+}
+
+function variantKey(blockName: string, axes: Record<string, string>): string {
+  switch (blockName) {
+    case "hero":
+      return `${axes.alignment ?? "center"}/${axes.mediaLayout ?? "none"}`;
+    case "features":
+    case "logo-cloud":
+    case "faq":
+    case "newsletter-signup":
+    case "site-footer":
+    case "auth-login":
+    case "auth-signup":
+      return axes.layout ?? "";
+    case "pricing":
+      return axes.tierCount ?? "";
+    case "testimonials":
+      return axes.layout ?? "";
+    case "cta":
+      return axes.alignment ?? "";
+    case "stats-row":
+    case "stats-band":
+      return axes.columns ?? "";
+    case "app-shell":
+      return axes.sidebar ?? "";
+    default:
+      return Object.values(axes).join("/");
+  }
+}
+
 function scoreAppShell(axes: Record<string, string>, genre: GenreId, dna: SelectorDna | undefined): { score: number; reason: string } {
   const dense = (dna?.density ?? 0.5) > 0.7 || genre === "dashboard";
   let score = 0;
@@ -375,6 +450,9 @@ export function rankedVariants(
       : null;
   const scored: Scored[] = combos.map((axes) => {
     let scoredBy: { score: number; reason: string };
+    const compositionTag = compositionOfVariant(blockName, axes);
+    const compositionBonus =
+      dna?.composition && compositionTag && dna.composition === compositionTag ? 1 : 0;
     switch (blockName) {
       case "hero": scoredBy = scoreHero(axes, context.genre, content, dna, direction, context.brandCta); break;
       case "features": scoredBy = scoreFeatures(axes, context.genre, content, dna, direction); break;
@@ -392,7 +470,13 @@ export function rankedVariants(
       case "app-shell": scoredBy = scoreAppShell(axes, context.genre, dna); break;
       default: scoredBy = { score: 0, reason: `${blockName}: manifest order (no content rules for this block)` };
     }
-    return { axes, score: scoredBy.score, reason: scoredBy.reason };
+    const bonusReason =
+      compositionBonus > 0 ? `; composition ${compositionTag} matches DNA` : "";
+    return {
+      axes,
+      score: scoredBy.score + compositionBonus,
+      reason: `${scoredBy.reason}${bonusReason}`,
+    };
   });
   // Stable sort: ties keep canonical (manifest) order.
   scored.sort((a, b) => b.score - a.score);

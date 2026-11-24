@@ -4,6 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import { BlockPreview } from "@/components/block-preview";
 import { EnterpriseDemo } from "@/components/enterprise-demo";
+import { blockBackgroundAttr, surfaceScopeAttrs, surfaceSlotForBlock } from "@/components/surface-attrs";
+import { BLOCK_SECTION_BY_NAME } from "@/content/catalog-sections.generated";
 import { Copy, Pencil, X } from "lucide-react";
 
 export interface PreviewIdentity {
@@ -29,6 +31,7 @@ export function PreviewShell({
   mode,
   identity,
   identities,
+  blockBackground,
 }: {
   name: string;
   isBlock: boolean;
@@ -36,6 +39,8 @@ export function PreviewShell({
   mode: "light" | "dark";
   identity: string;
   identities: PreviewIdentity[];
+  /** Per-block background choice; unset leaves the identity background. */
+  blockBackground?: string;
 }) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [overrides, setOverrides] = React.useState<Record<string, string>>({});
@@ -69,10 +74,20 @@ export function PreviewShell({
 
   return (
     <>
-      <div className={mode === "dark" ? "dark" : ""}>
-        <div style={merged as React.CSSProperties} className="arche-identity-scope rounded-xl border border-border bg-background px-5 py-6 text-foreground">
-          {preview}
-        </div>
+      <div
+        style={merged as React.CSSProperties}
+        {...surfaceScopeAttrs(merged)}
+        className={`arche-identity-scope rounded-xl border border-border bg-background font-sans text-foreground ${mode === "dark" ? "dark" : ""} ${isBlock ? "overflow-hidden" : "px-5 py-6"}`}
+      >
+        {isBlock && surfaceSlotForBlock(BLOCK_SECTION_BY_NAME[name]) === "band" ? (
+          <div data-arche-band {...blockBackgroundAttr(blockBackground)} className="flex flex-col items-center justify-center">
+            {preview}
+          </div>
+        ) : (
+          <div data-arche-section {...blockBackgroundAttr(blockBackground)} className="flex flex-col items-center justify-center">
+            {preview}
+          </div>
+        )}
       </div>
 
       {/* Floating edit/swap bar */}

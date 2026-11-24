@@ -155,7 +155,7 @@ export default function CommandPaletteBlock() {
   }
 
   return (
-    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-3 bg-background px-6 py-12 text-foreground">
+    <section className="flex min-h-svh w-full flex-col items-center justify-center gap-3 px-6 py-12 text-foreground">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild><Button 
               variant="outline"

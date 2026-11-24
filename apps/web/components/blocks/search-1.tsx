@@ -76,7 +76,7 @@ export default function SearchBlock() {
   )
 
   return (
-    <section className="flex w-full items-center justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="w-full max-w-3xl rounded-lg border-(length:--border-width) border-border bg-background">
         <div className="border-b-(length:--border-width) border-border p-3">
           <div className="relative">

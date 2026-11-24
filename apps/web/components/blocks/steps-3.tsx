@@ -39,7 +39,7 @@ export default function StepsBlock() {
   const percent = ((current + 1) / total) * 100
 
   return (
-    <section className="flex min-h-svh w-full items-center justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex min-h-svh w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="w-full max-w-md">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">

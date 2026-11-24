@@ -71,7 +71,7 @@ export default function AuthBlock() {
   }
 
   return (
-    <section className="flex w-full items-center justify-center bg-background text-foreground">
+    <section className="flex w-full items-center justify-center text-foreground">
       <Toaster />
       <div className="flex w-full max-w-4xl flex-col overflow-hidden rounded-xl md:flex-row">
         <div className="dark flex flex-col justify-between gap-10 bg-background px-10 py-12 text-foreground md:w-1/2">

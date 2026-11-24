@@ -100,7 +100,7 @@ export function Onboarding07() {
   };
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-background p-4">
+    <div className="flex min-h-dvh items-center justify-center p-4">
       <div className="w-full max-w-xl">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-foreground">Data Migration</h3>

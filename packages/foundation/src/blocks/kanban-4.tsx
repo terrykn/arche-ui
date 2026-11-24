@@ -272,7 +272,7 @@ export default function KanbanBlock() {
   const total = lanes.reduce((n, l) => n + l.tasks.length, 0)
 
   return (
-    <section className="flex min-h-svh w-full items-start justify-center bg-background px-6 py-12 text-foreground">
+    <section className="flex min-h-svh w-full items-start justify-center px-6 py-12 text-foreground">
       <div className="mx-auto w-full max-w-lg">
         <div className="mb-6 flex items-end justify-between border-b-(length:--border-width) border-border pb-4">
           <div>

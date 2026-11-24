@@ -58,7 +58,7 @@ export default function NotificationsBlock() {
     }))
 
   return (
-    <section className="flex w-full items-start justify-center bg-background px-6 py-16 text-foreground">
+    <section className="flex w-full items-start justify-center px-6 py-16 text-foreground">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Notification preferences</CardTitle>

@@ -58,7 +58,7 @@ export default function SearchBlock() {
     : results
 
   return (
-    <section className="flex w-full items-center justify-center bg-muted/30 px-6 py-16 text-foreground">
+    <section className="flex w-full items-center justify-center px-6 py-16 text-foreground">
       <div className="flex w-full max-w-xl flex-col gap-5">
         <div className="relative">
           <IconPlaceholder

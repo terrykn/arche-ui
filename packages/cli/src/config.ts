@@ -66,12 +66,18 @@ export function clearConfig(): boolean {
 }
 
 /**
+ * The hosted Arche app. Overridden by --app, ARCHE_APP_URL, or the stored
+ * login — in that order — so local development keeps working while every
+ * clean machine talks to production with no setup.
+ */
+export const DEFAULT_APP_URL = "https://arche-ui.vercel.app";
+
+/**
  * The app origin every registry URL is built from: explicit flag wins,
- * then ARCHE_APP_URL, then the stored login. Never assumes production —
- * a clean machine defaults to the local dev deployment.
+ * then ARCHE_APP_URL, then the stored login, then the hosted app.
  */
 export function resolveAppUrl(explicit?: string): string {
-  const raw = (explicit || process.env.ARCHE_APP_URL || loadConfig()?.appUrl || "http://localhost:3000").trim();
+  const raw = (explicit || process.env.ARCHE_APP_URL || loadConfig()?.appUrl || DEFAULT_APP_URL).trim();
   return raw.replace(/\/+$/, "");
 }
 
