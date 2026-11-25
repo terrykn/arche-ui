@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { getCatalogManifests } from "@arche/registry-core";
+import { getCatalogManifests } from "@arche-ui/registry-core";
 
 const NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

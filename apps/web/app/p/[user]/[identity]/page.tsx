@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/service";
-import { deriveTypeScale, nameColor, TYPE_ROLES } from "@arche/registry-core";
+import { deriveTypeScale, nameColor, TYPE_ROLES } from "@arche-ui/registry-core";
 import { SiteNav } from "@/components/site-nav";
 import { PageContainer } from "@/components/page-container";
 import { IdentityFontLinks } from "@/components/identity-fonts";

@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getBlockManifests, getManifests, getTokenContract } from "@arche/registry-core";
-import { FONT_REGISTRY_DATA } from "@arche/foundation/font-data";
+import { getBlockManifests, getManifests, getTokenContract } from "@arche-ui/registry-core";
+import { FONT_REGISTRY_DATA } from "@arche-ui/foundation/font-data";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { IdentityEditor } from "./editor";

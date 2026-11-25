@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBlockManifests, getTokenContract } from "@arche/registry-core";
+import { getBlockManifests, getTokenContract } from "@arche-ui/registry-core";
 import { SiteNav } from "@/components/site-nav";
 import { PageContainer } from "@/components/page-container";
 import { ComponentDetail } from "@/components/catalog-reference";

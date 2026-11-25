@@ -27,9 +27,9 @@
  * - EXAMPLE_RECORDS: reference identities for the "which feels closest"
  *   step (palette + typefaces + stack per record).
  */
-import type { DnaAxes, DnaObject, DnaPalette, GenerationProfile } from "@arche/foundation/dna";
-import { dnaEnums } from "@arche/foundation/dna";
-import { nameColor } from "@arche/foundation/taste/names";
+import type { DnaAxes, DnaObject, DnaPalette, GenerationProfile } from "@arche-ui/foundation/dna";
+import { dnaEnums } from "@arche-ui/foundation/dna";
+import { nameColor } from "@arche-ui/foundation/taste/names";
 import type { BrandStrategyId, WordsBorderWidth } from "./compiler.js";
 
 export type DnaAxisKey = keyof DnaAxes;

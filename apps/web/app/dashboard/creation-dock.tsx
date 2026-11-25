@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUp, Moon, Pipette, Sun, X } from "lucide-react";
-import { DESCRIBE_WORDS } from "@arche/registry-core/picker";
+import { DESCRIBE_WORDS } from "@arche-ui/registry-core/picker";
 import type {
   BrandSwatchSet,
   FinishSelections,

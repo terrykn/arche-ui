@@ -1,4 +1,4 @@
-import type { ArcheIdentity, ValidationResult } from "@arche/registry-core";
+import type { ArcheIdentity, ValidationResult } from "@arche-ui/registry-core";
 
 export interface LibrarySummary {
   /** `<user>/<library>` on hosted, payload name on local. */

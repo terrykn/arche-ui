@@ -18,7 +18,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readdirSync, readFileSync } from "node:fs";
-import { contrastRatio } from "@arche/foundation/contract/validate-tokens";
+import { contrastRatio } from "@arche-ui/foundation/contract/validate-tokens";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(join(root, "package.json"));

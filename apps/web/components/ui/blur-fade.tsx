@@ -64,7 +64,7 @@ export function BlurFade({
       className={cn(className)}
       initial={hidden}
       whileInView={{ opacity: 1, filter: "blur(0rem)", x: 0, y: 0 }}
-      viewport={{ once, margin: "0rem 0rem -10% 0rem" }}
+      viewport={{ once, margin: "0px 0px -10% 0px" }}
       transition={
         reducedMotion
           ? { duration: 0 }

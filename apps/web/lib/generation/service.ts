@@ -4,7 +4,7 @@ import {
   isMonochromeDna,
   shadowStepFor,
   type WordsBorderWidth,
-} from "@arche/registry-core/compiler";
+} from "@arche-ui/registry-core/compiler";
 import {
   applyPickerDelta,
   constraintSlots,
@@ -40,15 +40,15 @@ import {
   type PromptConstraints,
   type TypefaceOptionSpec,
   type TypefaceVariant,
-} from "@arche/registry-core";
+} from "@arche-ui/registry-core";
 import {
   dnaObjectSchema,
   dnaPaletteSchema,
   generationProfileSchema,
   paletteVariantSchema,
   typefaceVariantSchema,
-} from "@arche/foundation/dna";
-import { contrastRatio } from "@arche/foundation/contract/validate-tokens";
+} from "@arche-ui/foundation/dna";
+import { contrastRatio } from "@arche-ui/foundation/contract/validate-tokens";
 import { createServiceClient } from "@/lib/supabase/service";
 import { fixturesDir, slugify } from "@/lib/starter";
 import { readFileSync } from "node:fs";

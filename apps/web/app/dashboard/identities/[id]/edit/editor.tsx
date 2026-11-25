@@ -29,7 +29,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { NEUTRAL_CONTEXT, nextVariantAxes } from "@arche/registry-core/selector";
+import { NEUTRAL_CONTEXT, nextVariantAxes } from "@arche-ui/registry-core/selector";
 import { Undo2, Redo2, Sun, Moon, Search, RefreshCw, Maximize2, Pencil, X, Shuffle, SlidersHorizontal, ArrowDown, ImagePlus, RotateCcw, Contrast } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,11 +40,11 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { brandRampVars, componentTokenVars } from "@arche/registry-core/component-tokens";
-/* NOTE: never import the @arche/registry-core barrel here — it pulls node:fs
+import { brandRampVars, componentTokenVars } from "@arche-ui/registry-core/component-tokens";
+/* NOTE: never import the @arche-ui/registry-core barrel here — it pulls node:fs
  * into the browser bundle and panics Turbopack. Option lists live in the
- * client-safe @arche/foundation/dna barrel instead. */
-import { BLOCK_BACKGROUND_OPTIONS } from "@arche/foundation/dna";
+ * client-safe @arche-ui/foundation/dna barrel instead. */
+import { BLOCK_BACKGROUND_OPTIONS } from "@arche-ui/foundation/dna";
 import { blockBackgroundAttr } from "@/components/surface-attrs";
 import {
   BLOCK_SECTIONS,
@@ -2316,7 +2316,8 @@ export function IdentityEditor({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto bg-background">
-          <div className="sticky top-0 z-20 flex h-14 shrink-0 items-center border-b border-border bg-background px-4 lg:hidden">
+          {/* Above the sticky section headers (z-20) so they tuck underneath while scrolling. */}
+          <div className="sticky top-0 z-30 flex h-14 shrink-0 items-center border-b border-border bg-background px-4 lg:hidden">
             <div className="relative w-full">
               <Search
                 size={14}

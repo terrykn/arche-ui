@@ -1,8 +1,13 @@
 {
-  "name": "@arche/registry-core",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@arche-ui/registry-core",
+  "version": "0.1.0",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "exports": {
     ".": {
@@ -53,13 +58,13 @@
     "test:brand-picker": "pnpm build && node --test scripts/test-brand-picker.mjs"
   },
   "dependencies": {
-    "@arche/foundation": "workspace:*",
+    "@arche-ui/foundation": "workspace:*",
     "ajv": "^8.17.1",
     "zod": "^4.1.14"
   },
   "devDependencies": {
-    "@arche/eslint-config": "workspace:*",
-    "@arche/typescript-config": "workspace:*",
+    "@arche-ui/eslint-config": "workspace:*",
+    "@arche-ui/typescript-config": "workspace:*",
     "@types/node": "26.4.1",
     "eslint": "10.9.1",
     "typescript": "7.0.2"

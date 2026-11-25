@@ -1,5 +1,5 @@
 /* GENERATED — do not hand-edit. Source: fixtures/identity.default.json
- * Produced by apps/web/scripts/sync-theme.mjs via @arche/registry-core.
+ * Produced by apps/web/scripts/sync-theme.mjs via @arche-ui/registry-core.
  * Edit the payload, then run: pnpm --filter web sync-theme */
 :root {
   --accent: oklch(0.97 0 0);

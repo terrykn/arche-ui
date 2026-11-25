@@ -1,7 +1,7 @@
 /**
- * @arche/registry-core design-rule enforcement (post-Brief #6 Deliverable 2).
+ * @arche-ui/registry-core design-rule enforcement (post-Brief #6 Deliverable 2).
  *
- * Every enforce-tier rule from @arche/foundation/design-rules gets a named
+ * Every enforce-tier rule from @arche-ui/foundation/design-rules gets a named
  * check here producing findings with the rule id, token name, actual value,
  * and limit — same reporting style as contrast failures. Pure deterministic
  * local code: zero model cost.
@@ -19,7 +19,7 @@ import {
   TYPE_ROLES,
   validateTypeScaleSelection,
   type GenerationProfile,
-} from "@arche/foundation/typography";
+} from "@arche-ui/foundation/typography";
 import type { ArcheIdentity } from "./index.js";
 
 export interface DesignRuleFinding {

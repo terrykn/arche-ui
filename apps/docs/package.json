@@ -11,14 +11,14 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@arche/ui": "workspace:*",
+    "@arche-ui/ui": "workspace:*",
     "next": "16.3.8",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@arche/eslint-config": "workspace:*",
-    "@arche/typescript-config": "workspace:*",
+    "@arche-ui/eslint-config": "workspace:*",
+    "@arche-ui/typescript-config": "workspace:*",
     "@types/node": "26.4.1",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",

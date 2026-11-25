@@ -13,6 +13,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { DocsSearch } from "@/components/docs-search";
+import { SiteThemeToggle } from "@/components/site-theme";
 import { MobileNavMenu } from "@/components/mobile-nav-menu";
 import { PUBLIC_NAV_LINKS } from "@/components/public-nav-links";
 
@@ -59,6 +60,7 @@ export function ProtoNav() {
             </NavigationMenu>
           </div>
           <div className="flex shrink-0 items-center gap-2">
+            <SiteThemeToggle />
             <DocsSearch />
             <Button variant="default" size="sm" asChild className="hidden md:inline-flex">
               <Link href="/sign-up">

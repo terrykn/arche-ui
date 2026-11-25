@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { componentTokenVars, getManifests, getCatalogManifests } from "@arche/registry-core";
+import { componentTokenVars, getManifests, getCatalogManifests } from "@arche-ui/registry-core";
 import { SiteNav } from "@/components/site-nav";
 import { PageContainer } from "@/components/page-container";
 import { IdentityFontLinks } from "@/components/identity-fonts";

@@ -1,6 +1,6 @@
 import * as React from "react";
-import { isSurfaceId } from "@arche/foundation/dna";
-import type { SurfaceId } from "@arche/foundation/dna";
+import { isSurfaceId } from "@arche-ui/foundation/dna";
+import type { SurfaceId } from "@arche-ui/foundation/dna";
 
 /**
  * Surface scope attributes — the single bridge between the identity's global

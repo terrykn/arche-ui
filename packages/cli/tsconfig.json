@@ -1,5 +1,5 @@
 {
-  "extends": "@arche/typescript-config/base.json",
+  "extends": "@arche-ui/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",

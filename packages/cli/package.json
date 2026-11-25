@@ -1,6 +1,6 @@
 {
-  "name": "@arche/cli",
-  "version": "0.1.0",
+  "name": "@arche-ui/cli",
+  "version": "0.1.1",
   "description": "Install and check Arche component libraries: wire a library, add components and blocks, publish-safe upgrades, and a standards linter.",
   "keywords": ["arche", "shadcn", "components", "blocks", "cli", "design-system", "react", "tailwind"],
   "license": "MIT",
@@ -19,7 +19,8 @@
     "access": "public"
   },
   "bin": {
-    "arche": "./dist/index.js"
+    "arche": "./dist/index.js",
+    "cli": "./dist/index.js"
   },
   "exports": {
     ".": {
@@ -37,12 +38,12 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@arche/foundation": "workspace:*",
-    "@arche/registry-core": "workspace:*"
+    "@arche-ui/foundation": "workspace:*",
+    "@arche-ui/registry-core": "workspace:*"
   },
   "devDependencies": {
-    "@arche/eslint-config": "workspace:*",
-    "@arche/typescript-config": "workspace:*",
+    "@arche-ui/eslint-config": "workspace:*",
+    "@arche-ui/typescript-config": "workspace:*",
     "@types/node": "26.4.1",
     "eslint": "10.9.1",
     "typescript": "7.0.2"

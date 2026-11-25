@@ -20,7 +20,7 @@ importers:
 
   apps/docs:
     dependencies:
-      '@arche/ui':
+      '@arche-ui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       next:
@@ -33,10 +33,10 @@ importers:
         specifier: 19.2.8
         version: 19.2.8(react@19.2.8)
     devDependencies:
-      '@arche/eslint-config':
+      '@arche-ui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@arche/typescript-config':
+      '@arche-ui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':
@@ -57,16 +57,16 @@ importers:
 
   apps/web:
     dependencies:
-      '@arche/foundation':
+      '@arche-ui/foundation':
         specifier: workspace:*
         version: link:../../packages/foundation
-      '@arche/mcp':
+      '@arche-ui/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
-      '@arche/registry-core':
+      '@arche-ui/registry-core':
         specifier: workspace:*
         version: link:../../packages/registry-core
-      '@arche/ui':
+      '@arche-ui/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@base-ui/react':
@@ -265,10 +265,10 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
-      '@arche/eslint-config':
+      '@arche-ui/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
-      '@arche/typescript-config':
+      '@arche-ui/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@tailwindcss/turbopack':
@@ -298,17 +298,17 @@ importers:
 
   packages/cli:
     dependencies:
-      '@arche/foundation':
+      '@arche-ui/foundation':
         specifier: workspace:*
         version: link:../foundation
-      '@arche/registry-core':
+      '@arche-ui/registry-core':
         specifier: workspace:*
         version: link:../registry-core
     devDependencies:
-      '@arche/eslint-config':
+      '@arche-ui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@arche/typescript-config':
+      '@arche-ui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -485,6 +485,9 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      culori:
+        specifier: ^4.0.2
+        version: 4.0.2
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.8)
@@ -528,10 +531,10 @@ importers:
         specifier: ^4.1.14
         version: 4.4.3
     devDependencies:
-      '@arche/eslint-config':
+      '@arche-ui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@arche/typescript-config':
+      '@arche-ui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@babel/parser':
@@ -549,9 +552,6 @@ importers:
       '@types/react-dom':
         specifier: 19.2.5
         version: 19.2.5(@types/react@19.2.18)
-      culori:
-        specifier: ^4.0.2
-        version: 4.0.2
       eslint:
         specifier: 10.9.1
         version: 10.9.1(jiti@2.7.0)(supports-color@7.2.0)
@@ -567,10 +567,10 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@arche/foundation':
+      '@arche-ui/foundation':
         specifier: workspace:*
         version: link:../foundation
-      '@arche/registry-core':
+      '@arche-ui/registry-core':
         specifier: workspace:*
         version: link:../registry-core
       '@modelcontextprotocol/sdk':
@@ -580,10 +580,10 @@ importers:
         specifier: ^4.1.14
         version: 4.4.3
     devDependencies:
-      '@arche/eslint-config':
+      '@arche-ui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@arche/typescript-config':
+      '@arche-ui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -598,7 +598,7 @@ importers:
 
   packages/registry-core:
     dependencies:
-      '@arche/foundation':
+      '@arche-ui/foundation':
         specifier: workspace:*
         version: link:../foundation
       ajv:
@@ -608,10 +608,10 @@ importers:
         specifier: ^4.1.14
         version: 4.4.3
     devDependencies:
-      '@arche/eslint-config':
+      '@arche-ui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@arche/typescript-config':
+      '@arche-ui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -628,14 +628,14 @@ importers:
 
   packages/ui:
     dependencies:
-      '@arche/foundation':
+      '@arche-ui/foundation':
         specifier: workspace:*
         version: link:../foundation
     devDependencies:
-      '@arche/eslint-config':
+      '@arche-ui/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@arche/typescript-config':
+      '@arche-ui/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/react':

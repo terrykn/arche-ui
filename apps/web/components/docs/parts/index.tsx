@@ -1,6 +1,6 @@
 import { DocsLink } from "@/components/docs-base";
-import { getBlockManifests, getManifests, getTokenContract } from "@arche/registry-core";
-import { buildToolRegistry } from "@arche/mcp";
+import { getBlockManifests, getManifests, getTokenContract } from "@arche-ui/registry-core";
+import { buildToolRegistry } from "@arche-ui/mcp";
 import { DocsMarkdown } from "@/components/docs/markdown";
 import { DocPreview } from "@/components/doc-preview";
 import { BlockPreview } from "@/components/block-preview";

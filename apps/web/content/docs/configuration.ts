@@ -11,17 +11,17 @@ export const configuration: DocsPageData = {
         {
           title: "Log in once",
           body: "Authenticate with the hosted app. Your token is stored locally and reused for every install.",
-          code: "npx @arche/cli login",
+          code: "npx @arche-ui/cli login",
         },
         {
           title: "Point your project at a library",
           body: "Find the name on the library page, then wire it. Files land in your project — you own the source.",
-          code: "npx @arche/cli init <user>/<library>\nnpx @arche/cli add button hero-aurora",
+          code: "npx @arche-ui/cli init <user>/<library>\nnpx @arche-ui/cli add button hero-aurora",
         },
         {
           title: "Pin a version for reproducible installs",
           body: "Snapshots are immutable, so yesterday's install stays reproducible. List what's available any time.",
-          code: "npx @arche/cli list\nnpx @arche/cli add button --version 3",
+          code: "npx @arche-ui/cli list\nnpx @arche-ui/cli add button --version 3",
         },
       ],
     },

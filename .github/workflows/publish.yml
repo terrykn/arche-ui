@@ -1,0 +1,62 @@
+# Publish @arche/* packages to the public npm registry so anyone can run
+# them with no local setup (e.g. `npx @arche/cli login`).
+#
+# One-time npm setup (owner of the @arche scope, on npmjs.com):
+#   1. `npm login` once locally, then `npm publish --access public` for the
+#      first release of each package below (or run this workflow after
+#      adding this repo as a trusted publisher for each package under
+#      Package Settings -> Trusted Publisher -> Manage Trusted Publishers).
+#   2. No NPM_TOKEN secret is needed after that: this workflow publishes
+#      via OIDC trusted publishing (`id-token: write` + `--provenance`).
+#
+# How to release: bump the version in the package's package.json, merge to
+# main, then run this workflow (Actions -> publish -> Run workflow) and pick
+# the package. Publish order matters: foundation -> registry-core -> cli,
+# because each one depends on the previous at its new version.
+name: publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Package to publish"
+        required: true
+        type: choice
+        options:
+          - foundation
+          - registry-core
+          - cli
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - name: build and verify
+        run: |
+          case "${{ inputs.package }}" in
+            foundation)
+              pnpm --filter @arche/foundation build check-types lint check-token-only check-manifest-template
+              ;;
+            registry-core)
+              pnpm --filter @arche/registry-core build check-types lint test:rules test:fonts test:presentation test:blocks test:verification test:goldens
+              ;;
+            cli)
+              pnpm --filter @arche/cli build check-types lint
+              ;;
+          esac
+      - name: publish to npm
+        run: pnpm --filter @arche/${{ inputs.package }} publish --provenance --access public --no-git-checks

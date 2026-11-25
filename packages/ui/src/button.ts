@@ -1,1 +1,1 @@
-export { Button, buttonVariants } from "@arche/foundation/templates/button";
+export { Button, buttonVariants } from "@arche-ui/foundation/templates/button";

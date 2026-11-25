@@ -6,7 +6,7 @@
  * same payload. The model is the only nondeterministic step.
  */
 import { readFileSync } from "node:fs";
-import { contrastRatio } from "@arche/foundation/contract/validate-tokens";
+import { contrastRatio } from "@arche-ui/foundation/contract/validate-tokens";
 import type { ArcheIdentity } from "./index.js";
 import { resolveRuntimeAsset } from "./runtime-assets.js";
 

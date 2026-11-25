@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fetchRegistryItem, verifyToken } from "./api.js";
-import { getBlockManifests } from "@arche/registry-core";
+import { getBlockManifests } from "@arche-ui/registry-core";
 
 const BLOCK_NAMES: string[] = getBlockManifests().map((m) => m.name);
 import {

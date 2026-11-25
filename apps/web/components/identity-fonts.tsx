@@ -1,5 +1,5 @@
-import { identityFontStylesheetUrls } from "@arche/foundation/font-data";
-import type { FontSelection } from "@arche/foundation/fonts";
+import { identityFontStylesheetUrls } from "@arche-ui/foundation/font-data";
+import type { FontSelection } from "@arche-ui/foundation/fonts";
 
 /**
  * Loads the official Fontshare stylesheets for an identity's font selection.

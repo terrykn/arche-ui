@@ -1,5 +1,5 @@
 /**
- * @arche/registry-core compiler — deterministic Design DNA → payload.
+ * @arche-ui/registry-core compiler — deterministic Design DNA → payload.
  *
  * The model is the only nondeterministic step and its output (DNA + palette
  * anchors) is stored. Everything below is pure Arche code: same DNA +
@@ -15,7 +15,7 @@
 import {
   contrastRatio,
   contract as tokenContract,
-} from "@arche/foundation/contract/validate-tokens";
+} from "@arche-ui/foundation/contract/validate-tokens";
 import {
   DEFAULT_SURFACE_DEFAULTS,
   deriveProfile,
@@ -29,13 +29,13 @@ import {
   type DnaPalette,
   type DnaSource,
   type GenerationProfile,
-} from "@arche/foundation/dna";
-import { expectedFontStack, fontEntriesById } from "@arche/foundation/fonts";
+} from "@arche-ui/foundation/dna";
+import { expectedFontStack, fontEntriesById } from "@arche-ui/foundation/fonts";
 import {
   deriveTypeScale,
   DISPLAY_CAP_ABSOLUTE_PX,
   DISPLAY_CAP_BY_PROFILE,
-} from "@arche/foundation/typography";
+} from "@arche-ui/foundation/typography";
 import {
   ACCENT_PLACEMENT,
   ART_DIRECTIONS,
@@ -46,7 +46,7 @@ import {
   selectArtDirection,
   type ArtDirection,
   type NamedColor,
-} from "@arche/foundation/taste";
+} from "@arche-ui/foundation/taste";
 import { assertTypefaceOverride } from "./variants.js";
 import { assertGeneratedCompliant, CLOSED_EASINGS } from "./design-rules.js";
 import { enforceConstraints, type PromptConstraints } from "./prompt-adherence.js";

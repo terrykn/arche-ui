@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { validateIdentity } from "@arche/registry-core";
+import { validateIdentity } from "@arche-ui/registry-core";
 import {
   applyPickerStep,
   applyPromptEdit,

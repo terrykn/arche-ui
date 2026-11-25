@@ -1,20 +1,20 @@
 /**
- * @arche/registry-core — builds a deterministic shadcn-compatible registry from
+ * @arche-ui/registry-core — builds a deterministic shadcn-compatible registry from
  * an Arche identity (tokens + per-component knob selections).
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
 import { foundationDir, getBlockManifests } from "./manifests.js";
-import { validateTokens, type IdentityTokens } from "@arche/foundation/contract/validate-tokens";
+import { validateTokens, type IdentityTokens } from "@arche-ui/foundation/contract/validate-tokens";
 import {
   fontEntriesById,
   validateFontSelection,
   type ArcheIdentityFonts,
-} from "@arche/foundation/fonts";
-import { validateIconSelection } from "@arche/foundation/icons";
-import { BLOCK_BACKGROUND_OPTIONS, dnaSectionSchema, type DnaSection } from "@arche/foundation/dna";
-import tokenContract from "@arche/foundation/contract/token-contract.json" with { type: "json" };
+} from "@arche-ui/foundation/fonts";
+import { validateIconSelection } from "@arche-ui/foundation/icons";
+import { BLOCK_BACKGROUND_OPTIONS, dnaSectionSchema, type DnaSection } from "@arche-ui/foundation/dna";
+import tokenContract from "@arche-ui/foundation/contract/token-contract.json" with { type: "json" };
 
 
 const contractData = tokenContract as unknown as {
@@ -28,9 +28,9 @@ const contractData = tokenContract as unknown as {
 export type { Manifest } from "./manifests.js";
 export { getManifests, getBlockManifests, getCatalogManifests, getTokenContract } from "./manifests.js";
 
-export type { ArcheIdentityFonts } from "@arche/foundation/fonts";
-export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, PaletteVariant, TypefaceVariant, CompositionId, ImageryId, SurfaceId, SurfaceSlot, SurfaceDefaults } from "@arche/foundation/dna";
-export { BLOCK_BACKGROUND_OPTIONS, dnaSectionSchema, dnaDeltaSchema, dnaObjectSchema, dnaPaletteSchema, compositionSchema, imagerySchema, surfaceSchema, surfaceSlotSchema, generationProfileSchema, deriveProfile, migrateDnaAxes, resolveBrandHue, withBrandDefault, modelOutputSchema, modelDeltaOutputSchema, paletteVariantSchema, typefaceVariantSchema, defaultCompositionFor, defaultImageryFor, resolveSurfaceDefaults, isCompositionId, isImageryId, isSurfaceId, isSurfaceSlot, DNA_COMPILER_VERSION } from "@arche/foundation/dna";
+export type { ArcheIdentityFonts } from "@arche-ui/foundation/fonts";
+export type { DnaSection, DnaAxes, DnaEnums, DnaObject, DnaPalette, DnaDelta, DnaSource, ModelOutput, ModelDeltaOutput, GenerationProfile, PaletteVariant, TypefaceVariant, CompositionId, ImageryId, SurfaceId, SurfaceSlot, SurfaceDefaults } from "@arche-ui/foundation/dna";
+export { BLOCK_BACKGROUND_OPTIONS, dnaSectionSchema, dnaDeltaSchema, dnaObjectSchema, dnaPaletteSchema, compositionSchema, imagerySchema, surfaceSchema, surfaceSlotSchema, generationProfileSchema, deriveProfile, migrateDnaAxes, resolveBrandHue, withBrandDefault, modelOutputSchema, modelDeltaOutputSchema, paletteVariantSchema, typefaceVariantSchema, defaultCompositionFor, defaultImageryFor, resolveSurfaceDefaults, isCompositionId, isImageryId, isSurfaceId, isSurfaceSlot, DNA_COMPILER_VERSION } from "@arche-ui/foundation/dna";
 export {
   normalizePaletteVariants,
   normalizeTypefaceVariants,
@@ -119,14 +119,14 @@ export {
   type NamedColor,
   type SurpriseScore,
   type TasteSelfCheck,
-} from "@arche/foundation/taste";
+} from "@arche-ui/foundation/taste";
 export {
   buildTeachBlock,
   designRulesVersion,
   teachStatements,
   loadDesignRules,
-} from "@arche/foundation/design-rules";
-export { deriveTypeScale, DISPLAY_CAP_BY_PROFILE, DISPLAY_CAP_ABSOLUTE_PX, TYPE_ROLES, type GenerationProfile as TypeProfile } from "@arche/foundation/typography";
+} from "@arche-ui/foundation/design-rules";
+export { deriveTypeScale, DISPLAY_CAP_BY_PROFILE, DISPLAY_CAP_ABSOLUTE_PX, TYPE_ROLES, type GenerationProfile as TypeProfile } from "@arche-ui/foundation/typography";
 
 export interface ArcheIdentity {
   meta: { name: string; contractVersion: number } & Record<string, unknown>;
@@ -222,7 +222,7 @@ import {
   deriveTypeScale,
   TYPE_ROLES,
   type GenerationProfile as TypographyProfile,
-} from "@arche/foundation/typography";
+} from "@arche-ui/foundation/typography";
 
 const MANIFESTS: Manifest[] = getManifests();
 const BLOCK_MANIFESTS: Manifest[] = getBlockManifests();
@@ -785,7 +785,7 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
     for (const [name] of stampable) {
       if (!applied.has(name)) throw new Error(`${manifest.name}: selection '${name}' cannot be stamped`);
     }
-    // Also carried on the item, so `add @arche/button` brings its own values.
+    // Also carried on the item, so `add @arche-ui/button` brings its own values.
     const tokenVars = unprefixed(componentTokenVars([manifest], identity.components));
     items.set(
       manifest.name,
@@ -857,7 +857,7 @@ export function buildRegistry(identity: ArcheIdentity): Map<string, string> {
         "theme",
         "base",
         ...fontItemNames,
-      ].map((name) => `@arche/${name}`),
+      ].map((name) => `@arche-ui/${name}`),
       files: [],
     }),
   );

@@ -11,12 +11,12 @@ export const installation: DocsPageData = {
         {
           title: "Log in with the CLI",
           body: "Authenticate once. Your token is stored locally and reused for every install.",
-          code: "npx @arche/cli login",
+          code: "npx @arche-ui/cli login",
         },
         {
           title: "Initialize, then add components",
           body: "Point your project at a library, then add components by name. Files land in your project.",
-          code: "npx @arche/cli init <user>/<library>\nnpx @arche/cli add button dialog select",
+          code: "npx @arche-ui/cli init <user>/<library>\nnpx @arche-ui/cli add button dialog select",
         },
         {
           title: "Connect the MCP server",

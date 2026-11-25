@@ -1,4 +1,4 @@
-import { nextJsConfig } from "@arche/eslint-config/next-js";
+import { nextJsConfig } from "@arche-ui/eslint-config/next-js";
 
 /** @type {import("eslint").Linter.Config[]} */
 export default nextJsConfig;

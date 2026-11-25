@@ -48,7 +48,7 @@ test("168 blocks emit registry:block items", () => {
   }
   const all = JSON.parse(items.get("all"));
   for (const manifest of manifests) {
-    assert.ok(all.registryDependencies.includes(`@arche/${manifest.name}`), `all.json missing @arche/${manifest.name}`);
+    assert.ok(all.registryDependencies.includes(`@arche-ui/${manifest.name}`), `all.json missing @arche-ui/${manifest.name}`);
   }
 });
 

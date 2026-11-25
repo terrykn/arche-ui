@@ -218,7 +218,7 @@ test("type emission equals the derived steps; display cap holds", async () => {
   }
   // Registry line heights sit inside the enforcement bands.
   const bands = { display: [1.0, 1.15], heading: [1.15, 1.3], body: [1.45, 1.65], label: [1.2, 1.4] };
-  const { loadTypeScaleRegistry } = await import("@arche/foundation/typography");
+  const { loadTypeScaleRegistry } = await import("@arche-ui/foundation/typography");
   for (const entry of loadTypeScaleRegistry().scales) {
     for (const [group, [lo, hi]] of Object.entries(bands)) {
       const lh = entry.lineHeights[group];

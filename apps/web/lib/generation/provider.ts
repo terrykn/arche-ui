@@ -11,7 +11,7 @@ import {
   type DnaPalette,
   type ModelOutput,
   type PromptConstraints,
-} from "@arche/registry-core";
+} from "@arche-ui/registry-core";
 import { GENERATION_PROMPT_MAX_LENGTH } from "@/lib/hero-prompt";
 
 /**

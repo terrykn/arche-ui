@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { Moon, Send, Sun, TrendingDown, TrendingUp } from "lucide-react";
 import { Carousel } from "./carousel";
 import { DEMO_IDENTITIES, siteSlug } from "./demo-identities";
@@ -354,5 +354,108 @@ export function SinkCarousel() {
         <SinkSlide key={identity.name} identity={identity} />
       ))}
     </Carousel>
+  );
+}
+
+// Scroll-driven morph: one sticky preview that re-skins as each identity's
+// step scrolls through the viewport. Same components throughout — only the
+// identity tokens change, driven by scroll position instead of a pager.
+export function SinkScrollMorph() {
+  const [index, setIndex] = useState(0);
+  const [dark, setDark] = useState(true);
+  const stepRefs = useRef<Array<HTMLElement | null>>([]);
+  const identity = DEMO_IDENTITIES[index]!;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const i = Number((entry.target as HTMLElement).dataset.step);
+            if (Number.isInteger(i)) setIndex(i);
+          }
+        }
+      },
+      { rootMargin: "-40% 0px -40% 0px" },
+    );
+    for (const el of stepRefs.current) if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const jumpTo = (i: number) => {
+    stepRefs.current[i]?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "center",
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10">
+      <div className="order-first lg:order-2 lg:sticky lg:top-24 lg:self-start">
+        <DemoSkin identity={identity} dark={dark}>
+          <div className="flex items-center gap-3 p-5 pb-4">
+            <div className="min-w-0 flex-1">
+              <TypedPrompt key={identity.name} text={identity.prompt} />
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+              aria-pressed={dark}
+              onClick={() => setDark((value) => !value)}
+              className="shrink-0 rounded-full"
+            >
+              {dark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            </Button>
+          </div>
+          <div className="p-5 pt-0">
+            <div key={identity.name} className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500">
+              <SinkPreview ns={siteSlug(identity.name)} className={identity.name === "Meridian" ? "font-sans" : undefined} />
+            </div>
+          </div>
+        </DemoSkin>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <p className="min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground">
+            {identity.name} · {identity.components} components
+          </p>
+          <div className="flex shrink-0 items-center gap-2" role="tablist" aria-label="Identities">
+            {DEMO_IDENTITIES.map((item, i) => (
+              <button
+                key={item.name}
+                type="button"
+                role="tab"
+                aria-selected={i === index}
+                aria-label={item.name}
+                onClick={() => jumpTo(i)}
+                className={i === index ? "h-2 w-6 rounded-full bg-primary" : "h-2 w-2 rounded-full bg-muted-foreground/40 hover:bg-muted-foreground"}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="order-last lg:order-1">
+        {DEMO_IDENTITIES.map((item, i) => (
+          <article
+            key={item.name}
+            ref={(el) => {
+              stepRefs.current[i] = el;
+            }}
+            data-step={i}
+            aria-current={i === index ? "true" : undefined}
+            className="flex min-h-[52vh] flex-col justify-center border-l-2 py-8 pl-6 lg:min-h-[72vh]"
+            style={{ borderColor: i === index ? "var(--primary)" : "var(--border)" }}
+          >
+            <p className="font-mono text-xs text-muted-foreground">“{item.prompt}”</p>
+            <h3 className="mt-2 text-2xl font-extrabold tracking-tight">{item.name}</h3>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="rounded-full bg-muted px-2.5 py-1 font-mono text-[11px] text-muted-foreground">radius {item.radius}</span>
+              <span className="rounded-full bg-muted px-2.5 py-1 font-mono text-[11px] text-muted-foreground">border {item.borderWidth}</span>
+              <span className="rounded-full bg-muted px-2.5 py-1 font-mono text-[11px] text-muted-foreground">{item.components} components</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
   );
 }

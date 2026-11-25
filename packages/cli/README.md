@@ -1,12 +1,12 @@
-# @arche/cli
+# @arche-ui/cli
 
 Install Arche component libraries into any React project. No local setup — the
 CLI talks to the hosted Arche app by default.
 
 ```sh
-npx @arche/cli login
-npx @arche/cli init <user>/<library>
-npx @arche/cli add button dialog select
+npx @arche-ui/cli login
+npx @arche-ui/cli init <user>/<library>
+npx @arche-ui/cli add button dialog select
 ```
 
 ## Commands
@@ -46,3 +46,13 @@ writes only the `${ARCHE_TOKEN}` placeholder into `components.json` — run
 Node.js >= 22. `arche add` / `arche install` / `arche init` shell out to the
 stock `shadcn` CLI (`npx --yes shadcn@latest`) with inherited stdio, so you
 answer its prompts directly.
+
+## Releasing (maintainers)
+
+`npx @arche-ui/cli` works with no registry setup because the CLI and its two
+runtime deps are published to the public npm registry. To release: bump the
+version in the package's `package.json`, merge to main, then run the
+`publish` GitHub workflow and pick the package — in order
+`foundation` → `registry-core` → `cli`, since each depends on the previous.
+The workflow publishes via OIDC trusted publishing; the one-time setup is
+adding this repo as a trusted publisher for each package on npmjs.com.

@@ -1,4 +1,4 @@
-import { serializeStable } from "@arche/registry-core";
+import { serializeStable } from "@arche-ui/registry-core";
 import { createServiceClient } from "./supabase/service";
 import { bearerFromHeader, verifyRegistryToken } from "./registry-token";
 import type { Library, LibraryVersion, Profile } from "./db";

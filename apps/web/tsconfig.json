@@ -1,5 +1,5 @@
 {
-  "extends": "@arche/typescript-config/nextjs.json",
+  "extends": "@arche-ui/typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"]

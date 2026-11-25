@@ -7,7 +7,7 @@ import {
   serializeStable,
   validateIdentity,
   type ArcheIdentity,
-} from "@arche/registry-core";
+} from "@arche-ui/registry-core";
 import { createHash } from "node:crypto";
 import { checkPlacement, type PlacementContext } from "./check.js";
 import type { McpBackend } from "./backend.js";
@@ -268,7 +268,7 @@ export function buildToolRegistry(): ToolDef[] {
     },
     {
       name: "emit_registry",
-      description: "Local mode only: emit registry items for a payload file via @arche/registry-core. Byte-identical to the CLI emit for the same payload.",
+      description: "Local mode only: emit registry items for a payload file via @arche-ui/registry-core. Byte-identical to the CLI emit for the same payload.",
       inputSchema: EmitRegistrySchema,
       handler: async (args, backend) => {
         const { library, outDir } = EmitRegistrySchema.parse(args);

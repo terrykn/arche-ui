@@ -5,7 +5,7 @@ import {
   EXAMPLE_RECORDS,
   WORD_CHIPS,
   type PickerSelections,
-} from "@arche/registry-core";
+} from "@arche-ui/registry-core";
 import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { applyPickerAction } from "../../actions";

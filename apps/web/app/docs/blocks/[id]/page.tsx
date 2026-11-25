@@ -2,7 +2,7 @@ import { DocsLink } from "@/components/docs-base";
 import { notFound } from "next/navigation";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { getBlockManifests } from "@arche/registry-core";
+import { getBlockManifests } from "@arche-ui/registry-core";
 import { BlockPreview } from "@/components/block-preview";
 import { blockBackgroundAttr, surfaceSlotForBlock } from "@/components/surface-attrs";
 import { BLOCK_SECTION_BY_NAME } from "@/content/catalog-sections.generated";
@@ -60,8 +60,8 @@ export default async function BlockDoc({ params }: { params: Promise<{ id: strin
       </div>
 
       <div className="proto-code" style={{ marginTop: 18 }}>
-        <code>npx @arche/cli add {manifest.name}</code>
-        <CopyButton text={`npx @arche/cli add ${manifest.name}`} />
+        <code>npx @arche-ui/cli add {manifest.name}</code>
+        <CopyButton text={`npx @arche-ui/cli add ${manifest.name}`} />
       </div>
 
       <h2 style={{ marginTop: 30 }}>Composition</h2>

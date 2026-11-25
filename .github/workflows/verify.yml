@@ -22,6 +22,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: foundation checks
-        run: pnpm --filter @arche/foundation build check-types lint check-token-only check-manifest-template
+        run: pnpm --filter @arche-ui/foundation build check-types lint check-token-only check-manifest-template
       - name: registry-core suites
-        run: pnpm --filter @arche/registry-core test:rules test:fonts test:presentation test:blocks test:verification test:goldens
+        run: pnpm --filter @arche-ui/registry-core test:rules test:fonts test:presentation test:blocks test:verification test:goldens

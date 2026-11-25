@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Manifest } from "@arche/registry-core";
+import type { Manifest } from "@arche-ui/registry-core";
 
 /** Shared manifest-generated component reference (public + dashboard). */
 export function ComponentIndex({ manifests }: { manifests: Manifest[] }) {

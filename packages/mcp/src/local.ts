@@ -7,7 +7,7 @@ import {
   serializeStable,
   validateIdentity,
   type ArcheIdentity,
-} from "@arche/registry-core";
+} from "@arche-ui/registry-core";
 import type { IdentityResult, LibrarySummary, McpBackend, PublishOutcome } from "./backend.js";
 
 function payloadPaths(): string[] {

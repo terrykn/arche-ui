@@ -10,6 +10,7 @@
  * components themselves.
  */
 import * as React from "react";
+import { loadWithRetry } from "@/components/lazy-block";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AnimatedBeam } from "@/components/ui/animated-beam";
 import { DraggableCardContainer } from "@/components/ui/draggable-card";
@@ -58,7 +59,10 @@ function demo(
   exportName?: string,
 ) {
   return React.lazy(async () => {
-    const mod = await load();
+    // Same transient-chunk protection as the block previews: the editor
+    // mounts the whole catalog at once, so a miss while dev is still
+    // compiling must not become a permanent "Preview unavailable".
+    const mod = await loadWithRetry(load);
     // memo()/forwardRef() components are objects with $$typeof, not functions.
     const isRenderable = (value: unknown) =>
       typeof value === "function" ||
@@ -557,7 +561,7 @@ export const COMPONENT_DEMOS: Record<string, React.ComponentType> = {
     <div className="relative h-40 w-full overflow-hidden rounded-md border"><C /></div>
   )),
   terminal: demo(() => import("@/components/ui/terminal"), (C) => (
-    <C lines={["$ pnpm add @arche/ui", "✓ installed", "$ pnpm dev"]} />
+    <C lines={["$ pnpm add @arche-ui/ui", "✓ installed", "$ pnpm dev"]} />
   )),
   "text-3d-flip": demo(() => import("@/components/ui/text-3d-flip"), (C) => <C>3D flip</C>),
   "text-animate": demo(() => import("@/components/ui/text-animate"), (C) => <C>Animated text</C>),

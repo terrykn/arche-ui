@@ -1,5 +1,5 @@
 {
-  "extends": "@arche/typescript-config/react-library.json",
+  "extends": "@arche-ui/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"

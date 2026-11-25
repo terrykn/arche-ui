@@ -1,5 +1,5 @@
-import { getCatalogManifests, getManifests } from "@arche/registry-core";
-import type { Manifest } from "@arche/registry-core";
+import { getCatalogManifests, getManifests } from "@arche-ui/registry-core";
+import type { Manifest } from "@arche-ui/registry-core";
 
 /**
  * Structured context for `check_placement` (Brief #5 §7). Every field is

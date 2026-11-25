@@ -1,5 +1,5 @@
 import BlockDoc from "@/app/docs/blocks/[id]/page";
-import { getBlockManifests } from "@arche/registry-core";
+import { getBlockManifests } from "@arche-ui/registry-core";
 
 export function generateStaticParams() {
   return getBlockManifests().map((manifest) => ({ id: manifest.name }));

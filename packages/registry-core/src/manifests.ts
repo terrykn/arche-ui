@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import tokenContract from "@arche/foundation/contract/token-contract.json" with {
+import tokenContract from "@arche-ui/foundation/contract/token-contract.json" with {
   type: "json",
 };
 
@@ -58,8 +58,8 @@ export interface Manifest {
 // Foundation is located without require.resolve (bundlers rewrite that call).
 // From dist, up two levels lands on the package root's parent, so both the
 // monorepo layout (packages/registry-core -> packages/foundation) and an
-// installed layout (node_modules/@arche/registry-core ->
-// node_modules/@arche/foundation) resolve statically.
+// installed layout (node_modules/@arche-ui/registry-core ->
+// node_modules/@arche-ui/foundation) resolve statically.
 function locateFoundation(): string {
   const candidates: string[] = [];
   try {
@@ -81,7 +81,7 @@ function locateFoundation(): string {
   }
   const found = candidates.find((dir) => existsSync(join(dir, "src", "manifests")));
   if (!found) {
-    throw new Error("@arche/foundation manifests not found from registry-core");
+    throw new Error("@arche-ui/foundation manifests not found from registry-core");
   }
   return found;
 }

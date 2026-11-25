@@ -25,7 +25,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { contrastRatio } from "@arche/foundation/contract/validate-tokens";
+import { contrastRatio } from "@arche-ui/foundation/contract/validate-tokens";
 import { compileValidIdentity } from "../dist/compiler.js";
 import {
   ART_DIRECTIONS,

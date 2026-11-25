@@ -9,7 +9,7 @@
  */
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
-import { assertGeneratedCompliant, checkDesignRules } from "@arche/registry-core";
+import { assertGeneratedCompliant, checkDesignRules } from "@arche-ui/registry-core";
 import { generateFromPhrase as generate } from "../lib/generation/service";
 import { HostedBackend } from "../lib/mcp-host";
 

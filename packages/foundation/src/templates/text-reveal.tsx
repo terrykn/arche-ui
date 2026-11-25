@@ -36,7 +36,7 @@ export function TextReveal({
         aria-hidden
         initial="hidden"
         whileInView="visible"
-        viewport={{ once, margin: "0rem 0rem -10% 0rem" }}
+        viewport={{ once, margin: "0px 0px -10% 0px" }}
         transition={{ staggerChildren: stagger, delayChildren: delay }}
         className="inline"
       >

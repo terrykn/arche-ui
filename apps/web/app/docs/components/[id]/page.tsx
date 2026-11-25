@@ -1,6 +1,6 @@
 import { DocsLink } from "@/components/docs-base";
 import { notFound } from "next/navigation";
-import { getManifests } from "@arche/registry-core";
+import { getManifests } from "@arche-ui/registry-core";
 import { DocPreview } from "@/components/doc-preview";
 import { CopyButton } from "@/components/copy-button";
 import { PreviewFrame } from "@/components/preview-frame";
@@ -48,8 +48,8 @@ export default async function ComponentDoc({ params }: { params: Promise<{ id: s
       </div>
 
       <div className="proto-code" style={{ marginTop: 18 }}>
-        <code>npx @arche/cli add {manifest.name}</code>
-        <CopyButton text={`npx @arche/cli add ${manifest.name}`} />
+        <code>npx @arche-ui/cli add {manifest.name}</code>
+        <CopyButton text={`npx @arche-ui/cli add ${manifest.name}`} />
       </div>
 
       <h2 style={{ marginTop: 30 }}>Props</h2>

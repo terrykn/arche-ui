@@ -4,10 +4,10 @@ import * as React from "react";
 import { Check, Copy } from "lucide-react";
 
 const MANAGERS = [
-  { id: "npm", label: "npm", command: "npx @arche/cli login" },
-  { id: "pnpm", label: "pnpm", command: "pnpm dlx @arche/cli login" },
-  { id: "yarn", label: "yarn", command: "yarn dlx @arche/cli login" },
-  { id: "bun", label: "bun", command: "bunx @arche/cli login" },
+  { id: "npm", label: "npm", command: "npx @arche-ui/cli login" },
+  { id: "pnpm", label: "pnpm", command: "pnpm dlx @arche-ui/cli login" },
+  { id: "yarn", label: "yarn", command: "yarn dlx @arche-ui/cli login" },
+  { id: "bun", label: "bun", command: "bunx @arche-ui/cli login" },
 ];
 
 // Interactive block used by the Installation page data file.

@@ -8,6 +8,7 @@ import { DASH_LINKS, DashboardNav } from "@/components/dashboard-nav";
 import { MobileNavMenu, type MobileNavLink } from "@/components/mobile-nav-menu";
 import { PUBLIC_NAV_LINKS } from "@/components/public-nav-links";
 import { Button } from "@/components/ui/button";
+import { SiteThemeToggle } from "@/components/site-theme";
 import { signOut } from "@/app/(auth)/actions";
 
 // Same destinations as the home menu, preceded by the dashboard's own pages.
@@ -65,11 +66,14 @@ export function DashboardHeader() {
               <Plus aria-hidden="true" /> New Identity
             </Link>
           </Button>
-          <form action={signOut}>
-            <Button variant="outline" size="sm" type="submit" className="w-full">
-              Sign out
-            </Button>
-          </form>
+          <div className="flex items-center gap-2">
+            <SiteThemeToggle />
+            <form action={signOut} className="min-w-0 flex-1">
+              <Button variant="outline" size="sm" type="submit" className="w-full">
+                Sign out
+              </Button>
+            </form>
+          </div>
         </div>
       </aside>
     </>

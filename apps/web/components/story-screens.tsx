@@ -17,7 +17,7 @@ import { Plus } from "lucide-react";
  * person refs are initials only, and the dentist "photo" is an
  * initials avatar so nothing identifies a real individual.
  */
-function demoSkin(identity: DemoIdentity) {
+export function demoSkin(identity: DemoIdentity) {
   const line = `color-mix(in srgb, ${identity.ink} 14%, transparent)`;
   return {
     "--background": identity.background,
@@ -51,7 +51,7 @@ function demoSkin(identity: DemoIdentity) {
  */
 // Dark-mode remap: keeps the identity's brand hues, but swaps the
 // surfaces and ink for dark ones so the toggle reads as a true theme.
-function toDark(identity: DemoIdentity): DemoIdentity {
+export function toDark(identity: DemoIdentity): DemoIdentity {
   return {
     ...identity,
     background: "#0c0c11",
@@ -71,7 +71,14 @@ export function DemoSkin({
   children: React.ReactNode;
   dark?: boolean;
 }) {
-  return <div style={demoSkin(dark ? toDark(identity) : identity)}>{children}</div>;
+  return (
+    <div
+      className="transition-[background-color,color] duration-500 motion-reduce:transition-none"
+      style={demoSkin(dark ? toDark(identity) : identity)}
+    >
+      {children}
+    </div>
+  );
 }
 
 function Shell({

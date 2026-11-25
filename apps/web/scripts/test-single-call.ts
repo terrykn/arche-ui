@@ -6,9 +6,9 @@
  * Usage: ../../packages/foundation/node_modules/.bin/tsx --env-file=.env.local scripts/test-single-call.ts
  */
 import assert from "node:assert/strict";
-import { deriveProfile } from "@arche/registry-core";
+import { deriveProfile } from "@arche-ui/registry-core";
 import { generateDna, generateDnaDelta } from "../lib/generation/provider";
-import type { DnaObject } from "@arche/registry-core";
+import type { DnaObject } from "@arche-ui/registry-core";
 
 process.env.LLM_PROVIDER = "groq";
 process.env.LLM_MODEL = "openai/gpt-oss-120b";

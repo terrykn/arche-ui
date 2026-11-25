@@ -15,7 +15,7 @@ const webRoot = join(here, "..");
 const repoRoot = join(webRoot, "..", "..");
 
 const require = createRequire(join(webRoot, "package.json"));
-const { buildRegistry } = require("@arche/registry-core");
+const { buildRegistry } = require("@arche-ui/registry-core");
 
 const identity = JSON.parse(
   readFileSync(join(repoRoot, "fixtures", "identity.default.json"), "utf8"),

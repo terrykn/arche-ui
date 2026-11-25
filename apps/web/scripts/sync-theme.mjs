@@ -18,7 +18,7 @@ const webRoot = join(here, "..");
 const repoRoot = join(webRoot, "..", "..");
 
 const require = createRequire(join(webRoot, "package.json"));
-const { buildRegistry } = require("@arche/registry-core");
+const { buildRegistry } = require("@arche-ui/registry-core");
 
 const identityPath = join(repoRoot, "fixtures", "identity.default.json");
 const identity = JSON.parse(readFileSync(identityPath, "utf8"));
@@ -56,7 +56,7 @@ const block = (selector, vars) => {
 // stylesheet, and theme.css is inlined mid-bundle). The legacy font block is
 // removed from globals.css below if still present.
 const css = `/* GENERATED — do not hand-edit. Source: fixtures/identity.default.json
- * Produced by apps/web/scripts/sync-theme.mjs via @arche/registry-core.
+ * Produced by apps/web/scripts/sync-theme.mjs via @arche-ui/registry-core.
  * Edit the payload, then run: pnpm --filter web sync-theme */
 ${block(":root", light)}
 

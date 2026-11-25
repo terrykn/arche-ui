@@ -17,10 +17,10 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@arche/foundation": "workspace:*",
-    "@arche/mcp": "workspace:*",
-    "@arche/registry-core": "workspace:*",
-    "@arche/ui": "workspace:*",
+    "@arche-ui/foundation": "workspace:*",
+    "@arche-ui/mcp": "workspace:*",
+    "@arche-ui/registry-core": "workspace:*",
+    "@arche-ui/ui": "workspace:*",
     "@base-ui/react": "^1.9.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
@@ -88,8 +88,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@arche/eslint-config": "workspace:*",
-    "@arche/typescript-config": "workspace:*",
+    "@arche-ui/eslint-config": "workspace:*",
+    "@arche-ui/typescript-config": "workspace:*",
     "@tailwindcss/turbopack": "^4.3.3",
     "@types/node": "26.4.1",
     "@types/react": "19.2.18",

@@ -5,8 +5,8 @@ import {
   serializeStable,
   validateIdentity,
   type ArcheIdentity,
-} from "@arche/registry-core";
-import type { McpBackend, IdentityResult, LibrarySummary, PublishOutcome, GenerateOutcome } from "@arche/mcp";
+} from "@arche-ui/registry-core";
+import type { McpBackend, IdentityResult, LibrarySummary, PublishOutcome, GenerateOutcome } from "@arche-ui/mcp";
 import { createServiceClient } from "./supabase/service";
 import { publishLibrary } from "./publish";
 import { generateFromPhrase } from "./generation/service";

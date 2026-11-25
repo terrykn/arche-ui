@@ -11,4 +11,4 @@ export {
   DialogTrigger,
   dialogContentVariants,
   dialogOverlayVariants,
-} from "@arche/foundation/templates/dialog";
+} from "@arche-ui/foundation/templates/dialog";

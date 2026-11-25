@@ -37,7 +37,7 @@ export function InstallBlock({
       '    // headers: { "Authorization": "Bearer ${REGISTRY_TOKEN}" },',
     );
   }
-  lines.push("  }", "", "pnpm dlx shadcn@latest add @arche/all");
+  lines.push("  }", "", "pnpm dlx shadcn@latest add @arche-ui/all");
   if (authed) {
     lines.push("REGISTRY_TOKEN=<paste from dashboard settings>");
   }

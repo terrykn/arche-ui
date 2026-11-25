@@ -22,13 +22,13 @@ import {
   recommendedFontPairs,
   validateFontPairing,
   type FontEntry,
-} from "@arche/foundation/fonts";
+} from "@arche-ui/foundation/fonts";
 import type {
   DnaPalette,
   GenerationProfile,
   PaletteVariant,
   TypefaceVariant,
-} from "@arche/foundation/dna";
+} from "@arche-ui/foundation/dna";
 import { derivePaletteOptions } from "./picker.js";
 
 export type { PaletteVariant, TypefaceVariant };

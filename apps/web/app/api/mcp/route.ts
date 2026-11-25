@@ -1,4 +1,4 @@
-import { handleMcpHttp } from "@arche/mcp";
+import { handleMcpHttp } from "@arche-ui/mcp";
 import { HostedBackend } from "@/lib/mcp-host";
 import { hostedMcpEnabled, verifyMcpToken } from "@/lib/mcp-tokens";
 import { createServiceClient } from "@/lib/supabase/service";

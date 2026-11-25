@@ -1,4 +1,4 @@
-import { config as baseConfig } from "@arche/eslint-config/base";
+import { config as baseConfig } from "@arche-ui/eslint-config/base";
 
 /** @type {import("eslint").Linter.Config[]} */
 export default [...baseConfig];

@@ -25,7 +25,7 @@ import {
   validateFontPairing,
   validateFontSelection,
   validateRequestedFontUsage,
-} from "@arche/foundation/fonts";
+} from "@arche-ui/foundation/fonts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = join(root, "..", "..");

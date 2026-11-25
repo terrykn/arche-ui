@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ProtoAurora, ProtoNav, ProtoFooter } from "@/components/proto-shell";
-// Demo screens live on /examples; this section re-skins the whole site instead.
+import { ExamplesThemeGrid } from "@/components/examples-theme-grid";
 import ResponsiveGradientBg from "@/components/gradient-bg-adaptive";
 
 import { ArrowUp } from "lucide-react";
@@ -26,11 +26,11 @@ const GRID_OFFSETS = [
 const FEATURES = [
   {
     title: "Install what you need. Own the source code.",
-    code: "$ npx @arche/cli login\n$ npx @arche/cli init <user>/<library>\n$ npx @arche/cli add button dialog",
+    code: "$ npx @arche-ui/cli login\n$ npx @arche-ui/cli init <user>/<library>\n$ npx @arche-ui/cli add button dialog",
   },
   {
     title: "Check your code against the system.",
-    code: "$ npx @arche/cli check --strict",
+    code: "$ npx @arche-ui/cli check --strict",
   },
   {
     title: "Agents follow your system via MCP.",
@@ -153,6 +153,9 @@ export default function Home() {
               </Card>
             ))}
           </section>
+          <div className="pb-10">
+            <ExamplesThemeGrid />
+          </div>
         </div>
       </div>
       <ProtoFooter />

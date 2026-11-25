@@ -1,4 +1,4 @@
-import { getManifests } from "@arche/registry-core";
+import { getManifests } from "@arche-ui/registry-core";
 import { ComponentIndex } from "@/components/catalog-reference";
 import { PageContainer } from "@/components/page-container";
 

@@ -4,7 +4,7 @@ import {
   buildRegistry,
   serializeStable,
   validateIdentity,
-} from "@arche/registry-core";
+} from "@arche-ui/registry-core";
 import { createServiceClient } from "./supabase/service";
 import type { Library, LibraryVersion } from "./db";
 

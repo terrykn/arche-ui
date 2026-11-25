@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getBlockManifests } from "@arche/registry-core";
+import { getBlockManifests } from "@arche-ui/registry-core";
 import { SiteNav } from "@/components/site-nav";
 import { PageContainer } from "@/components/page-container";
 import { BlockPreview } from "@/components/block-preview";

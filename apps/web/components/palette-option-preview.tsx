@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import type { DnaPalette } from "@arche/registry-core";
+import type { DnaPalette } from "@arche-ui/registry-core";
 
 /**
  * Mini component preview per palette option (Brief: prompt-adherence Part 6).
